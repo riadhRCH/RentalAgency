@@ -1,0 +1,19 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.silver-glow {
+    text-shadow: 0 0 10px rgba(206, 212, 218, 0.4), 0 0 20px rgba(206, 212, 218, 0.2);
+    background: linear-gradient(to right, #adb5bd 0%, #f8f9fa 50%, #adb5bd 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.glass-card {
+    background: rgba(16, 22, 34, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(173, 181, 189, 0.1);
+}
+body {
+    min-height: max(884px, 100dvh);
+}

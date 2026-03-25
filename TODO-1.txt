@@ -1,0 +1,6 @@
+contract auto generation from 
+- properties in the offer details (location, price, size, etc)
+- client cin card
+-  properties owner cin card
+- price
+- 5% annual commission

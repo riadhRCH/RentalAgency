@@ -1,0 +1,17 @@
+- feat: when user calls the agency i want to add a lead entry to the database that have the following information:
+    - user id
+    - call start time
+    - call end time
+    - call duration
+    - call status
+    - call type
+    - call reason
+    - call notes
+    - and more if possible
+
+    those data for calls should appear in agent dashboard
+
+    agent should be able to mark the the lead as demand or a visit request
+
+    important : this leads management first step
+    

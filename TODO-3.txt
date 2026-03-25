@@ -1,0 +1,2 @@
+design : add a a way for agency agent to add a property to the database and add all possible property details
+design : edit property details page (maybe same as add property page)

@@ -1,0 +1,1 @@
+rental agency agent should be able to select any deal/client from the the dashboard and open the whatsapp session discussion

@@ -3,6 +3,7 @@ import { AgenciesService } from './agencies.service';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { ProvisionNumberDto } from './dto/provision-number.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AgencyGuard } from '../auth/agency.guard';
 
 @Controller('agencies')
 export class AgenciesController {
@@ -15,16 +16,16 @@ export class AgenciesController {
   }
 
   // Provision a new Twilio virtual number for the current agency
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AgencyGuard)
   @Post('numbers/provision')
   async provisionNumber(@Request() req, @Body() dto: ProvisionNumberDto) {
-    return this.agenciesService.provisionNumber(req.user._id.toString(), dto);
+    return this.agenciesService.provisionNumber(req.agencyId.toString(), dto);
   }
 
   // List all active virtual numbers for the current agency
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AgencyGuard)
   @Get('numbers/active')
   async getActiveNumbers(@Request() req) {
-    return this.agenciesService.getActiveNumbers(req.user._id.toString());
+    return this.agenciesService.getActiveNumbers(req.agencyId.toString());
   }
 }

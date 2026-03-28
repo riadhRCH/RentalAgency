@@ -32,6 +32,12 @@ export class Personnel {
   status: string;
 
   @Prop()
+  passwordHash?: string;
+
+  @Prop()
+  lastLoginAt?: Date;
+
+  @Prop()
   deletedAt: Date;
 }
 

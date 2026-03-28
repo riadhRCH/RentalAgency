@@ -11,6 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AgencyGuard } from '../auth/agency.guard';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { PropertiesService } from './properties.service';
@@ -20,6 +21,7 @@ import { PropertiesService } from './properties.service';
 export class PropertiesController {
   constructor(private readonly propertiesService: PropertiesService) {}
 
+  @UseGuards(AgencyGuard)
   @Get()
   findAll(
     @Request() req,
@@ -33,7 +35,7 @@ export class PropertiesController {
     @Query('maxSurface') maxSurface?: string,
   ) {
     return this.propertiesService.findAll(
-      req.user._id.toString(),
+      req.agencyId.toString(),
       parseInt(page),
       parseInt(limit),
       {
@@ -47,27 +49,31 @@ export class PropertiesController {
     );
   }
 
+  @UseGuards(AgencyGuard)
   @Get(':id')
   findOne(@Request() req, @Param('id') id: string) {
-    return this.propertiesService.findOne(req.user._id.toString(), id);
+    return this.propertiesService.findOne(req.agencyId.toString(), id);
   }
 
+  @UseGuards(AgencyGuard)
   @Post()
   create(@Request() req, @Body() dto: CreatePropertyDto) {
-    return this.propertiesService.create(req.user._id.toString(), dto);
+    return this.propertiesService.create(req.agencyId.toString(), dto);
   }
 
+  @UseGuards(AgencyGuard)
   @Patch(':id')
   update(
     @Request() req,
     @Param('id') id: string,
     @Body() dto: UpdatePropertyDto,
   ) {
-    return this.propertiesService.update(req.user._id.toString(), id, dto);
+    return this.propertiesService.update(req.agencyId.toString(), id, dto);
   }
 
+  @UseGuards(AgencyGuard)
   @Delete(':id')
   remove(@Request() req, @Param('id') id: string) {
-    return this.propertiesService.remove(req.user._id.toString(), id);
+    return this.propertiesService.remove(req.agencyId.toString(), id);
   }
 }

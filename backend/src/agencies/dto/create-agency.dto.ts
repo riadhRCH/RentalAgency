@@ -1,17 +1,13 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
 
 export class CreateAgencyDto {
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @IsString()
+  @IsPhoneNumber()
   @IsNotEmpty()
-  email: string;
-
-  @IsString()
-  @IsNotEmpty()
-  password: string;
+  ownerPhone: string;
 
   @IsString()
   @IsOptional()

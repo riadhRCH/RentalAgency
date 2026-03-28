@@ -24,11 +24,8 @@ export class RentalAgency {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true, unique: true })
-  email: string;
-
-  @Prop({ required: true })
-  password: string;
+  @Prop({ type: Types.ObjectId, ref: 'Personnel', required: true })
+  ownerId: Types.ObjectId;
 
   @Prop({
     type: [{ personnelId: { type: Types.ObjectId, ref: 'Personnel' }, role: { type: String, enum: ['admin', 'agent'] } }],

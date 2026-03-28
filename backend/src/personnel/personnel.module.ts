@@ -6,6 +6,7 @@ import { Property, PropertySchema } from '../schemas/property.schema';
 import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schema';
 import { PersonnelController } from './personnel.controller';
 import { PersonnelService } from './personnel.service';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { PersonnelService } from './personnel.service';
       { name: Property.name, schema: PropertySchema },
       { name: RentalAgency.name, schema: RentalAgencySchema },
     ]),
+    AuthModule,
   ],
   controllers: [PersonnelController],
   providers: [PersonnelService],

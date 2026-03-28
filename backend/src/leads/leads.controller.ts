@@ -11,11 +11,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AgencyGuard } from '../auth/agency.guard';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { LeadsService } from './leads.service';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, AgencyGuard)
 @Controller('leads')
 export class LeadsController {
   constructor(private readonly leadsService: LeadsService) {}
@@ -28,7 +29,7 @@ export class LeadsController {
     @Query('status') status?: string,
   ) {
     return this.leadsService.findAll(
-      req.user._id.toString(),
+      req.agencyId.toString(),
       parseInt(page),
       parseInt(limit),
       status,
@@ -37,12 +38,12 @@ export class LeadsController {
 
   @Get(':id')
   findOne(@Request() req, @Param('id') id: string) {
-    return this.leadsService.findOne(req.user._id.toString(), id);
+    return this.leadsService.findOne(req.agencyId.toString(), id);
   }
 
   @Post()
   create(@Request() req, @Body() dto: CreateLeadDto) {
-    return this.leadsService.create(req.user._id.toString(), dto);
+    return this.leadsService.create(req.agencyId.toString(), dto);
   }
 
   @Patch(':id')
@@ -51,11 +52,11 @@ export class LeadsController {
     @Param('id') id: string,
     @Body() dto: UpdateLeadDto,
   ) {
-    return this.leadsService.update(req.user._id.toString(), id, dto);
+    return this.leadsService.update(req.agencyId.toString(), id, dto);
   }
 
   @Delete(':id')
   remove(@Request() req, @Param('id') id: string) {
-    return this.leadsService.remove(req.user._id.toString(), id);
+    return this.leadsService.remove(req.agencyId.toString(), id);
   }
 }

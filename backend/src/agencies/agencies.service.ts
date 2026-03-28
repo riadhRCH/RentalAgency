@@ -8,6 +8,7 @@ import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import * as twilio from 'twilio';
 import { RentalAgency, RentalAgencyDocument } from '../schemas/rental-agency.schema';
+import { Personnel, PersonnelDocument } from '../schemas/personnel.schema';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { ProvisionNumberDto } from './dto/provision-number.dto';
 
@@ -18,6 +19,8 @@ export class AgenciesService {
   constructor(
     @InjectModel(RentalAgency.name)
     private readonly agencyModel: Model<RentalAgencyDocument>,
+    @InjectModel(Personnel.name)
+    private readonly personnelModel: Model<PersonnelDocument>,
   ) {
     this.twilioClient = twilio(
       process.env.TWILIO_ACCOUNT_SID,
@@ -26,21 +29,23 @@ export class AgenciesService {
   }
 
   async create(dto: CreateAgencyDto) {
-    const existing = await this.agencyModel.findOne({ email: dto.email });
-    if (existing) {
-      throw new BadRequestException('Agency with this email already exists');
+    let personnel = await this.personnelModel.findOne({ phone: dto.ownerPhone });
+    
+    if (!personnel) {
+      personnel = await this.personnelModel.create({
+        phone: dto.ownerPhone,
+        source: 'manual',
+      });
     }
 
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
     const agency = await this.agencyModel.create({
       name: dto.name,
-      email: dto.email,
-      password: hashedPassword,
+      ownerId: personnel._id,
+      staff: [{ personnelId: personnel._id, role: 'admin' }],
       settings: { forwardingNumber: dto.forwardingNumber || '' },
     });
 
-    const { password, ...result } = agency.toObject();
-    return result;
+    return agency;
   }
 
   async provisionNumber(agencyId: string, dto: ProvisionNumberDto) {

@@ -32,6 +32,9 @@ export class Lead {
   @Prop({ type: Types.ObjectId, ref: 'RentalAgency', required: true })
   agencyId: Types.ObjectId;
 
+  @Prop({ type: Types.ObjectId, ref: 'Personnel' })
+  personnelId: Types.ObjectId;
+
   @Prop({ required: true })
   customerPhone: string;
 
@@ -59,6 +62,9 @@ export class Lead {
 
   @Prop()
   notes: string;
+
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const LeadSchema = SchemaFactory.createForClass(Lead);

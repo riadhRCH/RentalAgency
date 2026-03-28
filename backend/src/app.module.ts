@@ -4,6 +4,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AgenciesModule } from './agencies/agencies.module';
 import { AuthModule } from './auth/auth.module';
 import { LeadsModule } from './leads/leads.module';
+import { PersonnelModule } from './personnel/personnel.module';
+import { PropertiesModule } from './properties/properties.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 
 @Module({
@@ -18,6 +20,8 @@ import { WebhooksModule } from './webhooks/webhooks.module';
     AuthModule,
     AgenciesModule,
     LeadsModule,
+    PersonnelModule,
+    PropertiesModule,
     WebhooksModule,
   ],
 })

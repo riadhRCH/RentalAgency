@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export type RentalAgencyDocument = RentalAgency & Document;
 
@@ -29,6 +29,12 @@ export class RentalAgency {
 
   @Prop({ required: true })
   password: string;
+
+  @Prop({
+    type: [{ personnelId: { type: Types.ObjectId, ref: 'Personnel' }, role: { type: String, enum: ['admin', 'agent'] } }],
+    default: [],
+  })
+  staff: { personnelId: Types.ObjectId; role: string }[];
 
   @Prop({ type: [{ sid: String, phoneNumber: String, label: String }], default: [] })
   activeVirtualNumbers: VirtualNumber[];

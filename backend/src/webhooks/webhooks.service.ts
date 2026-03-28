@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Lead, LeadDocument } from '../schemas/lead.schema';
 import { RentalAgency, RentalAgencyDocument } from '../schemas/rental-agency.schema';
+import { PersonnelService } from '../personnel/personnel.service';
 
 @Injectable()
 export class WebhooksService {
@@ -11,6 +12,7 @@ export class WebhooksService {
     private readonly leadModel: Model<LeadDocument>,
     @InjectModel(RentalAgency.name)
     private readonly agencyModel: Model<RentalAgencyDocument>,
+    private readonly personnelService: PersonnelService,
   ) {}
 
   /**
@@ -71,6 +73,9 @@ export class WebhooksService {
 
     const agencyId = agency._id as Types.ObjectId;
 
+    // Identify/Create personnel
+    const personnel = await this.personnelService.identify(callerPhone, 'call');
+
     const newActivity = {
       type: 'CALL',
       timestamp: new Date(),
@@ -91,7 +96,7 @@ export class WebhooksService {
         { _id: existingLead._id },
         {
           $push: { activities: newActivity },
-          $set: { lastInteraction: new Date() },
+          $set: { lastInteraction: new Date(), personnelId: personnel._id },
         },
       );
       console.log(`📞 Updated existing lead for ${callerPhone}`);
@@ -99,6 +104,7 @@ export class WebhooksService {
       // New caller — create lead with first activity
       await this.leadModel.create({
         agencyId,
+        personnelId: personnel._id,
         customerPhone: callerPhone,
         status: 'NEW',
         activities: [newActivity],

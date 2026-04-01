@@ -1,0 +1,45 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../auth.service';
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss']
+})
+export class LoginComponent {
+  credentials = {
+    phone: '',
+    password: ''
+  };
+  error = '';
+  loading = false;
+
+  constructor(private authService: AuthService, private router: Router) {}
+
+  onSubmit() {
+    this.loading = true;
+    this.error = '';
+    this.authService.login(this.credentials).subscribe({
+      next: () => {
+        this.authService.getMe().subscribe({
+          next: (res) => {
+            if (res.agencies.length > 1) {
+              this.router.navigate(['/auth/select-agency']);
+            } else {
+              this.router.navigate(['/']);
+            }
+          }
+        });
+      },
+      error: (err) => {
+        this.error = err.error?.message || 'Login failed';
+        this.loading = false;
+      }
+    });
+  }
+}

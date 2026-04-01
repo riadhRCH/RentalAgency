@@ -1,0 +1,66 @@
+<div class="min-h-screen flex items-center justify-center bg-background-dark relative overflow-hidden">
+  <!-- Decorative background elements -->
+  <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[120px]"></div>
+  <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/10 rounded-full blur-[120px]"></div>
+
+  <div class="w-full max-w-md p-8 relative z-10">
+    <div class="glass-card p-10 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-xl bg-white/5">
+      <div class="text-center mb-10">
+        <h1 class="font-serif text-4xl font-bold tracking-widest text-white mb-2 uppercase silver-glow">DOGHMANI</h1>
+        <p class="font-display text-silver-400 text-sm tracking-widest uppercase">Member Login</p>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="space-y-6">
+        <div *ngIf="error" class="p-4 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg animate-pulse">
+          {{ error }}
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Phone Number</label>
+          <div class="flex items-center gap-3 border-b border-white/10 pb-2 focus-within:border-primary transition-colors">
+            <span class="material-symbols-outlined text-primary text-xl">call</span>
+            <input 
+              type="tel" 
+              name="phone" 
+              [(ngModel)]="credentials.phone" 
+              required
+              placeholder="+1 234 567 890"
+              class="bg-transparent border-none text-white focus:ring-0 p-0 text-sm placeholder:text-silver-500/50 w-full"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Password</label>
+          <div class="flex items-center gap-3 border-b border-white/10 pb-2 focus-within:border-primary transition-colors">
+            <span class="material-symbols-outlined text-primary text-xl">lock</span>
+            <input 
+              type="password" 
+              name="password" 
+              [(ngModel)]="credentials.password" 
+              required
+              placeholder="••••••••"
+              class="bg-transparent border-none text-white focus:ring-0 p-0 text-sm placeholder:text-silver-500/50 w-full"
+            />
+          </div>
+        </div>
+
+        <button 
+          type="submit" 
+          [disabled]="!loginForm.form.valid || loading"
+          class="w-full py-4 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold uppercase tracking-widest rounded transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+        >
+          <span *ngIf="loading" class="material-symbols-outlined animate-spin">progress_activity</span>
+          {{ loading ? 'Authenticating...' : 'Sign In' }}
+        </button>
+
+        <div class="text-center mt-8">
+          <p class="text-silver-400 text-xs tracking-wide">
+            Don't have an agency? 
+            <a routerLink="/auth/register" class="text-primary hover:text-secondary transition-colors font-bold ml-1">Register Agency</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

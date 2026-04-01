@@ -15,8 +15,29 @@
             <button class="p-2 text-silver-400 hover:text-white transition-colors">
                 <span class="material-symbols-outlined">search</span>
             </button>
+            
+            <!-- Auth Button -->
+            <ng-container *ngIf="!authService.isAuthenticated(); else userProfile">
+                <a routerLink="/auth/login"
+                    class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20">
+                    Login
+                </a>
+            </ng-container>
+
+            <ng-template #userProfile>
+                <button [routerLink]="authService.userAgencies().length > 1 ? '/auth/select-agency' : '/'"
+                    class="flex items-center gap-2 p-1 pr-3 rounded-full glass-card border border-white/10 hover:border-primary/50 transition-all group">
+                    <div class="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary border border-primary/20">
+                        <span class="material-symbols-outlined text-sm">person</span>
+                    </div>
+                    <span class="text-[10px] font-bold text-silver-300 uppercase tracking-widest group-hover:text-white transition-colors">
+                        {{ authService.currentUser()?.firstName || 'Account' }}
+                    </span>
+                </button>
+            </ng-template>
+
             <button
-                class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20">
+                class="bg-white/5 hover:bg-white/10 text-white px-6 py-2 rounded border border-white/10 uppercase text-xs font-bold tracking-widest transition-all">
                 Book Viewing
             </button>
         </div>

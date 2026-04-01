@@ -42,14 +42,20 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-white/5">
-          <tr *ngIf="loading">
+          <tr *ngIf="loading()">
             <td colspan="5" class="p-12 text-center text-slate-500">
               <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
             </td>
           </tr>
-          <tr *ngIf="!loading && leads.length === 0">
+          <tr *ngIf="!loading() && leads.length === 0">
             <td colspan="5" class="p-12 text-center text-slate-500">
-              No leads found matching your criteria.
+              <app-empty-state 
+                icon="person_search"
+                title="No Leads Found"
+                description="No customer leads match your current filter or the database is empty. Check back later or adjust your filters."
+                [actionLabel]="statusFilter ? 'Clear Filters' : ''"
+                (action)="statusFilter = ''; onFilterChange()">
+              </app-empty-state>
             </td>
           </tr>
           <tr *ngFor="let lead of leads" class="group hover:bg-white/5 transition-colors">

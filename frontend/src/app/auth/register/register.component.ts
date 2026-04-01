@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -22,12 +22,12 @@ export class RegisterComponent {
     password: ''
   };
   error = '';
-  loading = false;
+  loading = signal(false);
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
-    this.loading = true;
+    this.loading.set(true);
     this.error = '';
     this.authService.register(this.data).subscribe({
       next: () => {
@@ -44,7 +44,7 @@ export class RegisterComponent {
       },
       error: (err) => {
         this.error = err.error?.message || 'Registration failed';
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

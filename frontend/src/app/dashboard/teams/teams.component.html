@@ -15,12 +15,16 @@
         Active Members
       </h2>
       <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-        <div *ngIf="loading" class="p-12 text-center text-slate-500">
+        <div *ngIf="loading()" class="p-12 text-center text-slate-500">
           <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
         </div>
 
-        <div *ngIf="!loading && staff.length === 0" class="p-12 text-center text-slate-500">
-          No staff members found.
+        <div *ngIf="!loading() && staff.length === 0" class="p-12 text-center text-slate-500">
+          <app-empty-state 
+            icon="group_off"
+            title="No Staff Members"
+            description="Your agency currently has no active staff members. Add your team to start collaborating.">
+          </app-empty-state>
         </div>
 
         <div *ngIf="!loading && staff.length > 0" class="divide-y divide-white/5">

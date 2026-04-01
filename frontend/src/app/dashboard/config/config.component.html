@@ -1,4 +1,9 @@
 <div class="p-8 max-w-7xl mx-auto space-y-12">
+  <div *ngIf="loading()" class="p-12 text-center text-slate-500">
+    <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
+  </div>
+
+  <ng-container *ngIf="!loading()">
   <header>
     <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
       Agency Configuration
@@ -110,4 +115,5 @@
       </div>
     </div>
   </div>
+  </ng-container>
 </div>

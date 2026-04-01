@@ -36,14 +36,20 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-white/5">
-          <tr *ngIf="loading">
+          <tr *ngIf="loading()">
             <td colspan="5" class="p-12 text-center text-slate-500">
               <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
             </td>
           </tr>
-          <tr *ngIf="!loading && visits.length === 0">
+          <tr *ngIf="!loading() && visits.length === 0">
             <td colspan="5" class="p-12 text-center text-slate-500">
-              No visit requests found.
+              <app-empty-state 
+                icon="calendar_today"
+                title="No Visits Scheduled"
+                description="There are no property viewing requests at the moment. New requests will appear here as they come in."
+                [actionLabel]="statusFilter ? 'Clear Status Filter' : ''"
+                (action)="statusFilter = ''; loadVisits(1)">
+              </app-empty-state>
             </td>
           </tr>
           <tr *ngFor="let visit of visits" class="group hover:bg-white/5 transition-colors">

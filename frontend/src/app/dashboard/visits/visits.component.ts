@@ -1,12 +1,13 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VisitsService, VisitRequest } from '../../services/visits.service';
 import { FormsModule } from '@angular/forms';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-visits',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, EmptyStateComponent],
   templateUrl: './visits.component.html',
   styleUrls: ['./visits.component.scss']
 })
@@ -14,7 +15,7 @@ export class VisitsComponent implements OnInit {
   private visitsService = inject(VisitsService);
 
   visits: VisitRequest[] = [];
-  loading = true;
+  loading = signal(true);
   currentPage = 1;
   totalPages = 1;
   statusFilter = '';
@@ -24,14 +25,16 @@ export class VisitsComponent implements OnInit {
   }
 
   loadVisits(page = 1) {
-    this.loading = true;
+    this.loading.set(true);
     this.visitsService.getVisits(page, 10, this.statusFilter || undefined).subscribe({
       next: (res) => {
-        this.visits = res.data;
-        this.totalPages = res.totalPages;
-        this.currentPage = res.page;
+        this.visits = res?.data || [];
+        this.totalPages = res?.totalPages || 1;
+        this.currentPage = res?.page || 1;
+        this.loading.set(false);
       },
-      complete: () => this.loading = false
+      error: () => this.loading.set(false),
+      complete: () => this.loading.set(false)
     });
   }
 

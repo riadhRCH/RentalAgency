@@ -1,13 +1,14 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AgencyService } from '../../services/agency.service';
 import { FormsModule } from '@angular/forms';
 import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-teams',
   standalone: true,
-  imports: [CommonModule, FormsModule, PhoneInputComponent],
+  imports: [CommonModule, FormsModule, PhoneInputComponent, EmptyStateComponent],
   templateUrl: './teams.component.html',
   styleUrls: ['./teams.component.scss']
 })
@@ -15,7 +16,7 @@ export class TeamsComponent implements OnInit {
   private agencyService = inject(AgencyService);
 
   staff: any[] = [];
-  loading = true;
+  loading = signal(true);
   adding = false;
   
   newMember = {
@@ -31,10 +32,14 @@ export class TeamsComponent implements OnInit {
   }
 
   loadStaff() {
-    this.loading = true;
+    this.loading.set(true);
     this.agencyService.getStaff().subscribe({
-      next: (res) => this.staff = res,
-      complete: () => this.loading = false
+      next: (res) => {
+        this.staff = res || [];
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false),
+      complete: () => this.loading.set(false)
     });
   }
 

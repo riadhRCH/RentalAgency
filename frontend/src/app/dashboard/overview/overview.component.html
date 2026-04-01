@@ -68,17 +68,21 @@
           View All
         </a>
       </div>
-
+      loading: {{ loading() }}
       <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-        <div *ngIf="loading" class="p-12 text-center text-slate-500">
+        <div *ngIf="loading()" class="p-12 text-center text-slate-500">
           <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
         </div>
         
-        <div *ngIf="!loading && recentLeads.length === 0" class="p-12 text-center text-slate-500">
-          No recent leads found.
+        <div *ngIf="!loading() && recentLeads.length === 0" class="p-12 text-center text-slate-500">
+          <app-empty-state 
+            icon="group_off"
+            title="No Recent Leads"
+            description="You haven't received any leads yet. They will appear here as soon as they are registered.">
+          </app-empty-state>
         </div>
 
-        <div *ngIf="!loading && recentLeads.length > 0" class="divide-y divide-white/5">
+        <div *ngIf="!loading() && recentLeads.length > 0" class="divide-y divide-white/5">
           <div *ngFor="let lead of recentLeads" class="p-6 hover:bg-white/5 transition-colors group">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-4">

@@ -1,12 +1,13 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LeadsService, Lead } from '../../services/leads.service';
 import { FormsModule } from '@angular/forms';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-leads',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, EmptyStateComponent],
   templateUrl: './leads.component.html',
   styleUrls: ['./leads.component.scss']
 })
@@ -14,7 +15,7 @@ export class LeadsComponent implements OnInit {
   private leadsService = inject(LeadsService);
 
   leads: Lead[] = [];
-  loading = true;
+  loading = signal(true);
   currentPage = 1;
   totalPages = 1;
   totalLeads = 0;
@@ -25,15 +26,17 @@ export class LeadsComponent implements OnInit {
   }
 
   loadLeads(page = 1) {
-    this.loading = true;
+    this.loading.set(true);
     this.leadsService.getLeads(page, 10, this.statusFilter || undefined).subscribe({
       next: (res) => {
-        this.leads = res.data;
-        this.totalLeads = res.total;
-        this.totalPages = res.totalPages;
-        this.currentPage = res.page;
+        this.leads = res?.data || [];
+        this.totalLeads = res?.total || 0;
+        this.totalPages = res?.totalPages || 1;
+        this.currentPage = res?.page || 1;
+        this.loading.set(false);
       },
-      complete: () => this.loading = false
+      error: () => this.loading.set(false),
+      complete: () => this.loading.set(false)
     });
   }
 

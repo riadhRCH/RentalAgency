@@ -1,14 +1,15 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LeadsService } from '../../services/leads.service';
 import { AgencyService } from '../../services/agency.service';
 import { AuthService } from '../../auth/auth.service';
 import { RouterModule } from '@angular/router';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, EmptyStateComponent],
   templateUrl: './overview.component.html',
   styleUrls: ['./overview.component.scss']
 })
@@ -25,31 +26,29 @@ export class OverviewComponent implements OnInit {
   };
 
   recentLeads: any[] = [];
-  loading = true;
+  loading = signal(false);
 
   ngOnInit() {
     this.loadData();
   }
 
   loadData() {
-    this.loading = true;
+    this.loading.set(true);
     // Fetch leads for stats and recent list
-    this.leadsService.getLeads(1, 5).subscribe({
+    this.leadsService.getLeads(1, 5, 'NEW').subscribe({
       next: (res) => {
-        this.stats.totalLeads = res.total;
-        this.recentLeads = res.data;
-        
-        // Count new leads (status === 'NEW')
-        this.leadsService.getLeads(1, 100, 'NEW').subscribe(newRes => {
-          this.stats.newLeads = newRes.total;
-        });
+        this.loading.set(false);
+        this.stats.totalLeads = res?.total || 0;
+        this.recentLeads = res?.data || [];
+        console.log('loading', this.loading());
+       
       },
-      complete: () => this.loading = false
+      error: () => this.loading.set(false)
     });
 
     // Fetch active numbers
     this.agencyService.getActiveNumbers().subscribe(nums => {
-      this.stats.activeNumbers = nums.length;
+      this.stats.activeNumbers = Array.isArray(nums) ? nums.length : 0;
     });
   }
 }

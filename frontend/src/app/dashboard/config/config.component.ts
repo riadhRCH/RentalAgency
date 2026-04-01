@@ -1,13 +1,14 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AgencyService, VirtualNumber, AgencySettings } from '../../services/agency.service';
 import { FormsModule } from '@angular/forms';
 import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
+import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-config',
   standalone: true,
-  imports: [CommonModule, FormsModule, PhoneInputComponent],
+  imports: [CommonModule, FormsModule, PhoneInputComponent, SidebarComponent],
   templateUrl: './config.component.html',
   styleUrls: ['./config.component.scss']
 })
@@ -22,7 +23,7 @@ export class ConfigComponent implements OnInit {
     label: ''
   };
 
-  loading = true;
+  loading = signal(true);
   saving = false;
   provisioning = false;
   message = '';
@@ -33,10 +34,14 @@ export class ConfigComponent implements OnInit {
   }
 
   loadData() {
-    this.loading = true;
+    this.loading.set(true);
     this.agencyService.getSettings().subscribe({
-      next: (s) => this.settings = s,
-      complete: () => this.loading = false
+      next: (s) => {
+        this.settings = s;
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false),
+      complete: () => this.loading.set(false)
     });
 
     this.agencyService.getActiveNumbers().subscribe(nums => {

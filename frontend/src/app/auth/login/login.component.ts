@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -18,12 +18,12 @@ export class LoginComponent {
     password: ''
   };
   error = '';
-  loading = false;
+  loading = signal(false);
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
-    this.loading = true;
+    this.loading.set(true);
     this.error = '';
     this.authService.login(this.credentials).subscribe({
       next: () => {
@@ -39,7 +39,7 @@ export class LoginComponent {
       },
       error: (err) => {
         this.error = err.error?.message || 'Login failed';
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

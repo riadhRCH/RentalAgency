@@ -107,11 +107,11 @@
 
         <button 
           type="submit" 
-          [disabled]="!registerForm.form.valid || loading"
-          class="w-full py-4 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold uppercase tracking-widest rounded transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+          [disabled]="!registerForm.form.valid || loading()"
+          class="w-full py-4 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-bold uppercase tracking-widest rounded transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
         >
-          <span *ngIf="loading" class="material-symbols-outlined animate-spin">progress_activity</span>
-          {{ loading ? 'Onboarding...' : 'Launch Agency' }}
+          <span *ngIf="loading()" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+          {{ loading() ? 'Creating Agency...' : 'Initialize Workspace' }}
         </button>
 
         <div class="text-center mt-8">

@@ -1,12 +1,13 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PropertiesService, Property } from '../../services/properties.service';
 import { FormsModule } from '@angular/forms';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-properties-mgmt',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, EmptyStateComponent],
   templateUrl: './properties-mgmt.component.html',
   styleUrls: ['./properties-mgmt.component.scss']
 })
@@ -14,7 +15,7 @@ export class PropertiesMgmtComponent implements OnInit {
   private propertiesService = inject(PropertiesService);
 
   properties: Property[] = [];
-  loading = true;
+  loading = signal(true);
   currentPage = 1;
   totalPages = 1;
   typeFilter = '';
@@ -24,15 +25,26 @@ export class PropertiesMgmtComponent implements OnInit {
   }
 
   loadProperties(page = 1) {
-    this.loading = true;
+    this.loading.set(true);
     this.propertiesService.getProperties(page, 10, { type: this.typeFilter || undefined }).subscribe({
       next: (res) => {
-        this.properties = res.data;
-        this.totalPages = res.totalPages;
-        this.currentPage = res.page;
+        this.properties = res?.data || [];
+        this.totalPages = res?.totalPages || 1;
+        this.currentPage = res?.page || 1;
+        this.loading.set(false);
       },
-      complete: () => this.loading = false
+      error: () => this.loading.set(false),
+      complete: () => this.loading.set(false)
     });
+  }
+
+  onFilterChange() {
+    this.loadProperties(1);
+  }
+
+  clearFilter() {
+    this.typeFilter = '';
+    this.loadProperties(1);
   }
 
   deleteProperty(id: string) {

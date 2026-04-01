@@ -1,0 +1,64 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export interface Property {
+  _id: string;
+  agencyId: string;
+  reference: string;
+  type: 'apartment' | 'villa' | 'house' | 'land';
+  address: string;
+  gpsLocation: { lat: number; lng: number };
+  surface: number;
+  price: number;
+  description: string;
+  photos: string[];
+  videos: string[];
+  status: 'available' | 'reserved' | 'rented' | 'sold';
+  ownerId: any;
+  amenities: Record<string, any>;
+  createdAt: Date;
+}
+
+export interface PaginatedProperties {
+  data: Property[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PropertiesService {
+  private readonly apiUrl = 'http://localhost:3000/properties';
+
+  constructor(private http: HttpClient) {}
+
+  getProperties(page = 1, limit = 20, filters?: any): Observable<PaginatedProperties> {
+    let url = `${this.apiUrl}?page=${page}&limit=${limit}`;
+    if (filters) {
+      Object.keys(filters).forEach(key => {
+        if (filters[key]) url += `&${key}=${filters[key]}`;
+      });
+    }
+    return this.http.get<PaginatedProperties>(url);
+  }
+
+  getProperty(id: string): Observable<Property> {
+    return this.http.get<Property>(`${this.apiUrl}/${id}`);
+  }
+
+  createProperty(data: any): Observable<Property> {
+    return this.http.post<Property>(this.apiUrl, data);
+  }
+
+  updateProperty(id: string, data: any): Observable<Property> {
+    return this.http.patch<Property>(`${this.apiUrl}/${id}`, data);
+  }
+
+  deleteProperty(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+}

@@ -1,0 +1,102 @@
+<div class="p-8 max-w-7xl mx-auto space-y-12">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+        Visit Requests
+      </h1>
+      <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+        Manage Scheduled Property Viewings
+      </p>
+    </div>
+    
+    <div class="flex items-center gap-4 w-full md:w-auto">
+      <select 
+        [(ngModel)]="statusFilter" 
+        (change)="loadVisits(1)"
+        class="bg-white/5 border border-white/10 text-white rounded p-3 text-xs font-bold uppercase tracking-widest outline-none focus:border-primary transition-all appearance-none cursor-pointer pr-10">
+        <option value="" class="bg-background-dark">All Requests</option>
+        <option value="PENDING" class="bg-background-dark">Pending</option>
+        <option value="CONFIRMED" class="bg-background-dark">Confirmed</option>
+        <option value="COMPLETED" class="bg-background-dark">Completed</option>
+        <option value="CANCELLED" class="bg-background-dark">Cancelled</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead class="bg-white/5 border-b border-white/10">
+          <tr>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Property</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Visitor</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Visit Date</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Status</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          <tr *ngIf="loading">
+            <td colspan="5" class="p-12 text-center text-slate-500">
+              <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
+            </td>
+          </tr>
+          <tr *ngIf="!loading && visits.length === 0">
+            <td colspan="5" class="p-12 text-center text-slate-500">
+              No visit requests found.
+            </td>
+          </tr>
+          <tr *ngFor="let visit of visits" class="group hover:bg-white/5 transition-colors">
+            <td class="p-6">
+              <div class="flex items-center gap-4">
+                <div class="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                  <span class="material-symbols-outlined">home</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white text-sm">{{ visit.propertyId?.reference || 'Unknown' }}</h4>
+                  <p class="text-[10px] text-slate-500 uppercase tracking-widest">{{ visit.propertyId?.type }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="p-6">
+              <div class="flex flex-col">
+                <span class="font-bold text-slate-300">{{ visit.visitorId?.phone }}</span>
+                <span class="text-[10px] text-slate-500 uppercase tracking-widest">{{ visit.visitorId?.firstName }} {{ visit.visitorId?.lastName }}</span>
+              </div>
+            </td>
+            <td class="p-6">
+              <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                {{ visit.visitDate | date:'MMM d, yyyy' }}
+                <span class="block text-[9px] text-slate-500 font-normal lowercase mt-1">
+                  at {{ visit.visitDate | date:'h:mm a' }}
+                </span>
+              </div>
+            </td>
+            <td class="p-6">
+              <select 
+                [ngModel]="visit.status"
+                (ngModelChange)="updateStatus(visit, $event)"
+                class="bg-transparent border-none text-[10px] font-bold uppercase tracking-widest outline-none cursor-pointer"
+                [ngClass]="{
+                  'text-amber-500': visit.status === 'PENDING',
+                  'text-primary': visit.status === 'CONFIRMED',
+                  'text-emerald-500': visit.status === 'COMPLETED',
+                  'text-red-500': visit.status === 'CANCELLED'
+                }">
+                <option value="PENDING">PENDING</option>
+                <option value="CONFIRMED">CONFIRMED</option>
+                <option value="COMPLETED">COMPLETED</option>
+                <option value="CANCELLED">CANCELLED</option>
+              </select>
+            </td>
+            <td class="p-6 text-right">
+              <button (click)="deleteVisit(visit._id)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-red-500 transition-all">
+                <span class="material-symbols-outlined text-sm">delete</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

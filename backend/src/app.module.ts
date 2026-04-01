@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { LeadsModule } from './leads/leads.module';
 import { PersonnelModule } from './personnel/personnel.module';
 import { PropertiesModule } from './properties/properties.module';
+import { VisitRequestsModule } from './visits/visits.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 
 @Module({
@@ -22,6 +23,7 @@ import { WebhooksModule } from './webhooks/webhooks.module';
     LeadsModule,
     PersonnelModule,
     PropertiesModule,
+    VisitRequestsModule,
     WebhooksModule,
   ],
 })

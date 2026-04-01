@@ -112,4 +112,55 @@ export class AgenciesService {
     if (!agency) throw new BadRequestException('Agency not found');
     return agency.settings;
   }
+
+  async addStaff(agencyId: string, dto: { phone: string; role: string }) {
+    let personnel = await this.personnelModel.findOne({ phone: dto.phone });
+    if (!personnel) {
+      personnel = await this.personnelModel.create({
+        phone: dto.phone,
+        source: 'manual',
+      });
+    }
+
+    const agency = await this.agencyModel.findById(agencyId);
+    if (!agency) throw new BadRequestException('Agency not found');
+
+    const isAlreadyStaff = agency.staff.some(
+      (s) => s.personnelId.toString() === personnel._id.toString(),
+    );
+
+    if (isAlreadyStaff) {
+      throw new BadRequestException('Personnel is already a staff member');
+    }
+
+    agency.staff.push({ personnelId: personnel._id as any, role: dto.role });
+    await agency.save();
+
+    return { message: 'Staff member added successfully', personnel };
+  }
+
+  async removeStaff(agencyId: string, personnelId: string) {
+    const agency = await this.agencyModel.findById(agencyId);
+    if (!agency) throw new BadRequestException('Agency not found');
+
+    // Cannot remove owner from staff if they are the ownerId
+    if (agency.ownerId.toString() === personnelId) {
+      throw new BadRequestException('Cannot remove the agency owner from staff');
+    }
+
+    agency.staff = agency.staff.filter(
+      (s) => s.personnelId.toString() !== personnelId,
+    );
+    await agency.save();
+
+    return { message: 'Staff member removed successfully' };
+  }
+
+  async getStaff(agencyId: string) {
+    const agency = await this.agencyModel
+      .findById(agencyId)
+      .populate('staff.personnelId')
+      .select('staff');
+    return agency?.staff || [];
+  }
 }

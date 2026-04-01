@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AgenciesService } from './agencies.service';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { ProvisionNumberDto } from './dto/provision-number.dto';
@@ -41,5 +41,26 @@ export class AgenciesController {
   @Patch('settings')
   async updateSettings(@Request() req, @Body() settings: any) {
     return this.agenciesService.updateSettings(req.agencyId.toString(), settings);
+  }
+
+  // Add staff member to agency
+  @UseGuards(JwtAuthGuard, AgencyGuard)
+  @Post('staff')
+  async addStaff(@Request() req, @Body() dto: { phone: string; role: string }) {
+    return this.agenciesService.addStaff(req.agencyId.toString(), dto);
+  }
+
+  // Remove staff member from agency
+  @UseGuards(JwtAuthGuard, AgencyGuard)
+  @Delete('staff/:personnelId')
+  async removeStaff(@Request() req, @Param('personnelId') personnelId: string) {
+    return this.agenciesService.removeStaff(req.agencyId.toString(), personnelId);
+  }
+
+  // Get all staff members for the current agency
+  @UseGuards(JwtAuthGuard, AgencyGuard)
+  @Get('staff')
+  async getStaff(@Request() req) {
+    return this.agenciesService.getStaff(req.agencyId.toString());
   }
 }

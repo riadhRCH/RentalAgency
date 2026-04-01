@@ -1,0 +1,108 @@
+<div class="p-8 max-w-7xl mx-auto space-y-12">
+  <header>
+    <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+      Agency Team
+    </h1>
+    <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+      Manage Staff Access & Permissions
+    </p>
+  </header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+    <!-- Staff List -->
+    <div class="lg:col-span-2 space-y-6">
+      <h2 class="font-serif text-2xl font-bold tracking-tight text-slate-900 dark:text-white uppercase">
+        Active Members
+      </h2>
+      <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+        <div *ngIf="loading" class="p-12 text-center text-slate-500">
+          <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
+        </div>
+
+        <div *ngIf="!loading && staff.length === 0" class="p-12 text-center text-slate-500">
+          No staff members found.
+        </div>
+
+        <div *ngIf="!loading && staff.length > 0" class="divide-y divide-white/5">
+          <div *ngFor="let member of staff" class="p-6 flex items-center justify-between group hover:bg-white/5 transition-colors">
+            <div class="flex items-center gap-4">
+              <div class="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                <span class="material-symbols-outlined">person</span>
+              </div>
+              <div>
+                <h4 class="font-bold text-white tracking-wide">
+                  {{ member.personnelId?.firstName }} {{ member.personnelId?.lastName }}
+                  <span *ngIf="!member.personnelId?.firstName" class="italic text-slate-500">Pending Profile</span>
+                </h4>
+                <p class="text-[10px] text-slate-500 uppercase tracking-widest">{{ member.personnelId?.phone }}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-6">
+              <span class="px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border"
+                    [ngClass]="{
+                      'border-primary/50 text-primary bg-primary/5': member.role === 'admin',
+                      'border-white/10 text-slate-400 bg-white/5': member.role === 'agent'
+                    }">
+                {{ member.role }}
+              </span>
+              <button (click)="removeMember(member.personnelId?._id)" class="p-2 rounded hover:bg-red-500/10 text-slate-500 hover:text-red-500 transition-all">
+                <span class="material-symbols-outlined text-sm">person_remove</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Member Form -->
+    <div class="space-y-6">
+      <h2 class="font-serif text-2xl font-bold tracking-tight text-slate-900 dark:text-white uppercase">
+        Add Member
+      </h2>
+      <div class="glass-card p-8 rounded-2xl border border-white/10 space-y-8">
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Invite a new staff member by their phone number. If they don't have an account, a minimal profile will be created.
+        </p>
+
+        <form (ngSubmit)="addMember()" class="space-y-6">
+          <div class="space-y-2">
+            <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Staff Phone</label>
+            <app-phone-input 
+              name="phone" 
+              [(ngModel)]="newMember.phone" 
+              [required]="true"
+              placeholder="234 567 890"
+            ></app-phone-input>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Assign Role</label>
+            <select 
+              name="role" 
+              [(ngModel)]="newMember.role"
+              class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs font-bold uppercase tracking-widest text-white outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+              <option value="agent" class="bg-background-dark">Agent</option>
+              <option value="admin" class="bg-background-dark">Administrator</option>
+            </select>
+          </div>
+
+          <div *ngIf="message" class="text-emerald-500 text-[10px] font-bold uppercase tracking-widest">
+            {{ message }}
+          </div>
+          <div *ngIf="error" class="text-red-500 text-[10px] font-bold uppercase tracking-widest">
+            {{ error }}
+          </div>
+
+          <button 
+            type="submit" 
+            [disabled]="!newMember.phone || adding"
+            class="w-full py-4 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-bold uppercase tracking-widest rounded transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+          >
+            <span *ngIf="adding" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+            {{ adding ? 'Adding Member...' : 'Grant Access' }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -35,4 +35,16 @@ export class AgencyService {
   updateSettings(settings: AgencySettings): Observable<AgencySettings> {
     return this.http.patch<AgencySettings>(`${this.apiUrl}/settings`, settings);
   }
+
+  getStaff(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/staff`);
+  }
+
+  addStaff(phone: string, role: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/staff`, { phone, role });
+  }
+
+  removeStaff(personnelId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/staff/${personnelId}`);
+  }
 }

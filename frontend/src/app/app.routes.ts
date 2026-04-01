@@ -10,16 +10,24 @@ import { ConfigComponent } from './dashboard/config/config.component';
 import { VisitsComponent } from './dashboard/visits/visits.component';
 import { PropertiesMgmtComponent } from './dashboard/properties/properties-mgmt.component';
 import { TeamsComponent } from './dashboard/teams/teams.component';
+import { DashboardLayoutComponent } from './dashboard/layout/dashboard-layout.component';
 
 export const routes: Routes = [
     { path: '', component: LandingPage, canActivate: [authGuard, agencyGuard] },
     { path: 'auth/login', component: LoginComponent },
     { path: 'auth/register', component: RegisterComponent },
     { path: 'auth/select-agency', component: AgencySelectionComponent, canActivate: [authGuard] },
-    { path: 'dashboard/overview', component: OverviewComponent, canActivate: [authGuard, agencyGuard] },
-    { path: 'dashboard/leads', component: LeadsComponent, canActivate: [authGuard, agencyGuard] },
-    { path: 'dashboard/visits', component: VisitsComponent, canActivate: [authGuard, agencyGuard] },
-    { path: 'dashboard/properties', component: PropertiesMgmtComponent, canActivate: [authGuard, agencyGuard] },
-    { path: 'dashboard/teams', component: TeamsComponent, canActivate: [authGuard, agencyGuard] },
-    { path: 'dashboard/config', component: ConfigComponent, canActivate: [authGuard, agencyGuard] }
+    {
+        path: 'dashboard',
+        component: DashboardLayoutComponent,
+        canActivate: [authGuard, agencyGuard],
+        children: [
+            { path: 'overview', component: OverviewComponent },
+            { path: 'leads', component: LeadsComponent },
+            { path: 'visits', component: VisitsComponent },
+            { path: 'properties', component: PropertiesMgmtComponent },
+            { path: 'teams', component: TeamsComponent },
+            { path: 'config', component: ConfigComponent }
+        ]
+    }
 ];

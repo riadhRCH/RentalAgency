@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 
 @Component({
@@ -12,4 +12,11 @@ import { AuthService } from '../auth/auth.service';
 })
 export class LandingPage {
   authService = inject(AuthService);
+  router = inject(Router)
+
+  navigateToDashboard() {
+    console.log('userAgencies ',this.authService.userAgencies())
+    this.router.navigate(['/dashboard/overview'])
+  }
+
 }

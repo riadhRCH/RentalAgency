@@ -1,0 +1,144 @@
+<div class="p-8 max-w-7xl mx-auto space-y-12">
+  <!-- Welcome Header -->
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+        Agency Dashboard
+      </h1>
+      <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+        Overview for {{ authService.activeAgencyId() ? 'Your Active Workspace' : 'Select an Agency' }}
+      </p>
+    </div>
+    <div class="flex gap-4">
+      <a routerLink="/dashboard/config" 
+         class="glass-button secondary px-6 py-2 rounded text-xs font-bold uppercase tracking-widest transition-all">
+        Settings
+      </a>
+      <a routerLink="/dashboard/leads" 
+         class="glass-button primary px-6 py-2 rounded text-xs font-bold uppercase tracking-widest transition-all">
+        Manage Leads
+      </a>
+    </div>
+  </header>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div class="glass-card p-8 rounded-2xl border border-white/10 hover:border-primary/50 transition-all group">
+      <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-4">Total Leads</p>
+      <div class="flex items-end justify-between">
+        <h3 class="text-4xl font-serif font-bold text-slate-900 dark:text-white">{{ stats.totalLeads }}</h3>
+        <span class="material-symbols-outlined text-primary text-3xl opacity-50">group</span>
+      </div>
+    </div>
+
+    <div class="glass-card p-8 rounded-2xl border border-white/10 hover:border-primary/50 transition-all group">
+      <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-4">New Leads</p>
+      <div class="flex items-end justify-between">
+        <h3 class="text-4xl font-serif font-bold text-primary">{{ stats.newLeads }}</h3>
+        <span class="material-symbols-outlined text-primary text-3xl opacity-50">notifications_active</span>
+      </div>
+    </div>
+
+    <div class="glass-card p-8 rounded-2xl border border-white/10 hover:border-primary/50 transition-all group">
+      <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-4">Active Numbers</p>
+      <div class="flex items-end justify-between">
+        <h3 class="text-4xl font-serif font-bold text-slate-900 dark:text-white">{{ stats.activeNumbers }}</h3>
+        <span class="material-symbols-outlined text-primary text-3xl opacity-50">call</span>
+      </div>
+    </div>
+
+    <div class="glass-card p-8 rounded-2xl border border-white/10 hover:border-primary/50 transition-all group">
+      <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-4">Conversion</p>
+      <div class="flex items-end justify-between">
+        <h3 class="text-4xl font-serif font-bold text-slate-900 dark:text-white">{{ stats.conversionRate }}%</h3>
+        <span class="material-symbols-outlined text-primary text-3xl opacity-50">trending_up</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Leads & Quick Actions -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+    <!-- Recent Leads List -->
+    <div class="lg:col-span-2 space-y-6">
+      <div class="flex items-center justify-between">
+        <h2 class="font-serif text-2xl font-bold tracking-tight text-slate-900 dark:text-white uppercase">
+          Recent Leads
+        </h2>
+        <a routerLink="/dashboard/leads" class="text-xs font-bold uppercase tracking-widest text-primary hover:text-secondary transition-colors">
+          View All
+        </a>
+      </div>
+
+      <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+        <div *ngIf="loading" class="p-12 text-center text-slate-500">
+          <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
+        </div>
+        
+        <div *ngIf="!loading && recentLeads.length === 0" class="p-12 text-center text-slate-500">
+          No recent leads found.
+        </div>
+
+        <div *ngIf="!loading && recentLeads.length > 0" class="divide-y divide-white/5">
+          <div *ngFor="let lead of recentLeads" class="p-6 hover:bg-white/5 transition-colors group">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                  <span class="material-symbols-outlined">person</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-900 dark:text-white">{{ lead.customerPhone }}</h4>
+                  <p class="text-[10px] text-slate-500 uppercase tracking-widest">
+                    Last Seen: {{ lead.lastInteraction | date:'MMM d, h:mm a' }}
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center gap-4">
+                <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-white/5 border border-white/10 text-slate-400"
+                      [ngClass]="{
+                        'border-primary/50 text-primary bg-primary/5': lead.status === 'NEW',
+                        'border-amber-500/50 text-amber-500 bg-amber-500/5': lead.status === 'QUALIFIED',
+                        'border-emerald-500/50 text-emerald-500 bg-emerald-500/5': lead.status === 'CONTACTED'
+                      }">
+                  {{ lead.status }}
+                </span>
+                <span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors cursor-pointer">
+                  chevron_right
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Configuration / Identity Context -->
+    <div class="space-y-6">
+      <h2 class="font-serif text-2xl font-bold tracking-tight text-slate-900 dark:text-white uppercase">
+        Agency Context
+      </h2>
+      <div class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+        <div class="flex items-center gap-4">
+          <div class="h-12 w-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary border border-primary/20">
+            <span class="material-symbols-outlined text-3xl">domain</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-white text-lg">DOGHMANI Estates</h3>
+            <p class="text-[10px] text-slate-500 uppercase tracking-widest">Active Workspace</p>
+          </div>
+        </div>
+        
+        <div class="pt-6 border-t border-white/10 space-y-4">
+          <p class="text-xs text-slate-400 leading-relaxed">
+            You are currently managing <strong>DOGHMANI Estates</strong>. Any new inbound calls to your virtual numbers will be automatically tracked here.
+          </p>
+          <div class="flex flex-col gap-2">
+            <button routerLink="/auth/select-agency" class="text-left p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all flex items-center justify-between group">
+              <span class="text-[10px] font-bold uppercase tracking-widest text-slate-300">Switch Agency</span>
+              <span class="material-symbols-outlined text-primary text-sm">sync</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

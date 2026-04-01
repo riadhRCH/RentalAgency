@@ -97,4 +97,19 @@ export class AgenciesService {
     const agency = await this.agencyModel.findById(agencyId).select('activeVirtualNumbers name');
     return agency?.activeVirtualNumbers || [];
   }
+
+  async getSettings(agencyId: string) {
+    const agency = await this.agencyModel.findById(agencyId).select('settings name');
+    return agency?.settings || {};
+  }
+
+  async updateSettings(agencyId: string, settings: any) {
+    const agency = await this.agencyModel.findByIdAndUpdate(
+      agencyId,
+      { $set: { settings: settings } },
+      { new: true },
+    ).select('settings name');
+    if (!agency) throw new BadRequestException('Agency not found');
+    return agency.settings;
+  }
 }

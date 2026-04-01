@@ -19,7 +19,15 @@ export class WebhooksService {
    * Generate TwiML instructions for an inbound call.
    * Records the call then dials the agency's forwarding number.
    */
-  generateInboundTwiml(toNumber: string, forwardingNumber: string): string {
+  generateInboundTwiml(toNumber: string, forwardingNumber?: string): string {
+    if (!forwardingNumber) {
+      return `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Say>Sorry, this agency has not set up a forwarding number. Goodbye.</Say>
+  <Hangup/>
+</Response>`;
+    }
+
     return `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Record
@@ -43,10 +51,7 @@ export class WebhooksService {
       'activeVirtualNumbers.phoneNumber': toNumber,
     });
 
-    const forwardingNumber =
-      agency?.settings?.forwardingNumber ||
-      process.env.AGENCY_FORWARDING_NUMBER ||
-      '';
+    const forwardingNumber = agency?.settings?.forwardingNumber;
 
     return this.generateInboundTwiml(toNumber, forwardingNumber);
   }

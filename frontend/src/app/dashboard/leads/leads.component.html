@@ -1,0 +1,145 @@
+<div class="p-8 max-w-7xl mx-auto space-y-12">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+        Leads Management
+      </h1>
+      <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+        Found {{ totalLeads }} Total Records
+      </p>
+    </div>
+    
+    <div class="flex items-center gap-4 w-full md:w-auto">
+      <div class="relative w-full md:w-64">
+        <select 
+          [(ngModel)]="statusFilter" 
+          (change)="onFilterChange()"
+          class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-xs font-bold uppercase tracking-widest outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+          <option value="" class="bg-background-dark">All Statuses</option>
+          <option value="NEW" class="bg-background-dark">New Leads</option>
+          <option value="CONTACTED" class="bg-background-dark">Contacted</option>
+          <option value="QUALIFIED" class="bg-background-dark">Qualified</option>
+          <option value="LOST" class="bg-background-dark">Lost</option>
+        </select>
+        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">
+          expand_more
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Leads Table -->
+  <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead class="bg-white/5 border-b border-white/10">
+          <tr>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Caller Identity</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Status</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Last Activity</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Interactions</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          <tr *ngIf="loading">
+            <td colspan="5" class="p-12 text-center text-slate-500">
+              <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
+            </td>
+          </tr>
+          <tr *ngIf="!loading && leads.length === 0">
+            <td colspan="5" class="p-12 text-center text-slate-500">
+              No leads found matching your criteria.
+            </td>
+          </tr>
+          <tr *ngFor="let lead of leads" class="group hover:bg-white/5 transition-colors">
+            <td class="p-6">
+              <div class="flex items-center gap-4">
+                <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                  <span class="material-symbols-outlined">person</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-900 dark:text-white">{{ lead.customerPhone }}</h4>
+                  <p class="text-[10px] text-slate-500 uppercase tracking-widest">
+                    {{ lead.customerName || 'Anonymous Caller' }}
+                  </p>
+                </div>
+              </div>
+            </td>
+            <td class="p-6">
+              <select 
+                [ngModel]="lead.status"
+                (ngModelChange)="changeStatus(lead, $event)"
+                class="bg-transparent border-none text-[10px] font-bold uppercase tracking-widest outline-none cursor-pointer"
+                [ngClass]="{
+                  'text-primary': lead.status === 'NEW',
+                  'text-amber-500': lead.status === 'QUALIFIED',
+                  'text-emerald-500': lead.status === 'CONTACTED',
+                  'text-slate-500': lead.status === 'LOST'
+                }">
+                <option value="NEW">NEW</option>
+                <option value="CONTACTED">CONTACTED</option>
+                <option value="QUALIFIED">QUALIFIED</option>
+                <option value="LOST">LOST</option>
+              </select>
+            </td>
+            <td class="p-6">
+              <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                {{ lead.lastInteraction | date:'MMM d, yyyy' }}
+                <span class="block text-[9px] text-slate-500 font-normal lowercase mt-1">
+                  at {{ lead.lastInteraction | date:'h:mm a' }}
+                </span>
+              </div>
+            </td>
+            <td class="p-6">
+              <div class="flex items-center gap-2">
+                <div class="flex -space-x-2">
+                  <div *ngFor="let act of lead.activities.slice(0, 3)" 
+                       class="h-6 w-6 rounded-full border border-background-dark bg-white/5 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[10px] text-primary">
+                      {{ act.type === 'CALL' ? 'call' : 'mail' }}
+                    </span>
+                  </div>
+                </div>
+                <span class="text-[9px] text-slate-500 uppercase font-bold" *ngIf="lead.activities.length > 3">
+                  +{{ lead.activities.length - 3 }} more
+                </span>
+              </div>
+            </td>
+            <td class="p-6 text-right">
+              <div class="flex items-center justify-end gap-3">
+                <button class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-primary transition-all">
+                  <span class="material-symbols-outlined text-sm">visibility</span>
+                </button>
+                <button (click)="deleteLead(lead._id)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-red-500 transition-all">
+                  <span class="material-symbols-outlined text-sm">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="p-6 bg-white/5 flex items-center justify-between border-t border-white/10">
+      <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">
+        Page {{ currentPage }} of {{ totalPages }}
+      </p>
+      <div class="flex gap-2">
+        <button 
+          (click)="loadLeads(currentPage - 1)" 
+          [disabled]="currentPage === 1"
+          class="p-2 rounded border border-white/10 text-slate-500 hover:text-white hover:border-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+          <span class="material-symbols-outlined text-sm">chevron_left</span>
+        </button>
+        <button 
+          (click)="loadLeads(currentPage + 1)" 
+          [disabled]="currentPage === totalPages"
+          class="p-2 rounded border border-white/10 text-slate-500 hover:text-white hover:border-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+          <span class="material-symbols-outlined text-sm">chevron_right</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AgenciesService } from './agencies.service';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { ProvisionNumberDto } from './dto/provision-number.dto';
@@ -27,5 +27,19 @@ export class AgenciesController {
   @Get('numbers/active')
   async getActiveNumbers(@Request() req) {
     return this.agenciesService.getActiveNumbers(req.agencyId.toString());
+  }
+
+  // Get current agency settings
+  @UseGuards(JwtAuthGuard, AgencyGuard)
+  @Get('settings')
+  async getSettings(@Request() req) {
+    return this.agenciesService.getSettings(req.agencyId.toString());
+  }
+
+  // Update agency settings (forwarding number, etc.)
+  @UseGuards(JwtAuthGuard, AgencyGuard)
+  @Patch('settings')
+  async updateSettings(@Request() req, @Body() settings: any) {
+    return this.agenciesService.updateSettings(req.agencyId.toString(), settings);
   }
 }

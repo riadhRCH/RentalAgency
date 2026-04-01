@@ -17,17 +17,12 @@
 
         <div class="space-y-2">
           <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Phone Number</label>
-          <div class="flex items-center gap-3 border-b border-white/10 pb-2 focus-within:border-primary transition-colors">
-            <span class="material-symbols-outlined text-primary text-xl">call</span>
-            <input 
-              type="tel" 
-              name="phone" 
-              [(ngModel)]="credentials.phone" 
-              required
-              placeholder="+1 234 567 890"
-              class="bg-transparent border-none text-white focus:ring-0 p-0 text-sm placeholder:text-silver-500/50 w-full"
-            />
-          </div>
+          <app-phone-input 
+            name="phone" 
+            [(ngModel)]="credentials.phone" 
+            [required]="true"
+            placeholder="234 567 890"
+          ></app-phone-input>
         </div>
 
         <div class="space-y-2">

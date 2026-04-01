@@ -1,120 +1,122 @@
-📞 Call-to-Lead: Intelligent Rental Lead Tracker
-🚀 Overview
+# 📞 Call-to-Lead: Intelligent Rental Lead Tracker
+
+## 🚀 Overview
 Call-to-Lead is a specialized B2B platform designed for rental agencies to ensure no potential tenant is ever missed. Many agencies lose leads when customers call phone numbers found in listings without a formal tracking system.
 
 This application intercepts incoming calls, records them, and automatically generates a structured Lead in a MongoDB database, allowing agencies to manage their pipeline effectively through a centralized dashboard.
 
-🛠 The Solution (V1)
+## 🛠 The Solution (V1)
 In the current version, the app solves the "Hidden Lead" problem by:
+- **Provisioning Virtual Numbers**: Agencies get unique phone numbers to put in their ads.
+- **Call Bridging**: When a customer calls, the app records the conversation and bridges the call to the agency's real phone.
+- **Automatic Lead Generation**: Immediately upon call completion, a new lead document is created with caller metadata and recording links.
+- **Personnel-Centric Identity**: Every person in the system (agent, owner, client) is a single `Personnel` record identified by their phone number.
 
-    Provisioning Virtual Numbers: Agencies get unique phone numbers to put in their ads.
-
-    Call Bridging: When a customer calls, the app records the conversation and bridges the call to the agency's real phone. if smth went wrong it should forward the call to the agency's real phone.
-
-    Automatic Lead Generation: Immediately upon call completion, a new lead document is created with caller metadata and recording links.
-
-    New Caller: A new Lead document is created.
-
-    Returning Caller: The new call (recording + metadata) is pushed into the existing Lead's Activity Array.
-
-    Note: Future versions will include automated AI transcription and data extraction.
-
-🏗 Solution Architecture
+## 🏗 Solution Architecture
 The system is designed around a 4-Layer Architecture.
-Layer,Status,Description
-1. Telephony/VOIP,ACTIVE,"Handles inbound calls, recording, and call routing via Twilio."
-2. Backend API,ACTIVE,"NestJS application managing business logic, webhooks, and agency accounts."
-3. Intelligence/AI,⏳ TODO,"AI-driven transcription and automatic field extraction (Budget, Move-in date)."
-4. Omni-Channel,⏳ TODO,"Lead ingestion from Instagram, WhatsApp, and Facebook."
 
-💻 Tech Stack (V1)
-Framework: Angular
+| Layer | Status | Description |
+|---|---|---|
+| 1. Telephony/VOIP | ACTIVE | Handles inbound calls, recording, and call routing via Twilio. |
+| 2. Backend API | ACTIVE | NestJS application managing business logic, webhooks, and agency accounts. |
+| 3. Intelligence/AI | ⏳ TODO | AI-driven transcription and automatic field extraction (Budget, Move-in date). |
+| 4. Omni-Channel | ⏳ TODO | Lead ingestion from Instagram, WhatsApp, and Facebook. |
 
-Database: MongoDB via Mongoose
+## 💻 Tech Stack (V1)
+- **Framework**: NestJS (Backend), Angular (Frontend)
+- **Database**: MongoDB via Mongoose
+- **Telephony**: Twilio
+- **Authentication**: JWT (Personnel-based) + Agency Context Headers
 
-Telephony: Twilio (Primary V1 Provider) (in future we migh explore other providers like Telynix, SignalWire, etc)
+## 🔐 Authentication & Authorization
+The system uses a decoupled authentication model where users (Personnel) are independent of the entities they interact with (Agencies).
 
-Authentication: JWT
+1.  **Identity (JWT)**: The JWT token contains the `personnelId`. It represents **WHO** the user is.
+2.  **Context (Header)**: To perform agency-specific actions (e.g., viewing leads), the client must provide the `X-Agency-ID` header.
+3.  **Validation**: The `AgencyGuard` verifies that the authenticated user is either the **Owner** or a **Staff Member** of the requested agency before allowing access.
 
-🗄 Database Schemas
-RentalAgencySchema
-Stores the identity and configuration of the agency using the platform.
+## 🗄 Database Schemas
+
+### PersonnelSchema
+The central identity record for everyone in the system.
+```json
 {
-  name: String,
-  email: String, (unique)
-  password: String, (hashed)
-  activeVirtualNumbers: [{
-    sid: String,      // Twilio SID
-    phoneNumber: String,
-    label: String     // e.g., "Apartment A Listing"
+  "phone": "String (unique, indexed)",
+  "firstName": "String",
+  "lastName": "String",
+  "email": "String",
+  "passwordHash": "String (for login)",
+  "source": "enum['call', 'manual', 'registration']",
+  "status": "enum['active', 'inactive']",
+  "lastLoginAt": "Date"
+}
+```
+
+### RentalAgencySchema
+Stores agency configuration and relationships.
+```json
+{
+  "name": "String",
+  "ownerId": "ObjectId (ref: Personnel)",
+  "staff": [{
+    "personnelId": "ObjectId (ref: Personnel)",
+    "role": "enum['admin', 'agent']"
   }],
-  settings: {
-    forwardingNumber: String // Where calls are actually sent
+  "activeVirtualNumbers": [{
+    "sid": "String",
+    "phoneNumber": "String",
+    "label": "String"
+  }],
+  "settings": {
+    "forwardingNumber": "String"
   }
 }
+```
 
-LeadSchema
-The core unit of data representing a potential customer.
+### PropertySchema
+Real estate listings belonging to an agency.
+```json
 {
-  agencyId: ObjectId, // Reference to RentalAgency
-  customerPhone: String, // Identity Key
-  customerName: String,  // Optional (Manual input later)
-  
-  status: { 
-    type: String, 
-    enum: ['NEW', 'CONTACTED', 'QUALIFIED', 'LOST'], 
-    default: 'NEW' 
-  },
-
-  // The Interaction History
-  activities: [{
-    type: { 
-      type: String, 
-      enum: ['CALL', 'WHATSAPP', 'INSTAGRAM', 'FACEBOOK', 'MANUAL'],
-      default: 'CALL'
-    },
-    timestamp: { type: Date, default: Date.now },
-    recordingUrl: String, // Link to the Twilio recording
-    duration: Number,    // Call length in seconds
-    metadata: Object     // Raw response from Twilio for debugging
-  }],
-
-  firstSeen: { type: Date, default: Date.now },
-  lastInteraction: { type: Date, default: Date.now },
-  tags: [String] 
+  "agencyId": "ObjectId (ref: RentalAgency)",
+  "reference": "String (unique, auto-generated)",
+  "type": "enum['apartment', 'villa', 'house', 'land']",
+  "address": "String",
+  "ownerId": "ObjectId (ref: Personnel)",
+  "price": "Number",
+  "status": "enum['available', 'reserved', 'rented', 'sold']"
 }
+```
 
-🛣 API Endpoints (V1)
-🔐 Auth & Agency Management
-POST /auth/register - Create a new agency account.
-POST /auth/login - Secure login for agency staff.
-POST /agencies/create - Admin endpoint for agency onboarding.
+### LeadSchema
+```json
+{
+  "agencyId": "ObjectId (ref: RentalAgency)",
+  "personnelId": "ObjectId (ref: Personnel)",
+  "customerPhone": "String",
+  "status": "enum['NEW', 'CONTACTED', 'QUALIFIED', 'LOST']",
+  "activities": [{
+    "type": "String",
+    "recordingUrl": "String",
+    "timestamp": "Date"
+  }]
+}
+```
 
-📞 Virtual Number Setup
-POST /agencies/numbers/provision - Purchase/Assign a Twilio number to an agency.
-GET /agencies/numbers/active - List all active virtual numbers for the logged-in agency.
+## 🛣 API Endpoints (V1)
 
-📥 Lead Management (The Lead Dashboard)
-GET /leads - Fetch all leads for the agency (with filtering/pagination).
-GET /leads/:id - Detailed view of a single lead + Recording player.
-POST /leads - Manual lead creation (for walk-ins or manual entry).
-PATCH /leads/:id - Update lead status or add notes.
-DELETE /leads/:id - Remove lead.
+### 🔐 Auth
+- `POST /auth/register` - Register a new user and their agency.
+- `POST /auth/login` - Login with phone and password.
+- `GET /auth/me` - Get current profile and list of accessible agencies.
 
-⚓ Webhooks
-POST /webhooks/twilio/inbound - TwiML instructions to record and dial.
-POST /webhooks/twilio/completed - Logic to catch call data and save to MongoDB.
+### � Personnel
+- `POST /personnel/identify` - Resolve or create a minimal personnel record by phone.
+- `GET /personnel/:id/context` - View all roles a person plays (owner of properties, staff at agencies).
 
-🛠 Backend Logic: The "Upsert" Flow
-To achieve the "One Client = One Lead" goal, the NestJS service will use an Upsert (Update or Insert) pattern whenever a webhook hits the server:
-Incoming Data: Get callerPhone and agencyId.
-Find: this.leadModel.findOne({ customerPhone, agencyId }).
-Branch:
-Existing Lead: Use $push to add the new call object to the activities array and update lastInteraction.
-New Lead: Use create() with the initial call as the first item in the activities array.
+### 🏠 Properties (Requires `X-Agency-ID` header)
+- `GET /properties` - List agency properties with filters.
+- `POST /properties` - Create a new property listing.
 
-📝 Roadmap & TODOs
-[ ] Omni-Channel Integration: Track leads from Instagram DMs, WhatsApp Business, and FB Messenger.
-[ ] AI Extraction: Use Whisper + GPT-4o to automatically fill lead fields from audio.
-[ ] Frontend Dashboard: A clean UI for agencies to manage their leads (Next.js/Angular).
-[ ] Cost Optimization: Implement Telnyx/SignalWire as alternatives to Twilio.
+### 📥 Lead Management (Requires `X-Agency-ID` header)
+- `GET /leads` - Fetch all leads for the agency.
+- `GET /leads/:id` - Detailed view of a single lead.

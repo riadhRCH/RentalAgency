@@ -16,7 +16,7 @@ import { RentalProvisioningComponent } from './dashboard/rentals/rental-provisio
 import { RentalDetailComponent } from './dashboard/rentals/rental-detail.component';
 
 export const routes: Routes = [
-    { path: '', component: LandingPage, canActivate: [authGuard, agencyGuard] },
+    { path: '', component: LandingPage },
     { path: 'auth/login', component: LoginComponent },
     { path: 'auth/register', component: RegisterComponent },
     { path: 'auth/select-agency', component: AgencySelectionComponent, canActivate: [authGuard] },

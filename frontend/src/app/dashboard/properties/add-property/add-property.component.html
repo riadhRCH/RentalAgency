@@ -2,10 +2,10 @@
   <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div>
       <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
-        Add New Property
+        {{ isEditMode() ? 'Edit Property' : 'Add New Property' }}
       </h1>
       <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
-        Create a new listing in the agency portfolio
+        {{ isEditMode() ? 'Modify existing listing details' : 'Create a new listing in the agency portfolio' }}
       </p>
     </div>
     
@@ -34,14 +34,45 @@
           </select>
         </div>
 
-        <div class="space-y-2">
+        <div class="space-y-4">
           <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Owner / Personnel</label>
-          <select formControlName="ownerId" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
-            <option value="" disabled selected class="bg-background-dark text-white">Select Owner</option>
-            <option *ngFor="let p of personnel()" [value]="p._id" class="bg-background-dark text-white">{{ p.name }} ({{ p.role }})</option>
-          </select>
-          <div *ngIf="propertyForm.get('ownerId')?.touched && propertyForm.get('ownerId')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
-            Owner is required
+          
+          <div class="flex gap-2 p-1 bg-white/5 rounded-lg border border-white/10 w-fit">
+            <button 
+              type="button"
+              (click)="setOwnerSelectionMode('existing')"
+              [class.bg-primary]="ownerSelectionMode() === 'existing'"
+              [class.text-white]="ownerSelectionMode() === 'existing'"
+              [class.text-slate-400]="ownerSelectionMode() !== 'existing'"
+              class="px-4 py-2 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all">
+              Existing
+            </button>
+            <button 
+              type="button"
+              (click)="setOwnerSelectionMode('new')"
+              [class.bg-primary]="ownerSelectionMode() === 'new'"
+              [class.text-white]="ownerSelectionMode() === 'new'"
+              [class.text-slate-400]="ownerSelectionMode() !== 'new'"
+              class="px-4 py-2 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all">
+              New Phone
+            </button>
+          </div>
+
+          <div *ngIf="ownerSelectionMode() === 'existing'" class="animate-in fade-in slide-in-from-top-2 duration-200">
+            <select formControlName="ownerId" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+              <option value="" disabled selected class="bg-background-dark text-white">Select Owner</option>
+              <option *ngFor="let p of personnel()" [value]="p._id" class="bg-background-dark text-white">{{ p.name || p.phone }} ({{ p.role || 'Personnel' }})</option>
+            </select>
+            <div *ngIf="propertyForm.get('ownerId')?.touched && propertyForm.get('ownerId')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
+              Owner is required
+            </div>
+          </div>
+
+          <div *ngIf="ownerSelectionMode() === 'new'" class="animate-in fade-in slide-in-from-top-2 duration-200">
+            <app-phone-input formControlName="ownerPhone" placeholder="Owner phone number"></app-phone-input>
+            <div *ngIf="propertyForm.get('ownerPhone')?.touched && propertyForm.get('ownerPhone')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
+              Owner phone is required
+            </div>
           </div>
         </div>
 
@@ -181,7 +212,7 @@
       <button type="submit" [disabled]="loading() || propertyForm.invalid" class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-10 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
         <span *ngIf="loading()" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
         <span *ngIf="!loading()" class="material-symbols-outlined text-sm">save</span>
-        {{ loading() ? 'Saving...' : 'Create Listing' }}
+        {{ loading() ? 'Saving...' : (isEditMode() ? 'Update Listing' : 'Create Listing') }}
       </button>
     </div>
   </form>

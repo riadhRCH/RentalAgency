@@ -1,14 +1,15 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PropertiesService } from '../../../services/properties.service';
 import { PersonnelService } from '../../../services/personnel.service';
+import { PhoneInputComponent } from '../../../shared/components/phone-input/phone-input.component';
 
 @Component({
   selector: 'app-add-property',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, PhoneInputComponent],
   templateUrl: './add-property.component.html',
   styleUrls: ['./add-property.component.scss']
 })
@@ -17,12 +18,16 @@ export class AddPropertyComponent implements OnInit {
   private propertiesService = inject(PropertiesService);
   private personnelService = inject(PersonnelService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   propertyForm: FormGroup;
   loading = signal(false);
   uploading = signal(false);
   personnel = signal<any[]>([]);
   uploadedPhotos = signal<string[]>([]);
+  ownerSelectionMode = signal<'existing' | 'new'>('existing');
+  propertyId: string | null = null;
+  isEditMode = signal(false);
 
   constructor() {
     this.propertyForm = this.fb.group({
@@ -32,7 +37,8 @@ export class AddPropertyComponent implements OnInit {
       price: [null, [Validators.required, Validators.min(0)]],
       description: ['', Validators.required],
       status: ['available', Validators.required],
-      ownerId: ['', Validators.required],
+      ownerId: [''],
+      ownerPhone: [''],
       gpsLocation: this.fb.group({
         lat: [0, Validators.required],
         lng: [0, Validators.required]
@@ -48,10 +54,66 @@ export class AddPropertyComponent implements OnInit {
         garden: [false]
       })
     });
+
+    this.updateOwnerValidators();
+  }
+
+  setOwnerSelectionMode(mode: 'existing' | 'new') {
+    this.ownerSelectionMode.set(mode);
+    this.updateOwnerValidators();
+  }
+
+  private updateOwnerValidators() {
+    const ownerIdControl = this.propertyForm.get('ownerId');
+    const ownerPhoneControl = this.propertyForm.get('ownerPhone');
+
+    if (this.ownerSelectionMode() === 'existing') {
+      ownerIdControl?.setValidators([Validators.required]);
+      ownerPhoneControl?.clearValidators();
+      ownerPhoneControl?.setValue('');
+    } else {
+      ownerPhoneControl?.setValidators([Validators.required]);
+      ownerIdControl?.clearValidators();
+      ownerIdControl?.setValue('');
+    }
+
+    ownerIdControl?.updateValueAndValidity();
+    ownerPhoneControl?.updateValueAndValidity();
   }
 
   ngOnInit() {
     this.loadPersonnel();
+    this.checkEditMode();
+  }
+
+  checkEditMode() {
+    this.propertyId = this.route.snapshot.paramMap.get('id');
+    if (this.propertyId) {
+      this.isEditMode.set(true);
+      this.loading.set(true);
+      this.propertiesService.getProperty(this.propertyId).subscribe({
+        next: (prop: any) => {
+          this.propertyForm.patchValue({
+            type: prop.type,
+            address: prop.address,
+            surface: prop.surface,
+            price: prop.price,
+            description: prop.description,
+            status: prop.status,
+            ownerId: prop.ownerId?._id || prop.ownerId,
+            gpsLocation: prop.gpsLocation,
+            amenities: prop.amenities
+          });
+          this.uploadedPhotos.set(prop.photos || []);
+          this.propertyForm.get('photos')?.setValue(this.uploadedPhotos());
+          this.loading.set(false);
+        },
+        error: (err) => {
+          console.error('Error loading property', err);
+          this.loading.set(false);
+        }
+      });
+    }
   }
 
   loadPersonnel() {
@@ -93,14 +155,18 @@ export class AddPropertyComponent implements OnInit {
       this.loading.set(true);
       const formData = this.propertyForm.value;
       
-      this.propertiesService.createProperty(formData).subscribe({
+      const request = this.isEditMode() && this.propertyId
+        ? this.propertiesService.updateProperty(this.propertyId, formData)
+        : this.propertiesService.createProperty(formData);
+
+      request.subscribe({
         next: () => {
           this.loading.set(false);
           this.router.navigate(['/dashboard/properties']);
         },
         error: (err) => {
           this.loading.set(false);
-          console.error('Error creating property', err);
+          console.error(`Error ${this.isEditMode() ? 'updating' : 'creating'} property`, err);
         }
       });
     } else {

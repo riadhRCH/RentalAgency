@@ -4,12 +4,15 @@ import { Model, Types } from 'mongoose';
 import { Property, PropertyDocument } from '../schemas/property.schema';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
+import { Personnel, PersonnelDocument } from '../schemas/personnel.schema';
 
 @Injectable()
 export class PropertiesService {
   constructor(
     @InjectModel(Property.name)
     private readonly propertyModel: Model<PropertyDocument>,
+    @InjectModel(Personnel.name)
+    private readonly personnelModel: Model<PersonnelDocument>,
   ) {}
 
   async findAll(
@@ -76,11 +79,28 @@ export class PropertiesService {
   }
 
   async create(agencyId: string, dto: CreatePropertyDto) {
+    let ownerId = dto.ownerId;
+
+    if (!ownerId && dto.ownerPhone) {
+      let personnel = await this.personnelModel.findOne({
+        phone: dto.ownerPhone,
+      });
+
+      if (!personnel) {
+        personnel = await this.personnelModel.create({
+          phone: dto.ownerPhone,
+          source: 'manual',
+          status: 'active',
+        });
+      }
+      ownerId = personnel._id.toString();
+    }
+
     const reference = `PROP-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
     const property = await this.propertyModel.create({
       ...dto,
       agencyId: new Types.ObjectId(agencyId),
-      ownerId: new Types.ObjectId(dto.ownerId),
+      ownerId: new Types.ObjectId(ownerId),
       reference,
     });
     return property;

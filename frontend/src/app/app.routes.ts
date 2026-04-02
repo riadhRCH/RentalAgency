@@ -33,6 +33,7 @@ export const routes: Routes = [
             { path: 'visits', component: VisitsComponent },
             { path: 'properties', component: PropertiesMgmtComponent },
             { path: 'properties/add', component: AddPropertyComponent },
+            { path: 'properties/edit/:id', component: AddPropertyComponent },
             { path: 'rentals', component: RentalsListComponent },
             { path: 'rentals/provision', component: RentalProvisioningComponent },
             { path: 'rentals/:id', component: RentalDetailComponent },

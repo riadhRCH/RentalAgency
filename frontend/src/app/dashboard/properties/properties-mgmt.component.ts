@@ -53,6 +53,10 @@ export class PropertiesMgmtComponent implements OnInit {
     this.router.navigate(['/dashboard/properties/add']);
   }
 
+  navigateToEditProperty(id: string) {
+    this.router.navigate(['/dashboard/properties/edit', id]);
+  }
+
   deleteProperty(id: string) {
     if (confirm('Are you sure you want to delete this property?')) {
       this.propertiesService.deleteProperty(id).subscribe(() => {

@@ -58,8 +58,12 @@ export class CreatePropertyDto {
   status?: string;
 
   @IsString()
-  @IsNotEmpty()
-  ownerId: string;
+  @IsOptional()
+  ownerId?: string;
+
+  @IsString()
+  @IsOptional()
+  ownerPhone?: string;
 
   @IsObject()
   @IsOptional()

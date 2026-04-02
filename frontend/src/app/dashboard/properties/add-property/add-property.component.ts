@@ -20,7 +20,9 @@ export class AddPropertyComponent implements OnInit {
 
   propertyForm: FormGroup;
   loading = signal(false);
+  uploading = signal(false);
   personnel = signal<any[]>([]);
+  uploadedPhotos = signal<string[]>([]);
 
   constructor() {
     this.propertyForm = this.fb.group({
@@ -57,6 +59,33 @@ export class AddPropertyComponent implements OnInit {
       next: (res: any) => this.personnel.set(res.data || []),
       error: (err) => console.error('Error loading personnel', err)
     });
+  }
+
+  onFileSelected(event: any) {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      this.uploading.set(true);
+      const uploadPromises = Array.from(files).map((file: any) => 
+        this.propertiesService.uploadImage(file).toPromise()
+      );
+
+      Promise.all(uploadPromises)
+        .then(results => {
+          const urls = results.map(r => r?.url).filter(url => !!url) as string[];
+          this.uploadedPhotos.update(photos => [...photos, ...urls]);
+          this.propertyForm.get('photos')?.setValue(this.uploadedPhotos());
+          this.uploading.set(false);
+        })
+        .catch(err => {
+          this.uploading.set(false);
+          console.error('Error uploading images', err);
+        });
+    }
+  }
+
+  removePhoto(index: number) {
+    this.uploadedPhotos.update(photos => photos.filter((_, i) => i !== index));
+    this.propertyForm.get('photos')?.setValue(this.uploadedPhotos());
   }
 
   onSubmit() {

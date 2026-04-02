@@ -5,6 +5,7 @@ import { PropertiesController } from './properties.controller';
 import { PropertiesService } from './properties.service';
 import { AuthModule } from '../auth/auth.module';
 import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schema';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schem
       { name: RentalAgency.name, schema: RentalAgencySchema },
     ]),
     AuthModule,
+    CloudinaryModule,
   ],
   controllers: [PropertiesController],
   providers: [PropertiesService],

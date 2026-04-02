@@ -46,6 +46,11 @@ export class LeadsComponent implements OnInit {
     this.loadLeads(1);
   }
 
+  clearFilter() {
+    this.statusFilter = '';
+    this.loadLeads(1);
+  }
+
   navigateToAddLead() {
     this.router.navigate(['/dashboard/leads/add']);
   }

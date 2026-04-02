@@ -59,7 +59,7 @@
                 title="No Leads Found"
                 description="No customer leads match your current filter or the database is empty. Check back later or adjust your filters."
                 [actionLabel]="statusFilter ? 'Clear Filters' : 'Add Lead'"
-                (action)="statusFilter ? (statusFilter = ''; onFilterChange()) : navigateToAddLead()">
+                (action)="statusFilter ? clearFilter() : navigateToAddLead()">
               </app-empty-state>
             </td>
           </tr>

@@ -8,18 +8,36 @@ import {
   Post,
   Query,
   Request,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AgencyGuard } from '../auth/agency.guard';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { PropertiesService } from './properties.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @UseGuards(JwtAuthGuard)
 @Controller('properties')
 export class PropertiesController {
-  constructor(private readonly propertiesService: PropertiesService) {}
+  constructor(
+    private readonly propertiesService: PropertiesService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
+
+  @UseGuards(AgencyGuard)
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    const result = await this.cloudinaryService.uploadImage(file);
+    return {
+      url: result.secure_url,
+      public_id: result.public_id,
+    };
+  }
 
   @UseGuards(AgencyGuard)
   @Get()

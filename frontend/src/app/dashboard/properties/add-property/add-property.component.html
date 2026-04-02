@@ -115,6 +115,33 @@
       </div>
     </section>
 
+    <!-- Images & Media -->
+    <section class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+      <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+        <span class="material-symbols-outlined text-primary">image</span>
+        Images & Media
+      </h2>
+      
+      <div class="space-y-4">
+        <div class="flex flex-wrap gap-4">
+          <div *ngFor="let photo of uploadedPhotos(); let i = index" class="relative w-24 h-24 rounded-lg overflow-hidden border border-white/10 group">
+            <img [src]="photo" class="w-full h-full object-cover">
+            <button type="button" (click)="removePhoto(i)" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span class="material-symbols-outlined text-xs">close</span>
+            </button>
+          </div>
+          
+          <label class="w-24 h-24 rounded-lg border-2 border-dashed border-white/10 flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group">
+            <input type="file" multiple (change)="onFileSelected($event)" class="hidden" accept="image/*">
+            <span *ngIf="!uploading()" class="material-symbols-outlined text-slate-500 group-hover:text-primary transition-colors">add_a_photo</span>
+            <span *ngIf="uploading()" class="material-symbols-outlined animate-spin text-primary">progress_activity</span>
+            <span class="text-[8px] font-bold uppercase tracking-widest text-slate-500 mt-1">{{ uploading() ? 'Uploading...' : 'Add Photos' }}</span>
+          </label>
+        </div>
+        <p class="text-[10px] text-slate-500 uppercase tracking-widest ml-1">Upload high-quality images of the property. Max 10MB per image.</p>
+      </div>
+    </section>
+
     <!-- Location & Status -->
     <section class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
       <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">

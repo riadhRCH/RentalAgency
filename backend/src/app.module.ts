@@ -8,6 +8,7 @@ import { PersonnelModule } from './personnel/personnel.module';
 import { PropertiesModule } from './properties/properties.module';
 import { VisitRequestsModule } from './visits/visits.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
+import { RentalsModule } from './rentals/rentals.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { WebhooksModule } from './webhooks/webhooks.module';
     PropertiesModule,
     VisitRequestsModule,
     WebhooksModule,
+    RentalsModule,
   ],
 })
 export class AppModule {}

@@ -96,9 +96,16 @@
               </select>
             </td>
             <td class="p-6 text-right">
-              <button (click)="deleteVisit(visit._id)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-red-500 transition-all">
-                <span class="material-symbols-outlined text-sm">delete</span>
-              </button>
+              <div class="flex items-center justify-end gap-3">
+                <a [routerLink]="['/dashboard/rentals/provision']" [queryParams]="{ visitId: visit._id }" 
+                   class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-emerald-500 transition-all"
+                   title="Provision Rental">
+                  <span class="material-symbols-outlined text-sm">contract</span>
+                </a>
+                <button (click)="deleteVisit(visit._id)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-red-500 transition-all">
+                  <span class="material-symbols-outlined text-sm">delete</span>
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>

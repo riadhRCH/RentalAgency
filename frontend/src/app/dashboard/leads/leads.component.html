@@ -114,6 +114,11 @@
             </td>
             <td class="p-6 text-right">
               <div class="flex items-center justify-end gap-3">
+                <a [routerLink]="['/dashboard/rentals/provision']" [queryParams]="{ leadId: lead._id }" 
+                   class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-emerald-500 transition-all"
+                   title="Provision Rental">
+                  <span class="material-symbols-outlined text-sm">contract</span>
+                </a>
                 <button class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-primary transition-all">
                   <span class="material-symbols-outlined text-sm">visibility</span>
                 </button>

@@ -45,8 +45,8 @@
 
     <div *ngFor="let prop of properties" class="glass-card rounded-2xl border border-white/10 overflow-hidden group hover:border-primary/50 transition-all flex flex-col">
       <div class="relative h-48 bg-slate-800">
-        <img *ngIf="prop.photos?.length" [src]="prop.photos[0]" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
-        <div *ngIf="!prop.photos?.length" class="w-full h-full flex items-center justify-center text-slate-600">
+        <img *ngIf="prop.photos.length" [src]="prop.photos[0]" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+        <div *ngIf="!prop.photos.length" class="w-full h-full flex items-center justify-center text-slate-600">
           <span class="material-symbols-outlined text-5xl">image</span>
         </div>
         <div class="absolute top-4 left-4 px-3 py-1 bg-background-dark/80 backdrop-blur rounded text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/20">

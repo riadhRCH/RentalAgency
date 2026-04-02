@@ -11,6 +11,9 @@ import { VisitsComponent } from './dashboard/visits/visits.component';
 import { PropertiesMgmtComponent } from './dashboard/properties/properties-mgmt.component';
 import { TeamsComponent } from './dashboard/teams/teams.component';
 import { DashboardLayoutComponent } from './dashboard/layout/dashboard-layout.component';
+import { RentalsListComponent } from './dashboard/rentals/rentals-list.component';
+import { RentalProvisioningComponent } from './dashboard/rentals/rental-provisioning.component';
+import { RentalDetailComponent } from './dashboard/rentals/rental-detail.component';
 
 export const routes: Routes = [
     { path: '', component: LandingPage, canActivate: [authGuard, agencyGuard] },
@@ -26,6 +29,9 @@ export const routes: Routes = [
             { path: 'leads', component: LeadsComponent },
             { path: 'visits', component: VisitsComponent },
             { path: 'properties', component: PropertiesMgmtComponent },
+            { path: 'rentals', component: RentalsListComponent },
+            { path: 'rentals/provision', component: RentalProvisioningComponent },
+            { path: 'rentals/:id', component: RentalDetailComponent },
             { path: 'teams', component: TeamsComponent },
             { path: 'config', component: ConfigComponent }
         ]

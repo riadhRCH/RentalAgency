@@ -27,15 +27,7 @@ export class LoginComponent {
     this.error = '';
     this.authService.login(this.credentials).subscribe({
       next: () => {
-        this.authService.getMe().subscribe({
-          next: (res) => {
-            if (res.agencies.length > 1) {
-              this.router.navigate(['/auth/select-agency']);
-            } else {
-              this.router.navigate(['/']);
-            }
-          }
-        });
+        this.router.navigate(['/auth/select-agency']);
       },
       error: (err) => {
         this.error = err.error?.message || 'Login failed';

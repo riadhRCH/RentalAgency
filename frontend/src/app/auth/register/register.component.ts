@@ -36,7 +36,7 @@ export class RegisterComponent {
           phone: this.data.phone,
           password: this.data.password
         }).subscribe({
-          next: () => this.router.navigate(['/']),
+          next: () => this.router.navigate(['/auth/select-agency']),
           error: () => {
             this.router.navigate(['/auth/login']);
           }

@@ -1,0 +1,83 @@
+<div class="p-8 max-w-2xl mx-auto space-y-12">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+        Add New Lead
+      </h1>
+      <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+        Manually register a new prospect
+      </p>
+    </div>
+    
+    <button (click)="onCancel()" class="text-slate-500 hover:text-white transition-colors flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+      <span class="material-symbols-outlined text-sm">arrow_back</span>
+      Back to Leads
+    </button>
+  </header>
+
+  <form [formGroup]="leadForm" (ngSubmit)="onSubmit()" class="space-y-8">
+    <section class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+      <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+        <span class="material-symbols-outlined text-primary">person</span>
+        Contact Information
+      </h2>
+      
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Customer Name</label>
+          <input type="text" formControlName="customerName" placeholder="Full name of the lead" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Phone Number</label>
+          <app-phone-input formControlName="customerPhone" placeholder="Phone number"></app-phone-input>
+          <div *ngIf="leadForm.get('customerPhone')?.touched && leadForm.get('customerPhone')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
+            Phone number is required
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Notes</label>
+          <textarea formControlName="notes" rows="4" placeholder="Additional details, preferences, etc." class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all resize-none"></textarea>
+        </div>
+
+        <div class="space-y-4">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Tags</label>
+          <div class="flex gap-2">
+            <input 
+              type="text" 
+              [(ngModel)]="tagInput" 
+              [ngModelOptions]="{standalone: true}"
+              (keyup.enter)="addTag()"
+              placeholder="Add a tag (press enter)" 
+              class="flex-1 bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+            <button type="button" (click)="addTag()" class="bg-white/5 hover:bg-white/10 text-white px-4 rounded transition-all">
+              <span class="material-symbols-outlined text-sm">add</span>
+            </button>
+          </div>
+          
+          <div class="flex flex-wrap gap-2">
+            <div *ngFor="let tag of tags()" class="px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-[10px] font-bold uppercase tracking-widest text-primary flex items-center gap-2 group">
+              {{ tag }}
+              <button type="button" (click)="removeTag(tag)" class="hover:text-white transition-colors">
+                <span class="material-symbols-outlined text-[12px]">close</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <div class="flex items-center justify-end gap-4 pt-4">
+      <button type="button" (click)="onCancel()" class="px-8 py-3 rounded uppercase text-[10px] font-bold tracking-widest text-slate-400 hover:text-white transition-all">
+        Cancel
+      </button>
+      <button type="submit" [disabled]="loading() || leadForm.invalid" class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-10 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+        <span *ngIf="loading()" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+        <span *ngIf="!loading()" class="material-symbols-outlined text-sm">save</span>
+        {{ loading() ? 'Saving...' : 'Create Lead' }}
+      </button>
+    </div>
+  </form>
+</div>

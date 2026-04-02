@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { LeadsService, Lead } from '../../services/leads.service';
 import { FormsModule } from '@angular/forms';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
@@ -14,6 +14,7 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 })
 export class LeadsComponent implements OnInit {
   private leadsService = inject(LeadsService);
+  private router = inject(Router);
 
   leads: Lead[] = [];
   loading = signal(true);
@@ -43,6 +44,10 @@ export class LeadsComponent implements OnInit {
 
   onFilterChange() {
     this.loadLeads(1);
+  }
+
+  navigateToAddLead() {
+    this.router.navigate(['/dashboard/leads/add']);
   }
 
   changeStatus(lead: Lead, status: any) {

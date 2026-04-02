@@ -1,0 +1,161 @@
+<div class="p-8 max-w-4xl mx-auto space-y-12">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+        Add New Property
+      </h1>
+      <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+        Create a new listing in the agency portfolio
+      </p>
+    </div>
+    
+    <button (click)="onCancel()" class="text-slate-500 hover:text-white transition-colors flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+      <span class="material-symbols-outlined text-sm">arrow_back</span>
+      Back to Listings
+    </button>
+  </header>
+
+  <form [formGroup]="propertyForm" (ngSubmit)="onSubmit()" class="space-y-8">
+    <!-- Basic Information -->
+    <section class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+      <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+        <span class="material-symbols-outlined text-primary">info</span>
+        Basic Information
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Property Type</label>
+          <select formControlName="type" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+            <option value="apartment" class="bg-background-dark text-white">Apartment</option>
+            <option value="villa" class="bg-background-dark text-white">Villa</option>
+            <option value="house" class="bg-background-dark text-white">House</option>
+            <option value="land" class="bg-background-dark text-white">Land</option>
+          </select>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Owner / Personnel</label>
+          <select formControlName="ownerId" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+            <option value="" disabled selected class="bg-background-dark text-white">Select Owner</option>
+            <option *ngFor="let p of personnel()" [value]="p._id" class="bg-background-dark text-white">{{ p.name }} ({{ p.role }})</option>
+          </select>
+          <div *ngIf="propertyForm.get('ownerId')?.touched && propertyForm.get('ownerId')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
+            Owner is required
+          </div>
+        </div>
+
+        <div class="md:col-span-2 space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Address</label>
+          <input type="text" formControlName="address" placeholder="Full address of the property" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+          <div *ngIf="propertyForm.get('address')?.touched && propertyForm.get('address')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
+            Address is required
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Surface (m²)</label>
+          <input type="number" formControlName="surface" placeholder="e.g. 120" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+          <div *ngIf="propertyForm.get('surface')?.touched && propertyForm.get('surface')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
+            Surface must be at least 1m²
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Price ($)</label>
+          <input type="number" formControlName="price" placeholder="e.g. 250000" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+          <div *ngIf="propertyForm.get('price')?.touched && propertyForm.get('price')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
+            Price is required
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Details & Description -->
+    <section class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+      <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+        <span class="material-symbols-outlined text-primary">description</span>
+        Details & Description
+      </h2>
+      
+      <div class="space-y-2">
+        <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Description</label>
+        <textarea formControlName="description" rows="4" placeholder="Describe the property, key features, etc." class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all resize-none"></textarea>
+        <div *ngIf="propertyForm.get('description')?.touched && propertyForm.get('description')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
+          Description is required
+        </div>
+      </div>
+
+      <div formGroupName="amenities" class="grid grid-cols-2 md:grid-cols-3 gap-6">
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Bedrooms</label>
+          <input type="number" formControlName="bedrooms" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+        </div>
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Bathrooms</label>
+          <input type="number" formControlName="bathrooms" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+        </div>
+        
+        <div class="flex items-center gap-3 pt-6">
+          <input type="checkbox" formControlName="parking" id="parking" class="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary">
+          <label for="parking" class="text-[10px] font-bold uppercase tracking-widest text-slate-300 cursor-pointer">Parking</label>
+        </div>
+        <div class="flex items-center gap-3 pt-6">
+          <input type="checkbox" formControlName="furnished" id="furnished" class="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary">
+          <label for="furnished" class="text-[10px] font-bold uppercase tracking-widest text-slate-300 cursor-pointer">Furnished</label>
+        </div>
+        <div class="flex items-center gap-3 pt-6">
+          <input type="checkbox" formControlName="pool" id="pool" class="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary">
+          <label for="pool" class="text-[10px] font-bold uppercase tracking-widest text-slate-300 cursor-pointer">Pool</label>
+        </div>
+        <div class="flex items-center gap-3 pt-6">
+          <input type="checkbox" formControlName="garden" id="garden" class="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary">
+          <label for="garden" class="text-[10px] font-bold uppercase tracking-widest text-slate-300 cursor-pointer">Garden</label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Location & Status -->
+    <section class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+      <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+        <span class="material-symbols-outlined text-primary">location_on</span>
+        Location & Status
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div formGroupName="gpsLocation" class="md:col-span-2 grid grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Latitude</label>
+            <input type="number" formControlName="lat" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Longitude</label>
+            <input type="number" formControlName="lng" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Initial Status</label>
+          <select formControlName="status" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+            <option value="available" class="bg-background-dark text-white">Available</option>
+            <option value="reserved" class="bg-background-dark text-white">Reserved</option>
+            <option value="rented" class="bg-background-dark text-white">Rented</option>
+            <option value="sold" class="bg-background-dark text-white">Sold</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <div class="flex items-center justify-end gap-4 pt-4">
+      <button type="button" (click)="onCancel()" class="px-8 py-3 rounded uppercase text-[10px] font-bold tracking-widest text-slate-400 hover:text-white transition-all">
+        Cancel
+      </button>
+      <button type="submit" [disabled]="loading() || propertyForm.invalid" class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-10 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+        <span *ngIf="loading()" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+        <span *ngIf="!loading()" class="material-symbols-outlined text-sm">save</span>
+        {{ loading() ? 'Saving...' : 'Create Listing' }}
+      </button>
+    </div>
+  </form>
+</div>

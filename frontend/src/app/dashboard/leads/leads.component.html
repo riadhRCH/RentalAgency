@@ -14,7 +14,7 @@
         <select 
           [(ngModel)]="statusFilter" 
           (change)="onFilterChange()"
-          class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-xs font-bold uppercase tracking-widest outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+          class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-xs font-bold uppercase tracking-widest outline-none focus:border-primary transition-all appearance-none cursor-pointer pr-10">
           <option value="" class="bg-background-dark">All Statuses</option>
           <option value="NEW" class="bg-background-dark">New Leads</option>
           <option value="CONTACTED" class="bg-background-dark">Contacted</option>
@@ -25,6 +25,11 @@
           expand_more
         </span>
       </div>
+
+      <button (click)="navigateToAddLead()" class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center gap-2 whitespace-nowrap">
+        <span class="material-symbols-outlined text-sm">add</span>
+        Manual Entry
+      </button>
     </div>
   </header>
 
@@ -53,8 +58,8 @@
                 icon="person_search"
                 title="No Leads Found"
                 description="No customer leads match your current filter or the database is empty. Check back later or adjust your filters."
-                [actionLabel]="statusFilter ? 'Clear Filters' : ''"
-                (action)="statusFilter = ''; onFilterChange()">
+                [actionLabel]="statusFilter ? 'Clear Filters' : 'Add Lead'"
+                (action)="statusFilter ? (statusFilter = ''; onFilterChange()) : navigateToAddLead()">
               </app-empty-state>
             </td>
           </tr>

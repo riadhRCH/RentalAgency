@@ -21,7 +21,7 @@
         <option value="land" class="bg-background-dark">Land</option>
       </select>
       
-      <button class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+      <button (click)="navigateToAddProperty()" class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
         <span class="material-symbols-outlined text-sm">add</span>
         New Listing
       </button>
@@ -39,7 +39,7 @@
         title="No Properties Listed"
         description="Your agency's property portfolio is currently empty or no listings match your criteria."
         [actionLabel]="typeFilter ? 'Clear Filter' : 'Add Property'"
-        (action)="typeFilter ? clearFilter() : null">
+        (action)="typeFilter ? clearFilter() : navigateToAddProperty()">
       </app-empty-state>
     </div>
 

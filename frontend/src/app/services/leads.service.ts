@@ -43,6 +43,10 @@ export class LeadsService {
     return this.http.get<Lead>(`${this.apiUrl}/${id}`);
   }
 
+  createLead(data: Partial<Lead>): Observable<Lead> {
+    return this.http.post<Lead>(this.apiUrl, data);
+  }
+
   updateLead(id: string, data: Partial<Lead>): Observable<Lead> {
     return this.http.patch<Lead>(`${this.apiUrl}/${id}`, data);
   }

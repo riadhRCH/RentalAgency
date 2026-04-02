@@ -6,9 +6,11 @@ import { AgencySelectionComponent } from './auth/agency-selection/agency-selecti
 import { authGuard, agencyGuard } from './auth/auth.guard';
 import { OverviewComponent } from './dashboard/overview/overview.component';
 import { LeadsComponent } from './dashboard/leads/leads.component';
+import { AddLeadComponent } from './dashboard/leads/add-lead/add-lead.component';
 import { ConfigComponent } from './dashboard/config/config.component';
 import { VisitsComponent } from './dashboard/visits/visits.component';
 import { PropertiesMgmtComponent } from './dashboard/properties/properties-mgmt.component';
+import { AddPropertyComponent } from './dashboard/properties/add-property/add-property.component';
 import { TeamsComponent } from './dashboard/teams/teams.component';
 import { DashboardLayoutComponent } from './dashboard/layout/dashboard-layout.component';
 import { RentalsListComponent } from './dashboard/rentals/rentals-list.component';
@@ -27,8 +29,10 @@ export const routes: Routes = [
         children: [
             { path: 'overview', component: OverviewComponent },
             { path: 'leads', component: LeadsComponent },
+            { path: 'leads/add', component: AddLeadComponent },
             { path: 'visits', component: VisitsComponent },
             { path: 'properties', component: PropertiesMgmtComponent },
+            { path: 'properties/add', component: AddPropertyComponent },
             { path: 'rentals', component: RentalsListComponent },
             { path: 'rentals/provision', component: RentalProvisioningComponent },
             { path: 'rentals/:id', component: RentalDetailComponent },

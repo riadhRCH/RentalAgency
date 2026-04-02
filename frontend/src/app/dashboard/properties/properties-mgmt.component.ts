@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PropertiesService, Property } from '../../services/properties.service';
 import { FormsModule } from '@angular/forms';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-properties-mgmt',
@@ -13,6 +14,7 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 })
 export class PropertiesMgmtComponent implements OnInit {
   private propertiesService = inject(PropertiesService);
+  private router = inject(Router);
 
   properties: Property[] = [];
   loading = signal(true);
@@ -45,6 +47,10 @@ export class PropertiesMgmtComponent implements OnInit {
   clearFilter() {
     this.typeFilter = '';
     this.loadProperties(1);
+  }
+
+  navigateToAddProperty() {
+    this.router.navigate(['/dashboard/properties/add']);
   }
 
   deleteProperty(id: string) {

@@ -17,6 +17,9 @@ class VirtualNumber {
 class AgencySettings {
   @Prop()
   forwardingNumber: string;
+
+  @Prop()
+  areaCode: string;
 }
 
 @Schema({ timestamps: true })
@@ -36,7 +39,7 @@ export class RentalAgency {
   @Prop({ type: [{ sid: String, phoneNumber: String, label: String }], default: [] })
   activeVirtualNumbers: VirtualNumber[];
 
-  @Prop({ type: { forwardingNumber: String }, default: {} })
+  @Prop({ type: { forwardingNumber: String, areaCode: String }, default: {} })
   settings: AgencySettings;
 }
 

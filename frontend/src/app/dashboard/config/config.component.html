@@ -34,6 +34,29 @@
             ></app-phone-input>
           </div>
 
+          <div class="space-y-2">
+            <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Default Area Code</label>
+            <div class="relative">
+              <select
+              name="areaCode"
+              [ngModel]="settings.areaCode"
+              (ngModelChange)="onAreaCodeInput($event, 'settings')"
+              class="w-full appearance-none bg-white/5 border border-white/10 rounded p-3 pr-10 text-xs font-bold text-white outline-none focus:border-primary transition-all"
+            >
+              <option value="" class="bg-background-dark">Select default area code</option>
+              <option *ngFor="let option of areaCodeOptions" [value]="option.code" class="bg-background-dark">
+                {{ option.code }} - {{ option.label }}
+              </option>
+              </select>
+              <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">
+                expand_more
+              </span>
+            </div>
+            <p class="text-[10px] text-slate-500 uppercase tracking-widest">
+              Choose the default area code used when provisioning a new number.
+            </p>
+          </div>
+
           <div *ngIf="message" class="text-emerald-500 text-[10px] font-bold uppercase tracking-widest animate-pulse">
             {{ message }}
           </div>
@@ -86,12 +109,25 @@
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-2">
               <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Area Code</label>
-              <input 
-                type="text" 
-                [(ngModel)]="newNumber.areaCode"
-                placeholder="415"
-                class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs font-bold text-white outline-none focus:border-primary transition-all"
-              />
+              <div class="relative">
+                <select
+                name="newAreaCode"
+                [ngModel]="newNumber.areaCode"
+                (ngModelChange)="onAreaCodeInput($event, 'newNumber')"
+                class="w-full appearance-none bg-white/5 border border-white/10 rounded p-3 pr-10 text-xs font-bold text-white outline-none focus:border-primary transition-all"
+              >
+                <option value="" class="bg-background-dark">Select area code</option>
+                <option *ngFor="let option of areaCodeOptions" [value]="option.code" class="bg-background-dark">
+                  {{ option.code }} - {{ option.label }}
+                </option>
+                </select>
+                <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">
+                  expand_more
+                </span>
+              </div>
+              <p class="text-[10px] text-slate-500 uppercase tracking-widest">
+                Select a supported area code.
+              </p>
             </div>
             <div class="space-y-2">
               <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Label (e.g. Zillow Ad)</label>
@@ -105,7 +141,7 @@
           </div>
           <button 
             (click)="provisionNumber()"
-            [disabled]="!newNumber.areaCode || provisioning"
+            [disabled]="!hasValidAreaCode(newNumber.areaCode || settings.areaCode) || provisioning"
             class="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold uppercase tracking-widest rounded transition-all flex items-center justify-center gap-2"
           >
             <span *ngIf="provisioning" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>

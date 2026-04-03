@@ -15,6 +15,21 @@ import { Rental, RentalDocument } from '../schemas/rental.schema';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { ProvisionNumberDto } from './dto/provision-number.dto';
 
+const DIAL_CODE_TO_COUNTRY_CODE: Array<{ dialCode: string; countryCode: string }> = [
+  { dialCode: '+971', countryCode: 'AE' },
+  { dialCode: '+974', countryCode: 'QA' },
+  { dialCode: '+966', countryCode: 'SA' },
+  { dialCode: '+216', countryCode: 'TN' },
+  { dialCode: '+213', countryCode: 'DZ' },
+  { dialCode: '+212', countryCode: 'MA' },
+  { dialCode: '+49', countryCode: 'DE' },
+  { dialCode: '+44', countryCode: 'GB' },
+  { dialCode: '+39', countryCode: 'IT' },
+  { dialCode: '+34', countryCode: 'ES' },
+  { dialCode: '+33', countryCode: 'FR' },
+  { dialCode: '+1', countryCode: 'US' },
+];
+
 @Injectable()
 export class AgenciesService {
   private twilioClient: twilio.Twilio;
@@ -35,6 +50,15 @@ export class AgenciesService {
       process.env.TWILIO_ACCOUNT_SID,
       process.env.TWILIO_AUTH_TOKEN,
     );
+  }
+
+  private getAgencyCountryCode(forwardingNumber?: string) {
+    const normalizedForwardingNumber = (forwardingNumber || '').replace(/[\s()-]/g, '');
+    const matchedCountry = DIAL_CODE_TO_COUNTRY_CODE.find(({ dialCode }) =>
+      normalizedForwardingNumber.startsWith(dialCode),
+    );
+
+    return matchedCountry?.countryCode || 'TN';
   }
 
   async getStats(agencyId: string) {
@@ -62,7 +86,7 @@ export class AgenciesService {
       name: dto.name,
       ownerId: personnel._id,
       staff: [{ personnelId: personnel._id, role: 'admin' }],
-      settings: { forwardingNumber: dto.forwardingNumber || '' },
+      settings: { forwardingNumber: dto.forwardingNumber || '', areaCode: '' },
     });
 
     return agency;
@@ -70,10 +94,21 @@ export class AgenciesService {
 
   async provisionNumber(agencyId: string, dto: ProvisionNumberDto) {
     try {
+      const currentAgency = await this.agencyModel.findById(agencyId).select('settings');
+      if (!currentAgency) {
+        throw new BadRequestException('Agency not found');
+      }
+
+      const agencyCountryCode = this.getAgencyCountryCode(
+        currentAgency.settings?.forwardingNumber,
+      );
+
       // Search for an available local number in the given area code
       const availableNumbers = await this.twilioClient
-        .availablePhoneNumbers('US')
+        .availablePhoneNumbers(agencyCountryCode)
         .local.list({ areaCode: Number(dto.areaCode), limit: 1 });
+
+        console.log('availableNumbers', availableNumbers)
 
       if (!availableNumbers.length) {
         throw new BadRequestException(
@@ -85,9 +120,9 @@ export class AgenciesService {
       const purchased = await this.twilioClient.incomingPhoneNumbers.create({
         phoneNumber: availableNumbers[0].phoneNumber,
         // Twilio will POST to this URL when a call comes in
-        voiceUrl: `${process.env.APP_URL || 'http://localhost:3000'}/webhooks/twilio/inbound`,
+        voiceUrl: `${process.env.APP_URL || 'http://localhost:3000'}/webhooks/twilio/inbound`, //question : will i be able to find and edit this in my twilio dashboard ?
         voiceMethod: 'POST',
-        statusCallback: `${process.env.APP_URL || 'http://localhost:3000'}/webhooks/twilio/completed`,
+        statusCallback: `${process.env.APP_URL || 'http://localhost:3000'}/webhooks/twilio/completed`, //question : will i be able to find and edit this in my twilio dashboard ?
         statusCallbackMethod: 'POST',
       });
 
@@ -98,13 +133,13 @@ export class AgenciesService {
       };
 
       // Save to agency document
-      const agency = await this.agencyModel.findByIdAndUpdate(
+      const updatedAgency = await this.agencyModel.findByIdAndUpdate(
         agencyId,
         { $push: { activeVirtualNumbers: virtualNumber } },
         { new: true },
       );
 
-      return { message: 'Number provisioned successfully', virtualNumber, agency };
+      return { message: 'Number provisioned successfully', virtualNumber, agency: updatedAgency };
     } catch (error) {
       if (error instanceof BadRequestException) throw error;
       throw new InternalServerErrorException(

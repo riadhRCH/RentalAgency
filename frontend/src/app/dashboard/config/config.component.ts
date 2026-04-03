@@ -4,6 +4,11 @@ import { AgencyService, VirtualNumber, AgencySettings } from '../../services/age
 import { FormsModule } from '@angular/forms';
 import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
 
+interface AreaCodeOption {
+  code: string;
+  label: string;
+}
+
 @Component({
   selector: 'app-config',
   standalone: true,
@@ -14,7 +19,11 @@ import { PhoneInputComponent } from '../../shared/components/phone-input/phone-i
 export class ConfigComponent implements OnInit {
   private agencyService = inject(AgencyService);
 
-  settings: AgencySettings = { forwardingNumber: '' };
+  areaCodeOptions: AreaCodeOption[] = [
+    { code: '212', label: 'Tunisia' },
+  ];
+
+  settings: AgencySettings = { forwardingNumber: '', areaCode: '' };
   virtualNumbers: VirtualNumber[] = [];
   
   newNumber = {
@@ -36,7 +45,12 @@ export class ConfigComponent implements OnInit {
     this.loading.set(true);
     this.agencyService.getSettings().subscribe({
       next: (s) => {
-        this.settings = s;
+        this.settings = {
+          forwardingNumber: s?.forwardingNumber || '',
+          areaCode: this.normalizeAreaCode(s?.areaCode || '')
+        };
+        this.ensureAreaCodeOptionExists(this.settings.areaCode);
+        this.newNumber.areaCode = this.settings.areaCode;
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
@@ -52,8 +66,17 @@ export class ConfigComponent implements OnInit {
     this.saving = true;
     this.message = '';
     this.error = '';
+    this.settings.areaCode = this.normalizeAreaCode(this.settings.areaCode);
+
+    if (this.settings.areaCode && !this.hasValidAreaCode(this.settings.areaCode)) {
+      this.error = 'Area code must be exactly 3 digits';
+      this.saving = false;
+      return;
+    }
+
     this.agencyService.updateSettings(this.settings).subscribe({
       next: () => {
+        this.newNumber.areaCode = this.settings.areaCode;
         this.message = 'Settings updated successfully';
         this.saving = false;
       },
@@ -64,8 +87,46 @@ export class ConfigComponent implements OnInit {
     });
   }
 
+  onAreaCodeInput(value: string, target: 'settings' | 'newNumber') {
+    const normalizedValue = this.normalizeAreaCode(value);
+    this.ensureAreaCodeOptionExists(normalizedValue);
+    if (target === 'settings') {
+      this.settings.areaCode = normalizedValue;
+      if (!this.newNumber.areaCode) {
+        this.newNumber.areaCode = normalizedValue;
+      }
+      return;
+    }
+
+    this.newNumber.areaCode = normalizedValue;
+  }
+
+  hasValidAreaCode(value: string) {
+    return /^\d{3}$/.test(value);
+  }
+
+  private normalizeAreaCode(value: string) {
+    return (value || '').replace(/\D/g, '').slice(0, 3);
+  }
+
+  private ensureAreaCodeOptionExists(code: string) {
+    if (!this.hasValidAreaCode(code) || this.areaCodeOptions.some((option) => option.code === code)) {
+      return;
+    }
+
+    this.areaCodeOptions = [
+      { code, label: 'Saved Area Code' },
+      ...this.areaCodeOptions,
+    ];
+  }
+
   provisionNumber() {
-    if (!this.newNumber.areaCode) return;
+    this.newNumber.areaCode = this.normalizeAreaCode(this.newNumber.areaCode || this.settings.areaCode);
+    if (!this.hasValidAreaCode(this.newNumber.areaCode)) {
+      this.error = 'Area code must be exactly 3 digits';
+      return;
+    }
+
     this.provisioning = true;
     this.message = '';
     this.error = '';
@@ -74,7 +135,7 @@ export class ConfigComponent implements OnInit {
       next: () => {
         this.message = 'Number provisioned successfully';
         this.provisioning = false;
-        this.newNumber = { areaCode: '', label: '' };
+        this.newNumber = { areaCode: this.settings.areaCode, label: '' };
         this.loadData();
       },
       error: (err) => {

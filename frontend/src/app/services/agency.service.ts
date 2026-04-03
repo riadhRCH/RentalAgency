@@ -10,6 +10,7 @@ export interface VirtualNumber {
 
 export interface AgencySettings {
   forwardingNumber: string;
+  areaCode: string;
 }
 
 @Injectable({

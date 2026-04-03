@@ -20,6 +20,10 @@ export class AgencyService {
 
   constructor(private http: HttpClient) {}
 
+  getStats(): Observable<{ totalLeads: number; totalVisits: number; totalRentals: number }> {
+    return this.http.get<{ totalLeads: number; totalVisits: number; totalRentals: number }>(`${this.apiUrl}/stats`);
+  }
+
   getActiveNumbers(): Observable<VirtualNumber[]> {
     return this.http.get<VirtualNumber[]>(`${this.apiUrl}/numbers/active`);
   }

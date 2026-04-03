@@ -36,7 +36,19 @@ export class RegisterComponent {
           phone: this.data.phone,
           password: this.data.password
         }).subscribe({
-          next: () => this.router.navigate(['/auth/select-agency']),
+          next: () => {
+            // After login, we need to check if we can skip agency selection
+            this.authService.getMe().subscribe({
+              next: (meRes) => {
+                if (meRes.agencies && meRes.agencies.length === 1) {
+                  this.router.navigate(['/dashboard/overview']);
+                } else {
+                  this.router.navigate(['/auth/select-agency']);
+                }
+              },
+              error: () => this.router.navigate(['/auth/select-agency'])
+            });
+          },
           error: () => {
             this.router.navigate(['/auth/login']);
           }

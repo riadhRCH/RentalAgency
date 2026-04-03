@@ -3,12 +3,11 @@ import { CommonModule } from '@angular/common';
 import { AgencyService, VirtualNumber, AgencySettings } from '../../services/agency.service';
 import { FormsModule } from '@angular/forms';
 import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
-import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-config',
   standalone: true,
-  imports: [CommonModule, FormsModule, PhoneInputComponent, SidebarComponent],
+  imports: [CommonModule, FormsModule, PhoneInputComponent],
   templateUrl: './config.component.html',
   styleUrls: ['./config.component.scss']
 })

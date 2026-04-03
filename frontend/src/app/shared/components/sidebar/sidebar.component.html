@@ -10,33 +10,41 @@
     <!-- Navigation Links -->
     <nav class="flex-1 overflow-y-auto py-6">
         <div class="px-4 space-y-1">
-            <a routerLink="/dashboard/overview" routerLinkActive="bg-primary/10 text-primary border-primary"
-                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent">
-                <span class="material-symbols-outlined">dashboard</span>
-                <span class="text-xs font-bold uppercase tracking-widest">Overview</span>
-            </a>
-            <a routerLink="/dashboard/leads" routerLinkActive="bg-primary/10 text-primary border-primary"
-                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent">
-                <span class="material-symbols-outlined">group</span>
-                <span class="text-xs font-bold uppercase tracking-widest">Leads</span>
-            </a>
+            <!-- Overview Group -->
+            <div class="space-y-1">
+                <a routerLink="/dashboard/overview" routerLinkActive="bg-primary/5 text-primary border-primary" [routerLinkActiveOptions]="{exact: false}"
+                    class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="text-xs font-bold uppercase tracking-widest">Overview</span>
+                </a>
+                
+                <!-- Sub-items -->
+                <div class="pl-4 ml-6 space-y-1 border-l border-white/5">
+                    <a routerLink="/dashboard/overview/leads" routerLinkActive="bg-primary/5 text-primary border-primary active-sub-item"
+                        class="flex items-center gap-3 px-4 py-2 text-silver-500 hover:text-white transition-all group rounded-r-lg border-l-2 border-transparent">
+                        <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">group</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest">Leads</span>
+                    </a>
+                    <a routerLink="/dashboard/overview/visits" routerLinkActive="bg-primary/5 text-primary border-primary active-sub-item"
+                        class="flex items-center gap-3 px-4 py-2 text-silver-500 hover:text-white transition-all group rounded-r-lg border-l-2 border-transparent">
+                        <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">event</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest">Visits</span>
+                    </a>
+                    <a routerLink="/dashboard/overview/rentals" routerLinkActive="bg-primary/5 text-primary border-primary active-sub-item"
+                        class="flex items-center gap-3 px-4 py-2 text-silver-500 hover:text-white transition-all group rounded-r-lg border-l-2 border-transparent">
+                        <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">contract</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest">Active Rentals</span>
+                    </a>
+                </div>
+            </div>
+
             <a routerLink="/dashboard/properties" routerLinkActive="bg-primary/10 text-primary border-primary"
-                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent">
+                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
                 <span class="material-symbols-outlined">real_estate_agent</span>
                 <span class="text-xs font-bold uppercase tracking-widest">Properties</span>
             </a>
-            <a routerLink="/dashboard/visits" routerLinkActive="bg-primary/10 text-primary border-primary"
-                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent">
-                <span class="material-symbols-outlined">event</span>
-                <span class="text-xs font-bold uppercase tracking-widest">Visits</span>
-            </a>
-            <a routerLink="/dashboard/rentals" routerLinkActive="bg-primary/10 text-primary border-primary"
-                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent">
-                <span class="material-symbols-outlined">contract</span>
-                <span class="text-xs font-bold uppercase tracking-widest">Active Rentals</span>
-            </a>
             <a routerLink="/dashboard/teams" routerLinkActive="bg-primary/10 text-primary border-primary"
-                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent">
+                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
                 <span class="material-symbols-outlined">badge</span>
                 <span class="text-xs font-bold uppercase tracking-widest">Team Management</span>
             </a>
@@ -47,7 +55,7 @@
                 <span class="text-[10px] uppercase tracking-[0.2em] text-silver-500 font-bold">System</span>
             </div>
             <a routerLink="/dashboard/config" routerLinkActive="bg-primary/10 text-primary border-primary"
-                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent">
+                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
                 <span class="material-symbols-outlined">settings</span>
                 <span class="text-xs font-bold uppercase tracking-widest">Settings</span>
             </a>

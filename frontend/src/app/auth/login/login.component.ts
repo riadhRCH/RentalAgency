@@ -26,8 +26,18 @@ export class LoginComponent {
     this.loading.set(true);
     this.error = '';
     this.authService.login(this.credentials).subscribe({
-      next: () => {
-        this.router.navigate(['/auth/select-agency']);
+      next: (res) => {
+        // After login, we need to check if we can skip agency selection
+        this.authService.getMe().subscribe({
+          next: (meRes) => {
+            if (meRes.agencies && meRes.agencies.length === 1) {
+              this.router.navigate(['/dashboard/overview']);
+            } else {
+              this.router.navigate(['/auth/select-agency']);
+            }
+          },
+          error: () => this.router.navigate(['/auth/select-agency'])
+        });
       },
       error: (err) => {
         this.error = err.error?.message || 'Login failed';

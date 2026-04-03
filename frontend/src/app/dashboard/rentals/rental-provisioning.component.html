@@ -1,137 +1,169 @@
-<div class="p-6">
-  <div class="mb-6 flex justify-between items-center">
-    <h1 class="text-2xl font-bold text-gray-900">Rental Provisioning</h1>
-    <a routerLink="/dashboard/rentals" class="text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
-      <i class="fas fa-arrow-left mr-1"></i> Back to Directory
-    </a>
-  </div>
-
-  <div *ngIf="notification" class="mb-6 bg-blue-50 border-l-4 border-blue-400 p-4 rounded-md">
-    <div class="flex">
-      <div class="flex-shrink-0">
-        <i class="fas fa-info-circle text-blue-400"></i>
-      </div>
-      <div class="ml-3">
-        <p class="text-sm text-blue-700">
-          {{ notification }}
-        </p>
-      </div>
+<div class="p-8 max-w-4xl mx-auto space-y-12">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="font-serif text-4xl font-bold tracking-tight text-white uppercase silver-glow">
+        Rental Provisioning
+      </h1>
+      <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+        Setup a new rental agreement
+      </p>
     </div>
+    
+    <button routerLink="/dashboard/rentals" class="text-slate-500 hover:text-white transition-colors flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+      <span class="material-symbols-outlined text-sm">arrow_back</span>
+      Back to Directory
+    </button>
+  </header>
+
+  <div *ngIf="notification" class="glass-card border-l-4 border-primary/50 p-6 rounded-xl flex items-start gap-4 shadow-2xl shadow-primary/5">
+    <span class="material-symbols-outlined text-primary text-xl">info</span>
+    <p class="text-xs font-bold uppercase tracking-widest text-slate-400 leading-relaxed">
+      {{ notification }}
+    </p>
   </div>
 
-  <form [formGroup]="rentalForm" (ngSubmit)="onSubmit()" class="bg-white rounded-xl shadow-sm overflow-hidden p-6 space-y-8">
+  <form [formGroup]="rentalForm" (ngSubmit)="onSubmit()" class="space-y-8 pb-20">
     
-    <!-- Property Selection -->
-    <section>
-      <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Property Assets</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Select Property</label>
-          <select formControlName="propertyId" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-            <option value="">Select a property</option>
-            <option *ngFor="let p of properties" [value]="p._id">{{ p.reference }} - {{ p.address }}</option>
-          </select>
-          <div *ngIf="rentalForm.get('propertyId')?.touched && rentalForm.get('propertyId')?.invalid" class="text-red-500 text-xs mt-1">Property is required</div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Property Selection -->
+      <section class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+          <span class="material-symbols-outlined text-primary">real_estate_agent</span>
+          Property Assets
+        </h2>
+        <div class="space-y-4">
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Select Property</label>
+            <div class="relative">
+              <select formControlName="propertyId" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+                <option value="" class="bg-background-dark">Select a property</option>
+                <option *ngFor="let p of properties" [value]="p._id" class="bg-background-dark">{{ p.reference }} - {{ p.address }}</option>
+              </select>
+              <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">expand_more</span>
+            </div>
+            <div *ngIf="rentalForm.get('propertyId')?.touched && rentalForm.get('propertyId')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">Property is required</div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Customer Profile -->
-    <section>
-      <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Customer Profile</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-          <input type="text" formControlName="customerName" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="e.g. John Doe">
-          <div *ngIf="rentalForm.get('customerName')?.touched && rentalForm.get('customerName')?.invalid" class="text-red-500 text-xs mt-1">Name is required</div>
+      <!-- Customer Profile -->
+      <section class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+          <span class="material-symbols-outlined text-primary">person</span>
+          Customer Profile
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Full Name</label>
+            <input type="text" formControlName="customerName" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" placeholder="e.g. John Doe">
+            <div *ngIf="rentalForm.get('customerName')?.touched && rentalForm.get('customerName')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">Name is required</div>
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Phone Number</label>
+            <input type="text" formControlName="customerPhone" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" placeholder="+216 12345678">
+            <div *ngIf="rentalForm.get('customerPhone')?.touched && rentalForm.get('customerPhone')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">Phone is required</div>
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Email Address</label>
+            <input type="email" formControlName="customerEmail" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" placeholder="john@example.com">
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Identity Status</label>
+            <div class="relative">
+              <select formControlName="identityVerificationStatus" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+                <option value="PENDING" class="bg-background-dark">Pending Verification</option>
+                <option value="VERIFIED" class="bg-background-dark">Verified</option>
+                <option value="REJECTED" class="bg-background-dark">Rejected</option>
+              </select>
+              <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">expand_more</span>
+            </div>
+          </div>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-          <input type="text" formControlName="customerPhone" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="+216 12345678">
-          <div *ngIf="rentalForm.get('customerPhone')?.touched && rentalForm.get('customerPhone')?.invalid" class="text-red-500 text-xs mt-1">Phone is required</div>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-          <input type="email" formControlName="customerEmail" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="john@example.com">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Identity Status</label>
-          <select formControlName="identityVerificationStatus" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-            <option value="PENDING">Pending Verification</option>
-            <option value="VERIFIED">Verified</option>
-            <option value="REJECTED">Rejected</option>
-          </select>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
 
     <!-- Financial Details -->
-    <section formGroupName="financialDetails">
-      <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Financial Details</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Rent Amount (TND)</label>
-          <input type="number" formControlName="rentAmount" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+    <section formGroupName="financialDetails" class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+      <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+        <span class="material-symbols-outlined text-primary">payments</span>
+        Financial Details
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Rent Amount (TND)</label>
+          <input type="number" formControlName="rentAmount" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Deposit Amount (TND)</label>
-          <input type="number" formControlName="depositAmount" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Deposit Amount (TND)</label>
+          <input type="number" formControlName="depositAmount" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Payment Frequency</label>
-          <select formControlName="paymentFrequency" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-            <option value="MONTHLY">Monthly</option>
-            <option value="QUARTERLY">Quarterly</option>
-            <option value="YEARLY">Yearly</option>
-          </select>
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Payment Frequency</label>
+          <div class="relative">
+            <select formControlName="paymentFrequency" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+              <option value="MONTHLY" class="bg-background-dark">Monthly</option>
+              <option value="QUARTERLY" class="bg-background-dark">Quarterly</option>
+              <option value="YEARLY" class="bg-background-dark">Yearly</option>
+            </select>
+            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">expand_more</span>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Timeline -->
-    <section formGroupName="timeline">
-      <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Timeline</h3>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-          <input type="date" formControlName="startDate" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+    <section formGroupName="timeline" class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+      <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+        <span class="material-symbols-outlined text-primary">calendar_today</span>
+        Timeline
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Start Date</label>
+          <input type="date" formControlName="startDate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Duration (Months)</label>
-          <input type="number" formControlName="duration" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Duration (Months)</label>
+          <input type="number" formControlName="duration" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-          <input type="date" formControlName="endDate" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" readonly>
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">End Date</label>
+          <input type="date" formControlName="endDate" class="w-full bg-white/10 border border-white/20 text-white rounded p-3 text-sm outline-none transition-all cursor-not-allowed" readonly>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Projected Renewal</label>
-          <input type="date" formControlName="renewalDate" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-        </div>
-      </div>
-    </section>
-
-    <!-- Metadata -->
-    <section formGroupName="metadata">
-      <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Additional Info</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Utility Hand-over Notes</label>
-          <textarea formControlName="utilityNotes" rows="3" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="e.g. Electricity meter reading: 45678"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Emergency Contact Info</label>
-          <textarea formControlName="emergencyContact" rows="3" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="e.g. Next of kin contact"></textarea>
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Renewal Date</label>
+          <input type="date" formControlName="renewalDate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
         </div>
       </div>
     </section>
 
-    <div class="pt-6 border-t flex justify-end">
-      <button type="submit" [disabled]="rentalForm.invalid || isLoading" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-        <span *ngIf="!isLoading">Provision Rental</span>
-        <span *ngIf="isLoading" class="flex items-center">
-          <i class="fas fa-circle-notch fa-spin mr-2"></i> Processing...
-        </span>
+    <!-- Metadata & Notes -->
+    <section formGroupName="metadata" class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+      <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+        <span class="material-symbols-outlined text-primary">notes</span>
+        Additional Information
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Utility Notes</label>
+          <textarea formControlName="utilityNotes" rows="3" placeholder="Meter readings, utility inclusions..." class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all resize-none"></textarea>
+        </div>
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Emergency Contact</label>
+          <textarea formControlName="emergencyContact" rows="3" placeholder="Name, relation, and phone number..." class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all resize-none"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <div class="flex items-center justify-end gap-6 pt-8">
+      <button type="button" routerLink="/dashboard/rentals" class="px-8 py-3 rounded uppercase text-[10px] font-bold tracking-[0.2em] text-slate-500 hover:text-white transition-all">
+        Discard Changes
+      </button>
+      <button type="submit" [disabled]="isLoading || rentalForm.invalid" class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-12 py-4 rounded uppercase text-xs font-bold tracking-[0.2em] transition-all shadow-xl shadow-primary/20 flex items-center gap-3">
+        <span *ngIf="isLoading" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+        <span *ngIf="!isLoading" class="material-symbols-outlined text-sm">assignment_turned_in</span>
+        {{ isLoading ? 'Provisioning...' : 'Provision Rental' }}
       </button>
     </div>
   </form>

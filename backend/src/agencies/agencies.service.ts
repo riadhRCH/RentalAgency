@@ -4,11 +4,14 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import * as twilio from 'twilio';
 import { RentalAgency, RentalAgencyDocument } from '../schemas/rental-agency.schema';
 import { Personnel, PersonnelDocument } from '../schemas/personnel.schema';
+import { Lead, LeadDocument } from '../schemas/lead.schema';
+import { VisitRequest, VisitRequestDocument } from '../schemas/visit-request.schema';
+import { Rental, RentalDocument } from '../schemas/rental.schema';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { ProvisionNumberDto } from './dto/provision-number.dto';
 
@@ -21,11 +24,28 @@ export class AgenciesService {
     private readonly agencyModel: Model<RentalAgencyDocument>,
     @InjectModel(Personnel.name)
     private readonly personnelModel: Model<PersonnelDocument>,
+    @InjectModel(Lead.name)
+    private readonly leadModel: Model<LeadDocument>,
+    @InjectModel(VisitRequest.name)
+    private readonly visitRequestModel: Model<VisitRequestDocument>,
+    @InjectModel(Rental.name)
+    private readonly rentalModel: Model<RentalDocument>,
   ) {
     this.twilioClient = twilio(
       process.env.TWILIO_ACCOUNT_SID,
       process.env.TWILIO_AUTH_TOKEN,
     );
+  }
+
+  async getStats(agencyId: string) {
+    const objectId = new Types.ObjectId(agencyId)
+    const [totalLeads, totalVisits, totalRentals] = await Promise.all([
+      this.leadModel.countDocuments({  agencyId: objectId }),
+      this.visitRequestModel.countDocuments({ agencyId: objectId }),
+      this.rentalModel.countDocuments({ agencyId: objectId }),
+    ]);
+
+    return { totalLeads, totalVisits, totalRentals };
   }
 
   async create(dto: CreateAgencyDto) {

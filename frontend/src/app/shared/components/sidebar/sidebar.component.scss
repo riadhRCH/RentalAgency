@@ -1,3 +1,10 @@
 :host {
   display: block;
 }
+
+/* Selected design for sub-items */
+.active-sub-item {
+  span {
+    opacity: 1 !important;
+  }
+}

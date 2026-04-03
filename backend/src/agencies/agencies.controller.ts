@@ -9,6 +9,12 @@ import { AgencyGuard } from '../auth/agency.guard';
 export class AgenciesController {
   constructor(private readonly agenciesService: AgenciesService) {}
 
+  @UseGuards(JwtAuthGuard, AgencyGuard)
+  @Get('stats')
+  async getStats(@Request() req) {
+    return this.agenciesService.getStats(req.agencyId.toString());
+  }
+
   // Admin: create a new agency
   @Post('create')
   async create(@Body() dto: CreateAgencyDto) {

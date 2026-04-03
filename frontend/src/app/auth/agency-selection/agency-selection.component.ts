@@ -23,6 +23,6 @@ export class AgencySelectionComponent implements OnInit {
 
   onSelect(agency: Agency) {
     this.authService.setActiveAgency(agency.id);
-    this.router.navigate(['/']);
+    this.router.navigate(['/dashboard/overview']);
   }
 }

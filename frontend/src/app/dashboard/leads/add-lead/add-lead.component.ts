@@ -4,11 +4,12 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Router, RouterModule } from '@angular/router';
 import { LeadsService } from '../../../services/leads.service';
 import { PhoneInputComponent } from '../../../shared/components/phone-input/phone-input.component';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 
 @Component({
   selector: 'app-add-lead',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, PhoneInputComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, PhoneInputComponent, TranslatePipe],
   templateUrl: './add-lead.component.html',
   styleUrls: ['./add-lead.component.scss']
 })

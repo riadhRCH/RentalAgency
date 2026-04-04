@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -6,15 +6,18 @@ import { RentalsService } from '../../services/rentals.service';
 import { LeadsService } from '../../services/leads.service';
 import { VisitsService } from '../../services/visits.service';
 import { PropertiesService, Property } from '../../services/properties.service';
+import { TranslatePipe } from '../../i18n/translate.pipe';
+import { I18nService } from '../../i18n/i18n.service';
 
 @Component({
   selector: 'app-rental-provisioning',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe],
   templateUrl: './rental-provisioning.component.html',
   styleUrls: ['./rental-provisioning.component.scss']
 })
 export class RentalProvisioningComponent implements OnInit {
+  private readonly i18n = inject(I18nService);
   rentalForm: FormGroup;
   isLoading = false;
   properties: Property[] = [];
@@ -77,11 +80,11 @@ export class RentalProvisioningComponent implements OnInit {
     if (leadId) {
       this.sourceInfo = { type: 'LEAD', id: leadId };
       this.loadLeadData(leadId);
-      this.notification = "This rental is being created from a Lead. The lead will be automatically closed upon completion.";
+      this.notification = this.i18n.translate('RENTAL_FORM.NOTIFICATION_LEAD');
     } else if (visitId) {
       this.sourceInfo = { type: 'VISIT', id: visitId };
       this.loadVisitData(visitId);
-      this.notification = "This rental is being created from a Visit Request. The visit will be automatically closed upon completion.";
+      this.notification = this.i18n.translate('RENTAL_FORM.NOTIFICATION_VISIT');
     }
   }
 
@@ -145,7 +148,7 @@ export class RentalProvisioningComponent implements OnInit {
       },
       error: () => {
         this.isLoading = false;
-        alert('Failed to create rental');
+        alert(this.i18n.translate('RENTAL_FORM.CREATE_FAILED'));
       }
     });
   }

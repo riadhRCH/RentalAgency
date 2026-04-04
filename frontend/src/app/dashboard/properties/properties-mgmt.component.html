@@ -2,10 +2,10 @@
   <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div>
       <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
-        Properties Portfolio
+        {{ 'PROPERTIES.TITLE' | translate }}
       </h1>
       <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
-        Manage Agency Listings
+        {{ 'PROPERTIES.SUBTITLE' | translate }}
       </p>
     </div>
     
@@ -14,16 +14,16 @@
         [(ngModel)]="typeFilter" 
         (ngModelChange)="onFilterChange()"
         class="bg-white/5 border border-white/10 text-white rounded p-3 text-xs font-bold uppercase tracking-widest outline-none focus:border-primary transition-all appearance-none cursor-pointer pr-10">
-        <option value="" class="bg-background-dark">All Types</option>
-        <option value="apartment" class="bg-background-dark">Apartment</option>
-        <option value="villa" class="bg-background-dark">Villa</option>
-        <option value="house" class="bg-background-dark">House</option>
-        <option value="land" class="bg-background-dark">Land</option>
+        <option value="" class="bg-background-dark">{{ 'PROPERTIES.ALL_TYPES' | translate }}</option>
+        <option value="apartment" class="bg-background-dark">{{ 'PROPERTIES.TYPE_APARTMENT' | translate }}</option>
+        <option value="villa" class="bg-background-dark">{{ 'PROPERTIES.TYPE_VILLA' | translate }}</option>
+        <option value="house" class="bg-background-dark">{{ 'PROPERTIES.TYPE_HOUSE' | translate }}</option>
+        <option value="land" class="bg-background-dark">{{ 'PROPERTIES.TYPE_LAND' | translate }}</option>
       </select>
       
       <button (click)="navigateToAddProperty()" class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
         <span class="material-symbols-outlined text-sm">add</span>
-        New Listing
+        {{ 'PROPERTIES.NEW_LISTING' | translate }}
       </button>
     </div>
   </header>
@@ -36,9 +36,9 @@
     <div *ngIf="!loading() && properties.length === 0" class="col-span-full p-12 text-center text-slate-500">
       <app-empty-state 
         icon="home"
-        title="No Properties Listed"
-        description="Your agency's property portfolio is currently empty or no listings match your criteria."
-        [actionLabel]="typeFilter ? 'Clear Filter' : 'Add Property'"
+        [title]="'PROPERTIES.NO_PROPERTIES_TITLE' | translate"
+        [description]="'PROPERTIES.NO_PROPERTIES_DESC' | translate"
+        [actionLabel]="typeFilter ? i18n.translate('COMMON.CLEAR_FILTER') : i18n.translate('PROPERTIES.ADD_PROPERTY')"
         (action)="typeFilter ? clearFilter() : navigateToAddProperty()">
       </app-empty-state>
     </div>
@@ -50,7 +50,7 @@
           <span class="material-symbols-outlined text-5xl">image</span>
         </div>
         <div class="absolute top-4 left-4 px-3 py-1 bg-background-dark/80 backdrop-blur rounded text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/20">
-          {{ prop.type }}
+          {{ getPropertyTypeLabel(prop.type) }}
         </div>
         <div class="absolute bottom-4 right-4 px-3 py-1 bg-primary text-white rounded text-xs font-bold tracking-widest">
           ${{ prop.price | number }}
@@ -73,13 +73,13 @@
           </div>
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-primary text-sm">info</span>
-            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{{ prop.status }}</span>
+            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{{ getPropertyStatusLabel(prop.status) }}</span>
           </div>
         </div>
 
         <div class="pt-4 mt-auto flex items-center justify-between">
           <button (click)="navigateToEditProperty(prop._id)" class="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-primary transition-colors flex items-center gap-1">
-            Edit Details
+            {{ 'PROPERTIES.EDIT_DETAILS' | translate }}
             <span class="material-symbols-outlined text-sm">edit</span>
           </button>
           <button (click)="deleteProperty(prop._id)" class="p-2 rounded hover:bg-red-500/10 text-slate-500 hover:text-red-500 transition-all">

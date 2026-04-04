@@ -5,11 +5,12 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PropertiesService } from '../../../services/properties.service';
 import { PersonnelService } from '../../../services/personnel.service';
 import { PhoneInputComponent } from '../../../shared/components/phone-input/phone-input.component';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 
 @Component({
   selector: 'app-add-property',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, PhoneInputComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, PhoneInputComponent, TranslatePipe],
   templateUrl: './add-property.component.html',
   styleUrls: ['./add-property.component.scss']
 })

@@ -52,7 +52,7 @@ export class AgenciesService {
     );
   }
 
-  private getAgencyCountryCode(forwardingNumber?: string) {
+  private getAgencyCountryCode(forwardingNumber?: string) {  //example +21694669601
     const normalizedForwardingNumber = (forwardingNumber || '').replace(/[\s()-]/g, '');
     const matchedCountry = DIAL_CODE_TO_COUNTRY_CODE.find(({ dialCode }) =>
       normalizedForwardingNumber.startsWith(dialCode),

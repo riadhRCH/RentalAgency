@@ -5,11 +5,12 @@ import { AgencyService } from '../../services/agency.service';
 import { AuthService } from '../../auth/auth.service';
 import { RouterModule } from '@angular/router';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [CommonModule, RouterModule, EmptyStateComponent],
+  imports: [CommonModule, RouterModule, EmptyStateComponent, TranslatePipe],
   templateUrl: './overview.component.html',
   styleUrls: ['./overview.component.scss']
 })

@@ -4,17 +4,20 @@ import { PropertiesService, Property } from '../../services/properties.service';
 import { FormsModule } from '@angular/forms';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { Router } from '@angular/router';
+import { TranslatePipe } from '../../i18n/translate.pipe';
+import { I18nService } from '../../i18n/i18n.service';
 
 @Component({
   selector: 'app-properties-mgmt',
   standalone: true,
-  imports: [CommonModule, FormsModule, EmptyStateComponent],
+  imports: [CommonModule, FormsModule, EmptyStateComponent, TranslatePipe],
   templateUrl: './properties-mgmt.component.html',
   styleUrls: ['./properties-mgmt.component.scss']
 })
 export class PropertiesMgmtComponent implements OnInit {
   private propertiesService = inject(PropertiesService);
   private router = inject(Router);
+  readonly i18n = inject(I18nService);
 
   properties: Property[] = [];
   loading = signal(true);
@@ -58,10 +61,18 @@ export class PropertiesMgmtComponent implements OnInit {
   }
 
   deleteProperty(id: string) {
-    if (confirm('Are you sure you want to delete this property?')) {
+    if (confirm(this.i18n.translate('CONFIRM.DELETE_PROPERTY'))) {
       this.propertiesService.deleteProperty(id).subscribe(() => {
         this.loadProperties(this.currentPage);
       });
     }
+  }
+
+  getPropertyTypeLabel(type: string) {
+    return this.i18n.translate(`PROPERTIES.TYPE_${type.toUpperCase()}`);
+  }
+
+  getPropertyStatusLabel(status: string) {
+    return this.i18n.translate(`PROPERTY_FORM.STATUS_${status.toUpperCase()}`);
   }
 }

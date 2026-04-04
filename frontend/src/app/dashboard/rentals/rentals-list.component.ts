@@ -1,17 +1,20 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { RentalsService, Rental } from '../../services/rentals.service';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { TranslatePipe } from '../../i18n/translate.pipe';
+import { I18nService } from '../../i18n/i18n.service';
 
 @Component({
   selector: 'app-rentals-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, EmptyStateComponent],
+  imports: [CommonModule, RouterModule, EmptyStateComponent, TranslatePipe],
   templateUrl: './rentals-list.component.html',
   styleUrls: ['./rentals-list.component.scss']
 })
 export class RentalsListComponent implements OnInit {
+  private readonly i18n = inject(I18nService);
   rentals: Rental[] = [];
   isLoading = signal(true);
   error: string | null = null;
@@ -30,7 +33,7 @@ export class RentalsListComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: (err) => {
-        this.error = 'Failed to load rentals';
+        this.error = this.i18n.translate('RENTALS.LOAD_FAILED');
         this.isLoading.set(false);
       }
     });
@@ -47,7 +50,7 @@ export class RentalsListComponent implements OnInit {
   }
 
   closeRental(id: string): void {
-    if (confirm('Are you sure you want to close this rental? The property will become available again.')) {
+    if (confirm(this.i18n.translate('CONFIRM.CLOSE_RENTAL_AND_RELEASE'))) {
       this.rentalsService.closeRental(id).subscribe(() => {
         this.loadRentals();
       });
@@ -55,10 +58,14 @@ export class RentalsListComponent implements OnInit {
   }
 
   deleteRental(id: string): void {
-    if (confirm('Are you sure you want to delete this rental record?')) {
+    if (confirm(this.i18n.translate('CONFIRM.DELETE_RENTAL'))) {
       this.rentalsService.delete(id).subscribe(() => {
         this.loadRentals();
       });
     }
+  }
+
+  getRentalStatusLabel(status: string) {
+    return this.i18n.translate(`COMMON.${status}`);
   }
 }

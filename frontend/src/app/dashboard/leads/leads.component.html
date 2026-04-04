@@ -2,10 +2,10 @@
   <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div>
       <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
-        Leads Management
+        {{ 'LEADS.TITLE' | translate }}
       </h1>
       <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
-        Found {{ totalLeads }} Total Records
+        {{ 'LEADS.SUBTITLE' | translate:{ count: totalLeads } }}
       </p>
     </div>
     
@@ -15,11 +15,11 @@
           [(ngModel)]="statusFilter" 
           (change)="onFilterChange()"
           class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-xs font-bold uppercase tracking-widest outline-none focus:border-primary transition-all appearance-none cursor-pointer pr-10">
-          <option value="" class="bg-background-dark">All Statuses</option>
-          <option value="NEW" class="bg-background-dark">New Leads</option>
-          <option value="CONTACTED" class="bg-background-dark">Contacted</option>
-          <option value="QUALIFIED" class="bg-background-dark">Qualified</option>
-          <option value="LOST" class="bg-background-dark">Lost</option>
+          <option value="" class="bg-background-dark">{{ 'LEADS.ALL_STATUSES' | translate }}</option>
+          <option value="NEW" class="bg-background-dark">{{ 'LEADS.NEW_LEAD' | translate }}</option>
+          <option value="CONTACTED" class="bg-background-dark">{{ 'COMMON.CONTACTED' | translate }}</option>
+          <option value="QUALIFIED" class="bg-background-dark">{{ 'COMMON.QUALIFIED' | translate }}</option>
+          <option value="LOST" class="bg-background-dark">{{ 'COMMON.LOST' | translate }}</option>
         </select>
         <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">
           expand_more
@@ -28,7 +28,7 @@
 
       <button (click)="navigateToAddLead()" class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center gap-2 whitespace-nowrap">
         <span class="material-symbols-outlined text-sm">add</span>
-        New Lead
+        {{ 'LEADS.NEW_LEAD' | translate }}
       </button>
     </div>
   </header>
@@ -39,11 +39,11 @@
       <table class="w-full text-left border-collapse">
         <thead class="bg-white/5 border-b border-white/10">
           <tr>
-            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Caller Identity</th>
-            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Status</th>
-            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Last Activity</th>
-            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Interactions</th>
-            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">Actions</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'LEADS.CALLER_IDENTITY' | translate }}</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'COMMON.STATUS' | translate }}</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'LEADS.LAST_ACTIVITY' | translate }}</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'LEADS.INTERACTIONS' | translate }}</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">{{ 'LEADS.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-white/5">
@@ -56,9 +56,9 @@
             <td colspan="5" class="p-12 text-center text-slate-500">
               <app-empty-state 
                 icon="person_search"
-                title="No Leads Found"
-                description="No customer leads match your current filter or the database is empty. Check back later or adjust your filters."
-                [actionLabel]="statusFilter ? 'Clear Filters' : 'Add Lead'"
+                [title]="'LEADS.NO_LEADS_TITLE' | translate"
+                [description]="'LEADS.NO_LEADS_DESC' | translate"
+                [actionLabel]="statusFilter ? i18n.translate('COMMON.CLEAR_FILTERS') : i18n.translate('LEADS.ADD_LEAD')"
                 (action)="statusFilter ? clearFilter() : navigateToAddLead()">
               </app-empty-state>
             </td>
@@ -72,7 +72,7 @@
                 <div>
                   <h4 class="font-bold text-slate-900 dark:text-white">{{ lead.customerPhone }}</h4>
                   <p class="text-[10px] text-slate-500 uppercase tracking-widest">
-                    {{ lead.customerName || 'Anonymous Caller' }}
+                    {{ lead.customerName || ('COMMON.ANONYMOUS_CALLER' | translate) }}
                   </p>
                 </div>
               </div>
@@ -88,17 +88,17 @@
                   'text-emerald-500': lead.status === 'CONTACTED',
                   'text-slate-500': lead.status === 'LOST'
                 }">
-                <option value="NEW">NEW</option>
-                <option value="CONTACTED">CONTACTED</option>
-                <option value="QUALIFIED">QUALIFIED</option>
-                <option value="LOST">LOST</option>
+                <option value="NEW">{{ getLeadStatusLabel('NEW') }}</option>
+                <option value="CONTACTED">{{ getLeadStatusLabel('CONTACTED') }}</option>
+                <option value="QUALIFIED">{{ getLeadStatusLabel('QUALIFIED') }}</option>
+                <option value="LOST">{{ getLeadStatusLabel('LOST') }}</option>
               </select>
             </td>
             <td class="p-6">
               <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                 {{ lead.lastInteraction | date:'MMM d, yyyy' }}
                 <span class="block text-[9px] text-slate-500 font-normal lowercase mt-1">
-                  at {{ lead.lastInteraction | date:'h:mm a' }}
+                  {{ 'COMMON.AT_TIME' | translate:{ time: (lead.lastInteraction | date:'h:mm a') } }}
                 </span>
               </div>
             </td>
@@ -113,7 +113,7 @@
                   </div>
                 </div>
                 <span class="text-[9px] text-slate-500 uppercase font-bold" *ngIf="lead.activities.length > 3">
-                  +{{ lead.activities.length - 3 }} more
+                  +{{ lead.activities.length - 3 }} {{ 'COMMON.MORE' | translate }}
                 </span>
               </div>
             </td>
@@ -121,7 +121,7 @@
               <div class="flex items-center justify-end gap-3">
                 <a [routerLink]="['/dashboard/rentals/provision']" [queryParams]="{ leadId: lead._id }" 
                    class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-emerald-500 transition-all"
-                   title="Provision Rental">
+                   [title]="'LEADS.PROVISION_RENTAL' | translate">
                   <span class="material-symbols-outlined text-sm">contract</span>
                 </a>
                 <button class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-primary transition-all">
@@ -140,7 +140,7 @@
     <!-- Pagination -->
     <div class="p-6 bg-white/5 flex items-center justify-between border-t border-white/10">
       <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">
-        Page {{ currentPage }} of {{ totalPages }}
+        {{ 'COMMON.PAGE_OF' | translate:{ current: currentPage, total: totalPages } }}
       </p>
       <div class="flex gap-2">
         <button 

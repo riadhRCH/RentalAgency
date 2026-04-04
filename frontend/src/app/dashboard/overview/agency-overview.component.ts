@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { AgencyService } from '../../services/agency.service';
 import { filter } from 'rxjs/operators';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 
 @Component({
   selector: 'app-agency-overview',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslatePipe],
   template: `
     <div class="min-h-screen bg-background-dark text-slate-300">
       <!-- Stats Navigation Header -->
@@ -23,7 +24,7 @@ import { filter } from 'rxjs/operators';
                   {{ stats.totalLeads }}
                 </span>
                 <span class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity">
-                  Leads
+                  {{ 'SIDEBAR.LEADS' | translate }}
                 </span>
                 <div routerLinkActive="opacity-100 scale-100" class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-primary rounded-full blur-[2px] opacity-0 scale-50 transition-all duration-300"></div>
               </button>
@@ -38,7 +39,7 @@ import { filter } from 'rxjs/operators';
                   {{ stats.totalVisits }}
                 </span>
                 <span class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity">
-                  Visits
+                  {{ 'SIDEBAR.VISITS' | translate }}
                 </span>
                 <div routerLinkActive="opacity-100 scale-100" class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-primary rounded-full blur-[2px] opacity-0 scale-50 transition-all duration-300"></div>
               </button>
@@ -53,7 +54,7 @@ import { filter } from 'rxjs/operators';
                   {{ stats.totalRentals }}
                 </span>
                 <span class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity">
-                  Rents
+                  {{ 'RENTALS.TITLE' | translate }}
                 </span>
                 <div routerLinkActive="opacity-100 scale-100" class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-primary rounded-full blur-[2px] opacity-0 scale-50 transition-all duration-300"></div>
               </button>

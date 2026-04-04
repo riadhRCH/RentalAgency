@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { AgencyService, VirtualNumber, AgencySettings } from '../../services/agency.service';
 import { FormsModule } from '@angular/forms';
 import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
+import { TranslatePipe } from '../../i18n/translate.pipe';
+import { I18nService } from '../../i18n/i18n.service';
 
 interface AreaCodeOption {
   code: string;
@@ -12,12 +14,13 @@ interface AreaCodeOption {
 @Component({
   selector: 'app-config',
   standalone: true,
-  imports: [CommonModule, FormsModule, PhoneInputComponent],
+  imports: [CommonModule, FormsModule, PhoneInputComponent, TranslatePipe],
   templateUrl: './config.component.html',
   styleUrls: ['./config.component.scss']
 })
 export class ConfigComponent implements OnInit {
   private agencyService = inject(AgencyService);
+  private i18n = inject(I18nService);
 
   areaCodeOptions: AreaCodeOption[] = [
     { code: '212', label: 'Tunisia' },
@@ -69,7 +72,7 @@ export class ConfigComponent implements OnInit {
     this.settings.areaCode = this.normalizeAreaCode(this.settings.areaCode);
 
     if (this.settings.areaCode && !this.hasValidAreaCode(this.settings.areaCode)) {
-      this.error = 'Area code must be exactly 3 digits';
+      this.error = this.i18n.translate('CONFIG.AREA_CODE_INVALID');
       this.saving = false;
       return;
     }
@@ -77,11 +80,11 @@ export class ConfigComponent implements OnInit {
     this.agencyService.updateSettings(this.settings).subscribe({
       next: () => {
         this.newNumber.areaCode = this.settings.areaCode;
-        this.message = 'Settings updated successfully';
+        this.message = this.i18n.translate('CONFIG.SETTINGS_UPDATED');
         this.saving = false;
       },
       error: () => {
-        this.error = 'Failed to update settings';
+        this.error = this.i18n.translate('CONFIG.SETTINGS_UPDATE_FAILED');
         this.saving = false;
       }
     });
@@ -115,7 +118,7 @@ export class ConfigComponent implements OnInit {
     }
 
     this.areaCodeOptions = [
-      { code, label: 'Saved Area Code' },
+      { code, label: this.i18n.translate('CONFIG.SAVED_AREA_CODE') },
       ...this.areaCodeOptions,
     ];
   }
@@ -123,7 +126,7 @@ export class ConfigComponent implements OnInit {
   provisionNumber() {
     this.newNumber.areaCode = this.normalizeAreaCode(this.newNumber.areaCode || this.settings.areaCode);
     if (!this.hasValidAreaCode(this.newNumber.areaCode)) {
-      this.error = 'Area code must be exactly 3 digits';
+      this.error = this.i18n.translate('CONFIG.AREA_CODE_INVALID');
       return;
     }
 
@@ -133,13 +136,13 @@ export class ConfigComponent implements OnInit {
     
     this.agencyService.provisionNumber(this.newNumber.areaCode, this.newNumber.label).subscribe({
       next: () => {
-        this.message = 'Number provisioned successfully';
+        this.message = this.i18n.translate('CONFIG.NUMBER_PROVISIONED');
         this.provisioning = false;
         this.newNumber = { areaCode: this.settings.areaCode, label: '' };
         this.loadData();
       },
       error: (err) => {
-        this.error = err.error?.message || 'Failed to provision number';
+        this.error = err.error?.message || this.i18n.translate('CONFIG.NUMBER_PROVISION_FAILED');
         this.provisioning = false;
       }
     });

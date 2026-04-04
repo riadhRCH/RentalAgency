@@ -2,9 +2,9 @@
     <!-- Left: Context Info -->
     <div class="flex items-center gap-4">
         <div class="flex flex-col">
-            <span class="text-[10px] uppercase tracking-widest text-silver-500 font-bold leading-none mb-1">Active Agency</span>
+            <span class="text-[10px] uppercase tracking-widest text-silver-500 font-bold leading-none mb-1">{{ 'NAVBAR.ACTIVE_AGENCY' | translate }}</span>
             <span class="text-sm font-bold text-white uppercase tracking-wider">
-                {{ authService.activeAgencyId() ? 'Doghmani Homes & Estates' : 'No Agency Selected' }}
+                {{ authService.activeAgencyId() ? ('NAVBAR.DEFAULT_AGENCY_NAME' | translate) : ('COMMON.NO_AGENCY_SELECTED' | translate) }}
             </span>
         </div>
         
@@ -12,12 +12,33 @@
         
         <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded bg-white/5 border border-white/10">
             <span class="material-symbols-outlined text-xs text-primary">verified</span>
-            <span class="text-[10px] font-bold text-silver-300 uppercase tracking-widest">Premium Partner</span>
+            <span class="text-[10px] font-bold text-silver-300 uppercase tracking-widest">{{ 'COMMON.PREMIUM_PARTNER' | translate }}</span>
         </div>
     </div>
 
     <!-- Right: Quick Actions -->
     <div class="flex items-center gap-4">
+        <div class="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 p-1">
+            <button
+                type="button"
+                (click)="setLanguage('en')"
+                [class.bg-primary]="i18n.language() === 'en'"
+                [class.text-white]="i18n.language() === 'en'"
+                [class.text-silver-400]="i18n.language() !== 'en'"
+                class="rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest transition-all">
+                {{ 'LANGUAGE.EN' | translate }}
+            </button>
+            <button
+                type="button"
+                (click)="setLanguage('fr')"
+                [class.bg-primary]="i18n.language() === 'fr'"
+                [class.text-white]="i18n.language() === 'fr'"
+                [class.text-silver-400]="i18n.language() !== 'fr'"
+                class="rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest transition-all">
+                {{ 'LANGUAGE.FR' | translate }}
+            </button>
+        </div>
+
         <!-- Search -->
         <button class="p-2 text-silver-400 hover:text-white hover:bg-white/5 rounded-lg transition-all">
             <span class="material-symbols-outlined">search</span>

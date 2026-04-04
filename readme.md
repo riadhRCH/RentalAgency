@@ -634,3 +634,25 @@ luxury brand experience
 smart property discovery
 
 powerful agency management tools
+
+## Docker Setup
+
+Run the full stack with Docker Compose:
+
+```bash
+copy .env.docker.example .env
+docker compose up --build
+```
+
+Services:
+
+- Frontend: `http://localhost:8080`
+- Backend API: `http://localhost:3000`
+- MongoDB: internal `mongo:27017`
+
+Notes:
+
+- The frontend image builds the Angular app and serves it with Nginx.
+- The backend image builds the NestJS app and runs `npm run start:prod`.
+- The compose stack provisions a MongoDB container automatically.
+- Fill in the Twilio and Cloudinary values in the root `.env` file before using those features.

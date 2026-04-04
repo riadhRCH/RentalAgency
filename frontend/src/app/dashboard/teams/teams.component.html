@@ -1,10 +1,10 @@
 <div class="p-8 max-w-7xl mx-auto space-y-12">
   <header>
     <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
-      Agency Team
+      {{ 'TEAMS.TITLE' | translate }}
     </h1>
     <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
-      Manage Staff Access & Permissions
+      {{ 'TEAMS.SUBTITLE' | translate }}
     </p>
   </header>
 
@@ -12,7 +12,7 @@
     <!-- Staff List -->
     <div class="lg:col-span-2 space-y-6">
       <h2 class="font-serif text-2xl font-bold tracking-tight text-slate-900 dark:text-white uppercase">
-        Active Members
+        {{ 'TEAMS.ACTIVE_MEMBERS' | translate }}
       </h2>
       <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
         <div *ngIf="loading()" class="p-12 text-center text-slate-500">
@@ -22,8 +22,8 @@
         <div *ngIf="!loading() && staff.length === 0" class="p-12 text-center text-slate-500">
           <app-empty-state 
             icon="group_off"
-            title="No Staff Members"
-            description="Your agency currently has no active staff members. Add your team to start collaborating.">
+            [title]="'TEAMS.NO_STAFF_TITLE' | translate"
+            [description]="'TEAMS.NO_STAFF_DESC' | translate">
           </app-empty-state>
         </div>
 
@@ -36,7 +36,7 @@
               <div>
                 <h4 class="font-bold text-white tracking-wide">
                   {{ member.personnelId?.firstName }} {{ member.personnelId?.lastName }}
-                  <span *ngIf="!member.personnelId?.firstName" class="italic text-slate-500">Pending Profile</span>
+                  <span *ngIf="!member.personnelId?.firstName" class="italic text-slate-500">{{ 'TEAMS.PENDING_PROFILE' | translate }}</span>
                 </h4>
                 <p class="text-[10px] text-slate-500 uppercase tracking-widest">{{ member.personnelId?.phone }}</p>
               </div>
@@ -61,16 +61,16 @@
     <!-- Add Member Form -->
     <div class="space-y-6">
       <h2 class="font-serif text-2xl font-bold tracking-tight text-slate-900 dark:text-white uppercase">
-        Add Member
+        {{ 'TEAMS.ADD_MEMBER' | translate }}
       </h2>
       <div class="glass-card p-8 rounded-2xl border border-white/10 space-y-8">
         <p class="text-xs text-slate-400 leading-relaxed">
-          Invite a new staff member by their phone number. If they don't have an account, a minimal profile will be created.
+          {{ 'TEAMS.ADD_MEMBER_DESC' | translate }}
         </p>
 
         <form (ngSubmit)="addMember()" class="space-y-6">
           <div class="space-y-2">
-            <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Staff Phone</label>
+            <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{{ 'TEAMS.STAFF_PHONE' | translate }}</label>
             <app-phone-input 
               name="phone" 
               [(ngModel)]="newMember.phone" 
@@ -80,13 +80,13 @@
           </div>
 
           <div class="space-y-2">
-            <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Assign Role</label>
+            <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{{ 'TEAMS.ASSIGN_ROLE' | translate }}</label>
             <select 
               name="role" 
               [(ngModel)]="newMember.role"
               class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs font-bold uppercase tracking-widest text-white outline-none focus:border-primary transition-all appearance-none cursor-pointer">
-              <option value="agent" class="bg-background-dark">Agent</option>
-              <option value="admin" class="bg-background-dark">Administrator</option>
+              <option value="agent" class="bg-background-dark">{{ 'COMMON.AGENT' | translate }}</option>
+              <option value="admin" class="bg-background-dark">{{ 'COMMON.ADMINISTRATOR' | translate }}</option>
             </select>
           </div>
 
@@ -103,7 +103,7 @@
             class="w-full py-4 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-bold uppercase tracking-widest rounded transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
           >
             <span *ngIf="adding" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
-            {{ adding ? 'Adding Member...' : 'Grant Access' }}
+            {{ adding ? ('TEAMS.ADDING_MEMBER' | translate) : ('TEAMS.GRANT_ACCESS' | translate) }}
           </button>
         </form>
       </div>

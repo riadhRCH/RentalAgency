@@ -2,16 +2,16 @@
   <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div>
       <h1 class="font-serif text-4xl font-bold tracking-tight text-white uppercase silver-glow">
-        Rental Provisioning
+        {{ 'RENTAL_FORM.TITLE' | translate }}
       </h1>
       <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
-        Setup a new rental agreement
+        {{ 'RENTAL_FORM.SUBTITLE' | translate }}
       </p>
     </div>
     
     <button routerLink="/dashboard/rentals" class="text-slate-500 hover:text-white transition-colors flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
       <span class="material-symbols-outlined text-sm">arrow_back</span>
-      Back to Directory
+      {{ 'RENTAL_FORM.BACK_TO_DIRECTORY' | translate }}
     </button>
   </header>
 
@@ -29,19 +29,19 @@
       <section class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
         <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
           <span class="material-symbols-outlined text-primary">real_estate_agent</span>
-          Property Assets
+          {{ 'RENTAL_FORM.PROPERTY_ASSETS' | translate }}
         </h2>
         <div class="space-y-4">
           <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Select Property</label>
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'RENTAL_FORM.SELECT_PROPERTY' | translate }}</label>
             <div class="relative">
               <select formControlName="propertyId" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
-                <option value="" class="bg-background-dark">Select a property</option>
+                <option value="" class="bg-background-dark">{{ 'RENTAL_FORM.SELECT_PROPERTY_PLACEHOLDER' | translate }}</option>
                 <option *ngFor="let p of properties" [value]="p._id" class="bg-background-dark">{{ p.reference }} - {{ p.address }}</option>
               </select>
               <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">expand_more</span>
             </div>
-            <div *ngIf="rentalForm.get('propertyId')?.touched && rentalForm.get('propertyId')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">Property is required</div>
+            <div *ngIf="rentalForm.get('propertyId')?.touched && rentalForm.get('propertyId')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">{{ 'RENTAL_FORM.PROPERTY_REQUIRED' | translate }}</div>
           </div>
         </div>
       </section>
@@ -50,30 +50,30 @@
       <section class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
         <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
           <span class="material-symbols-outlined text-primary">person</span>
-          Customer Profile
+          {{ 'RENTAL_FORM.CUSTOMER_PROFILE' | translate }}
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Full Name</label>
-            <input type="text" formControlName="customerName" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" placeholder="e.g. John Doe">
-            <div *ngIf="rentalForm.get('customerName')?.touched && rentalForm.get('customerName')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">Name is required</div>
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'RENTAL_FORM.FULL_NAME' | translate }}</label>
+            <input type="text" formControlName="customerName" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" [placeholder]="'RENTAL_FORM.FULL_NAME_PLACEHOLDER' | translate">
+            <div *ngIf="rentalForm.get('customerName')?.touched && rentalForm.get('customerName')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">{{ 'COMMON.NAME_REQUIRED' | translate }}</div>
           </div>
           <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Phone Number</label>
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.PHONE_NUMBER' | translate }}</label>
             <input type="text" formControlName="customerPhone" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" placeholder="+216 12345678">
-            <div *ngIf="rentalForm.get('customerPhone')?.touched && rentalForm.get('customerPhone')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">Phone is required</div>
+            <div *ngIf="rentalForm.get('customerPhone')?.touched && rentalForm.get('customerPhone')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">{{ 'COMMON.PHONE_REQUIRED' | translate }}</div>
           </div>
           <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Email Address</label>
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'RENTAL_FORM.EMAIL_ADDRESS' | translate }}</label>
             <input type="email" formControlName="customerEmail" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" placeholder="john@example.com">
           </div>
           <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Identity Status</label>
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'RENTAL_FORM.IDENTITY_STATUS' | translate }}</label>
             <div class="relative">
               <select formControlName="identityVerificationStatus" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
-                <option value="PENDING" class="bg-background-dark">Pending Verification</option>
-                <option value="VERIFIED" class="bg-background-dark">Verified</option>
-                <option value="REJECTED" class="bg-background-dark">Rejected</option>
+                <option value="PENDING" class="bg-background-dark">{{ 'RENTAL_FORM.PENDING_VERIFICATION' | translate }}</option>
+                <option value="VERIFIED" class="bg-background-dark">{{ 'COMMON.VERIFIED' | translate }}</option>
+                <option value="REJECTED" class="bg-background-dark">{{ 'COMMON.REJECTED' | translate }}</option>
               </select>
               <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">expand_more</span>
             </div>
@@ -86,24 +86,24 @@
     <section formGroupName="financialDetails" class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
       <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
         <span class="material-symbols-outlined text-primary">payments</span>
-        Financial Details
+        {{ 'RENTAL_FORM.FINANCIAL_DETAILS' | translate }}
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="space-y-2">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Rent Amount (TND)</label>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'RENTAL_FORM.RENT_AMOUNT' | translate }}</label>
           <input type="number" formControlName="rentAmount" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
         </div>
         <div class="space-y-2">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Deposit Amount (TND)</label>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'RENTAL_FORM.DEPOSIT_AMOUNT' | translate }}</label>
           <input type="number" formControlName="depositAmount" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
         </div>
         <div class="space-y-2">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Payment Frequency</label>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'RENTAL_FORM.PAYMENT_FREQUENCY' | translate }}</label>
           <div class="relative">
             <select formControlName="paymentFrequency" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
-              <option value="MONTHLY" class="bg-background-dark">Monthly</option>
-              <option value="QUARTERLY" class="bg-background-dark">Quarterly</option>
-              <option value="YEARLY" class="bg-background-dark">Yearly</option>
+              <option value="MONTHLY" class="bg-background-dark">{{ 'COMMON.MONTHLY' | translate }}</option>
+              <option value="QUARTERLY" class="bg-background-dark">{{ 'COMMON.QUARTERLY' | translate }}</option>
+              <option value="YEARLY" class="bg-background-dark">{{ 'COMMON.YEARLY' | translate }}</option>
             </select>
             <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">expand_more</span>
           </div>
@@ -115,23 +115,23 @@
     <section formGroupName="timeline" class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
       <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
         <span class="material-symbols-outlined text-primary">calendar_today</span>
-        Timeline
+        {{ 'RENTAL_FORM.TIMELINE' | translate }}
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div class="space-y-2">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Start Date</label>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'RENTAL_FORM.START_DATE' | translate }}</label>
           <input type="date" formControlName="startDate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
         </div>
         <div class="space-y-2">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Duration (Months)</label>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'RENTAL_FORM.DURATION' | translate }}</label>
           <input type="number" formControlName="duration" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
         </div>
         <div class="space-y-2">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">End Date</label>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'RENTAL_FORM.END_DATE' | translate }}</label>
           <input type="date" formControlName="endDate" class="w-full bg-white/10 border border-white/20 text-white rounded p-3 text-sm outline-none transition-all cursor-not-allowed" readonly>
         </div>
         <div class="space-y-2">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Renewal Date</label>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'RENTAL_FORM.RENEWAL_DATE' | translate }}</label>
           <input type="date" formControlName="renewalDate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
         </div>
       </div>
@@ -141,16 +141,16 @@
     <section formGroupName="metadata" class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
       <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
         <span class="material-symbols-outlined text-primary">notes</span>
-        Additional Information
+        {{ 'RENTAL_FORM.ADDITIONAL_INFORMATION' | translate }}
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="space-y-2">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Utility Notes</label>
-          <textarea formControlName="utilityNotes" rows="3" placeholder="Meter readings, utility inclusions..." class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all resize-none"></textarea>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'RENTAL_FORM.UTILITY_NOTES' | translate }}</label>
+          <textarea formControlName="utilityNotes" rows="3" [placeholder]="'RENTAL_FORM.UTILITY_NOTES_PLACEHOLDER' | translate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all resize-none"></textarea>
         </div>
         <div class="space-y-2">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Emergency Contact</label>
-          <textarea formControlName="emergencyContact" rows="3" placeholder="Name, relation, and phone number..." class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all resize-none"></textarea>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'RENTAL_FORM.EMERGENCY_CONTACT' | translate }}</label>
+          <textarea formControlName="emergencyContact" rows="3" [placeholder]="'RENTAL_FORM.EMERGENCY_CONTACT_PLACEHOLDER' | translate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all resize-none"></textarea>
         </div>
       </div>
     </section>
@@ -158,12 +158,12 @@
     <!-- Actions -->
     <div class="flex items-center justify-end gap-6 pt-8">
       <button type="button" routerLink="/dashboard/rentals" class="px-8 py-3 rounded uppercase text-[10px] font-bold tracking-[0.2em] text-slate-500 hover:text-white transition-all">
-        Discard Changes
+        {{ 'COMMON.DISCARD_CHANGES' | translate }}
       </button>
       <button type="submit" [disabled]="isLoading || rentalForm.invalid" class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-12 py-4 rounded uppercase text-xs font-bold tracking-[0.2em] transition-all shadow-xl shadow-primary/20 flex items-center gap-3">
         <span *ngIf="isLoading" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
         <span *ngIf="!isLoading" class="material-symbols-outlined text-sm">assignment_turned_in</span>
-        {{ isLoading ? 'Provisioning...' : 'Provision Rental' }}
+        {{ isLoading ? ('RENTAL_FORM.PROVISIONING' | translate) : ('RENTAL_FORM.PROVISION_RENTAL' | translate) }}
       </button>
     </div>
   </form>

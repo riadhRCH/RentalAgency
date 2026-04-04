@@ -2,10 +2,10 @@
   <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div>
       <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
-        Visit Requests
+        {{ 'VISITS.TITLE' | translate }}
       </h1>
       <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
-        Manage Scheduled Property Viewings
+        {{ 'VISITS.SUBTITLE' | translate }}
       </p>
     </div>
     
@@ -14,11 +14,11 @@
         [(ngModel)]="statusFilter" 
         (change)="loadVisits(1)"
         class="bg-white/5 border border-white/10 text-white rounded p-3 text-xs font-bold uppercase tracking-widest outline-none focus:border-primary transition-all appearance-none cursor-pointer pr-10">
-        <option value="" class="bg-background-dark">All Requests</option>
-        <option value="PENDING" class="bg-background-dark">Pending</option>
-        <option value="CONFIRMED" class="bg-background-dark">Confirmed</option>
-        <option value="COMPLETED" class="bg-background-dark">Completed</option>
-        <option value="CANCELLED" class="bg-background-dark">Cancelled</option>
+        <option value="" class="bg-background-dark">{{ 'VISITS.ALL_REQUESTS' | translate }}</option>
+        <option value="PENDING" class="bg-background-dark">{{ 'COMMON.PENDING' | translate }}</option>
+        <option value="CONFIRMED" class="bg-background-dark">{{ 'COMMON.CONFIRMED' | translate }}</option>
+        <option value="COMPLETED" class="bg-background-dark">{{ getVisitStatusLabel('COMPLETED') }}</option>
+        <option value="CANCELLED" class="bg-background-dark">{{ getVisitStatusLabel('CANCELLED') }}</option>
       </select>
     </div>
   </header>
@@ -28,11 +28,11 @@
       <table class="w-full text-left border-collapse">
         <thead class="bg-white/5 border-b border-white/10">
           <tr>
-            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Property</th>
-            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Visitor</th>
-            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Visit Date</th>
-            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Status</th>
-            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">Actions</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'VISITS.PROPERTY' | translate }}</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'VISITS.VISITOR' | translate }}</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'VISITS.VISIT_DATE' | translate }}</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'COMMON.STATUS' | translate }}</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">{{ 'LEADS.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-white/5">
@@ -45,9 +45,9 @@
             <td colspan="5" class="p-12 text-center text-slate-500">
               <app-empty-state 
                 icon="calendar_today"
-                title="No Visits Scheduled"
-                description="There are no property viewing requests at the moment. New requests will appear here as they come in."
-                [actionLabel]="statusFilter ? 'Clear Status Filter' : ''"
+                [title]="'VISITS.NO_VISITS_TITLE' | translate"
+                [description]="'VISITS.NO_VISITS_DESC' | translate"
+                [actionLabel]="statusFilter ? i18n.translate('COMMON.CLEAR_STATUS_FILTER') : ''"
                 (action)="statusFilter = ''; loadVisits(1)">
               </app-empty-state>
             </td>
@@ -59,7 +59,7 @@
                   <span class="material-symbols-outlined">home</span>
                 </div>
                 <div>
-                  <h4 class="font-bold text-white text-sm">{{ visit.propertyId?.reference || 'Unknown' }}</h4>
+                  <h4 class="font-bold text-white text-sm">{{ visit.propertyId?.reference || ('COMMON.UNKNOWN' | translate) }}</h4>
                   <p class="text-[10px] text-slate-500 uppercase tracking-widest">{{ visit.propertyId?.type }}</p>
                 </div>
               </div>
@@ -74,7 +74,7 @@
               <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                 {{ visit.visitDate | date:'MMM d, yyyy' }}
                 <span class="block text-[9px] text-slate-500 font-normal lowercase mt-1">
-                  at {{ visit.visitDate | date:'h:mm a' }}
+                  {{ 'COMMON.AT_TIME' | translate:{ time: (visit.visitDate | date:'h:mm a') } }}
                 </span>
               </div>
             </td>
@@ -89,17 +89,17 @@
                   'text-emerald-500': visit.status === 'COMPLETED',
                   'text-red-500': visit.status === 'CANCELLED'
                 }">
-                <option value="PENDING">PENDING</option>
-                <option value="CONFIRMED">CONFIRMED</option>
-                <option value="COMPLETED">COMPLETED</option>
-                <option value="CANCELLED">CANCELLED</option>
+                <option value="PENDING">{{ getVisitStatusLabel('PENDING') }}</option>
+                <option value="CONFIRMED">{{ getVisitStatusLabel('CONFIRMED') }}</option>
+                <option value="COMPLETED">{{ getVisitStatusLabel('COMPLETED') }}</option>
+                <option value="CANCELLED">{{ getVisitStatusLabel('CANCELLED') }}</option>
               </select>
             </td>
             <td class="p-6 text-right">
               <div class="flex items-center justify-end gap-3">
                 <a [routerLink]="['/dashboard/rentals/provision']" [queryParams]="{ visitId: visit._id }" 
                    class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-emerald-500 transition-all"
-                   title="Provision Rental">
+                   [title]="'LEADS.PROVISION_RENTAL' | translate">
                   <span class="material-symbols-outlined text-sm">contract</span>
                 </a>
                 <button (click)="deleteVisit(visit._id)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-red-500 transition-all">

@@ -103,6 +103,8 @@ export class AgenciesService {
         currentAgency.settings?.forwardingNumber,
       );
 
+      console.log('agencyCountryCode', agencyCountryCode)
+
       // Search for an available local number in the given area code
       const availableNumbers = await this.twilioClient
         .availablePhoneNumbers(agencyCountryCode)
@@ -120,9 +122,9 @@ export class AgenciesService {
       const purchased = await this.twilioClient.incomingPhoneNumbers.create({
         phoneNumber: availableNumbers[0].phoneNumber,
         // Twilio will POST to this URL when a call comes in
-        voiceUrl: `${process.env.APP_URL || 'http://localhost:3000'}/webhooks/twilio/inbound`, //question : will i be able to find and edit this in my twilio dashboard ?
+        voiceUrl: `${'https://rantal-agency-backend.onrender.com'}/webhooks/twilio/inbound`, //question : will i be able to find and edit this in my twilio dashboard ?
         voiceMethod: 'POST',
-        statusCallback: `${process.env.APP_URL || 'http://localhost:3000'}/webhooks/twilio/completed`, //question : will i be able to find and edit this in my twilio dashboard ?
+        statusCallback: `${'https://rantal-agency-backend.onrender.com'}/webhooks/twilio/completed`, //question : will i be able to find and edit this in my twilio dashboard ?
         statusCallbackMethod: 'POST',
       });
 

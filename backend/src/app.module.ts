@@ -9,6 +9,7 @@ import { PropertiesModule } from './properties/properties.module';
 import { VisitRequestsModule } from './visits/visits.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { RentalsModule } from './rentals/rentals.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -28,5 +29,6 @@ import { RentalsModule } from './rentals/rentals.module';
     WebhooksModule,
     RentalsModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}

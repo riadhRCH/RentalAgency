@@ -13,7 +13,11 @@ async function bootstrap() {
     }),
   );
 
-  app.enableCors();
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: '*',
+  });
 
   const port = process.env.PORT || 3000;
   await app.listen(port);

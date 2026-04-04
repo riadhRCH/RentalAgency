@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface VirtualNumber {
   sid: string;
@@ -17,7 +18,7 @@ export interface AgencySettings {
   providedIn: 'root'
 })
 export class AgencyService {
-  private readonly apiUrl = 'http://localhost:3000/agencies';
+  private readonly apiUrl = `${environment.apiBaseUrl}/agencies`;
 
   constructor(private http: HttpClient) {}
 

@@ -59,4 +59,12 @@ export class VisitsComponent implements OnInit {
   getVisitStatusLabel(status: string) {
     return this.i18n.translate(`COMMON.${status}`);
   }
+
+  getPropertyTypeLabel(type: string | undefined) {
+    if (!type) {
+      return '';
+    }
+
+    return this.i18n.translate(`PROPERTIES.TYPE_${type.toUpperCase()}`);
+  }
 }

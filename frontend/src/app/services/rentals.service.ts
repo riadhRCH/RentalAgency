@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Rental {
   _id?: string;
@@ -37,7 +38,7 @@ export interface Rental {
   providedIn: 'root'
 })
 export class RentalsService {
-  private readonly apiUrl = 'http://localhost:3000/rentals';
+  private readonly apiUrl = `${environment.apiBaseUrl}/rentals`;
 
   constructor(private http: HttpClient) {}
 

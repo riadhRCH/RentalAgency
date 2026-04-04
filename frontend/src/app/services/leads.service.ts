@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Lead {
   _id: string;
@@ -29,7 +30,7 @@ export interface PaginatedLeads {
   providedIn: 'root'
 })
 export class LeadsService {
-  private readonly apiUrl = 'http://localhost:3000/leads';
+  private readonly apiUrl = `${environment.apiBaseUrl}/leads`;
 
   constructor(private http: HttpClient) {}
 

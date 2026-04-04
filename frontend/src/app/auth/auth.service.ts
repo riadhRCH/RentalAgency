@@ -2,6 +2,7 @@ import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface User {
   id: string;
@@ -20,7 +21,7 @@ export interface Agency {
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:3000/auth';
+  private readonly apiUrl = `${environment.apiBaseUrl}/auth`;
   private readonly TOKEN_KEY = 'auth_token';
   private readonly AGENCY_KEY = 'active_agency_id';
 

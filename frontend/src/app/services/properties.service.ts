@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Property {
   _id: string;
@@ -32,7 +33,7 @@ export interface PaginatedProperties {
   providedIn: 'root'
 })
 export class PropertiesService {
-  private readonly apiUrl = 'http://localhost:3000/properties';
+  private readonly apiUrl = `${environment.apiBaseUrl}/properties`;
 
   constructor(private http: HttpClient) {}
 

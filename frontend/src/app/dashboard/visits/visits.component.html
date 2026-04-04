@@ -60,7 +60,7 @@
                 </div>
                 <div>
                   <h4 class="font-bold text-white text-sm">{{ visit.propertyId?.reference || ('COMMON.UNKNOWN' | translate) }}</h4>
-                  <p class="text-[10px] text-slate-500 uppercase tracking-widest">{{ visit.propertyId?.type }}</p>
+                  <p class="text-[10px] text-slate-500 uppercase tracking-widest">{{ getPropertyTypeLabel(visit.propertyId?.type) }}</p>
                 </div>
               </div>
             </td>

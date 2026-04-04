@@ -74,4 +74,10 @@ export class TeamsComponent implements OnInit {
       });
     }
   }
+
+  getRoleLabel(role: string) {
+    return role === 'admin'
+      ? this.i18n.translate('COMMON.ADMIN')
+      : this.i18n.translate('COMMON.AGENT');
+  }
 }

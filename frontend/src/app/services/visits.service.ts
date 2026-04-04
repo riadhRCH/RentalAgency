@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface VisitRequest {
   _id: string;
@@ -25,7 +26,7 @@ export interface PaginatedVisits {
   providedIn: 'root'
 })
 export class VisitsService {
-  private readonly apiUrl = 'http://localhost:3000/visits';
+  private readonly apiUrl = `${environment.apiBaseUrl}/visits`;
 
   constructor(private http: HttpClient) {}
 

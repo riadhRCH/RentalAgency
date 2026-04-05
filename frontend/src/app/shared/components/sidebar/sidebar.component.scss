@@ -2,9 +2,91 @@
   display: block;
 }
 
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  border: 0;
+  background: rgba(2, 6, 23, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sidebar-shell {
+  z-index: 50;
+  height: 100vh;
+  width: 16rem;
+  transition: width 0.25s ease, transform 0.25s ease;
+}
+
+.sidebar-shell.collapsed {
+  width: 5.5rem;
+}
+
+.sidebar-shell.collapsed .sidebar-label,
+.sidebar-shell.collapsed .sidebar-section-label,
+.sidebar-shell.collapsed .active-sub-item .sidebar-label,
+.sidebar-shell.collapsed .border-l .sidebar-label {
+  display: none;
+}
+
+.sidebar-shell.collapsed nav a,
+.sidebar-shell.collapsed .sidebar-brand,
+.sidebar-shell.collapsed .p-4 .glass-card {
+  justify-content: center;
+}
+
+.sidebar-shell.collapsed .pl-4.ml-6 {
+  display: none;
+}
+
+.sidebar-shell.collapsed .p-4 .glass-card {
+  padding-inline: 0.5rem;
+}
+
+.sidebar-shell.collapsed .p-4 .glass-card button {
+  margin-inline: 0;
+}
+
 /* Selected design for sub-items */
 .active-sub-item {
   span {
     opacity: 1 !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sidebar-backdrop {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .sidebar-shell {
+    width: min(18rem, calc(100vw - 2rem));
+    transform: translateX(-110%);
+  }
+
+  .sidebar-shell.collapsed {
+    width: min(18rem, calc(100vw - 2rem));
+  }
+
+  .sidebar-shell.mobile-open {
+    transform: translateX(0);
+  }
+
+  .sidebar-shell .sidebar-label,
+  .sidebar-shell .sidebar-section-label {
+    display: block;
+  }
+
+  .sidebar-shell .pl-4.ml-6 {
+    display: block;
   }
 }

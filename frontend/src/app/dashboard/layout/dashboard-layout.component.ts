@@ -10,4 +10,20 @@ import { NavbarComponent } from '../../shared/components/navbar/navbar.component
   templateUrl: './dashboard-layout.component.html',
   styleUrl: './dashboard-layout.component.scss'
 })
-export class DashboardLayoutComponent {}
+export class DashboardLayoutComponent {
+  sidebarCollapsed = false;
+  mobileSidebarOpen = false;
+
+  toggleSidebar() {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      this.mobileSidebarOpen = !this.mobileSidebarOpen;
+      return;
+    }
+
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+  }
+
+  closeMobileSidebar() {
+    this.mobileSidebarOpen = false;
+  }
+}

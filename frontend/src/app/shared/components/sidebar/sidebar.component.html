@@ -1,10 +1,23 @@
-<div class="h-screen w-64 glass-card border-r border-slate-800/50 flex flex-col fixed left-0 top-0">
+<button
+    type="button"
+    class="sidebar-backdrop"
+    [class.open]="mobileOpen"
+    (click)="closeMobile.emit()"
+    aria-label="Close sidebar"></button>
+
+<div
+    class="sidebar-shell glass-card border-r border-slate-800/50 flex flex-col fixed left-0 top-0"
+    [class.collapsed]="collapsed"
+    [class.mobile-open]="mobileOpen">
     <!-- App Name / Logo -->
-    <a routerLink="/" class="p-6 border-b border-slate-800/50 flex items-center gap-3 cursor-pointer group">
+    <a
+        routerLink="/"
+        (click)="onNavigate()"
+        class="sidebar-brand p-6 border-b border-slate-800/50 flex items-center gap-3 cursor-pointer group">
         <div class="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary border border-primary/20 group-hover:border-primary/50 transition-all">
             <span class="material-symbols-outlined text-sm">home_work</span>
         </div>
-        <h1 class="text-xl font-black tracking-widest silver-glow uppercase group-hover:text-white transition-all">DOGHMANI</h1>
+        <h1 class="sidebar-label text-xl font-black tracking-widest silver-glow uppercase group-hover:text-white transition-all">DOGHMANI</h1>
     </a>
 
     <!-- Navigation Links -->
@@ -13,51 +26,58 @@
             <!-- Overview Group -->
             <div class="space-y-1">
                 <a routerLink="/dashboard/overview" routerLinkActive="bg-primary/5 text-primary border-primary" [routerLinkActiveOptions]="{exact: false}"
+                    (click)="onNavigate()"
                     class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
                     <span class="material-symbols-outlined">dashboard</span>
-                    <span class="text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.OVERVIEW' | translate }}</span>
+                    <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.OVERVIEW' | translate }}</span>
                 </a>
                 
                 <!-- Sub-items -->
                 <div class="pl-4 ml-6 space-y-1 border-l border-white/5">
                     <a routerLink="/dashboard/overview/leads" routerLinkActive="bg-primary/5 text-primary border-primary active-sub-item"
+                        (click)="onNavigate()"
                         class="flex items-center gap-3 px-4 py-2 text-silver-500 hover:text-white transition-all group rounded-r-lg border-l-2 border-transparent">
                         <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">group</span>
-                        <span class="text-[10px] font-bold uppercase tracking-widest">{{ 'SIDEBAR.LEADS' | translate }}</span>
+                        <span class="sidebar-label text-[10px] font-bold uppercase tracking-widest">{{ 'SIDEBAR.LEADS' | translate }}</span>
                     </a>
                     <a routerLink="/dashboard/overview/visits" routerLinkActive="bg-primary/5 text-primary border-primary active-sub-item"
+                        (click)="onNavigate()"
                         class="flex items-center gap-3 px-4 py-2 text-silver-500 hover:text-white transition-all group rounded-r-lg border-l-2 border-transparent">
                         <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">event</span>
-                        <span class="text-[10px] font-bold uppercase tracking-widest">{{ 'SIDEBAR.VISITS' | translate }}</span>
+                        <span class="sidebar-label text-[10px] font-bold uppercase tracking-widest">{{ 'SIDEBAR.VISITS' | translate }}</span>
                     </a>
                     <a routerLink="/dashboard/overview/rentals" routerLinkActive="bg-primary/5 text-primary border-primary active-sub-item"
+                        (click)="onNavigate()"
                         class="flex items-center gap-3 px-4 py-2 text-silver-500 hover:text-white transition-all group rounded-r-lg border-l-2 border-transparent">
                         <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">contract</span>
-                        <span class="text-[10px] font-bold uppercase tracking-widest">{{ 'SIDEBAR.ACTIVE_RENTALS' | translate }}</span>
+                        <span class="sidebar-label text-[10px] font-bold uppercase tracking-widest">{{ 'SIDEBAR.ACTIVE_RENTALS' | translate }}</span>
                     </a>
                 </div>
             </div>
 
             <a routerLink="/dashboard/properties" routerLinkActive="bg-primary/10 text-primary border-primary"
+                (click)="onNavigate()"
                 class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
                 <span class="material-symbols-outlined">real_estate_agent</span>
-                <span class="text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.PROPERTIES' | translate }}</span>
+                <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.PROPERTIES' | translate }}</span>
             </a>
             <a routerLink="/dashboard/teams" routerLinkActive="bg-primary/10 text-primary border-primary"
+                (click)="onNavigate()"
                 class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
                 <span class="material-symbols-outlined">badge</span>
-                <span class="text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.TEAM_MANAGEMENT' | translate }}</span>
+                <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.TEAM_MANAGEMENT' | translate }}</span>
             </a>
         </div>
 
         <div class="mt-8 px-4">
-            <div class="px-4 mb-2">
-                <span class="text-[10px] uppercase tracking-[0.2em] text-silver-500 font-bold">{{ 'SIDEBAR.SYSTEM' | translate }}</span>
+            <div class="sidebar-section-label px-4 mb-2">
+                <span class="sidebar-label text-[10px] uppercase tracking-[0.2em] text-silver-500 font-bold">{{ 'SIDEBAR.SYSTEM' | translate }}</span>
             </div>
             <a routerLink="/dashboard/config" routerLinkActive="bg-primary/10 text-primary border-primary"
+                (click)="onNavigate()"
                 class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
                 <span class="material-symbols-outlined">settings</span>
-                <span class="text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.SETTINGS' | translate }}</span>
+                <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.SETTINGS' | translate }}</span>
             </a>
         </div>
     </nav>
@@ -68,7 +88,7 @@
             <div class="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary border border-primary/20">
                 <span class="material-symbols-outlined text-sm">person</span>
             </div>
-            <div class="flex-1 overflow-hidden">
+            <div class="sidebar-label flex-1 overflow-hidden">
                 <div class="text-[10px] font-bold text-white uppercase tracking-widest truncate">
                     {{ authService.currentUser()?.firstName || ('COMMON.USER' | translate) }}
                 </div>

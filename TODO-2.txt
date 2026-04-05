@@ -1,4 +1,4 @@
-- mobile friendly website
+- mobile friendly website (make sidebar collapsable, fix navbars)
 - whatsapp api integration
 - update homepage
     - section to display availble properties

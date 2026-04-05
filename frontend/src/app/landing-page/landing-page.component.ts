@@ -12,11 +12,19 @@ import { AuthService } from '../auth/auth.service';
 })
 export class LandingPage {
   authService = inject(AuthService);
-  router = inject(Router)
+  router = inject(Router);
+  mobileMenuOpen = false;
 
   navigateToDashboard() {
-    console.log('userAgencies ',this.authService.userAgencies())
-    this.router.navigate(['/dashboard/overview'])
+    this.mobileMenuOpen = false;
+    this.router.navigate(['/dashboard/overview']);
   }
 
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.mobileMenuOpen = false;
+  }
 }

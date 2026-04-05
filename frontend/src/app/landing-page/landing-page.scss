@@ -1,0 +1,23 @@
+.landing-nav {
+  backdrop-filter: blur(18px);
+}
+
+.landing-nav-panel {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.25s ease, opacity 0.2s ease;
+}
+
+.landing-nav-panel.open {
+  max-height: 24rem;
+  opacity: 1;
+}
+
+@media (min-width: 768px) {
+  .landing-nav-panel {
+    max-height: none;
+    overflow: visible;
+    opacity: 1;
+  }
+}

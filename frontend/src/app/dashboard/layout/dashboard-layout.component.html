@@ -1,8 +1,16 @@
-<app-sidebar></app-sidebar>
+<div class="dashboard-shell" [class.sidebar-collapsed]="sidebarCollapsed">
+    <app-sidebar
+        [collapsed]="sidebarCollapsed"
+        [mobileOpen]="mobileSidebarOpen"
+        (closeMobile)="closeMobileSidebar()"></app-sidebar>
 
-<div class="ml-64 flex flex-col min-h-screen">
-    <app-navbar></app-navbar>
-    <main class="flex-1 overflow-auto">
-        <router-outlet></router-outlet>
-    </main>
+    <div class="dashboard-content">
+        <app-navbar
+            [sidebarCollapsed]="sidebarCollapsed"
+            [mobileSidebarOpen]="mobileSidebarOpen"
+            (menuToggle)="toggleSidebar()"></app-navbar>
+        <main class="dashboard-main">
+            <router-outlet></router-outlet>
+        </main>
+    </div>
 </div>

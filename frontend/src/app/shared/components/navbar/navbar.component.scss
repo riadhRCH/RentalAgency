@@ -2,3 +2,18 @@
   display: block;
   width: 100%;
 }
+
+.dashboard-navbar {
+  display: flex;
+  min-height: 4.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+}
+
+@media (min-width: 768px) {
+  .dashboard-navbar {
+    padding-inline: 1.5rem;
+  }
+}

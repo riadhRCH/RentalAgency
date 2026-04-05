@@ -16,6 +16,7 @@
 
 @media (min-width: 768px) {
   .landing-nav-panel {
+    flex: 1 1 auto;
     max-height: none;
     overflow: visible;
     opacity: 1;

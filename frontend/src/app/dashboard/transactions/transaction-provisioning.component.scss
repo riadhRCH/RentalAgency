@@ -1,0 +1,22 @@
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.silver-glow {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2),
+               0 0 20px rgba(255, 255, 255, 0.1);
+  background: linear-gradient(to bottom, #ffffff 0%, #a3a3a3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+select {
+  background-image: none;
+}

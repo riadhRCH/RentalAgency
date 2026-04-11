@@ -8,7 +8,7 @@ import { PersonnelModule } from './personnel/personnel.module';
 import { PropertiesModule } from './properties/properties.module';
 import { VisitRequestsModule } from './visits/visits.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
-import { RentalsModule } from './rentals/rentals.module';
+import { TransactionsModule } from './transactions/transactions.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -27,7 +27,7 @@ import { AppController } from './app.controller';
     PropertiesModule,
     VisitRequestsModule,
     WebhooksModule,
-    RentalsModule,
+    TransactionsModule,
   ],
   controllers: [AppController],
 })

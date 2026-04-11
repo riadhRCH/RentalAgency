@@ -1,0 +1,73 @@
+<div class="p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">{{ 'TRANSACTIONS.TITLE' | translate }}</h1>
+    <a routerLink="/dashboard/transactions/provision" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+      {{ 'TRANSACTIONS.NEW_TRANSACTION' | translate }}
+    </a>
+  </div>
+
+  <div *ngIf="isLoading()" class="flex justify-center items-center h-64">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+  </div>
+
+  <div *ngIf="!isLoading() && transactions.length === 0" class="mt-8">
+    <app-empty-state
+      [title]="'TRANSACTIONS.NO_TRANSACTIONS_TITLE' | translate"
+      [description]="'TRANSACTIONS.NO_TRANSACTIONS_DESC' | translate"
+      icon="home"
+      [actionLabel]="'COMMON.CREATE_TRANSACTION' | translate"
+      (action)="onNewTransaction()">
+    </app-empty-state>
+  </div>
+
+  <div *ngIf="!isLoading() && transactions.length > 0" class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200 text-left">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'TRANSACTIONS.PROPERTY' | translate }}</th>
+          <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'TRANSACTIONS.TENANT' | translate }}</th>
+          <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'TRANSACTIONS.RENT' | translate }}</th>
+          <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'TRANSACTIONS.DATES' | translate }}</th>
+          <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'COMMON.STATUS' | translate }}</th>
+          <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'LEADS.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr *ngFor="let transaction of transactions" class="hover:bg-gray-50 transition-colors">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-medium text-gray-900">{{ transaction.propertyId?.reference }}</div>
+            <div class="text-xs text-gray-500">{{ transaction.propertyId?.address }}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">{{ transaction.personnelId?.firstName }} {{ transaction.personnelId?.lastName }}</div>
+            <div class="text-xs text-gray-500">{{ transaction.personnelId?.phone }}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            {{ transaction.financialDetails.rentAmount | currency:'TND' }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <div>{{ transaction.timeline.startDate | date:'shortDate' }} - {{ transaction.timeline.endDate | date:'shortDate' }}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="getStatusBadgeClass(transaction.status)">
+              {{ getTransactionStatusLabel(transaction.status) }}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <div class="flex space-x-3">
+              <a [routerLink]="['/dashboard/transactions', transaction._id]" class="text-indigo-600 hover:text-indigo-900" [title]="'TRANSACTIONS.VIEW_DETAILS' | translate">
+                <i class="fas fa-eye"></i>
+              </a>
+              <button (click)="closeTransaction(transaction._id!)" class="text-amber-600 hover:text-amber-900" [title]="'TRANSACTIONS.CLOSE_TRANSACTION' | translate">
+                <i class="fas fa-file-contract"></i>
+              </button>
+              <button (click)="deleteTransaction(transaction._id!)" class="text-red-600 hover:text-red-900" [title]="'TRANSACTIONS.DELETE_TRANSACTION' | translate">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

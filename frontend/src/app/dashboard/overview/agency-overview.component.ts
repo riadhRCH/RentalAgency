@@ -47,14 +47,14 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
               <div class="w-px h-12 my-auto bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
 
               <button 
-                [routerLink]="['rentals']" 
+                [routerLink]="['transactions']" 
                 routerLinkActive="bg-primary/10 text-primary border-primary/20 shadow-inner shadow-primary/5"
                 class="group relative flex flex-col items-center justify-center py-4 px-10 rounded-xl transition-all duration-300 hover:bg-white/5 min-w-[160px]">
                 <span class="text-3xl font-black silver-glow mb-1 tracking-tighter group-hover:scale-110 transition-transform duration-300">
                   {{ stats.totalRentals }}
                 </span>
                 <span class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity">
-                  {{ 'RENTALS.TITLE' | translate }}
+                  {{ 'TRANSACTIONS.TITLE' | translate }}
                 </span>
                 <div routerLinkActive="opacity-100 scale-100" class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-primary rounded-full blur-[2px] opacity-0 scale-50 transition-all duration-300"></div>
               </button>

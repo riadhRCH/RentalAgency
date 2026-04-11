@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { PropertyType, PropertyStatus, PricingType } from '../shared/enums';
+import { PropertyType, PropertyStatus, PaymentFrequency } from '../shared/enums';
 
 export type PropertyDocument = Property & Document;
 
@@ -42,8 +42,8 @@ export class Property {
 
   @Prop({
     type: String,
-    enum: Object.values(PricingType),
-    default: PricingType.MONTHLY,
+    enum: Object.values(PaymentFrequency),
+    default: PaymentFrequency.MONTHLY,
     required: true,
   })
   pricingType: string;

@@ -1,0 +1,148 @@
+<div class="p-6">
+  <div class="mb-6 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-gray-900">{{ 'TRANSACTION_DETAIL.TITLE' | translate:{ reference: transaction?.propertyId?.reference || '' } }}</h1>
+    <div class="flex space-x-4">
+      <button (click)="closeTransaction()" *ngIf="transaction?.status !== 'CLOSED'" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+        {{ 'TRANSACTIONS.CLOSE_TRANSACTION' | translate }}
+      </button>
+      <a routerLink="/dashboard/transactions" class="text-indigo-600 hover:text-indigo-800 font-medium transition-colors flex items-center">
+        <i class="fas fa-arrow-left mr-1"></i> {{ 'TRANSACTION_FORM.BACK_TO_DIRECTORY' | translate }}
+      </a>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="flex justify-center items-center h-64">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+  </div>
+
+  <div *ngIf="!isLoading && transaction" class="bg-white rounded-xl shadow-sm overflow-hidden p-6">
+    <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()" class="space-y-8">
+      
+      <!-- Property Info (Read-only) -->
+      <section>
+        <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">{{ 'TRANSACTION_FORM.PROPERTY_ASSETS' | translate }}</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+          <div>
+            <span class="text-xs font-bold text-gray-500 uppercase block mb-1">{{ 'TRANSACTION_DETAIL.PROPERTY_REFERENCE' | translate }}</span>
+            <span class="text-gray-900 font-medium">{{ transaction.propertyId?.reference }}</span>
+          </div>
+          <div>
+            <span class="text-xs font-bold text-gray-500 uppercase block mb-1">{{ 'PROPERTY_FORM.ADDRESS' | translate }}</span>
+            <span class="text-gray-900 font-medium">{{ transaction.propertyId?.address }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Customer Profile -->
+      <section>
+        <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">{{ 'TRANSACTION_FORM.CUSTOMER_PROFILE' | translate }}</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'TRANSACTION_FORM.FULL_NAME' | translate }}</label>
+            <input type="text" formControlName="customerName" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'COMMON.PHONE_NUMBER' | translate }}</label>
+            <input type="text" formControlName="customerPhone" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'TRANSACTION_FORM.EMAIL_ADDRESS' | translate }}</label>
+            <input type="email" formControlName="customerEmail" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'TRANSACTION_FORM.IDENTITY_STATUS' | translate }}</label>
+            <select formControlName="identityVerificationStatus" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+              <option value="PENDING">{{ 'TRANSACTION_FORM.PENDING_VERIFICATION' | translate }}</option>
+              <option value="VERIFIED">{{ 'COMMON.VERIFIED' | translate }}</option>
+              <option value="REJECTED">{{ 'COMMON.REJECTED' | translate }}</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Financial Details -->
+      <section formGroupName="financialDetails">
+        <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">{{ 'TRANSACTION_FORM.FINANCIAL_DETAILS' | translate }}</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'TRANSACTION_FORM.RENT_AMOUNT' | translate }}</label>
+            <input type="number" formControlName="rentAmount" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'TRANSACTION_FORM.DEPOSIT_AMOUNT' | translate }}</label>
+            <input type="number" formControlName="depositAmount" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'TRANSACTION_FORM.PAYMENT_FREQUENCY' | translate }}</label>
+            <select formControlName="paymentFrequency" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+              <option value="MONTHLY">{{ 'COMMON.MONTHLY' | translate }}</option>
+              <option value="QUARTERLY">{{ 'COMMON.QUARTERLY' | translate }}</option>
+              <option value="YEARLY">{{ 'COMMON.YEARLY' | translate }}</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Timeline -->
+      <section formGroupName="timeline">
+        <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">{{ 'TRANSACTION_FORM.TIMELINE' | translate }}</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'TRANSACTION_FORM.START_DATE' | translate }}</label>
+            <input type="date" formControlName="startDate" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'TRANSACTION_FORM.DURATION' | translate }}</label>
+            <input type="number" formControlName="duration" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'TRANSACTION_FORM.END_DATE' | translate }}</label>
+            <input type="date" formControlName="endDate" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'COMMON.PROJECTED_RENEWAL' | translate }}</label>
+            <input type="date" formControlName="renewalDate" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          </div>
+        </div>
+      </section>
+
+      <!-- Metadata -->
+      <section formGroupName="metadata">
+        <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">{{ 'TRANSACTION_DETAIL.ADDITIONAL_INFO' | translate }}</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'TRANSACTION_DETAIL.UTILITY_HANDOVER_NOTES' | translate }}</label>
+            <textarea formControlName="utilityNotes" rows="3" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'TRANSACTION_DETAIL.EMERGENCY_CONTACT_INFO' | translate }}</label>
+            <textarea formControlName="emergencyContact" rows="3" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Status -->
+      <section>
+        <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">{{ 'TRANSACTION_DETAIL.CURRENT_STATUS' | translate }}</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'TRANSACTION_DETAIL.TRANSACTION_STATUS' | translate }}</label>
+            <select formControlName="status" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+              <option value="CURRENT">{{ 'COMMON.CURRENT' | translate }}</option>
+              <option value="EXPIRING_SOON">{{ 'COMMON.EXPIRING_SOON' | translate }}</option>
+              <option value="OVERDUE">{{ 'COMMON.OVERDUE' | translate }}</option>
+              <option value="CLOSED">{{ 'COMMON.CLOSED' | translate }}</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <div class="pt-6 border-t flex justify-end">
+        <button type="submit" [disabled]="transactionForm.invalid || isSaving" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+          <span *ngIf="!isSaving">{{ 'COMMON.SAVE_CHANGES' | translate }}</span>
+          <span *ngIf="isSaving">{{ 'COMMON.SAVING' | translate }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

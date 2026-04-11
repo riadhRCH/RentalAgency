@@ -1,0 +1,170 @@
+<div class="p-8 max-w-4xl mx-auto space-y-12">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="font-serif text-4xl font-bold tracking-tight text-white uppercase silver-glow">
+        {{ 'TRANSACTION_FORM.TITLE' | translate }}
+      </h1>
+      <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+        {{ 'TRANSACTION_FORM.SUBTITLE' | translate }}
+      </p>
+    </div>
+    
+    <button routerLink="/dashboard/transactions" class="text-slate-500 hover:text-white transition-colors flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+      <span class="material-symbols-outlined text-sm">arrow_back</span>
+      {{ 'TRANSACTION_FORM.BACK_TO_DIRECTORY' | translate }}
+    </button>
+  </header>
+
+  <div *ngIf="notification" class="glass-card border-l-4 border-primary/50 p-6 rounded-xl flex items-start gap-4 shadow-2xl shadow-primary/5">
+    <span class="material-symbols-outlined text-primary text-xl">info</span>
+    <p class="text-xs font-bold uppercase tracking-widest text-slate-400 leading-relaxed">
+      {{ notification }}
+    </p>
+  </div>
+
+  <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()" class="space-y-8 pb-20">
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Property Selection -->
+      <section class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+          <span class="material-symbols-outlined text-primary">real_estate_agent</span>
+          {{ 'TRANSACTION_FORM.PROPERTY_ASSETS' | translate }}
+        </h2>
+        <div class="space-y-4">
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.SELECT_PROPERTY' | translate }}</label>
+            <div class="relative">
+              <select formControlName="propertyId" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+                <option value="" class="bg-background-dark">{{ 'TRANSACTION_FORM.SELECT_PROPERTY_PLACEHOLDER' | translate }}</option>
+                <option *ngFor="let p of properties" [value]="p._id" class="bg-background-dark">{{ p.reference }} - {{ p.address }}</option>
+              </select>
+              <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">expand_more</span>
+            </div>
+            <div *ngIf="transactionForm.get('propertyId')?.touched && transactionForm.get('propertyId')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">{{ 'TRANSACTION_FORM.PROPERTY_REQUIRED' | translate }}</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Customer Profile -->
+      <section class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+          <span class="material-symbols-outlined text-primary">person</span>
+          {{ 'TRANSACTION_FORM.CUSTOMER_PROFILE' | translate }}
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.FULL_NAME' | translate }}</label>
+            <input type="text" formControlName="customerName" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" [placeholder]="'TRANSACTION_FORM.FULL_NAME_PLACEHOLDER' | translate">
+            <div *ngIf="transactionForm.get('customerName')?.touched && transactionForm.get('customerName')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">{{ 'COMMON.NAME_REQUIRED' | translate }}</div>
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.PHONE_NUMBER' | translate }}</label>
+            <input type="text" formControlName="customerPhone" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" placeholder="+216 12345678">
+            <div *ngIf="transactionForm.get('customerPhone')?.touched && transactionForm.get('customerPhone')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">{{ 'COMMON.PHONE_REQUIRED' | translate }}</div>
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.EMAIL_ADDRESS' | translate }}</label>
+            <input type="email" formControlName="customerEmail" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" placeholder="john@example.com">
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.IDENTITY_STATUS' | translate }}</label>
+            <div class="relative">
+              <select formControlName="identityVerificationStatus" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+                <option value="PENDING" class="bg-background-dark">{{ 'TRANSACTION_FORM.PENDING_VERIFICATION' | translate }}</option>
+                <option value="VERIFIED" class="bg-background-dark">{{ 'COMMON.VERIFIED' | translate }}</option>
+                <option value="REJECTED" class="bg-background-dark">{{ 'COMMON.REJECTED' | translate }}</option>
+              </select>
+              <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">expand_more</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Financial Details -->
+    <section formGroupName="financialDetails" class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+      <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+        <span class="material-symbols-outlined text-primary">payments</span>
+        {{ 'TRANSACTION_FORM.FINANCIAL_DETAILS' | translate }}
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.RENT_AMOUNT' | translate }}</label>
+          <input type="number" formControlName="rentAmount" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+        </div>
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.DEPOSIT_AMOUNT' | translate }}</label>
+          <input type="number" formControlName="depositAmount" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+        </div>
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.PAYMENT_FREQUENCY' | translate }}</label>
+          <div class="relative">
+            <select formControlName="paymentFrequency" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+              <option value="MONTHLY" class="bg-background-dark">{{ 'COMMON.MONTHLY' | translate }}</option>
+              <option value="QUARTERLY" class="bg-background-dark">{{ 'COMMON.QUARTERLY' | translate }}</option>
+              <option value="YEARLY" class="bg-background-dark">{{ 'COMMON.YEARLY' | translate }}</option>
+            </select>
+            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">expand_more</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Timeline -->
+    <section formGroupName="timeline" class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+      <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+        <span class="material-symbols-outlined text-primary">calendar_today</span>
+        {{ 'TRANSACTION_FORM.TIMELINE' | translate }}
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.START_DATE' | translate }}</label>
+          <input type="date" formControlName="startDate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+        </div>
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.DURATION' | translate }}</label>
+          <input type="number" formControlName="duration" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+        </div>
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.END_DATE' | translate }}</label>
+          <input type="date" formControlName="endDate" class="w-full bg-white/10 border border-white/20 text-white rounded p-3 text-sm outline-none transition-all cursor-not-allowed" readonly>
+        </div>
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.RENEWAL_DATE' | translate }}</label>
+          <input type="date" formControlName="renewalDate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+        </div>
+      </div>
+    </section>
+
+    <!-- Metadata & Notes -->
+    <section formGroupName="metadata" class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+      <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+        <span class="material-symbols-outlined text-primary">notes</span>
+        {{ 'TRANSACTION_FORM.ADDITIONAL_INFORMATION' | translate }}
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.UTILITY_NOTES' | translate }}</label>
+          <textarea formControlName="utilityNotes" rows="3" [placeholder]="'TRANSACTION_FORM.UTILITY_NOTES_PLACEHOLDER' | translate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all resize-none"></textarea>
+        </div>
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.EMERGENCY_CONTACT' | translate }}</label>
+          <textarea formControlName="emergencyContact" rows="3" [placeholder]="'TRANSACTION_FORM.EMERGENCY_CONTACT_PLACEHOLDER' | translate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all resize-none"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <div class="flex items-center justify-end gap-6 pt-8">
+      <button type="button" routerLink="/dashboard/transactions" class="px-8 py-3 rounded uppercase text-[10px] font-bold tracking-[0.2em] text-slate-500 hover:text-white transition-all">
+        {{ 'COMMON.DISCARD_CHANGES' | translate }}
+      </button>
+      <button type="submit" [disabled]="isLoading || transactionForm.invalid" class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-12 py-4 rounded uppercase text-xs font-bold tracking-[0.2em] transition-all shadow-xl shadow-primary/20 flex items-center gap-3">
+        <span *ngIf="isLoading" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+        <span *ngIf="!isLoading" class="material-symbols-outlined text-sm">assignment_turned_in</span>
+        {{ isLoading ? ('TRANSACTION_FORM.PROVISIONING' | translate) : ('TRANSACTION_FORM.PROVISION_TRANSACTION' | translate) }}
+      </button>
+    </div>
+  </form>
+</div>

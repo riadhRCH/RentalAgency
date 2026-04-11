@@ -14,9 +14,9 @@ import { PropertiesMgmtComponent } from './dashboard/properties/properties-mgmt.
 import { AddPropertyComponent } from './dashboard/properties/add-property/add-property.component';
 import { TeamsComponent } from './dashboard/teams/teams.component';
 import { DashboardLayoutComponent } from './dashboard/layout/dashboard-layout.component';
-import { RentalsListComponent } from './dashboard/rentals/rentals-list.component';
-import { RentalProvisioningComponent } from './dashboard/rentals/rental-provisioning.component';
-import { RentalDetailComponent } from './dashboard/rentals/rental-detail.component';
+import { TransactionsListComponent } from './dashboard/transactions/transactions-list.component';
+import { TransactionProvisioningComponent } from './dashboard/transactions/transaction-provisioning.component';
+import { TransactionDetailComponent } from './dashboard/transactions/transaction-detail.component';
 
 export const routes: Routes = [
     { path: '', component: LandingPage },
@@ -36,18 +36,18 @@ export const routes: Routes = [
                     { path: '', redirectTo: 'leads', pathMatch: 'full' },
                     { path: 'leads', component: LeadsComponent },
                     { path: 'visits', component: VisitsComponent },
-                    { path: 'rentals', component: RentalsListComponent }
+                    { path: 'transactions', component: TransactionsListComponent }
                 ]
             },
             { path: 'leads', redirectTo: 'overview/leads' },
             { path: 'visits', redirectTo: 'overview/visits' },
-            { path: 'rentals', redirectTo: 'overview/rentals' },
+            { path: 'transactions', redirectTo: 'overview/transactions' },
             { path: 'leads/add', component: AddLeadComponent },
             { path: 'properties', component: PropertiesMgmtComponent },
             { path: 'properties/add', component: AddPropertyComponent },
             { path: 'properties/edit/:id', component: AddPropertyComponent },
-            { path: 'rentals/provision', component: RentalProvisioningComponent },
-            { path: 'rentals/:id', component: RentalDetailComponent },
+            { path: 'transactions/provision', component: TransactionProvisioningComponent },
+            { path: 'transactions/:id', component: TransactionDetailComponent },
             { path: 'teams', component: TeamsComponent },
             { path: 'config', component: ConfigComponent }
         ]

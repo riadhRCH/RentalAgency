@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { VisitRequestStatus } from '../shared/enums';
 
 export type VisitRequestDocument = VisitRequest & Document;
 
@@ -19,8 +20,8 @@ export class VisitRequest {
 
   @Prop({
     type: String,
-    enum: ['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'],
-    default: 'PENDING',
+    enum: Object.values(VisitRequestStatus),
+    default: VisitRequestStatus.PENDING,
   })
   status: string;
 

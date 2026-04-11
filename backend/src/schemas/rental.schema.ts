@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { RentalStatus, RentalSourceType, PaymentFrequency, IdentityVerificationStatus } from '../shared/enums';
 
 export type RentalDocument = Rental & Document;
 
@@ -11,7 +12,11 @@ class FinancialDetails {
   @Prop({ required: true })
   depositAmount: number;
 
-  @Prop({ default: 'MONTHLY' })
+  @Prop({ 
+    type: String,
+    enum: Object.values(PaymentFrequency),
+    default: PaymentFrequency.MONTHLY 
+  })
   paymentFrequency: string;
 }
 
@@ -64,17 +69,21 @@ export class Rental {
 
   @Prop({
     type: String,
-    enum: ['CURRENT', 'EXPIRING_SOON', 'OVERDUE', 'CLOSED'],
-    default: 'CURRENT',
+    enum: Object.values(RentalStatus),
+    default: RentalStatus.CURRENT,
   })
   status: string;
 
-  @Prop({ default: 'PENDING' })
+  @Prop({
+    type: String,
+    enum: Object.values(IdentityVerificationStatus),
+    default: IdentityVerificationStatus.PENDING,
+  })
   identityVerificationStatus: string;
 
   @Prop({
     type: {
-      sourceType: { type: String, enum: ['LEAD', 'VISIT', 'DIRECT'] },
+      sourceType: { type: String, enum: Object.values(RentalSourceType) },
       sourceId: { type: Types.ObjectId },
     },
     _id: false,

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { LeadStatus, ActivityType } from '../shared/enums';
 
 export type LeadDocument = Lead & Document;
 
@@ -7,8 +8,8 @@ export type LeadDocument = Lead & Document;
 class Activity {
   @Prop({
     type: String,
-    enum: ['CALL', 'WHATSAPP', 'INSTAGRAM', 'FACEBOOK', 'MANUAL'],
-    default: 'CALL',
+    enum: Object.values(ActivityType),
+    default: ActivityType.CALL,
   })
   type: string;
 
@@ -43,8 +44,8 @@ export class Lead {
 
   @Prop({
     type: String,
-    enum: ['NEW', 'CONTACTED', 'QUALIFIED', 'LOST'],
-    default: 'NEW',
+    enum: Object.values(LeadStatus),
+    default: LeadStatus.NEW,
   })
   status: string;
 

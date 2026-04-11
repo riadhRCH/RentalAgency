@@ -16,10 +16,7 @@
           (change)="onFilterChange()"
           class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-xs font-bold uppercase tracking-widest outline-none focus:border-primary transition-all appearance-none cursor-pointer pr-10">
           <option value="" class="bg-background-dark">{{ 'LEADS.ALL_STATUSES' | translate }}</option>
-          <option value="NEW" class="bg-background-dark">{{ 'LEADS.NEW_LEAD' | translate }}</option>
-          <option value="CONTACTED" class="bg-background-dark">{{ 'COMMON.CONTACTED' | translate }}</option>
-          <option value="QUALIFIED" class="bg-background-dark">{{ 'COMMON.QUALIFIED' | translate }}</option>
-          <option value="LOST" class="bg-background-dark">{{ 'COMMON.LOST' | translate }}</option>
+          <option *ngFor="let status of leadStatuses" [value]="status" class="bg-background-dark">{{ ('COMMON.' + status) | translate }}</option>
         </select>
         <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">
           expand_more

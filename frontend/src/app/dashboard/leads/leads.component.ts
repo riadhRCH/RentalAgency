@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
+import { LeadStatus, getEnumValues } from '../../shared/enums';
 
 @Component({
   selector: 'app-leads',
@@ -18,6 +19,10 @@ export class LeadsComponent implements OnInit {
   private leadsService = inject(LeadsService);
   private router = inject(Router);
   readonly i18n = inject(I18nService);
+
+  // Expose enums
+  LeadStatus = LeadStatus;
+  leadStatuses = getEnumValues(LeadStatus);
 
   leads: Lead[] = [];
   loading = signal(true);

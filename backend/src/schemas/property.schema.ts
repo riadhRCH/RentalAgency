@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { PropertyType, PropertyStatus, PricingType } from '../shared/enums';
 
 export type PropertyDocument = Property & Document;
 
@@ -22,7 +23,7 @@ export class Property {
 
   @Prop({
     type: String,
-    enum: ['apartment', 'villa', 'house', 'land'],
+    enum: Object.values(PropertyType),
     required: true,
   })
   type: string;
@@ -41,8 +42,8 @@ export class Property {
 
   @Prop({
     type: String,
-    enum: ['monthly', 'yearly', 'daily'],
-    default: 'monthly',
+    enum: Object.values(PricingType),
+    default: PricingType.MONTHLY,
     required: true,
   })
   pricingType: string;
@@ -61,8 +62,8 @@ export class Property {
 
   @Prop({
     type: String,
-    enum: ['available', 'reserved', 'rented', 'sold'],
-    default: 'available',
+    enum: Object.values(PropertyStatus),
+    default: PropertyStatus.AVAILABLE,
   })
   status: string;
 

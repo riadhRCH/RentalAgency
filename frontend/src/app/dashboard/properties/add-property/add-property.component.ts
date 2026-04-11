@@ -7,6 +7,7 @@ import { PropertiesService } from '../../../services/properties.service';
 import { PersonnelService } from '../../../services/personnel.service';
 import { PhoneInputComponent } from '../../../shared/components/phone-input/phone-input.component';
 import { TranslatePipe } from '../../../i18n/translate.pipe';
+import { PropertyType, PropertyStatus, PaymentFrequency, getEnumValues } from '../../../shared/enums';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -24,6 +25,14 @@ export class AddPropertyComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   @ViewChild(GoogleMap) googleMap!: GoogleMap;
+
+  // Expose enums to template
+  PropertyType = PropertyType;
+  PropertyStatus = PropertyStatus;
+  PricingType = PaymentFrequency;
+  propertyTypes = getEnumValues(PropertyType);
+  propertyStatuses = getEnumValues(PropertyStatus);
+  pricingTypes = getEnumValues(PaymentFrequency);
 
   propertyForm: FormGroup;
   loading = signal(false);
@@ -61,14 +70,14 @@ export class AddPropertyComponent implements OnInit {
 
   constructor() {
     this.propertyForm = this.fb.group({
-      type: ['apartment', Validators.required],
+      type: [PropertyType.APARTMENT, Validators.required],
       address: ['', Validators.required],
       surface: [null, [Validators.required, Validators.min(1)]],
       price: [null, [Validators.required, Validators.min(0)]],
-      pricingType: ['monthly', Validators.required],
+      pricingType: [PaymentFrequency.MONTHLY, Validators.required],
       googleMapsLink: [''],
       description: ['', Validators.required],
-      status: ['available', Validators.required],
+      status: [PropertyStatus.AVAILABLE, Validators.required],
       ownerId: [''],
       ownerPhone: [''],
       gpsLocation: this.fb.group({

@@ -1,0 +1,4 @@
+possible 3rd parties integrations to explore that aligns with project needs
+- infobip
+- whatapp
+- instagram

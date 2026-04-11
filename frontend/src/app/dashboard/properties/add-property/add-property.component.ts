@@ -1,16 +1,18 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { PropertiesService } from '../../../services/properties.service';
 import { PersonnelService } from '../../../services/personnel.service';
 import { PhoneInputComponent } from '../../../shared/components/phone-input/phone-input.component';
 import { TranslatePipe } from '../../../i18n/translate.pipe';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-add-property',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, PhoneInputComponent, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, PhoneInputComponent, TranslatePipe, GoogleMapsModule],
   templateUrl: './add-property.component.html',
   styleUrls: ['./add-property.component.scss']
 })
@@ -20,6 +22,8 @@ export class AddPropertyComponent implements OnInit {
   private personnelService = inject(PersonnelService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+
+  @ViewChild(GoogleMap) googleMap!: GoogleMap;
 
   propertyForm: FormGroup;
   loading = signal(false);
@@ -32,9 +36,28 @@ export class AddPropertyComponent implements OnInit {
   
   // Collapsible sections
   basicInfoExpanded = signal(true);
-  detailsExpanded = signal(true);
-  imagesExpanded = signal(true);
-  locationExpanded = signal(true);
+  detailsExpanded = signal(false);
+  imagesExpanded = signal(false);
+  locationExpanded = signal(false);
+
+  // Google Maps properties
+  mapLoading = signal(false);
+  mapCenter: google.maps.LatLngLiteral = { lat: 36.8065, lng: 10.1686 }; // Default to Tunisia
+  mapZoom = 12;
+  markerPosition: google.maps.LatLngLiteral = { lat: 36.8065, lng: 10.1686 };
+  markerOptions: google.maps.MarkerOptions = {
+    draggable: true,
+    icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+  };
+  mapOptions: google.maps.MapOptions = {
+    center: { lat: 36.8065, lng: 10.1686 },
+    zoom: 12,
+    fullscreenControl: true,
+    mapTypeControl: true,
+    zoomControl: true,
+    streetViewControl: false
+  };
+  googleMapsApiKey = environment.googleMapsApiKey;
 
   constructor() {
     this.propertyForm = this.fb.group({
@@ -115,6 +138,12 @@ export class AddPropertyComponent implements OnInit {
             gpsLocation: prop.gpsLocation,
             amenities: prop.amenities
           });
+          // Set map to property location
+          if (prop.gpsLocation && prop.gpsLocation.lat && prop.gpsLocation.lng) {
+            this.markerPosition = { lat: prop.gpsLocation.lat, lng: prop.gpsLocation.lng };
+            this.mapCenter = { lat: prop.gpsLocation.lat, lng: prop.gpsLocation.lng };
+            this.mapOptions = { ...this.mapOptions, center: { lat: prop.gpsLocation.lat, lng: prop.gpsLocation.lng } };
+          }
           this.uploadedPhotos.set(prop.photos || []);
           this.propertyForm.get('photos')?.setValue(this.uploadedPhotos());
           this.loading.set(false);
@@ -254,7 +283,62 @@ export class AddPropertyComponent implements OnInit {
         break;
       case 'location':
         this.locationExpanded.update(v => !v);
+        this.initializeMapIfNeeded();
         break;
+    }
+  }
+
+  private initializeMapIfNeeded() {
+    // This will ensure the map is initialized when the section is expanded
+    setTimeout(() => {
+      if (this.googleMap && (this.googleMap as any).mapElement) {
+        google.maps.event.trigger((this.googleMap as any).mapElement, 'resize');
+      }
+    }, 100);
+  }
+
+  onMapClick(event: google.maps.MapMouseEvent) {
+    if (event.latLng) {
+      const lat = event.latLng.lat();
+      const lng = event.latLng.lng();
+      
+      this.markerPosition = { lat, lng };
+      this.mapCenter = { lat, lng };
+      
+      // Update form with selected coordinates
+      this.propertyForm.get('gpsLocation')?.patchValue({
+        lat: lat,
+        lng: lng
+      });
+      
+      // Reverse geocode to get address
+      this.reverseGeocodeCoordinates(lat, lng);
+    }
+  }
+
+  onMarkerDragEnd(event: google.maps.MapMouseEvent | any) {
+    if (event.latLng) {
+      const lat = event.latLng.lat();
+      const lng = event.latLng.lng();
+      
+      this.markerPosition = { lat, lng };
+      
+      // Update form with new coordinates
+      this.propertyForm.get('gpsLocation')?.patchValue({
+        lat: lat,
+        lng: lng
+      });
+      
+      // Reverse geocode to get address
+      this.reverseGeocodeCoordinates(lat, lng);
+    }
+  }
+
+  centerMapOnMarker() {
+    const gpsLocation = this.propertyForm.get('gpsLocation')?.value;
+    if (gpsLocation && gpsLocation.lat && gpsLocation.lng) {
+      this.mapCenter = { lat: gpsLocation.lat, lng: gpsLocation.lng };
+      this.markerPosition = { lat: gpsLocation.lat, lng: gpsLocation.lng };
     }
   }
 }

@@ -223,6 +223,38 @@
 
       <div *ngIf="locationExpanded()" class="animate-in fade-in slide-in-from-top-2 duration-200 px-8 pb-8 space-y-6 border-t border-white/5">
         <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.MAP_LOCATION' | translate }}</label>
+          <p class="text-[10px] text-slate-400 uppercase tracking-widest ml-1 mt-1">{{ 'PROPERTY_FORM.MAP_INSTRUCTIONS' | translate }}</p>
+          
+          <!-- Google Map -->
+          <div *ngIf="googleMapsApiKey; else noApiKey" class="mt-4 rounded-lg overflow-hidden border border-white/10 bg-black/50">
+            <google-map 
+              #map
+              [center]="mapCenter"
+              [zoom]="mapZoom"
+              [options]="mapOptions"
+              height="500px"
+              [width]="null"
+              (mapClick)="onMapClick($event)"
+              class="w-full">
+              <map-marker
+                [position]="markerPosition"
+                [options]="markerOptions"
+                (markerDragEnd)="onMarkerDragEnd($event)">
+              </map-marker>
+            </google-map>
+          </div>
+
+          <ng-template #noApiKey>
+            <div class="p-4 rounded-lg border border-red-500/30 bg-red-500/10">
+              <p class="text-red-400 text-[10px] uppercase font-bold tracking-widest">
+                Google Maps API key is not configured. Please add your API key to the environment configuration.
+              </p>
+            </div>
+          </ng-template>
+        </div>
+
+        <div class="space-y-2">
           <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.ADDRESS' | translate }}</label>
           <input type="text" formControlName="address" [placeholder]="'PROPERTY_FORM.ADDRESS_PLACEHOLDER' | translate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
           <div *ngIf="propertyForm.get('address')?.touched && propertyForm.get('address')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
@@ -230,7 +262,7 @@
           </div>
         </div>
 
-        <div class="space-y-2">
+        <!--div class="space-y-2">
           <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.GOOGLE_MAPS_LINK' | translate }}</label>
           <input 
             type="url" 
@@ -239,9 +271,9 @@
             (change)="onGoogleMapsLinkPaste(propertyForm.get('googleMapsLink')?.value)"
             class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
           <p class="text-[10px] text-slate-400 uppercase tracking-widest ml-1 mt-1">{{ 'PROPERTY_FORM.GOOGLE_MAPS_HELP' | translate }}</p>
-        </div>
+        </div-->
 
-        <div formGroupName="gpsLocation" class="grid grid-cols-2 gap-4">
+        <!--div formGroupName="gpsLocation" class="grid grid-cols-2 gap-4">
           <div class="space-y-2">
             <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.LATITUDE' | translate }}</label>
             <input type="number" formControlName="lat" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
@@ -250,7 +282,14 @@
             <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.LONGITUDE' | translate }}</label>
             <input type="number" formControlName="lng" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
           </div>
-        </div>
+        </div-->
+
+        <!--button 
+          type="button" 
+          (click)="centerMapOnMarker()"
+          class="w-full px-4 py-2 rounded text-[10px] font-bold uppercase tracking-widest bg-primary/20 hover:bg-primary/30 text-primary transition-colors border border-primary/30">
+          {{ 'PROPERTY_FORM.UPDATE_LOCATION' | translate }}
+        </button-->
 
         <div class="space-y-2">
           <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.INITIAL_STATUS' | translate }}</label>

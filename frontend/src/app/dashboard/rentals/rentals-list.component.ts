@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { RentalsService, Rental } from '../../services/rentals.service';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { TranslatePipe } from '../../i18n/translate.pipe';
@@ -19,7 +19,7 @@ export class RentalsListComponent implements OnInit {
   isLoading = signal(true);
   error: string | null = null;
 
-  constructor(private rentalsService: RentalsService) {}
+  constructor(private rentalsService: RentalsService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadRentals();
@@ -67,5 +67,9 @@ export class RentalsListComponent implements OnInit {
 
   getRentalStatusLabel(status: string) {
     return this.i18n.translate(`COMMON.${status}`);
+  }
+
+    onNewRental() {
+    this.router.navigate(['/dashboard/rentals/provision'])
   }
 }

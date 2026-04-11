@@ -37,11 +37,26 @@
             <div class="relative">
               <select formControlName="propertyId" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
                 <option value="" class="bg-background-dark">{{ 'TRANSACTION_FORM.SELECT_PROPERTY_PLACEHOLDER' | translate }}</option>
-                <option *ngFor="let p of properties" [value]="p._id" class="bg-background-dark">{{ p.reference }} - {{ p.address }}</option>
+                @for(property of properties; track property._id) {
+                     <option [value]="property._id" class="bg-background-dark">{{ property.reference }} - {{ property.address }}</option>
+                }
               </select>
               <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">expand_more</span>
             </div>
-            <div *ngIf="transactionForm.get('propertyId')?.touched && transactionForm.get('propertyId')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">{{ 'TRANSACTION_FORM.PROPERTY_REQUIRED' | translate }}</div>
+            @if (transactionForm.get('propertyId')?.touched && transactionForm.get('propertyId')?.invalid) {
+              <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">{{ 'TRANSACTION_FORM.PROPERTY_REQUIRED' | translate }}</div>
+            } @else if (selectedProperty() && selectedProperty()?.photos?.length) {
+              <div class="mt-4 space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Property Gallery</label>
+                <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                  @for (photo of selectedProperty()?.photos ?? []; track $index) {
+                    <div class="flex-shrink-0 rounded-lg overflow-hidden border border-white/10 h-32 w-48">
+                      <img [src]="photo" [alt]="'Property photo ' + $index" class="w-full h-full object-cover hover:scale-110 transition-transform duration-300 cursor-pointer">
+                    </div>
+                  }
+                </div>
+              </div>
+            }
           </div>
         </div>
       </section>

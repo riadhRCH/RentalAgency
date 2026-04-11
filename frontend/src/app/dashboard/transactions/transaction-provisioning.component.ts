@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -21,6 +21,7 @@ export class TransactionProvisioningComponent implements OnInit {
   transactionForm: FormGroup;
   isLoading = false;
   properties: Property[] = [];
+  selectedProperty = signal<Property | undefined>(undefined)
   sourceInfo: { type: string, id: string } | null = null;
   notification: string | null = null;
 
@@ -60,6 +61,11 @@ export class TransactionProvisioningComponent implements OnInit {
     // Automatically calculate end date when start date or duration changes
     this.transactionForm.get('timeline.startDate')?.valueChanges.subscribe(() => this.updateEndDate());
     this.transactionForm.get('timeline.duration')?.valueChanges.subscribe(() => this.updateEndDate());
+    
+    // Update selected property when propertyId changes
+    this.transactionForm.get('propertyId')?.valueChanges.subscribe(v => {
+      this.selectedProperty.set(this.properties.find(p => p._id === v) || undefined);
+    });
   }
 
   ngOnInit(): void {
@@ -70,6 +76,7 @@ export class TransactionProvisioningComponent implements OnInit {
   loadProperties(): void {
     this.propertiesService.getProperties().subscribe(data => {
       this.properties = data.data.filter((p: Property) => p.status === 'available');
+      console.log('this.properties', this.properties)
     });
   }
 

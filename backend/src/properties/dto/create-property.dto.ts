@@ -41,6 +41,14 @@ export class CreatePropertyDto {
   @IsNotEmpty()
   price: number;
 
+  @IsEnum(['monthly', 'yearly', 'daily'])
+  @IsNotEmpty()
+  pricingType: string;
+
+  @IsString()
+  @IsOptional()
+  googleMapsLink?: string;
+
   @IsString()
   @IsNotEmpty()
   description: string;

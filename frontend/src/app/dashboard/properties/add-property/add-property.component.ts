@@ -29,6 +29,12 @@ export class AddPropertyComponent implements OnInit {
   ownerSelectionMode = signal<'existing' | 'new'>('existing');
   propertyId: string | null = null;
   isEditMode = signal(false);
+  
+  // Collapsible sections
+  basicInfoExpanded = signal(true);
+  detailsExpanded = signal(true);
+  imagesExpanded = signal(true);
+  locationExpanded = signal(true);
 
   constructor() {
     this.propertyForm = this.fb.group({
@@ -36,6 +42,8 @@ export class AddPropertyComponent implements OnInit {
       address: ['', Validators.required],
       surface: [null, [Validators.required, Validators.min(1)]],
       price: [null, [Validators.required, Validators.min(0)]],
+      pricingType: ['monthly', Validators.required],
+      googleMapsLink: [''],
       description: ['', Validators.required],
       status: ['available', Validators.required],
       ownerId: [''],
@@ -99,6 +107,8 @@ export class AddPropertyComponent implements OnInit {
             address: prop.address,
             surface: prop.surface,
             price: prop.price,
+            pricingType: prop.pricingType || 'monthly',
+            googleMapsLink: prop.googleMapsLink || '',
             description: prop.description,
             status: prop.status,
             ownerId: prop.ownerId?._id || prop.ownerId,
@@ -177,5 +187,74 @@ export class AddPropertyComponent implements OnInit {
 
   onCancel() {
     this.router.navigate(['/dashboard/properties']);
+  }
+
+  onGoogleMapsLinkPaste(link: string) {
+    // Extract coordinates from Google Maps link
+    // Does support these formats:
+    // https://www.google.com/maps/place/33.5731,-7.5898
+    // https://www.google.com/maps/@33.5731,-7.5898,...
+    // https://maps.google.com/?q=33.5731,-7.5898
+    
+    const coordPattern = /([\d.-]+),\s*([\d.-]+)/;
+    const match = link.match(coordPattern);
+    
+    if (match) {
+      const lat = parseFloat(match[1]);
+      const lng = parseFloat(match[2]);
+      
+      if (!isNaN(lat) && !isNaN(lng)) {
+        this.propertyForm.get('gpsLocation')?.patchValue({
+          lat: lat,
+          lng: lng
+        });
+        
+        // Attempt to reverse geocode (fetch address from coordinates)
+        this.reverseGeocodeCoordinates(lat, lng);
+      }
+    }
+  }
+
+  private reverseGeocodeCoordinates(lat: number, lng: number) {
+    // Using OpenStreetMap Nominatim reverse geocoding service (free, no API key required)
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
+    
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        if (data.address) {
+          // Build address from components
+          const addressParts = [];
+          if (data.address.house_number) addressParts.push(data.address.house_number);
+          if (data.address.road) addressParts.push(data.address.road);
+          if (data.address.suburb) addressParts.push(data.address.suburb);
+          if (data.address.city) addressParts.push(data.address.city);
+          if (data.address.postcode) addressParts.push(data.address.postcode);
+          if (data.address.country) addressParts.push(data.address.country);
+          
+          const fullAddress = addressParts.join(', ');
+          if (fullAddress) {
+            this.propertyForm.get('address')?.setValue(fullAddress);
+          }
+        }
+      })
+      .catch(err => console.warn('Could not reverse geocode address:', err));
+  }
+
+  toggleSection(section: 'basicInfo' | 'details' | 'images' | 'location') {
+    switch (section) {
+      case 'basicInfo':
+        this.basicInfoExpanded.update(v => !v);
+        break;
+      case 'details':
+        this.detailsExpanded.update(v => !v);
+        break;
+      case 'images':
+        this.imagesExpanded.update(v => !v);
+        break;
+      case 'location':
+        this.locationExpanded.update(v => !v);
+        break;
+    }
   }
 }

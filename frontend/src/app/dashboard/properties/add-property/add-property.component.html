@@ -16,6 +16,284 @@
   </header>
 
   <form [formGroup]="propertyForm" (ngSubmit)="onSubmit()" class="space-y-8">
+    <!-- BASIC INFORMATION SECTION -->
+    <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+      <button
+        type="button"
+        (click)="toggleSection('basicInfo')"
+        class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors"
+      >
+        <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">info</span>
+          {{ 'PROPERTY_FORM.BASIC_INFORMATION' | translate }}
+        </h2>
+        <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!basicInfoExpanded()">
+          expand_more
+        </span>
+      </button>
+
+      <div *ngIf="basicInfoExpanded()" class="animate-in fade-in slide-in-from-top-2 duration-200 px-8 pb-8 space-y-6 border-t border-white/5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.PROPERTY_TYPE' | translate }}</label>
+            <select formControlName="type" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+              <option value="apartment" class="bg-background-dark text-white">{{ 'PROPERTIES.TYPE_APARTMENT' | translate }}</option>
+              <option value="villa" class="bg-background-dark text-white">{{ 'PROPERTIES.TYPE_VILLA' | translate }}</option>
+              <option value="house" class="bg-background-dark text-white">{{ 'PROPERTIES.TYPE_HOUSE' | translate }}</option>
+              <option value="land" class="bg-background-dark text-white">{{ 'PROPERTIES.TYPE_LAND' | translate }}</option>
+            </select>
+          </div>
+
+          <div class="space-y-4">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.OWNER_PERSONNEL' | translate }}</label>
+
+            <div class="flex gap-2 p-1 bg-white/5 rounded-lg border border-white/10 w-fit">
+              <button
+                type="button"
+                (click)="setOwnerSelectionMode('existing')"
+                [class.bg-primary]="ownerSelectionMode() === 'existing'"
+                [class.text-white]="ownerSelectionMode() === 'existing'"
+                [class.text-slate-400]="ownerSelectionMode() !== 'existing'"
+                class="px-4 py-2 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all">
+                {{ 'COMMON.EXISTING' | translate }}
+              </button>
+              <button
+                type="button"
+                (click)="setOwnerSelectionMode('new')"
+                [class.bg-primary]="ownerSelectionMode() === 'new'"
+                [class.text-white]="ownerSelectionMode() === 'new'"
+                [class.text-slate-400]="ownerSelectionMode() !== 'new'"
+                class="px-4 py-2 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all">
+                {{ 'COMMON.NEW_PHONE' | translate }}
+              </button>
+            </div>
+
+            <div *ngIf="ownerSelectionMode() === 'existing'" class="animate-in fade-in slide-in-from-top-2 duration-200">
+              <select formControlName="ownerId" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+                <option value="" disabled selected class="bg-background-dark text-white">{{ 'PROPERTY_FORM.SELECT_OWNER' | translate }}</option>
+                <option *ngFor="let p of personnel()" [value]="p._id" class="bg-background-dark text-white">{{ p.name || p.phone }} ({{ p.role || ('PROPERTY_FORM.OWNER_PERSONNEL' | translate) }})</option>
+              </select>
+              <div *ngIf="propertyForm.get('ownerId')?.touched && propertyForm.get('ownerId')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
+                {{ 'PROPERTY_FORM.OWNER_REQUIRED' | translate }}
+              </div>
+            </div>
+
+            <div *ngIf="ownerSelectionMode() === 'new'" class="animate-in fade-in slide-in-from-top-2 duration-200">
+              <app-phone-input formControlName="ownerPhone" [placeholder]="'PROPERTY_FORM.OWNER_PHONE_PLACEHOLDER' | translate"></app-phone-input>
+              <div *ngIf="propertyForm.get('ownerPhone')?.touched && propertyForm.get('ownerPhone')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
+                {{ 'PROPERTY_FORM.OWNER_PHONE_REQUIRED' | translate }}
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.PRICE' | translate }}</label>
+            <input type="number" formControlName="price" [placeholder]="'PROPERTY_FORM.PRICE_PLACEHOLDER' | translate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+            <div *ngIf="propertyForm.get('price')?.touched && propertyForm.get('price')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
+              {{ 'PROPERTY_FORM.PRICE_REQUIRED' | translate }}
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.PRICING_TYPE' | translate }}</label>
+            <select formControlName="pricingType" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+              <option value="monthly" class="bg-background-dark text-white">{{ 'PROPERTY_FORM.PRICING_MONTHLY' | translate }}</option>
+              <option value="yearly" class="bg-background-dark text-white">{{ 'PROPERTY_FORM.PRICING_YEARLY' | translate }}</option>
+              <option value="daily" class="bg-background-dark text-white">{{ 'PROPERTY_FORM.PRICING_DAILY' | translate }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DETAILS & DESCRIPTION SECTION -->
+    <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+      <button
+        type="button"
+        (click)="toggleSection('details')"
+        class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors"
+      >
+        <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">description</span>
+          {{ 'PROPERTY_FORM.DETAILS' | translate }}
+        </h2>
+        <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!detailsExpanded()">
+          expand_more
+        </span>
+      </button>
+
+      <div *ngIf="detailsExpanded()" class="animate-in fade-in slide-in-from-top-2 duration-200 px-8 pb-8 space-y-6 border-t border-white/5">
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.DESCRIPTION' | translate }}</label>
+          <textarea formControlName="description" rows="4" [placeholder]="'PROPERTY_FORM.DESCRIPTION_PLACEHOLDER' | translate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all resize-none"></textarea>
+          <div *ngIf="propertyForm.get('description')?.touched && propertyForm.get('description')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
+            {{ 'PROPERTY_FORM.DESCRIPTION_REQUIRED' | translate }}
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.SURFACE' | translate }}</label>
+          <input type="number" formControlName="surface" [placeholder]="'PROPERTY_FORM.SURFACE_PLACEHOLDER' | translate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+          <div *ngIf="propertyForm.get('surface')?.touched && propertyForm.get('surface')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
+            {{ 'PROPERTY_FORM.SURFACE_REQUIRED' | translate }}
+          </div>
+        </div>
+
+        <div formGroupName="amenities" class="grid grid-cols-2 md:grid-cols-3 gap-6">
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.BEDROOMS' | translate }}</label>
+            <input type="number" formControlName="bedrooms" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.BATHROOMS' | translate }}</label>
+            <input type="number" formControlName="bathrooms" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+          </div>
+
+          <div class="flex items-center gap-3 pt-6">
+            <input type="checkbox" formControlName="parking" id="parking" class="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary">
+            <label for="parking" class="text-[10px] font-bold uppercase tracking-widest text-slate-300 cursor-pointer">{{ 'PROPERTY_FORM.PARKING' | translate }}</label>
+          </div>
+          <div class="flex items-center gap-3 pt-6">
+            <input type="checkbox" formControlName="furnished" id="furnished" class="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary">
+            <label for="furnished" class="text-[10px] font-bold uppercase tracking-widest text-slate-300 cursor-pointer">{{ 'PROPERTY_FORM.FURNISHED' | translate }}</label>
+          </div>
+          <div class="flex items-center gap-3 pt-6">
+            <input type="checkbox" formControlName="pool" id="pool" class="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary">
+            <label for="pool" class="text-[10px] font-bold uppercase tracking-widest text-slate-300 cursor-pointer">{{ 'PROPERTY_FORM.POOL' | translate }}</label>
+          </div>
+          <div class="flex items-center gap-3 pt-6">
+            <input type="checkbox" formControlName="garden" id="garden" class="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary">
+            <label for="garden" class="text-[10px] font-bold uppercase tracking-widest text-slate-300 cursor-pointer">{{ 'PROPERTY_FORM.GARDEN' | translate }}</label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- IMAGES SECTION -->
+    <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+      <button
+        type="button"
+        (click)="toggleSection('images')"
+        class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors"
+      >
+        <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">image</span>
+          {{ 'PROPERTY_FORM.IMAGES' | translate }}
+        </h2>
+        <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!imagesExpanded()">
+          expand_more
+        </span>
+      </button>
+
+      <div *ngIf="imagesExpanded()" class="animate-in fade-in slide-in-from-top-2 duration-200 px-8 pb-8 space-y-4 border-t border-white/5">
+        <div class="flex flex-wrap gap-4">
+          <div *ngFor="let photo of uploadedPhotos(); let i = index" class="relative w-24 h-24 rounded-lg overflow-hidden border border-white/10 group">
+            <img [src]="photo" class="w-full h-full object-cover">
+            <button type="button" (click)="removePhoto(i)" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span class="material-symbols-outlined text-xs">close</span>
+            </button>
+          </div>
+
+          <label class="w-24 h-24 rounded-lg border-2 border-dashed border-white/10 flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group">
+            <input type="file" multiple (change)="onFileSelected($event)" class="hidden" accept="image/*">
+            <span *ngIf="!uploading()" class="material-symbols-outlined text-slate-500 group-hover:text-primary transition-colors">add_a_photo</span>
+            <span *ngIf="uploading()" class="material-symbols-outlined animate-spin text-primary">progress_activity</span>
+            <span class="text-[8px] font-bold uppercase tracking-widest text-slate-500 mt-1">{{ uploading() ? ('PROPERTY_FORM.UPLOADING' | translate) : ('PROPERTY_FORM.ADD_PHOTOS' | translate) }}</span>
+          </label>
+        </div>
+        <p class="text-[10px] text-slate-500 uppercase tracking-widest ml-1">{{ 'PROPERTY_FORM.IMAGES_HELP' | translate }}</p>
+      </div>
+    </section>
+
+    <!-- LOCATION & STATUS SECTION -->
+    <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+      <button
+        type="button"
+        (click)="toggleSection('location')"
+        class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors"
+      >
+        <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">location_on</span>
+          {{ 'PROPERTY_FORM.LOCATION' | translate }}
+        </h2>
+        <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!locationExpanded()">
+          expand_more
+        </span>
+      </button>
+
+      <div *ngIf="locationExpanded()" class="animate-in fade-in slide-in-from-top-2 duration-200 px-8 pb-8 space-y-6 border-t border-white/5">
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.ADDRESS' | translate }}</label>
+          <input type="text" formControlName="address" [placeholder]="'PROPERTY_FORM.ADDRESS_PLACEHOLDER' | translate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+          <div *ngIf="propertyForm.get('address')?.touched && propertyForm.get('address')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">
+            {{ 'PROPERTY_FORM.ADDRESS_REQUIRED' | translate }}
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.GOOGLE_MAPS_LINK' | translate }}</label>
+          <input 
+            type="url" 
+            formControlName="googleMapsLink" 
+            [placeholder]="'PROPERTY_FORM.GOOGLE_MAPS_PLACEHOLDER' | translate"
+            (change)="onGoogleMapsLinkPaste(propertyForm.get('googleMapsLink')?.value)"
+            class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+          <p class="text-[10px] text-slate-400 uppercase tracking-widest ml-1 mt-1">{{ 'PROPERTY_FORM.GOOGLE_MAPS_HELP' | translate }}</p>
+        </div>
+
+        <div formGroupName="gpsLocation" class="grid grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.LATITUDE' | translate }}</label>
+            <input type="number" formControlName="lat" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.LONGITUDE' | translate }}</label>
+            <input type="number" formControlName="lng" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.INITIAL_STATUS' | translate }}</label>
+          <select formControlName="status" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+            <option value="available" class="bg-background-dark text-white">{{ 'PROPERTY_FORM.STATUS_AVAILABLE' | translate }}</option>
+            <option value="reserved" class="bg-background-dark text-white">{{ 'PROPERTY_FORM.STATUS_RESERVED' | translate }}</option>
+            <option value="rented" class="bg-background-dark text-white">{{ 'PROPERTY_FORM.STATUS_RENTED' | translate }}</option>
+            <option value="sold" class="bg-background-dark text-white">{{ 'PROPERTY_FORM.STATUS_SOLD' | translate }}</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORM ACTIONS -->
+    <div class="flex items-center justify-end gap-4 pt-4">
+      <button type="button" (click)="onCancel()" class="px-8 py-3 rounded uppercase text-[10px] font-bold tracking-widest text-slate-400 hover:text-white transition-all">
+        {{ 'COMMON.CANCEL' | translate }}
+      </button>
+      <button type="submit" [disabled]="loading() || propertyForm.invalid" class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-10 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+        <span *ngIf="loading()" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+        <span *ngIf="!loading()" class="material-symbols-outlined text-sm">save</span>
+        {{ loading() ? ('COMMON.SAVING' | translate) : (isEditMode() ? ('PROPERTY_FORM.UPDATE_LISTING' | translate) : ('PROPERTY_FORM.CREATE_LISTING' | translate)) }}
+      </button>
+    </div>
+  </form>
+</div>
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+        {{ isEditMode() ? ('PROPERTY_FORM.EDIT_TITLE' | translate) : ('PROPERTY_FORM.ADD_TITLE' | translate) }}
+      </h1>
+      <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+        {{ isEditMode() ? ('PROPERTY_FORM.EDIT_SUBTITLE' | translate) : ('PROPERTY_FORM.ADD_SUBTITLE' | translate) }}
+      </p>
+    </div>
+
+    <button (click)="onCancel()" class="text-slate-500 hover:text-white transition-colors flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+      <span class="material-symbols-outlined text-sm">arrow_back</span>
+      {{ 'PROPERTY_FORM.BACK_TO_LISTINGS' | translate }}
+    </button>
+  </header>
+
+  <form [formGroup]="propertyForm" (ngSubmit)="onSubmit()" class="space-y-8">
     <section class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
       <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
         <span class="material-symbols-outlined text-primary">info</span>
@@ -211,4 +489,4 @@
       </button>
     </div>
   </form>
-</div>
+

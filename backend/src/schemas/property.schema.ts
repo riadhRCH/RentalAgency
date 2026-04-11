@@ -39,6 +39,17 @@ export class Property {
   @Prop({ required: true })
   price: number;
 
+  @Prop({
+    type: String,
+    enum: ['monthly', 'yearly', 'daily'],
+    default: 'monthly',
+    required: true,
+  })
+  pricingType: string;
+
+  @Prop()
+  googleMapsLink: string;
+
   @Prop({ required: true })
   description: string;
 

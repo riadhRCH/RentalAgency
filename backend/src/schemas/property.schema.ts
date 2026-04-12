@@ -69,6 +69,9 @@ export class Property {
   @Prop({ type: [String], default: [] })
   videos: string[];
 
+  @Prop()
+  previewVideo: string;
+
   @Prop({
     type: String,
     enum: Object.values(PropertyStatus),

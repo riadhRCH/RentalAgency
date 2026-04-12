@@ -75,6 +75,10 @@ export class CreatePropertyDto {
   @IsOptional()
   videos?: string[];
 
+  @IsString()
+  @IsOptional()
+  previewVideo?: string;
+
   @IsEnum(['available', 'reserved', 'rented', 'sold'])
   @IsOptional()
   status?: string;

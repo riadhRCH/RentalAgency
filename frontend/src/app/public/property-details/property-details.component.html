@@ -1,0 +1,318 @@
+<div class="min-h-screen bg-background-dark text-white">
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="flex items-center justify-center min-h-screen">
+      <div class="text-center">
+        <div class="inline-block">
+          <span class="material-symbols-outlined animate-spin text-primary text-5xl">progress_activity</span>
+        </div>
+        <p class="mt-4 text-slate-400">{{ 'COMMON.LOADING' | translate }}</p>
+      </div>
+    </div>
+  } @else if (property()) {
+    <div class="space-y-12">
+      <!-- Cover Image Section -->
+      <section class="relative h-96 md:h-[500px] overflow-hidden">
+        @if (property()?.previewVideo && !videoLoaded()) {
+          <div class="absolute inset-0 bg-black/60 flex items-center justify-center">
+            <span class="material-symbols-outlined animate-spin text-primary text-5xl">progress_activity</span>
+          </div>
+        }
+
+        @if (property()?.previewVideo) {
+          <iframe
+            [src]="property()?.previewVideo"
+            class="w-full h-full border-0 object-cover"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            (load)="onVideoLoaded()"
+          ></iframe>
+        } @else if (getGalleryImages()[0]) {
+          <img
+            [src]="getGalleryImages()[0]"
+            alt="Property cover"
+            class="w-full h-full object-cover"
+          />
+        } @else {
+          <div class="w-full h-full bg-white/5 flex items-center justify-center">
+            <span class="material-symbols-outlined text-slate-500 text-6xl">image</span>
+          </div>
+        }
+
+        <!-- Property Header Overlay -->
+        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent pt-20 pb-8 px-8">
+          <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-2">
+            {{ property()?.reference }}
+          </h1>
+          <div class="flex items-center gap-4 text-slate-300">
+            <span class="material-symbols-outlined">location_on</span>
+            <p class="text-sm">{{ property()?.address }}</p>
+          </div>
+          <div class="flex flex-wrap gap-4 mt-4">
+            <div class="flex items-center gap-2">
+              <span class="text-primary font-bold text-2xl">{{ property()?.price }}</span>
+              <span class="text-slate-400 text-sm">
+                @switch(property()?.paymentFrequency) {
+                  @case ('DAILY') { {{ 'COMMON.DAILY' | translate }} }
+                  @case ('WEEKLY') { {{ 'COMMON.WEEKLY' | translate }} }
+                  @case ('MONTHLY') { {{ 'COMMON.MONTHLY' | translate }} }
+                  @case ('YEARLY') { {{ 'COMMON.YEARLY' | translate }} }
+                }
+              </span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-300">
+              <span class="material-symbols-outlined">square_foot</span>
+              <span>{{ property()?.surface }} m²</span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-300">
+              <span class="material-symbols-outlined">home</span>
+              <span>{{ property()?.type }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Property Details Container -->
+      <div class="px-8 max-w-6xl mx-auto space-y-12">
+        <!-- Overview Section -->
+        <section class="space-y-6">
+          <h2 class="text-2xl font-serif font-bold text-white uppercase tracking-widest flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary">info</span>
+            {{ 'PROPERTY_DETAILS.OVERVIEW' | translate }}
+          </h2>
+          <p class="text-slate-300 leading-relaxed text-lg">{{ property()?.description }}</p>
+
+          @if (property()?.amenities) {
+            <div class="space-y-4">
+              <h3 class="text-sm font-bold uppercase tracking-widest text-primary">{{ 'PROPERTY_DETAILS.AMENITIES' | translate }}</h3>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                @for (item of property()?.amenities | keyvalue; track item.key) {
+                  @if (item.value !== false && item.value !== null && item.value !== undefined) {
+                    <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg p-3">
+                      <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                      <span class="text-sm text-slate-300 capitalize">{{ item.key }}</span>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+          }
+        </section>
+
+        <!-- Gallery Section -->
+        @if (getGalleryImages().length > 0) {
+          <section class="space-y-6">
+            <h2 class="text-2xl font-serif font-bold text-white uppercase tracking-widest flex items-center gap-3">
+              <span class="material-symbols-outlined text-primary">image</span>
+              {{ 'PROPERTY_DETAILS.GALLERY' | translate }}
+            </h2>
+
+            <div class="relative">
+              <div class="aspect-video rounded-2xl overflow-hidden border border-white/10 bg-black">
+                <img
+                  [src]="getGalleryImages()[currentImageIndex()]"
+                  alt="Property gallery"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+
+              @if (getGalleryImages().length > 1) {
+                <button
+                  type="button"
+                  (click)="previousImage()"
+                  class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-primary text-white p-3 rounded-full transition-all"
+                >
+                  <span class="material-symbols-outlined">arrow_back</span>
+                </button>
+                <button
+                  type="button"
+                  (click)="nextImage()"
+                  class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-primary text-white p-3 rounded-full transition-all"
+                >
+                  <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+
+                <div class="mt-4 flex gap-2 overflow-x-auto pb-2">
+                  @for (image of getGalleryImages(); track $index) {
+                    <button
+                      type="button"
+                      (click)="currentImageIndex.set($index)"
+                      class="flex-shrink-0 h-20 w-32 rounded-lg overflow-hidden border-2 transition-all"
+                      [class.border-primary]="currentImageIndex() === $index"
+                      [class.border-white/10]="currentImageIndex() !== $index"
+                    >
+                      <img [src]="image" alt="Gallery thumbnail" class="w-full h-full object-cover" />
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          </section>
+        }
+
+        <!-- Google Maps Section -->
+        @if (property()?.gpsLocation) {
+          <section class="space-y-6">
+            <h2 class="text-2xl font-serif font-bold text-white uppercase tracking-widest flex items-center gap-3">
+              <span class="material-symbols-outlined text-primary">location_on</span>
+              {{ 'PROPERTY_DETAILS.LOCATION' | translate }}
+            </h2>
+
+            <div class="rounded-2xl overflow-hidden border border-white/10 h-96">
+              <iframe
+                [src]="getGoogleMapsEmbedUrl()"
+                width="100%"
+                height="100%"
+                style="border: 0"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
+          </section>
+        }
+
+        <!-- Reservation Section -->
+        <section class="space-y-6 bg-white/5 border border-white/10 rounded-2xl p-8">
+          <h2 class="text-2xl font-serif font-bold text-white uppercase tracking-widest flex items-center gap-3 border-b border-white/10 pb-4">
+            <span class="material-symbols-outlined text-primary">calendar_today</span>
+            {{ 'PROPERTY_DETAILS.MAKE_RESERVATION' | translate }}
+          </h2>
+
+          <form [formGroup]="reservationForm" (ngSubmit)="makeReservation()" class="space-y-6">
+            <!-- Customer Phone -->
+            <div class="space-y-2">
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                {{ 'COMMON.PHONE_NUMBER' | translate }}
+              </label>
+              <input
+                type="tel"
+                formControlName="customerPhone"
+                class="w-full bg-white/5 border border-white/10 text-white rounded-lg p-3 text-sm outline-none focus:border-primary transition-all"
+                placeholder="+216 12345678"
+              />
+              @if (reservationForm.get('customerPhone')?.touched && reservationForm.get('customerPhone')?.invalid) {
+                <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1">
+                  {{ 'COMMON.PHONE_REQUIRED' | translate }}
+                </div>
+              }
+            </div>
+
+            <!-- Reservation Type -->
+            @if (property()?.paymentFrequency === 'DAILY') {
+              <!-- Calendar for DAILY -->
+              <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                  {{ 'PROPERTY_DETAILS.SELECT_DATES' | translate }}
+                </label>
+                <div class="bg-white/5 border border-white/10 rounded-lg p-6">
+                  <app-calendar-selector
+                    [propertyCalendarData]="property()?.calendarData || []"
+                    (datesSelected)="onSelectedDates($event)"
+                  ></app-calendar-selector>
+                </div>
+              </div>
+            } @else {
+              <!-- Timeline for Monthly/Weekly/Yearly -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="space-y-2">
+                  <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                    {{ 'TRANSACTION_FORM.START_DATE' | translate }}
+                  </label>
+                  <input
+                    type="date"
+                    formControlName="startDate"
+                    class="w-full bg-white/5 border border-white/10 text-white rounded-lg p-3 text-sm outline-none focus:border-primary transition-all"
+                  />
+                  @if (reservationForm.get('startDate')?.touched && reservationForm.get('startDate')?.invalid) {
+                    <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1">
+                      {{ 'COMMON.REQUIRED' | translate }}
+                    </div>
+                  }
+                </div>
+
+                <div class="space-y-2">
+                  <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                    {{ 'TRANSACTION_FORM.END_DATE' | translate }}
+                  </label>
+                  <input
+                    type="date"
+                    formControlName="endDate"
+                    class="w-full bg-white/5 border border-white/10 text-white rounded-lg p-3 text-sm outline-none focus:border-primary transition-all"
+                  />
+                  @if (reservationForm.get('endDate')?.touched && reservationForm.get('endDate')?.invalid) {
+                    <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1">
+                      {{ 'COMMON.REQUIRED' | translate }}
+                    </div>
+                  }
+                </div>
+
+                <div class="space-y-2">
+                  <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                    {{ 'PROPERTY_DETAILS.DURATION' | translate }}
+                  </label>
+                  <div class="w-full bg-white/5 border border-white/10 text-white rounded-lg p-3 text-sm">
+                    {{ getDuration() }} {{ getDuration() === 1 ? 'day' : 'days' }}
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Error Message -->
+            @if (reservationError()) {
+              <div class="bg-red-500/20 border border-red-500/50 rounded-lg p-4">
+                <p class="text-red-300 text-sm">{{ reservationError() }}</p>
+              </div>
+            }
+
+            <!-- Price Summary -->
+            <div class="bg-black/40 border border-primary/30 rounded-lg p-6 space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400">{{ 'PROPERTY_DETAILS.DAILY_RATE' | translate }}</span>
+                <span class="text-white font-semibold">{{ property()?.price }} TND</span>
+              </div>
+              @if (getDuration() > 0) {
+                <div class="flex justify-between items-center text-slate-300 text-sm">
+                  <span>
+                    @if (property()?.paymentFrequency === 'DAILY') {
+                      Selected days
+                    } @else {
+                      {{ getDuration() }} days
+                    }
+                  </span>
+                  <span>×</span>
+                </div>
+                <div class="border-t border-white/10 pt-2 flex justify-between items-center">
+                  <span class="text-primary font-bold">{{ 'PROPERTY_DETAILS.TOTAL' | translate }}</span>
+                  <span class="text-primary font-bold text-xl">{{ getEstimatedCost() }} TND</span>
+                </div>
+              }
+            </div>
+
+            <!-- Submit Button -->
+            <button
+              type="submit"
+              [disabled]="isSubmitting() || reservationForm.invalid"
+              class="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold uppercase tracking-widest py-4 rounded-lg transition-all flex items-center justify-center gap-2"
+            >
+              @if (isSubmitting()) {
+                <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                {{ 'PROPERTY_DETAILS.PROCESSING' | translate }}
+              } @else {
+                <span class="material-symbols-outlined text-sm">check_circle</span>
+                {{ 'PROPERTY_DETAILS.CONFIRM_RESERVATION' | translate }}
+              }
+            </button>
+          </form>
+        </section>
+      </div>
+    </div>
+  } @else {
+    <div class="flex items-center justify-center min-h-screen">
+      <div class="text-center">
+        <span class="material-symbols-outlined text-slate-500 text-6xl">error</span>
+        <p class="mt-4 text-slate-400">{{ 'PROPERTY_DETAILS.NOT_FOUND' | translate }}</p>
+      </div>
+    </div>
+  }
+</div>

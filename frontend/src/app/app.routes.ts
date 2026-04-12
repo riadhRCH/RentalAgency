@@ -17,9 +17,11 @@ import { DashboardLayoutComponent } from './dashboard/layout/dashboard-layout.co
 import { TransactionsListComponent } from './dashboard/transactions/transactions-list.component';
 import { TransactionProvisioningComponent } from './dashboard/transactions/transaction-provisioning.component';
 import { TransactionDetailComponent } from './dashboard/transactions/transaction-detail.component';
+import { PropertyDetailsComponent } from './public/property-details/property-details.component';
 
 export const routes: Routes = [
     { path: '', component: LandingPage },
+    { path: 'property/:id', component: PropertyDetailsComponent },
     { path: 'auth/login', component: LoginComponent },
     { path: 'auth/register', component: RegisterComponent },
     { path: 'auth/select-agency', component: AgencySelectionComponent, canActivate: [authGuard] },

@@ -78,6 +78,21 @@ export class PropertiesService {
     return property;
   }
 
+  async getPublicProperty(id: string) {
+    const property = await this.propertyModel
+      .findOne({
+        _id: new Types.ObjectId(id),
+        status: { $ne: 'sold' },
+        deletedAt: { $exists: false },
+      })
+      .populate('ownerId')
+      .select(
+        'reference type address gpsLocation surface price paymentFrequency googleMapsLink description photos videos previewVideo amenities calendarData ownerId createdAt',
+      );
+    if (!property) throw new NotFoundException('Property not found');
+    return property;
+  }
+
   async create(agencyId: string, dto: CreatePropertyDto) {
     let ownerId = dto.ownerId;
 

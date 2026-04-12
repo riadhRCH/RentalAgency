@@ -21,12 +21,14 @@ export interface Property {
   description: string;
   photos: string[];
   videos: string[];
+  previewVideo?: string;
   status: PropertyStatus;
   ownerId: any;
   amenities: Record<string, any>;
   createdAt: Date;
   paymentFrequency: PaymentFrequency;
   calendarData?: DayAvailability[];
+  googleMapsLink?: string;
 }
 
 export interface PaginatedProperties {
@@ -57,6 +59,10 @@ export class PropertiesService {
 
   getProperty(id: string): Observable<Property> {
     return this.http.get<Property>(`${this.apiUrl}/${id}`);
+  }
+
+  getPublicProperty(id: string): Observable<Property> {
+    return this.http.get<Property>(`${this.apiUrl}/public/${id}`);
   }
 
   createProperty(data: any): Observable<Property> {

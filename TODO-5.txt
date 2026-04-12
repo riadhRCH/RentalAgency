@@ -1,93 +1,19 @@
-in http://localhost:4200/dashboard/transactions/provision page
+create a brand new page component in frontend for showing all public detail for a given property
 
-there is a log that will display smth like this 
-`this.selectedProperty() {
-    "_id": "69d0f9ec9262530d35ec910c",
-    "agencyId": "69cd98193e52869d6875d33c",
-    "reference": "PROP-ZFQP7H2",
-    "type": "apartment",
-    "address": "chotrana",
-    "gpsLocation": {
-        "lat": 2333,
-        "lng": 2333
-    },
-    "surface": 233,
-    "price": 850,
-    "description": "citraaa",
-    "photos": [
-        "https://res.cloudinary.com/deglldw7i/image/upload/v1775303113/dv35kgc8i93ltzh1z6db.jpg",
-        "https://res.cloudinary.com/deglldw7i/image/upload/v1775303115/rhvjjuhtnz1566rxkbmf.jpg"
-    ],
-    "videos": [],
-    "status": "available",
-    "ownerId": {
-        "_id": "69d0f9ec9262530d35ec910a",
-        "phone": "+216223344",
-        "source": "manual",
-        "status": "active",
-        "createdAt": "2026-04-04T11:45:48.736Z",
-        "updatedAt": "2026-04-04T11:45:48.736Z",
-        "__v": 0
-    },
-    "amenities": {
-        "bedrooms": 3,
-        "bathrooms": 1,
-        "parking": true,
-        "furnished": false,
-        "pool": false,
-        "garden": true
-    },
-    "createdAt": "2026-04-04T11:45:48.852Z",
-    "updatedAt": "2026-04-12T08:11:29.092Z",
-    "__v": 0,
-    "googleMapsLink": "",
-    "paymentFrequency": "MONTHLY"
-}`
-or `this.selectedProperty() {
-    "_id": "69da152017f27d3040e1bd7d",
-    "agencyId": "69cd98193e52869d6875d33c",
-    "reference": "PROP-XXV6CKO",
-    "type": "villa",
-    "address": "نهج القدس, حلق الوادي, Tunis, 2060, Tunisia",
-    "gpsLocation": {
-        "lat": 36.817447117148255,
-        "lng": 10.307500661362864
-    },
-    "surface": 233,
-    "price": 350,
-    "pricingType": "DAILY",
-    "googleMapsLink": "",
-    "description": "QD",
-    "photos": [
-        "https://res.cloudinary.com/deglldw7i/image/upload/v1775899920/htwvnitv2ays8yb6xzpl.jpg"
-    ],
-    "videos": [],
-    "status": "available",
-    "ownerId": {
-        "_id": "69d8fed698ae37724b64205f",
-        "phone": "+21612345678",
-        "source": "manual",
-        "status": "active",
-        "createdAt": "2026-04-10T13:44:54.055Z",
-        "updatedAt": "2026-04-10T13:44:54.055Z",
-        "__v": 0
-    },
-    "amenities": {
-        "bedrooms": 232,
-        "bathrooms": 22,
-        "parking": true,
-        "furnished": false,
-        "pool": false,
-        "garden": true
-    },
-    "createdAt": "2026-04-11T09:32:16.892Z",
-    "updatedAt": "2026-04-12T08:08:26.355Z",
-    "__v": 0,
-    "paymentFrequency": "DAILY"
-}`
+this component is public, make a bublic route for it that ends with property id, and make a getPublicProperty api that returns only needed property information
 
-1/ i want to autofill details in the transaction form from selectedProperty (only if they are undefined)
-2/ i want to make a feature in calendar, i want to display an interactive days select calendar if paymentFrequency is DAILY, and keep existing view in the transaction page if paymentFrequency is not DAILY
-- i want the calendar data to get saved in the property it self so if any user wants to consult a property he will find its available agenda, the calendar data in transaction represents what a given customer wants to perform
-- i want the calendar to follow frontend project design pattern and allow app users to easely distinguish btw available days and not available days, allow users to select a range of available days (highlight them with app main color )
-- check/update the needed schema,dto,controllers, services from backend and do needed changes in frontend 
+show add new field in property, previewVideo that can be a link to a video preview of the property 
+
+in this component show :
+    1- show a cover first in the page that have previewVideo if exists, if not first photo in photos (or show the first photo initially and wait till a potential video preview loads and replace)
+    2- show property name and some details above the cover
+    3- show property overview 
+    4- show property gallery
+    5- show google maps card that have property location 
+    6- reservation section (important)
+        - if it is a paymentFrequency === 'DAILY' show the shared calendar component, indicate unavailable days, 
+        - if it is a paymentFrequency !== 'DAILY' show smth similar to `<!-- Timeline -->` section from frontend\src\app\dashboard\transactions\transaction-provisioning.component.html
+        - show a make a reservation button + customer phone number input (make a reservation will need the customer phone number to proceed)
+        - once reservation button clicked mmake an api that creates a transaction
+
+follow same design guidelines for the app, use the provided design library or inspire from frontend\src\app\landing-page\landing-page.component.html

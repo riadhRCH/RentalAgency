@@ -1,0 +1,53 @@
+:host {
+  @apply block;
+}
+
+/* Cover image fade in animations */
+img, iframe {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Smooth transitions for interactive elements */
+button {
+  transition: all 0.2s ease-out;
+
+  &:hover:not(:disabled) {
+    transform: scale(1.05);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+/* Gallery thumbnail scroll */
+.overflow-x-auto {
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(15, 118, 110, 0.5);
+    border-radius: 10px;
+
+    &:hover {
+      background: rgba(15, 118, 110, 0.8);
+    }
+  }
+}

@@ -20,7 +20,6 @@ import { UpdatePropertyDto } from './dto/update-property.dto';
 import { PropertiesService } from './properties.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
-@UseGuards(JwtAuthGuard)
 @Controller('properties')
 export class PropertiesController {
   constructor(
@@ -28,6 +27,12 @@ export class PropertiesController {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
+  @Get('public/:id')
+  getPublicProperty(@Param('id') id: string) {
+    return this.propertiesService.getPublicProperty(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @UseGuards(AgencyGuard)
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
@@ -39,6 +44,7 @@ export class PropertiesController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
   @UseGuards(AgencyGuard)
   @Get()
   findAll(
@@ -67,18 +73,21 @@ export class PropertiesController {
     );
   }
 
+  @UseGuards(JwtAuthGuard)
   @UseGuards(AgencyGuard)
   @Get(':id')
   findOne(@Request() req, @Param('id') id: string) {
     return this.propertiesService.findOne(req.agencyId.toString(), id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @UseGuards(AgencyGuard)
   @Post()
   create(@Request() req, @Body() dto: CreatePropertyDto) {
     return this.propertiesService.create(req.agencyId.toString(), dto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @UseGuards(AgencyGuard)
   @Patch(':id')
   update(
@@ -89,6 +98,7 @@ export class PropertiesController {
     return this.propertiesService.update(req.agencyId.toString(), id, dto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @UseGuards(AgencyGuard)
   @Delete(':id')
   remove(@Request() req, @Param('id') id: string) {

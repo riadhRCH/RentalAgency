@@ -7,11 +7,13 @@ import { TransactionsService } from '../../services/transactions.service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
 import { CalendarSelectorComponent } from '../../shared/components/calendar/calendar-selector.component';
+import { PublicNavbarComponent } from '../../shared/components/public-navbar/public-navbar.component';
+import { PublicFooterComponent } from '../../shared/components/public-footer/public-footer.component';
 
 @Component({
   selector: 'app-property-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, CalendarSelectorComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, CalendarSelectorComponent, PublicNavbarComponent, PublicFooterComponent],
   templateUrl: './property-details.component.html',
   styleUrls: ['./property-details.component.scss']
 })

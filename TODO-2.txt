@@ -1,4 +1,3 @@
-- mobile friendly website (make sidebar collapsable, fix navbars)
 - whatsapp api integration
 - update homepage
     - section to display availble properties
@@ -7,4 +6,3 @@
 - active nombers page (list of client and owners) 
 - add permission in teams managements and configurate phone/password
 - complete isolation btw data (leads, properties, visits, management) btw members of the agency
-- add rental type in appartements (per month, per year, with contract, per night)

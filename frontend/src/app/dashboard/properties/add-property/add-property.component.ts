@@ -29,10 +29,10 @@ export class AddPropertyComponent implements OnInit {
   // Expose enums to template
   PropertyType = PropertyType;
   PropertyStatus = PropertyStatus;
-  PricingType = PaymentFrequency;
+  paymentFrequency = PaymentFrequency;
   propertyTypes = getEnumValues(PropertyType);
   propertyStatuses = getEnumValues(PropertyStatus);
-  pricingTypes = getEnumValues(PaymentFrequency);
+  paymentFrequencys = getEnumValues(PaymentFrequency);
 
   propertyForm: FormGroup;
   loading = signal(false);
@@ -74,7 +74,7 @@ export class AddPropertyComponent implements OnInit {
       address: ['', Validators.required],
       surface: [null, [Validators.required, Validators.min(1)]],
       price: [null, [Validators.required, Validators.min(0)]],
-      pricingType: [PaymentFrequency.MONTHLY, Validators.required],
+      paymentFrequency: [PaymentFrequency.MONTHLY, Validators.required],
       googleMapsLink: [''],
       description: ['', Validators.required],
       status: [PropertyStatus.AVAILABLE, Validators.required],
@@ -139,7 +139,7 @@ export class AddPropertyComponent implements OnInit {
             address: prop.address,
             surface: prop.surface,
             price: prop.price,
-            pricingType: prop.pricingType || 'monthly',
+            paymentFrequency: prop.paymentFrequency || 'monthly',
             googleMapsLink: prop.googleMapsLink || '',
             description: prop.description,
             status: prop.status,

@@ -93,8 +93,8 @@
 
           <div class="space-y-2">
             <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.PRICING_TYPE' | translate }}</label>
-            <select formControlName="pricingType" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
-              <option *ngFor="let type of pricingTypes" [value]="type" class="bg-background-dark text-white">{{ ('PROPERTY_FORM.PRICING_' + type.toUpperCase()) | translate }}</option>
+            <select formControlName="paymentFrequency" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+              <option *ngFor="let type of paymentFrequencys" [value]="type" class="bg-background-dark text-white">{{ ('PROPERTY_FORM.PRICING_' + type.toUpperCase()) | translate }}</option>
             </select>
           </div>
         </div>

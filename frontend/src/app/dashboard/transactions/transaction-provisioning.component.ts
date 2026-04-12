@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -66,6 +66,10 @@ export class TransactionProvisioningComponent implements OnInit {
     this.transactionForm.get('propertyId')?.valueChanges.subscribe(v => {
       this.selectedProperty.set(this.properties.find(p => p._id === v) || undefined);
     });
+
+    effect(() => {
+      console.log('this.selectedProperty()', this.selectedProperty())
+    })
   }
 
   ngOnInit(): void {

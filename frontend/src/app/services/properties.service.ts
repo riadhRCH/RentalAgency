@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { PaymentFrequency, PropertyStatus, PropertyType } from '../shared/enums';
 
 export interface Property {
   _id: string;
   agencyId: string;
   reference: string;
-  type: 'apartment' | 'villa' | 'house' | 'land';
+  type: PropertyType;
   address: string;
   gpsLocation: { lat: number; lng: number };
   surface: number;
@@ -15,10 +16,11 @@ export interface Property {
   description: string;
   photos: string[];
   videos: string[];
-  status: 'available' | 'reserved' | 'rented' | 'sold';
+  status: PropertyStatus;
   ownerId: any;
   amenities: Record<string, any>;
   createdAt: Date;
+  paymentFrequency: PaymentFrequency
 }
 
 export interface PaginatedProperties {

@@ -8,6 +8,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { PaymentFrequency } from 'src/shared/enums';
 
 class GpsLocationDto {
   @IsNumber()
@@ -41,9 +42,9 @@ export class CreatePropertyDto {
   @IsNotEmpty()
   price: number;
 
-  @IsEnum(['monthly', 'yearly', 'daily'])
+  @IsEnum(PaymentFrequency)
   @IsNotEmpty()
-  pricingType: string;
+  paymentFrequency: PaymentFrequency;
 
   @IsString()
   @IsOptional()

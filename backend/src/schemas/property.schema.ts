@@ -46,7 +46,7 @@ export class Property {
     default: PaymentFrequency.MONTHLY,
     required: true,
   })
-  pricingType: string;
+  paymentFrequency: PaymentFrequency;
 
   @Prop()
   googleMapsLink: string;

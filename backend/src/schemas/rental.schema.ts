@@ -33,6 +33,9 @@ class Timeline {
 
   @Prop()
   renewalDate: Date;
+
+  @Prop({ type: [Date], default: [] })
+  selectedDates: Date[]; // For DAILY frequency: selected available dates
 }
 
 @Schema({ _id: false })

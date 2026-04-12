@@ -399,6 +399,14 @@ export const translations: Record<Language, Record<string, string>> = {
     'TRANSACTION_FORM.PROVISIONING': 'Provisioning...',
     'TRANSACTION_FORM.PROVISION_TRANSACTION': 'Provision Transaction',
     'TRANSACTION_FORM.CREATE_FAILED': 'Failed to create transaction',
+    'TRANSACTION_FORM.SELECT_AVAILABLE_DATES': 'Select Available Dates',
+    'TRANSACTION_FORM.CALENDAR_HELP_TEXT': 'Select the dates when the property is available for rent. Click on a date to start, then click another date to complete the range.',
+
+    'CALENDAR.SELECTED': 'Selected dates',
+    'CALENDAR.AVAILABLE': 'Available for selection',
+
+    'COMMON.DAILY': 'Daily',
+    'COMMON.WEEKLY': 'Weekly',
 
     'TRANSACTION_DETAIL.TITLE': 'Transaction Details: {{reference}}',
     'TRANSACTION_DETAIL.PROPERTY_REFERENCE': 'Reference',
@@ -811,6 +819,14 @@ export const translations: Record<Language, Record<string, string>> = {
     'TRANSACTION_FORM.PROVISIONING': 'Provisionnement...',
     'TRANSACTION_FORM.PROVISION_TRANSACTION': 'Provisionner la transaction',
     'TRANSACTION_FORM.CREATE_FAILED': 'Echec de la creation de la transaction',
+    'TRANSACTION_FORM.SELECT_AVAILABLE_DATES': 'Selectionner les dates disponibles',
+    'TRANSACTION_FORM.CALENDAR_HELP_TEXT': 'Selectionnez les dates ou la propriete est disponible a la location. Cliquez sur une date pour commencer, puis cliquez sur une autre date pour completer la plage.',
+
+    'CALENDAR.SELECTED': 'Dates selectionnees',
+    'CALENDAR.AVAILABLE': 'Disponible pour la selection',
+
+    'COMMON.DAILY': 'Quotidien',
+    'COMMON.WEEKLY': 'Hebdomadaire',
 
     'TRANSACTION_DETAIL.TITLE': 'Details de transaction : {{reference}}',
     'TRANSACTION_DETAIL.PROPERTY_REFERENCE': 'Reference',

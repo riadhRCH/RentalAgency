@@ -4,6 +4,11 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { PaymentFrequency, PropertyStatus, PropertyType } from '../shared/enums';
 
+export interface DayAvailability {
+  date: Date | string;
+  isAvailable: boolean;
+}
+
 export interface Property {
   _id: string;
   agencyId: string;
@@ -20,7 +25,8 @@ export interface Property {
   ownerId: any;
   amenities: Record<string, any>;
   createdAt: Date;
-  paymentFrequency: PaymentFrequency
+  paymentFrequency: PaymentFrequency;
+  calendarData?: DayAvailability[];
 }
 
 export interface PaginatedProperties {

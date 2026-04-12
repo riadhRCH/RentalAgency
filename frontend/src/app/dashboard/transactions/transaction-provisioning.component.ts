@@ -1,6 +1,6 @@
 import { Component, OnInit, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TransactionsService } from '../../services/transactions.service';
 import { LeadsService } from '../../services/leads.service';
@@ -8,11 +8,12 @@ import { VisitsService } from '../../services/visits.service';
 import { PropertiesService, Property } from '../../services/properties.service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
+import { CalendarSelectorComponent } from '../../shared/components/calendar/calendar-selector.component';
 
 @Component({
   selector: 'app-transaction-provisioning',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, CalendarSelectorComponent],
   templateUrl: './transaction-provisioning.component.html',
   styleUrls: ['./transaction-provisioning.component.scss']
 })
@@ -50,7 +51,8 @@ export class TransactionProvisioningComponent implements OnInit {
         startDate: ['', Validators.required],
         duration: [12, [Validators.required, Validators.min(1)]],
         endDate: ['', Validators.required],
-        renewalDate: ['']
+        renewalDate: [''],
+        selectedDates: [[], []]
       }),
       metadata: this.fb.group({
         utilityNotes: [''],
@@ -62,9 +64,10 @@ export class TransactionProvisioningComponent implements OnInit {
     this.transactionForm.get('timeline.startDate')?.valueChanges.subscribe(() => this.updateEndDate());
     this.transactionForm.get('timeline.duration')?.valueChanges.subscribe(() => this.updateEndDate());
     
-    // Update selected property when propertyId changes
+    // Update selected property when propertyId changes and auto-fill form
     this.transactionForm.get('propertyId')?.valueChanges.subscribe(v => {
       this.selectedProperty.set(this.properties.find(p => p._id === v) || undefined);
+      this.autoFillFormFromProperty();
     });
 
     effect(() => {
@@ -120,6 +123,29 @@ export class TransactionProvisioningComponent implements OnInit {
     });
   }
 
+  private autoFillFormFromProperty(): void {
+    const property = this.selectedProperty();
+    if (!property) return;
+
+    const financialDetails = this.transactionForm.get('financialDetails');
+    const currentRentAmount = financialDetails?.get('rentAmount')?.value;
+    const currentPaymentFrequency = financialDetails?.get('paymentFrequency')?.value;
+
+    // Auto-fill rentAmount from property price (only if not already set)
+    if (!currentRentAmount || currentRentAmount === 0) {
+      financialDetails?.patchValue({
+        rentAmount: property.price
+      });
+    }
+
+    // Auto-fill paymentFrequency from property paymentFrequency
+    if (!currentPaymentFrequency || currentPaymentFrequency === 'MONTHLY') {
+      financialDetails?.patchValue({
+        paymentFrequency: property.paymentFrequency || 'MONTHLY'
+      });
+    }
+  }
+
   updateEndDate(): void {
     const start = this.transactionForm.get('timeline.startDate')?.value;
     const duration = this.transactionForm.get('timeline.duration')?.value;
@@ -133,6 +159,19 @@ export class TransactionProvisioningComponent implements OnInit {
         }
       });
     }
+  }
+
+  onSelectedDates(dates: Date[]): void {
+    const dateStrings = dates.map(d => d.toISOString().split('T')[0]);
+    this.transactionForm.patchValue({
+      timeline: {
+        selectedDates: dateStrings
+      }
+    });
+  }
+
+  getSelectedDatesControl(): FormControl {
+    return (this.transactionForm.get('timeline.selectedDates') as FormControl) || new FormControl([]);
   }
 
   onSubmit(): void {

@@ -13,6 +13,15 @@ class GpsLocation {
   lng: number;
 }
 
+@Schema({ _id: false })
+class DayAvailability {
+  @Prop({ required: true })
+  date: Date;
+
+  @Prop({ required: true, default: true })
+  isAvailable: boolean;
+}
+
 @Schema({ timestamps: true })
 export class Property {
   @Prop({ type: Types.ObjectId, ref: 'RentalAgency', required: true })
@@ -72,6 +81,9 @@ export class Property {
 
   @Prop({ type: Object, default: {} })
   amenities: Record<string, any>;
+
+  @Prop({ type: [DayAvailability], default: [] })
+  calendarData: DayAvailability[];
 
   @Prop()
   deletedAt: Date;

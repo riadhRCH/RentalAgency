@@ -26,6 +26,10 @@ class TimelineDto {
   @IsOptional()
   @IsDateString()
   renewalDate?: string;
+
+  @IsOptional()
+  @IsArray()
+  selectedDates?: string[]; // For DAILY frequency
 }
 
 class TransactionMetadataDto {

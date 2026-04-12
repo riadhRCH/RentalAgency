@@ -6,6 +6,9 @@ import {
   IsOptional,
   IsString,
   ValidateNested,
+  IsDateString,
+  IsArray,
+  IsBoolean,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PaymentFrequency } from 'src/shared/enums';
@@ -18,6 +21,16 @@ class GpsLocationDto {
   @IsNumber()
   @IsNotEmpty()
   lng: number;
+}
+
+class DayAvailabilityDto {
+  @IsDateString()
+  @IsNotEmpty()
+  date: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isAvailable?: boolean;
 }
 
 export class CreatePropertyDto {
@@ -77,4 +90,10 @@ export class CreatePropertyDto {
   @IsObject()
   @IsOptional()
   amenities?: Record<string, any>;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => DayAvailabilityDto)
+  @IsOptional()
+  calendarData?: DayAvailabilityDto[];
 }

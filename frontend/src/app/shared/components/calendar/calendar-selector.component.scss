@@ -1,0 +1,35 @@
+/* Calendar Component Styles */
+
+:host {
+  @apply block;
+}
+
+/* Smooth transitions for day selection */
+button {
+  transition: all 0.2s ease-out;
+
+  &:hover:not(:disabled) {
+    transform: scale(1.05);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 640px) {
+  .grid-cols-7 {
+    gap: 0.5rem;
+  }
+
+  button {
+    font-size: 0.75rem;
+  }
+
+  .text-sm {
+    font-size: 0.875rem;
+  }
+}
+
+

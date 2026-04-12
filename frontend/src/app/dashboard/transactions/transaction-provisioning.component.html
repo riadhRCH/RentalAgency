@@ -107,6 +107,9 @@
         <div class="space-y-2">
           <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.RENT_AMOUNT' | translate }}</label>
           <input type="number" formControlName="rentAmount" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+          @if (selectedProperty()?.price) {
+            <div class="text-[10px] text-slate-400 mt-1 ml-1">Auto-filled from property price: {{ selectedProperty()?.price }}</div>
+          }
         </div>
         <div class="space-y-2">
           <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.DEPOSIT_AMOUNT' | translate }}</label>
@@ -116,15 +119,39 @@
           <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.PAYMENT_FREQUENCY' | translate }}</label>
           <div class="relative">
             <select formControlName="paymentFrequency" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+              <option value="DAILY" class="bg-background-dark">{{ 'COMMON.DAILY' | translate }}</option>
+              <option value="WEEKLY" class="bg-background-dark">{{ 'COMMON.WEEKLY' | translate }}</option>
               <option value="MONTHLY" class="bg-background-dark">{{ 'COMMON.MONTHLY' | translate }}</option>
-              <option value="QUARTERLY" class="bg-background-dark">{{ 'COMMON.QUARTERLY' | translate }}</option>
               <option value="YEARLY" class="bg-background-dark">{{ 'COMMON.YEARLY' | translate }}</option>
             </select>
             <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">expand_more</span>
           </div>
+          @if (selectedProperty()?.paymentFrequency) {
+            <div class="text-[10px] text-slate-400 mt-1 ml-1">Property default: {{ selectedProperty()?.paymentFrequency }}</div>
+          }
         </div>
       </div>
     </section>
+
+    <!-- Calendar Selection for DAILY Payment Frequency -->
+    @if (transactionForm.get('financialDetails.paymentFrequency')?.value === 'DAILY') {
+      <section class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
+          <span class="material-symbols-outlined text-primary">calendar_month</span>
+          {{ 'TRANSACTION_FORM.SELECT_AVAILABLE_DATES' | translate }}
+        </h2>
+        <p class="text-xs text-slate-400">
+          {{ 'TRANSACTION_FORM.CALENDAR_HELP_TEXT' | translate }}
+        </p>
+        <div formGroupName="timeline" class="bg-white/5 border border-white/10 rounded-lg p-6">
+          <app-calendar-selector
+            [propertyCalendarData]="selectedProperty()?.calendarData || []"
+            [selectedDatesControl]="getSelectedDatesControl()"
+            (datesSelected)="onSelectedDates($event)"
+          ></app-calendar-selector>
+        </div>
+      </section>
+    }
 
     <!-- Timeline -->
     <section formGroupName="timeline" class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">

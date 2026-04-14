@@ -18,10 +18,12 @@ import { TransactionsListComponent } from './dashboard/transactions/transactions
 import { TransactionProvisioningComponent } from './dashboard/transactions/transaction-provisioning.component';
 import { TransactionDetailComponent } from './dashboard/transactions/transaction-detail.component';
 import { PropertyDetailsComponent } from './public/property-details/property-details.component';
+import { ThankYouComponent } from './public/thank-you/thank-you.component';
 
 export const routes: Routes = [
     { path: '', component: LandingPage },
     { path: 'property/:id', component: PropertyDetailsComponent },
+    { path: 'thank-you', component: ThankYouComponent },
     { path: 'auth/login', component: LoginComponent },
     { path: 'auth/register', component: RegisterComponent },
     { path: 'auth/select-agency', component: AgencySelectionComponent, canActivate: [authGuard] },

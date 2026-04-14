@@ -19,11 +19,13 @@ import { TransactionProvisioningComponent } from './dashboard/transactions/trans
 import { TransactionDetailComponent } from './dashboard/transactions/transaction-detail.component';
 import { PropertyDetailsComponent } from './public/property-details/property-details.component';
 import { ThankYouComponent } from './public/thank-you/thank-you.component';
+import { CarouselComponent } from './public/carousel/carousel.component';
 
 export const routes: Routes = [
     { path: '', component: LandingPage },
     { path: 'property/:id', component: PropertyDetailsComponent },
     { path: 'thank-you', component: ThankYouComponent },
+    { path: 'carousel', component: CarouselComponent },
     { path: 'auth/login', component: LoginComponent },
     { path: 'auth/register', component: RegisterComponent },
     { path: 'auth/select-agency', component: AgencySelectionComponent, canActivate: [authGuard] },

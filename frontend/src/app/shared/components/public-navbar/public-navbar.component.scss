@@ -1,4 +1,4 @@
-.nav-panel {
+.landing-nav-panel {
   display: none;
   flex-direction: column;
   gap: 1rem;
@@ -6,12 +6,12 @@
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.nav-panel.open {
+.landing-nav-panel.open {
   display: flex;
 }
 
 @media (min-width: 768px) {
-  .nav-panel {
+  .landing-nav-panel {
     display: flex !important;
     flex-direction: row;
     padding-top: 0;

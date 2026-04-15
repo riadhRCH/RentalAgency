@@ -1,19 +1,11 @@
-create a brand new page component in frontend for showing all public detail for a given property
+lets fix the http://localhost:4200/property/69d0f9ec9262530d35ec910c page
 
-this component is public, make a bublic route for it that ends with property id, and make a getPublicProperty api that returns only needed property information
+1- the google maps card is not working `location_on Localisation`
 
-show add new field in property, previewVideo that can be a link to a video preview of the property 
+2- i want the `Faire une Reservation` section to appear in right of the page in web version (two columns page, Faire une Reservation is smallet ), one column in mobile
 
-in this component show :
-    1- show a cover first in the page that have previewVideo if exists, if not first photo in photos (or show the first photo initially and wait till a potential video preview loads and replace)
-    2- show property name and some details above the cover
-    3- show property overview 
-    4- show property gallery
-    5- show google maps card that have property location 
-    6- reservation section (important)
-        - if it is a paymentFrequency === 'DAILY' show the shared calendar component, indicate unavailable days, 
-        - if it is a paymentFrequency !== 'DAILY' show smth similar to `<!-- Timeline -->` section from frontend\src\app\dashboard\transactions\transaction-provisioning.component.html
-        - show a make a reservation button + customer phone number input (make a reservation will need the customer phone number to proceed)
-        - once reservation button clicked mmake an api that creates a transaction
+3- i want to hide the calendar and date selections from the page, 
 
-follow same design guidelines for the app, use the provided design library or inspire from frontend\src\app\landing-page\landing-page.component.html
+4- make the confirm reservation button always available and rename it to make reservation
+
+5- when user clicks the make reservation, highlight the phone input if it is wrong/missing, if no create a transaction and opne a popup that have calendar and let user selects days/dates and when confirming you patch the create transaction

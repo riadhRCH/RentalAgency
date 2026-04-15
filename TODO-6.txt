@@ -1,6 +1,0 @@
-now i want you to create a new component that have a list of item to show
-each item will have an image link and a text
-in the html just show the items in the page one by one, one fades in , one fades out with a smooth animation
-make it with time each item remaain in the screen for 5 seconds
-each item should cover the  entire page
-dont forget about mobile version

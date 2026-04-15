@@ -3,6 +3,7 @@ export interface AppEnvironment {
   appName: string;
   apiBaseUrl: string;
   googleMapsApiKey: string;
+  appUrl: string
 }
 
 export const sharedEnvironment = {

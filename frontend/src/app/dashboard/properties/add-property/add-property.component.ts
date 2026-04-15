@@ -127,6 +127,11 @@ export class AddPropertyComponent implements OnInit {
     this.checkEditMode();
   }
 
+  prevewLink() {
+    console.log(`${environment.appUrl}/property/${this.propertyId}`)
+    window.open(`${environment.appUrl}/property/${this.propertyId}`, '_blank');
+  }
+
   checkEditMode() {
     this.propertyId = this.route.snapshot.paramMap.get('id');
     if (this.propertyId) {

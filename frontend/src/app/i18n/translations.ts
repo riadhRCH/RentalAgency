@@ -440,6 +440,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
     'COMMON.REQUIRED': 'This field is required',
     'COMMON.LOADING': 'Loading...',
+    'COMMON.PREVIEW': 'Preview',
   },
   fr: {
     'LANGUAGE.EN': 'Anglais',
@@ -846,6 +847,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
     'COMMON.DAILY': 'Quotidien',
     'COMMON.WEEKLY': 'Hebdomadaire',
+    'COMMON.PREVIEW': 'Aperçu',
 
     'TRANSACTION_DETAIL.TITLE': 'Details de transaction : {{reference}}',
     'TRANSACTION_DETAIL.PROPERTY_REFERENCE': 'Reference',

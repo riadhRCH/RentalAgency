@@ -300,6 +300,10 @@
       <button type="button" (click)="onCancel()" class="px-8 py-3 rounded uppercase text-[10px] font-bold tracking-widest text-slate-400 hover:text-white transition-all">
         {{ 'COMMON.CANCEL' | translate }}
       </button>
+      <button type="button" (click)="prevewLink()" class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-10 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">visibility</span>
+        {{ 'COMMON.PREVIEW' | translate }}
+      </button>
       <button type="submit" [disabled]="loading() || propertyForm.invalid" class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-10 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
         <span *ngIf="loading()" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
         <span *ngIf="!loading()" class="material-symbols-outlined text-sm">save</span>

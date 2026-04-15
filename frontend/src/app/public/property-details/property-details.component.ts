@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PropertiesService, Property } from '../../services/properties.service';
 import { TransactionsService } from '../../services/transactions.service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
@@ -23,6 +24,7 @@ export class PropertyDetailsComponent implements OnInit {
   private propertiesService = inject(PropertiesService);
   private transactionsService = inject(TransactionsService);
   private fb = inject(FormBuilder);
+  private sanitizer = inject(DomSanitizer);
 
   property = signal<Property | undefined>(undefined);
   isLoading = signal(true);
@@ -226,11 +228,50 @@ export class PropertyDetailsComponent implements OnInit {
     }
   }
 
-  getGoogleMapsEmbedUrl(): string {
+  getGoogleMapsEmbedUrl(): SafeResourceUrl {
     const prop = this.property();
-    if (!prop?.gpsLocation) return '';
+    if (!prop?.gpsLocation) {
+      return this.sanitizer.bypassSecurityTrustResourceUrl('');
+    }
 
-    const { lat, lng } = prop.gpsLocation;
-    return `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3194.5!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z${lat}%2C${lng}!5e0!3m2!1sen!2s!4v1234567890`;
+    try {
+      // Handle different possible data formats
+      let lat: number;
+      let lng: number;
+
+      if (typeof prop.gpsLocation === 'object') {
+        if ('lat' in prop.gpsLocation && 'lng' in prop.gpsLocation) {
+          lat = parseFloat(String(prop.gpsLocation.lat));
+          lng = parseFloat(String(prop.gpsLocation.lng));
+        } else if ('latitude' in prop.gpsLocation && 'longitude' in prop.gpsLocation) {
+          lat = parseFloat(String(prop.gpsLocation.latitude));
+          lng = parseFloat(String(prop.gpsLocation.longitude));
+        } else {
+          return this.sanitizer.bypassSecurityTrustResourceUrl('');
+        }
+      } else {
+        return this.sanitizer.bypassSecurityTrustResourceUrl('');
+      }
+
+      // Validate coordinate ranges
+      if (isNaN(lat) || isNaN(lng)) {
+        console.warn('Invalid GPS coordinates - NaN values:', prop.gpsLocation);
+        return this.sanitizer.bypassSecurityTrustResourceUrl('');
+      }
+
+      if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        console.warn('Invalid GPS coordinates - out of range:', { lat, lng });
+        console.warn('Valid ranges: Latitude -90 to 90, Longitude -180 to 180');
+        return this.sanitizer.bypassSecurityTrustResourceUrl('');
+      }
+
+      // Simple Google Maps embed - just needs lat/lng
+      // Using the standard Maps embed URL format
+      const url = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1000!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0:0x0!2z${lat},${lng}!5e0!3m2!1sen!2sUS!4v1`;
+      return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    } catch (error) {
+      console.error('Error generating Google Maps URL:', error);
+      return this.sanitizer.bypassSecurityTrustResourceUrl('');
+    }
   }
 }

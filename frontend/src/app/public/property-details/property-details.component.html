@@ -157,39 +157,46 @@
             }
 
             <!-- Google Maps Section -->
-            @if (property()?.gpsLocation) {
-              <section class="space-y-6">
-                <h2 class="text-2xl font-serif font-bold text-white uppercase tracking-widest flex items-center gap-3">
-                  <span class="material-symbols-outlined text-primary">location_on</span>
-                  {{ 'PROPERTY_DETAILS.LOCATION' | translate }}
-                </h2>
+            <section class="space-y-6">
+              <h2 class="text-2xl font-serif font-bold text-white uppercase tracking-widest flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary">location_on</span>
+                {{ 'PROPERTY_DETAILS.LOCATION' | translate }}
+              </h2>
 
-                <div class="rounded-2xl overflow-hidden border border-white/10 h-96">
-                  <iframe
-                    [src]="getGoogleMapsEmbedUrl()"
-                    width="100%"
-                    height="100%"
-                    style="border: 0"
-                    allowfullscreen=""
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"
-                  ></iframe>
-                </div>
-              </section>
-            } @else {
-              <section class="space-y-6">
-                <h2 class="text-2xl font-serif font-bold text-white uppercase tracking-widest flex items-center gap-3">
-                  <span class="material-symbols-outlined text-primary">location_on</span>
-                  {{ 'PROPERTY_DETAILS.LOCATION' | translate }}
-                </h2>
-                <div class="rounded-2xl overflow-hidden border border-white/10 h-96 bg-white/5 flex items-center justify-center">
-                  <div class="text-center">
-                    <span class="material-symbols-outlined text-slate-500 text-5xl">location_off</span>
-                    <p class="mt-4 text-slate-400 text-sm">{{ 'PROPERTY_DETAILS.LOCATION_NOT_AVAILABLE' | translate }}</p>
+              <div class="rounded-2xl overflow-hidden border border-white/10 h-96">
+                @if (property()?.gpsLocation) {
+                  @if (property()?.gpsLocation?.lat && property()?.gpsLocation?.lat >= -90 && property()?.gpsLocation?.lat <= 90 && property()?.gpsLocation?.lng && property()?.gpsLocation?.lng >= -180 && property()?.gpsLocation?.lng <= 180) {
+                    <iframe
+                      [src]="getGoogleMapsEmbedUrl()"
+                      width="100%"
+                      height="100%"
+                      style="border: 0"
+                      allowfullscreen=""
+                      loading="lazy"
+                      referrerpolicy="no-referrer-when-downgrade"
+                      title="Property location map"
+                    ></iframe>
+                  } @else {
+                    <div class="w-full h-full bg-white/5 flex items-center justify-center">
+                      <div class="text-center">
+                        <span class="material-symbols-outlined text-yellow-500 text-5xl">warning</span>
+                        <p class="mt-4 text-yellow-400 text-sm font-semibold">Invalid Coordinates</p>
+                        <p class="text-slate-400 text-xs mt-2">Latitude must be between -90 and 90</p>
+                        <p class="text-slate-400 text-xs">Longitude must be between -180 and 180</p>
+                        <p class="text-slate-500 text-xs mt-3">Current: {{ property()?.gpsLocation?.lat }}, {{ property()?.gpsLocation?.lng }}</p>
+                      </div>
+                    </div>
+                  }
+                } @else {
+                  <div class="w-full h-full bg-white/5 flex items-center justify-center">
+                    <div class="text-center">
+                      <span class="material-symbols-outlined text-slate-500 text-5xl">location_off</span>
+                      <p class="mt-4 text-slate-400 text-sm">{{ 'PROPERTY_DETAILS.LOCATION_NOT_AVAILABLE' | translate }}</p>
+                    </div>
                   </div>
-                </div>
-              </section>
-            }
+                }
+              </div>
+            </section>
           </div>
 
           <!-- Right Side - Reservation Card (Smaller on web, same on mobile) -->

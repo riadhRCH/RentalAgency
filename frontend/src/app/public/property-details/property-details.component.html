@@ -164,18 +164,31 @@
               </h2>
 
               <div class="rounded-2xl overflow-hidden border border-white/10 h-96">
-                @if (property()?.gpsLocation) {
-                  @if (property()?.gpsLocation?.lat && property()?.gpsLocation?.lat >= -90 && property()?.gpsLocation?.lat <= 90 && property()?.gpsLocation?.lng && property()?.gpsLocation?.lng >= -180 && property()?.gpsLocation?.lng <= 180) {
-                    <iframe
-                      [src]="getGoogleMapsEmbedUrl()"
-                      width="100%"
-                      height="100%"
-                      style="border: 0"
-                      allowfullscreen=""
-                      loading="lazy"
-                      referrerpolicy="no-referrer-when-downgrade"
-                      title="Property location map"
-                    ></iframe>
+                @if (property()?.gpsLocation; as location) {
+                  @if (location.lat && location.lat >= -90 && location.lat <= 90 && location.lng && location.lng >= -180 && location.lng <= 180) {
+                    <div *ngIf="googleMapsApiKey; else noApiKey" class="w-full h-full">
+                      <google-map 
+                        #map
+                        [center]="{ lat: location.lat, lng: location.lng }"
+                        [zoom]="mapZoom"
+                        [options]="{ ...mapOptions, center: { lat: location.lat, lng: location.lng } }"
+                        height="100%"
+                        [width]="null"
+                        class="w-full h-full">
+                        <map-marker
+                          [position]="{ lat: location.lat, lng: location.lng }"
+                          [options]="markerOptions">
+                        </map-marker>
+                      </google-map>
+                    </div>
+
+                    <ng-template #noApiKey>
+                      <div class="p-4 rounded-lg border border-red-500/30 bg-red-500/10 w-full h-full flex items-center justify-center">
+                        <p class="text-red-400 text-[10px] uppercase font-bold tracking-widest">
+                          Google Maps API key is not configured. Please add your API key to the environment configuration.
+                        </p>
+                      </div>
+                    </ng-template>
                   } @else {
                     <div class="w-full h-full bg-white/5 flex items-center justify-center">
                       <div class="text-center">
@@ -183,7 +196,7 @@
                         <p class="mt-4 text-yellow-400 text-sm font-semibold">Invalid Coordinates</p>
                         <p class="text-slate-400 text-xs mt-2">Latitude must be between -90 and 90</p>
                         <p class="text-slate-400 text-xs">Longitude must be between -180 and 180</p>
-                        <p class="text-slate-500 text-xs mt-3">Current: {{ property()?.gpsLocation?.lat }}, {{ property()?.gpsLocation?.lng }}</p>
+                        <p class="text-slate-500 text-xs mt-3">Current: {{ location.lat }}, {{ location.lng }}</p>
                       </div>
                     </div>
                   }
@@ -267,23 +280,23 @@
         <!-- Calendar Modal for Date Selection -->
         @if (showCalendarModal()) {
           <div class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-            <div class="bg-background-dark border border-white/10 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto space-y-6 p-8">
-              <div class="flex items-center justify-between border-b border-white/10 pb-4">
-                <h3 class="text-2xl font-serif font-bold text-white uppercase tracking-widest flex items-center gap-3">
-                  <span class="material-symbols-outlined text-primary">calendar_today</span>
+            <div class="bg-background-dark border border-white/10 rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto space-y-4 p-5">
+              <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <h3 class="text-lg font-serif font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary text-xl">calendar_today</span>
                   {{ 'PROPERTY_DETAILS.SELECT_DATES' | translate }}
                 </h3>
                 <button
                   type="button"
                   (click)="closeCalendarModal()"
-                  class="text-slate-400 hover:text-white transition-all"
+                  class="text-slate-400 hover:text-white transition-all text-sm"
                 >
                   <span class="material-symbols-outlined">close</span>
                 </button>
               </div>
 
               <!-- Calendar Component -->
-              <div class="bg-white/5 border border-white/10 rounded-lg p-6">
+              <div class="bg-white/5 border border-white/10 rounded-lg p-4">
                 <app-calendar-selector
                   [propertyCalendarData]="property()?.calendarData || []"
                   (datesSelected)="onSelectedDates($event)"
@@ -291,11 +304,11 @@
               </div>
 
               <!-- Confirm Button -->
-              <div class="flex gap-4 pt-4 border-t border-white/10">
+              <div class="flex gap-3 pt-3 border-t border-white/10">
                 <button
                   type="button"
                   (click)="closeCalendarModal()"
-                  class="flex-1 bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-widest py-3 rounded-lg transition-all"
+                  class="flex-1 bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-widest py-2 text-sm rounded-lg transition-all"
                 >
                   {{ 'COMMON.CANCEL' | translate }}
                 </button>
@@ -303,7 +316,7 @@
                   type="button"
                   (click)="confirmReservationWithDates()"
                   [disabled]="isSubmitting() || selectedDatesForSubmit().length === 0"
-                  class="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold uppercase tracking-widest py-3 rounded-lg transition-all flex items-center justify-center gap-2"
+                  class="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold uppercase tracking-widest py-2 text-sm rounded-lg transition-all flex items-center justify-center gap-2"
                 >
                   @if (isSubmitting()) {
                     <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>

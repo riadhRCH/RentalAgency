@@ -1,8 +1,8 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { PropertiesService, Property } from '../../services/properties.service';
 import { TransactionsService } from '../../services/transactions.service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
@@ -10,11 +10,12 @@ import { I18nService } from '../../i18n/i18n.service';
 import { CalendarSelectorComponent } from '../../shared/components/calendar/calendar-selector.component';
 import { PublicNavbarComponent } from '../../shared/components/public-navbar/public-navbar.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer/public-footer.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-property-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, CalendarSelectorComponent, PublicNavbarComponent, PublicFooterComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, CalendarSelectorComponent, PublicNavbarComponent, PublicFooterComponent, GoogleMapsModule],
   templateUrl: './property-details.component.html',
   styleUrls: ['./property-details.component.scss']
 })
@@ -24,7 +25,27 @@ export class PropertyDetailsComponent implements OnInit {
   private propertiesService = inject(PropertiesService);
   private transactionsService = inject(TransactionsService);
   private fb = inject(FormBuilder);
-  private sanitizer = inject(DomSanitizer);
+
+  @ViewChild(GoogleMap) googleMap!: GoogleMap;
+
+  // Google Maps properties
+  mapLoading = signal(false);
+  mapCenter: google.maps.LatLngLiteral = { lat: 36.8065, lng: 10.1686 }; // Default to Tunisia
+  mapZoom = 12;
+  markerPosition: google.maps.LatLngLiteral = { lat: 36.8065, lng: 10.1686 };
+  markerOptions: google.maps.MarkerOptions = {
+    draggable: false,
+    icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+  };
+  mapOptions: google.maps.MapOptions = {
+    center: { lat: 36.8065, lng: 10.1686 },
+    zoom: 12,
+    fullscreenControl: true,
+    mapTypeControl: true,
+    zoomControl: true,
+    streetViewControl: false
+  };
+  googleMapsApiKey = environment.googleMapsApiKey;
 
   property = signal<Property | undefined>(undefined);
   isLoading = signal(true);
@@ -225,53 +246,6 @@ export class PropertyDetailsComponent implements OnInit {
     // This method is now for form submission via Enter key
     if (this.reservationForm.get('customerPhone')?.valid) {
       this.initiateReservation();
-    }
-  }
-
-  getGoogleMapsEmbedUrl(): SafeResourceUrl {
-    const prop = this.property();
-    if (!prop?.gpsLocation) {
-      return this.sanitizer.bypassSecurityTrustResourceUrl('');
-    }
-
-    try {
-      // Handle different possible data formats
-      let lat: number;
-      let lng: number;
-
-      if (typeof prop.gpsLocation === 'object') {
-        if ('lat' in prop.gpsLocation && 'lng' in prop.gpsLocation) {
-          lat = parseFloat(String(prop.gpsLocation.lat));
-          lng = parseFloat(String(prop.gpsLocation.lng));
-        } else if ('latitude' in prop.gpsLocation && 'longitude' in prop.gpsLocation) {
-          lat = parseFloat(String(prop.gpsLocation.latitude));
-          lng = parseFloat(String(prop.gpsLocation.longitude));
-        } else {
-          return this.sanitizer.bypassSecurityTrustResourceUrl('');
-        }
-      } else {
-        return this.sanitizer.bypassSecurityTrustResourceUrl('');
-      }
-
-      // Validate coordinate ranges
-      if (isNaN(lat) || isNaN(lng)) {
-        console.warn('Invalid GPS coordinates - NaN values:', prop.gpsLocation);
-        return this.sanitizer.bypassSecurityTrustResourceUrl('');
-      }
-
-      if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-        console.warn('Invalid GPS coordinates - out of range:', { lat, lng });
-        console.warn('Valid ranges: Latitude -90 to 90, Longitude -180 to 180');
-        return this.sanitizer.bypassSecurityTrustResourceUrl('');
-      }
-
-      // Simple Google Maps embed - just needs lat/lng
-      // Using the standard Maps embed URL format
-      const url = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1000!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0:0x0!2z${lat},${lng}!5e0!3m2!1sen!2sUS!4v1`;
-      return this.sanitizer.bypassSecurityTrustResourceUrl(url);
-    } catch (error) {
-      console.error('Error generating Google Maps URL:', error);
-      return this.sanitizer.bypassSecurityTrustResourceUrl('');
     }
   }
 }

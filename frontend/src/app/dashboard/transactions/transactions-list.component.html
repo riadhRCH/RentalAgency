@@ -55,6 +55,9 @@
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
             <div class="flex space-x-3">
+              <button (click)="copyTransactionLink(transaction._id!)" class="text-blue-600 hover:text-blue-900" [title]="'TRANSACTIONS.COPY_LINK' | translate">
+                <i class="fas fa-link"></i>
+              </button>
               <a [routerLink]="['/dashboard/transactions', transaction._id]" class="text-indigo-600 hover:text-indigo-900" [title]="'TRANSACTIONS.VIEW_DETAILS' | translate">
                 <i class="fas fa-eye"></i>
               </a>

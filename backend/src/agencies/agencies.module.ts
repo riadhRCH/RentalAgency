@@ -8,6 +8,7 @@ import { Lead, LeadSchema } from '../schemas/lead.schema';
 import { VisitRequest, VisitRequestSchema } from '../schemas/visit-request.schema';
 import { Rental, RentalSchema } from '../schemas/rental.schema';
 import { AuthModule } from '../auth/auth.module';
+import { Transaction, TransactionSchema } from 'src/schemas/transaction.schema';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AuthModule } from '../auth/auth.module';
       { name: Lead.name, schema: LeadSchema },
       { name: VisitRequest.name, schema: VisitRequestSchema },
       { name: Rental.name, schema: RentalSchema },
+       { name: Transaction.name, schema: TransactionSchema },
     ]),
     AuthModule,
   ],

@@ -1,0 +1,209 @@
+<app-public-navbar></app-public-navbar>
+
+<div class="min-h-screen bg-background-dark pt-24 pb-12">
+  <div class="p-8 max-w-4xl mx-auto space-y-12">
+    <header class="text-center">
+      <h1 class="font-serif text-4xl font-bold tracking-tight text-white uppercase silver-glow">
+        {{ 'TRANSACTION.COMPLETE_RESERVATION' | translate }}
+      </h1>
+      <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+        {{ 'TRANSACTION.COMPLETE_RESERVATION_SUBTITLE' | translate }}
+      </p>
+    </header>
+
+    <div *ngIf="loading()" class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+
+    <div *ngIf="!loading() && transaction()" class="space-y-8">
+      <!-- Property Info -->
+      <div class="glass-card rounded-2xl border border-white/10 p-6">
+        <h3 class="text-lg font-bold text-white uppercase tracking-wider mb-4">
+          {{ 'TRANSACTION.SELECTED_PROPERTY' | translate }}
+        </h3>
+        <div class="flex items-center gap-4">
+          <div class="flex-1">
+            <h4 class="text-white font-semibold">{{ transaction()?.propertyId?.reference }}</h4>
+            <p class="text-slate-400 text-sm">{{ transaction()?.propertyId?.address }}</p>
+            <p class="text-primary font-bold mt-2">{{ transaction()?.financialDetails?.rentAmount }} TND</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Information Step -->
+      <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+        <button
+          type="button"
+          (click)="toggleSection('customerInfo')"
+          class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors"
+        >
+          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+            <span class="material-symbols-outlined" [class.text-primary]="customerInfoDone()" [class.text-slate-500]="!customerInfoDone()">
+              {{ customerInfoDone() ? 'check_circle' : 'radio_button_unchecked' }}
+            </span>
+            {{ 'TRANSACTION.CUSTOMER_INFORMATION' | translate }}
+          </h2>
+          <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!customerInfoExpanded()">
+            expand_more
+          </span>
+        </button>
+
+        <div *ngIf="customerInfoExpanded()" class="animate-in fade-in slide-in-from-top-2 duration-200 px-8 pb-8 space-y-6 border-t border-white/5">
+          <form [formGroup]="customerForm" (ngSubmit)="onCustomerInfoSubmit()" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.FIRST_NAME' | translate }}</label>
+                <input type="text" formControlName="firstName" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+              </div>
+              <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.LAST_NAME' | translate }}</label>
+                <input type="text" formControlName="lastName" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+              </div>
+              <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.PHONE_NUMBER' | translate }}</label>
+                <input type="tel" formControlName="phone" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+              </div>
+              <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.EMAIL' | translate }}</label>
+                <input type="email" formControlName="email" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+              </div>
+            </div>
+
+            <div class="flex justify-end">
+              <button
+                type="submit"
+                [disabled]="saving() || !customerForm.valid"
+                class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all"
+              >
+                {{ 'COMMON.NEXT' | translate }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Calendar Step (only for DAILY) -->
+      <section *ngIf="transaction()?.financialDetails?.paymentFrequency === 'DAILY'" class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+        <button
+          type="button"
+          (click)="toggleSection('calendar')"
+          class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors"
+        >
+          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+            <span class="material-symbols-outlined" [class.text-primary]="calendarDone()" [class.text-slate-500]="!calendarDone()">
+              {{ calendarDone() ? 'check_circle' : 'radio_button_unchecked' }}
+            </span>
+            {{ 'TRANSACTION.SELECT_DATES' | translate }}
+          </h2>
+          <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!calendarExpanded()">
+            expand_more
+          </span>
+        </button>
+
+        <div *ngIf="calendarExpanded()" class="animate-in fade-in slide-in-from-top-2 duration-200 px-8 pb-8 space-y-6 border-t border-white/5">
+          <app-calendar-selector
+            [propertyCalendarData]="propertyCalendarData"
+            [selectedDatesControl]="selectedDatesControl"
+            (datesSelected)="onDatesSelected($event)">
+          </app-calendar-selector>
+
+          <div class="flex justify-end">
+            <button
+              type="button"
+              (click)="onCalendarSubmit()"
+              [disabled]="saving() || !calendarDone()"
+              class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all"
+            >
+              {{ 'COMMON.NEXT' | translate }}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Documents Step -->
+      <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+        <button
+          type="button"
+          (click)="toggleSection('documents')"
+          class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors"
+        >
+          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+            <span class="material-symbols-outlined" [class.text-primary]="documentsDone()" [class.text-slate-500]="!documentsDone()">
+              {{ documentsDone() ? 'check_circle' : 'radio_button_unchecked' }}
+            </span>
+            {{ 'TRANSACTION.DOCUMENTS' | translate }}
+          </h2>
+          <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!documentsExpanded()">
+            expand_more
+          </span>
+        </button>
+
+        <div *ngIf="documentsExpanded()" class="animate-in fade-in slide-in-from-top-2 duration-200 px-8 pb-8 space-y-6 border-t border-white/5">
+          <form [formGroup]="documentsForm" (ngSubmit)="onDocumentsSubmit()" class="space-y-6">
+            <div class="space-y-2">
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION.CIN_NUMBER' | translate }}</label>
+              <input type="text" formControlName="cinNumber" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+            </div>
+
+            <!-- File uploads for CIN and Passport would go here -->
+
+            <div class="flex justify-end">
+              <button
+                type="submit"
+                [disabled]="saving() || !documentsForm.valid"
+                class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all"
+              >
+                {{ 'COMMON.NEXT' | translate }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Payment Step -->
+      <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+        <button
+          type="button"
+          (click)="toggleSection('payment')"
+          class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors"
+        >
+          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+            <span class="material-symbols-outlined text-slate-500">
+              radio_button_unchecked
+            </span>
+            {{ 'TRANSACTION.PAYMENT' | translate }}
+          </h2>
+          <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!paymentExpanded()">
+            expand_more
+          </span>
+        </button>
+
+        <div *ngIf="paymentExpanded()" class="animate-in fade-in slide-in-from-top-2 duration-200 px-8 pb-8 space-y-6 border-t border-white/5">
+          <div class="space-y-4">
+            <h3 class="text-white font-semibold">{{ 'TRANSACTION.AGENCY_PAYMENT_DETAILS' | translate }}</h3>
+            <div class="bg-white/5 border border-white/10 rounded-lg p-4 space-y-2">
+              <p><strong>{{ 'TRANSACTION.BANK_NAME' | translate }}:</strong> {{ transaction()?.agency?.paymentDetails?.bankName }}</p>
+              <p><strong>{{ 'TRANSACTION.RIB' | translate }}:</strong> {{ transaction()?.agency?.paymentDetails?.rib }}</p>
+              <p><strong>{{ 'TRANSACTION.POSTAL_ACCOUNT' | translate }}:</strong> {{ transaction()?.agency?.paymentDetails?.postalAccount }}</p>
+              <p><strong>{{ 'TRANSACTION.ACCOUNT_HOLDER' | translate }}:</strong> {{ transaction()?.agency?.paymentDetails?.accountHolder }}</p>
+            </div>
+
+            <!-- Payment proof upload would go here -->
+
+            <div class="flex justify-end">
+              <button
+                type="button"
+                (click)="onPaymentSubmit()"
+                class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all"
+              >
+                {{ 'TRANSACTION.FINALIZE_RESERVATION' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<app-public-footer></app-public-footer>

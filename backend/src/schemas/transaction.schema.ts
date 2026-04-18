@@ -22,13 +22,13 @@ class FinancialDetails {
 
 @Schema({ _id: false })
 class Timeline {
-  @Prop({ required: true })
+  @Prop()
   startDate: Date;
 
-  @Prop({ required: true })
+  @Prop()
   duration: number; // in months
 
-  @Prop({ required: true })
+  @Prop()
   endDate: Date;
 
   @Prop()

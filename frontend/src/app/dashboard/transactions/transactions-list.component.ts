@@ -72,4 +72,11 @@ export class TransactionsListComponent implements OnInit {
   onNewTransaction() {
     this.router.navigate(['/dashboard/transactions/provision'])
   }
+
+  copyTransactionLink(id: string): void {
+    const url = `${window.location.origin}/transaction/${id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      alert(this.i18n.translate('TRANSACTIONS.LINK_COPIED'));
+    });
+  }
 }

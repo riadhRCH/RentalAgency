@@ -59,6 +59,14 @@ export class PersonnelService {
     return person;
   }
 
+  async createPublic(dto: CreatePersonnelDto) {
+    const person = await this.personnelModel.create({
+      ...dto,
+      source: 'public'
+    });
+    return person;
+  }
+
   async update(id: string, dto: UpdatePersonnelDto) {
     const person = await this.personnelModel.findOneAndUpdate(
       { _id: new Types.ObjectId(id), deletedAt: { $exists: false } },

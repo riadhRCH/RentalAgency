@@ -87,7 +87,7 @@ export class PropertiesService {
       })
       .populate('ownerId')
       .select(
-        'reference type address gpsLocation surface price paymentFrequency googleMapsLink description photos videos previewVideo amenities calendarData ownerId createdAt',
+        'reference type address gpsLocation surface price agencyId paymentFrequency googleMapsLink description photos videos previewVideo amenities calendarData ownerId createdAt',
       );
     if (!property) throw new NotFoundException('Property not found');
     return property;

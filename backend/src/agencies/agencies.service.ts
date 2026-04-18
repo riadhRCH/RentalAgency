@@ -14,6 +14,7 @@ import { VisitRequest, VisitRequestDocument } from '../schemas/visit-request.sch
 import { Rental, RentalDocument } from '../schemas/rental.schema';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { ProvisionNumberDto } from './dto/provision-number.dto';
+import { Transaction, TransactionDocument } from 'src/schemas/transaction.schema';
 
 const DIAL_CODE_TO_COUNTRY_CODE: Array<{ dialCode: string; countryCode: string }> = [
   { dialCode: '+971', countryCode: 'AE' },
@@ -43,6 +44,8 @@ export class AgenciesService {
     private readonly leadModel: Model<LeadDocument>,
     @InjectModel(VisitRequest.name)
     private readonly visitRequestModel: Model<VisitRequestDocument>,
+    @InjectModel(Transaction.name)
+    private readonly transactionsModel: Model<TransactionDocument>,
     @InjectModel(Rental.name)
     private readonly rentalModel: Model<RentalDocument>,
   ) {
@@ -63,13 +66,13 @@ export class AgenciesService {
 
   async getStats(agencyId: string) {
     const objectId = new Types.ObjectId(agencyId)
-    const [totalLeads, totalVisits, totalRentals] = await Promise.all([
+    const [totalLeads, totalVisits, totalTransactions] = await Promise.all([
       this.leadModel.countDocuments({  agencyId: objectId }),
       this.visitRequestModel.countDocuments({ agencyId: objectId }),
-      this.rentalModel.countDocuments({ agencyId: objectId }),
+      this.transactionsModel.countDocuments({ agencyId: objectId }),
     ]);
 
-    return { totalLeads, totalVisits, totalRentals };
+    return { totalLeads, totalVisits, totalTransactions };
   }
 
   async create(dto: CreateAgencyDto) {

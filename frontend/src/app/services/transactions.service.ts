@@ -46,6 +46,10 @@ export class TransactionsService {
     return this.http.post<Transaction>(this.apiUrl, transaction);
   }
 
+  createPublic(transaction: any): Observable<Transaction> {
+    return this.http.post<Transaction>(`${this.apiUrl}/public`, transaction);
+  }
+
   findAll(): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(this.apiUrl);
   }
@@ -64,5 +68,13 @@ export class TransactionsService {
 
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getPublicTransaction(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/public/${id}`);
+  }
+
+  updatePublicTransaction(id: string, updateData: any): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/public/${id}`, updateData);
   }
 }

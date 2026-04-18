@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
-import { AgencyService } from '../../services/agency.service';
+import { AgencyService, AgencyStats } from '../../services/agency.service';
 import { filter } from 'rxjs/operators';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 
@@ -51,7 +51,7 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
                 routerLinkActive="bg-primary/10 text-primary border-primary/20 shadow-inner shadow-primary/5"
                 class="group relative flex flex-col items-center justify-center py-4 px-10 rounded-xl transition-all duration-300 hover:bg-white/5 min-w-[160px]">
                 <span class="text-3xl font-black silver-glow mb-1 tracking-tighter group-hover:scale-110 transition-transform duration-300">
-                  {{ stats.totalRentals }}
+                  {{ stats.totalTransactions }}
                 </span>
                 <span class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity">
                   {{ 'TRANSACTIONS.TITLE' | translate }}
@@ -89,11 +89,11 @@ export class AgencyOverviewComponent implements OnInit {
   private agencyService = inject(AgencyService);
   private router = inject(Router);
 
-  stats = {
+  stats: AgencyStats = {
     totalLeads: 0,
-    totalVisits: 0,
-    totalRentals: 0
-  };
+    totalTransactions: 0, 
+    totalVisits: 0
+  }
 
   ngOnInit() {
     this.loadStats();

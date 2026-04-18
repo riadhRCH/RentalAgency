@@ -14,6 +14,12 @@ export interface AgencySettings {
   areaCode: string;
 }
 
+export interface AgencyStats { 
+  totalLeads: number; 
+  totalVisits: number;
+  totalTransactions: number
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -22,8 +28,8 @@ export class AgencyService {
 
   constructor(private http: HttpClient) {}
 
-  getStats(): Observable<{ totalLeads: number; totalVisits: number; totalRentals: number }> {
-    return this.http.get<{ totalLeads: number; totalVisits: number; totalRentals: number }>(`${this.apiUrl}/stats`);
+  getStats(): Observable<AgencyStats> {
+    return this.http.get<AgencyStats>(`${this.apiUrl}/stats`);
   }
 
   getActiveNumbers(): Observable<VirtualNumber[]> {

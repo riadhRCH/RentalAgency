@@ -44,6 +44,11 @@ export class PersonnelController {
     return this.personnelService.create(dto);
   }
 
+  @Post('public')
+  createPublic(@Body() dto: CreatePersonnelDto) {
+    return this.personnelService.createPublic(dto);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdatePersonnelDto) {
     return this.personnelService.update(id, dto);

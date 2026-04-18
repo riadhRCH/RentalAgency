@@ -40,4 +40,8 @@ export class PersonnelService {
   deletePersonnel(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  createOrUpdatePersonnel(data: any): Observable<Personnel> {
+    return this.http.post<Personnel>(`${this.apiUrl}/public`, data);
+  }
 }

@@ -15,13 +15,16 @@ class FinancialDetailsDto {
 
 class TimelineDto {
   @IsDateString()
-  startDate: string;
+   @IsOptional()
+  startDate?: string;
 
   @IsNumber()
-  duration: number;
+  @IsOptional()
+  duration?: number;
 
   @IsDateString()
-  endDate: string;
+  @IsOptional()
+  endDate?: string;
 
   @IsOptional()
   @IsDateString()
@@ -62,6 +65,10 @@ export class CreateTransactionDto {
 
   @IsOptional()
   @IsString()
+  agencyId?: string;
+
+  @IsOptional()
+  @IsString()
   personnelId?: string;
 
   @IsOptional()
@@ -79,8 +86,9 @@ export class CreateTransactionDto {
 
   @IsObject()
   @ValidateNested()
+  @IsOptional()
   @Type(() => TimelineDto)
-  timeline: TimelineDto;
+  timeline?: TimelineDto;
 
   @IsOptional()
   @IsObject()

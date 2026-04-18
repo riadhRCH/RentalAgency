@@ -7,6 +7,7 @@ import { Lead, LeadDocument } from '../schemas/lead.schema';
 import { VisitRequest, VisitRequestDocument } from '../schemas/visit-request.schema';
 import { Property, PropertyDocument } from '../schemas/property.schema';
 import { Personnel, PersonnelDocument } from '../schemas/personnel.schema';
+import { RentalAgency, RentalAgencyDocument } from '../schemas/rental-agency.schema';
 
 @Injectable()
 export class TransactionsService {
@@ -16,6 +17,7 @@ export class TransactionsService {
     @InjectModel(Lead.name) private leadModel: Model<LeadDocument>,
     @InjectModel(VisitRequest.name) private visitRequestModel: Model<VisitRequestDocument>,
     @InjectModel(Personnel.name) private personnelModel: Model<PersonnelDocument>,
+    @InjectModel(RentalAgency.name) private agencyModel: Model<RentalAgencyDocument>,
   ) {}
 
   private async identifyPersonnel(phone: string, name?: string): Promise<PersonnelDocument> {
@@ -79,6 +81,7 @@ export class TransactionsService {
   }
 
   async findAll(agencyId: string): Promise<TransactionDocument[]> {
+    console.log('agencyId', agencyId)
     return this.transactionModel
       .find({ agencyId: new Types.ObjectId(agencyId) })
       .populate(['propertyId', 'personnelId'])
@@ -135,5 +138,65 @@ export class TransactionsService {
     await this.propertyModel.findByIdAndUpdate(transaction.propertyId, { status: 'available' });
 
     await this.transactionModel.findByIdAndDelete(id);
+  }
+
+  async findOnePublic(id: string): Promise<any> {
+    const transaction = await this.transactionModel
+      .findById(id)
+      .populate('propertyId')
+      .exec();
+    
+    if (!transaction) {
+      throw new NotFoundException('Transaction not found');
+    }
+
+    // Get agency payment details
+    const agency = await this.agencyModel.findById(transaction.agencyId).select('paymentDetails name');
+
+    return {
+      ...transaction.toObject(),
+      agency: agency
+    };
+  }
+
+  async updatePublic(id: string, updateData: any): Promise<TransactionDocument> {
+    // Only allow updating specific fields for public access
+    const allowedFields = [
+      'personnelId', // for customer info
+      'timeline.selectedDates', // for calendar
+      'metadata.documents', // for documents
+      'metadata.cinNumber', // for CIN
+      'metadata.paymentProof' // for payment proof
+    ];
+
+    const filteredUpdateData = {};
+    for (const field of allowedFields) {
+      if (this.getNestedValue(updateData, field) !== undefined) {
+        this.setNestedValue(filteredUpdateData, field, this.getNestedValue(updateData, field));
+      }
+    }
+
+    const updatedTransaction = await this.transactionModel
+      .findByIdAndUpdate(id, filteredUpdateData, { new: true })
+      .exec();
+    
+    if (!updatedTransaction) {
+      throw new NotFoundException('Transaction not found');
+    }
+    return updatedTransaction;
+  }
+
+  private getNestedValue(obj: any, path: string): any {
+    return path.split('.').reduce((current, key) => current?.[key], obj);
+  }
+
+  private setNestedValue(obj: any, path: string, value: any): void {
+    const keys = path.split('.');
+    const lastKey = keys.pop()!;
+    const target = keys.reduce((current, key) => {
+      if (!current[key]) current[key] = {};
+      return current[key];
+    }, obj);
+    target[lastKey] = value;
   }
 }

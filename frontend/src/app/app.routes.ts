@@ -20,10 +20,12 @@ import { TransactionDetailComponent } from './dashboard/transactions/transaction
 import { PropertyDetailsComponent } from './public/property-details/property-details.component';
 import { ThankYouComponent } from './public/thank-you/thank-you.component';
 import { CarouselComponent } from './public/carousel/carousel.component';
+import { TransactionComponent } from './public/transaction/transaction.component';
 
 export const routes: Routes = [
     { path: '', component: LandingPage },
     { path: 'property/:id', component: PropertyDetailsComponent },
+    { path: 'transaction/:id', component: TransactionComponent },
     { path: 'thank-you', component: ThankYouComponent },
     { path: 'carousel', component: CarouselComponent },
     { path: 'auth/login', component: LoginComponent },

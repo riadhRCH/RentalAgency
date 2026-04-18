@@ -1,13 +1,12 @@
 import { Component, OnInit, inject, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { PropertiesService, Property } from '../../services/properties.service';
 import { TransactionsService } from '../../services/transactions.service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
-import { CalendarSelectorComponent } from '../../shared/components/calendar/calendar-selector.component';
 import { PublicNavbarComponent } from '../../shared/components/public-navbar/public-navbar.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer/public-footer.component';
 import { environment } from '../../../environments/environment';
@@ -15,13 +14,14 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-property-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, CalendarSelectorComponent, PublicNavbarComponent, PublicFooterComponent, GoogleMapsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, PublicNavbarComponent, PublicFooterComponent, GoogleMapsModule],
   templateUrl: './property-details.component.html',
   styleUrls: ['./property-details.component.scss']
 })
 export class PropertyDetailsComponent implements OnInit {
   private readonly i18n = inject(I18nService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private propertiesService = inject(PropertiesService);
   private transactionsService = inject(TransactionsService);
   private fb = inject(FormBuilder);
@@ -55,9 +55,7 @@ export class PropertyDetailsComponent implements OnInit {
   isSubmitting = signal(false);
   reservationError = signal<string | null>(null);
   phoneInputInvalid = signal(false);
-  showCalendarModal = signal(false);
   transactionId = signal<string | null>(null);
-  selectedDatesForSubmit = signal<Date[]>([]);
 
   constructor() {
     this.reservationForm = this.fb.group({
@@ -154,10 +152,6 @@ export class PropertyDetailsComponent implements OnInit {
     return prop.price * duration;
   }
 
-  onSelectedDates(dates: Date[]): void {
-    this.selectedDatesForSubmit.set(dates);
-  }
-
   initiateReservation(): void {
     const phoneControl = this.reservationForm.get('customerPhone');
     
@@ -167,29 +161,7 @@ export class PropertyDetailsComponent implements OnInit {
       return;
     }
 
-    // Phone is valid, now show calendar modal for daily properties
-    const prop = this.property();
-    if (!prop) return;
-
-    if (prop.paymentFrequency === 'DAILY') {
-      this.showCalendarModal.set(true);
-    } else {
-      // For non-daily properties, proceed with reservation directly
-      this.submitReservation([]);
-    }
-  }
-
-  confirmReservationWithDates(): void {
-    const prop = this.property();
-    if (!prop) return;
-
-    const selectedDates = this.selectedDatesForSubmit();
-    this.submitReservation(selectedDates);
-  }
-
-  closeCalendarModal(): void {
-    this.showCalendarModal.set(false);
-    this.selectedDatesForSubmit.set([]);
+    this.submitReservation([]);
   }
 
   private submitReservation(selectedDates: Date[]): void {
@@ -214,6 +186,7 @@ export class PropertyDetailsComponent implements OnInit {
     const reservationData = {
       propertyId: prop._id,
       customerPhone: formValue.customerPhone,
+      agencyId: prop.agencyId,
       financialDetails: {
         rentAmount: prop.price,
         depositAmount: 0,
@@ -226,14 +199,13 @@ export class PropertyDetailsComponent implements OnInit {
       }
     };
 
-    this.transactionsService.create(reservationData).subscribe({
-      next: () => {
+    this.transactionsService.createPublic(reservationData).subscribe({
+      next: (transaction) => {
         this.isSubmitting.set(false);
-        this.showCalendarModal.set(false);
-        alert(this.i18n.translate('PROPERTY_DETAILS.RESERVATION_SUCCESS'));
+        // Redirect to transaction page instead of showing alert
+        this.router.navigate(['/transaction', transaction._id]);
         this.reservationForm.reset();
         this.phoneInputInvalid.set(false);
-        this.selectedDatesForSubmit.set([]);
       },
       error: (err) => {
         this.isSubmitting.set(false);

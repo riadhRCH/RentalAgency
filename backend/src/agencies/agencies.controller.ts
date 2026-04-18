@@ -12,7 +12,8 @@ export class AgenciesController {
   @UseGuards(JwtAuthGuard, AgencyGuard)
   @Get('stats')
   async getStats(@Request() req) {
-    return this.agenciesService.getStats(req.agencyId.toString());
+    const agencyId = req.headers['x-agency-id'];
+    return this.agenciesService.getStats(agencyId);
   }
 
   // Admin: create a new agency

@@ -50,8 +50,8 @@ interface Transaction {
     PublicNavbarComponent,
     PublicFooterComponent
   ],
-  templateUrl: './transaction.html',
-  styleUrl: './transaction.css'
+  templateUrl: './transaction.component.html',
+  styleUrl: './transaction.component.scss'
 })
 export class TransactionComponent implements OnInit {
   private route = inject(ActivatedRoute);

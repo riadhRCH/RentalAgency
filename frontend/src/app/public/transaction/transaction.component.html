@@ -23,11 +23,22 @@
         <h3 class="text-lg font-bold text-white uppercase tracking-wider mb-4">
           {{ 'TRANSACTION.SELECTED_PROPERTY' | translate }}
         </h3>
-        <div class="flex items-center gap-4">
+        <div class="flex flex-col lg:flex-row gap-6">
+          <!-- Property Photos -->
           <div class="flex-1">
-            <h4 class="text-white font-semibold">{{ transaction()?.propertyId?.reference }}</h4>
-            <p class="text-slate-400 text-sm">{{ transaction()?.propertyId?.address }}</p>
-            <p class="text-primary font-bold mt-2">{{ transaction()?.financialDetails?.rentAmount }} TND</p>
+            <div *ngIf="transaction()?.propertyId?.photos && transaction()?.propertyId?.photos.length > 0" class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+              <img
+                *ngFor="let photo of transaction()?.propertyId?.photos.slice(0, 6)"
+                [src]="photo"
+                [alt]="'Property photo'"
+                class="w-full h-32 object-cover rounded-lg border border-white/10"
+              />
+            </div>
+            <div class="space-y-2">
+              <h4 class="text-white font-semibold">{{ transaction()?.propertyId?.reference }}</h4>
+              <p class="text-slate-400 text-sm">{{ transaction()?.propertyId?.address }}</p>
+              <p class="text-primary font-bold mt-2">{{ transaction()?.financialDetails?.rentAmount }} TND / {{ transaction()?.financialDetails?.paymentFrequency | translate }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -143,11 +154,16 @@
         <div *ngIf="documentsExpanded()" class="animate-in fade-in slide-in-from-top-2 duration-200 px-8 pb-8 space-y-6 border-t border-white/5">
           <form [formGroup]="documentsForm" (ngSubmit)="onDocumentsSubmit()" class="space-y-6">
             <div class="space-y-2">
-              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION.CIN_NUMBER' | translate }}</label>
-              <input type="text" formControlName="cinNumber" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION.CIN_OR_PASSPORT' | translate }}</label>
+              <input
+                type="file"
+                formControlName="cinDocument"
+                accept="image/*,.pdf"
+                (change)="onFileSelected($event, 'cinDocument')"
+                class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90"
+              />
+              <p class="text-xs text-slate-400">{{ 'TRANSACTION.CIN_OR_PASSPORT_DESCRIPTION' | translate }}</p>
             </div>
-
-            <!-- File uploads for CIN and Passport would go here -->
 
             <div class="flex justify-end">
               <button
@@ -190,7 +206,17 @@
               <p><strong>{{ 'TRANSACTION.ACCOUNT_HOLDER' | translate }}:</strong> {{ transaction()?.agency?.paymentDetails?.accountHolder }}</p>
             </div>
 
-            <!-- Payment proof upload would go here -->
+            <div class="space-y-2">
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION.PAYMENT_PROOF' | translate }}</label>
+              <input
+                type="file"
+                formControlName="paymentProof"
+                accept="image/*,.pdf"
+                (change)="onFileSelected($event, 'paymentProof')"
+                class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90"
+              />
+              <p class="text-xs text-slate-400">{{ 'TRANSACTION.PAYMENT_PROOF_DESCRIPTION' | translate }}</p>
+            </div>
 
             <div class="flex justify-end">
               <button

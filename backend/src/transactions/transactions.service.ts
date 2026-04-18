@@ -144,6 +144,7 @@ export class TransactionsService {
     const transaction = await this.transactionModel
       .findById(id)
       .populate('propertyId')
+      .populate('personnelId')
       .exec();
     
     if (!transaction) {

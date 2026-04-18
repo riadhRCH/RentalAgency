@@ -41,6 +41,9 @@ export const translations: Record<Language, Record<string, string>> = {
     'COMMON.NAME_REQUIRED': 'Name is required',
     'COMMON.NEW': 'New',
     'COMMON.NEW_PHONE': 'New phone',
+    'COMMON.FIRST_NAME': 'First Name',
+    'COMMON.LAST_NAME': 'Last Name',
+    'COMMON.EMAIL': 'Email',
     'COMMON.NO_AGENCY_SELECTED': 'No Agency Selected',
     'COMMON.NO_DATA_FOUND': 'No Data Found',
     'COMMON.OVERDUE': 'Overdue',
@@ -76,6 +79,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'COMMON.VERIFIED': 'Verified',
     'COMMON.YEARLY': 'Yearly',
     'COMMON.AT_TIME': 'at {{time}}',
+    'COMMON.NEXT': 'Next',
 
     'CONFIRM.DELETE_PROPERTY': 'Are you sure you want to delete this property?',
     'CONFIRM.DELETE_LEAD': 'Are you sure you want to delete this lead?',
@@ -376,6 +380,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'TRANSACTION.SELECT_DATES': 'Select Dates',
     'TRANSACTION.DOCUMENTS': 'Documents',
     'TRANSACTION.CIN_NUMBER': 'CIN Number',
+    'TRANSACTION.CIN_OR_PASSPORT': 'CIN or Passport',
+    'TRANSACTION.CIN_OR_PASSPORT_DESCRIPTION': 'Upload a clear photo or scan of your CIN or passport',
+    'TRANSACTION.PAYMENT_PROOF': 'Payment Proof',
+    'TRANSACTION.PAYMENT_PROOF_DESCRIPTION': 'Upload proof of payment (bank transfer receipt, check photo, etc.)',
     'TRANSACTION.PAYMENT': 'Payment',
     'TRANSACTION.AGENCY_PAYMENT_DETAILS': 'Agency Payment Details',
     'TRANSACTION.BANK_NAME': 'Bank Name',
@@ -459,6 +467,12 @@ export const translations: Record<Language, Record<string, string>> = {
     'COMMON.REQUIRED': 'This field is required',
     'COMMON.LOADING': 'Loading...',
     'COMMON.PREVIEW': 'Preview',
+
+    'DAILY': 'Day',
+    'WEEKLY': 'Week',
+    'MONTHLY': 'Month',
+    'YEARLY': 'Year',
+
   },
   fr: {
     'LANGUAGE.EN': 'Anglais',
@@ -498,6 +512,9 @@ export const translations: Record<Language, Record<string, string>> = {
     'COMMON.NAME_REQUIRED': 'Le nom est requis',
     'COMMON.NEW': 'Nouveau',
     'COMMON.NEW_PHONE': 'Nouveau numero',
+    'COMMON.FIRST_NAME': 'Prenom',
+    'COMMON.LAST_NAME': 'Nom',
+    'COMMON.EMAIL': 'Email',
     'COMMON.NO_AGENCY_SELECTED': 'Aucune agence selectionnee',
     'COMMON.NO_DATA_FOUND': 'Aucune donnee trouvee',
     'COMMON.OVERDUE': 'En retard',
@@ -534,6 +551,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'COMMON.YEARLY': 'Annuel',
     'COMMON.AT_TIME': 'a {{time}}',
     'COMMON.LOADING_MAP': 'Chargement de la carte...',
+    'COMMON.NEXT': 'Suivant',
 
     'CONFIRM.DELETE_PROPERTY': 'Voulez-vous vraiment supprimer ce bien ?',
     'CONFIRM.DELETE_LEAD': 'Voulez-vous vraiment supprimer ce lead ?',
@@ -834,6 +852,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'TRANSACTION.SELECT_DATES': 'Selectionner les dates',
     'TRANSACTION.DOCUMENTS': 'Documents',
     'TRANSACTION.CIN_NUMBER': 'Numero CIN',
+    'TRANSACTION.CIN_OR_PASSPORT': 'CIN ou Passeport',
+    'TRANSACTION.CIN_OR_PASSPORT_DESCRIPTION': 'Téléchargez une photo claire ou un scan de votre CIN ou passeport',
+    'TRANSACTION.PAYMENT_PROOF': 'Preuve de paiement',
+    'TRANSACTION.PAYMENT_PROOF_DESCRIPTION': 'Téléchargez une preuve de paiement (reçu de virement bancaire, photo de chèque, etc.)',
     'TRANSACTION.PAYMENT': 'Paiement',
     'TRANSACTION.AGENCY_PAYMENT_DETAILS': 'Details de paiement de l\'agence',
     'TRANSACTION.BANK_NAME': 'Nom de la banque',
@@ -917,5 +939,10 @@ export const translations: Record<Language, Record<string, string>> = {
 
     'COMMON.REQUIRED': 'Ce champ est obligatoire',
     'COMMON.LOADING': 'Chargement...',
+
+    'DAILY': 'Jour',
+    'WEEKLY': 'Semaine',
+    'MONTHLY': 'Mois',
+    'YEARLY': 'An',
   }
 };

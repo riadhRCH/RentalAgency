@@ -70,6 +70,10 @@ export class TransactionComponent implements OnInit {
   // Forms
   customerForm: FormGroup;
   documentsForm: FormGroup;
+  paymentForm: FormGroup;
+
+  // File storage
+  selectedFiles: { [key: string]: File } = {};
 
   // Steps
   customerInfoExpanded = signal(true);
@@ -95,9 +99,11 @@ export class TransactionComponent implements OnInit {
     });
 
     this.documentsForm = this.fb.group({
-      cinNumber: ['', Validators.required],
-      cinDocument: [null],
-      passportDocument: [null]
+      cinDocument: [null, Validators.required]
+    });
+
+    this.paymentForm = this.fb.group({
+      paymentProof: [null, Validators.required]
     });
   }
 
@@ -140,12 +146,6 @@ export class TransactionComponent implements OnInit {
         email: transaction.personnelId.email
       });
       this.checkCustomerInfoDone();
-    }
-
-    if (transaction?.metadata?.cinNumber) {
-      this.documentsForm.patchValue({
-        cinNumber: transaction.metadata.cinNumber
-      });
     }
   }
 
@@ -243,20 +243,18 @@ export class TransactionComponent implements OnInit {
   }
 
   onDocumentsSubmit() {
-    if (this.documentsForm.valid) {
+    if (this.documentsForm.valid && this.selectedFiles['cinDocument']) {
       this.saving.set(true);
-      const formValue = this.documentsForm.value;
+      const formData = new FormData();
+      formData.append('cinDocument', this.selectedFiles['cinDocument']);
 
-      const updateData: any = {
+      // For now, just mark as done since file upload handling would need backend support
+      // In a real implementation, you'd upload the file and get back a URL
+      this.transactionsService.updatePublicTransaction(this.transactionId, {
         metadata: {
-          cinNumber: formValue.cinNumber
+          documents: ['cin_document_uploaded'] // Placeholder
         }
-      };
-
-      // Handle file uploads if any
-      // For now, just update CIN number
-
-      this.transactionsService.updatePublicTransaction(this.transactionId, updateData).subscribe({
+      }).subscribe({
         next: () => {
           this.saving.set(false);
           this.documentsDone.set(true);
@@ -271,13 +269,46 @@ export class TransactionComponent implements OnInit {
   }
 
   onPaymentSubmit() {
-    // Handle payment proof upload
-    // For now, just mark as done
-    this.paymentExpanded.set(false);
+    if (this.paymentForm.valid && this.selectedFiles['paymentProof']) {
+      this.saving.set(true);
+      const formData = new FormData();
+      formData.append('paymentProof', this.selectedFiles['paymentProof']);
+
+      // For now, just mark as done since file upload handling would need backend support
+      // In a real implementation, you'd upload the file and get back a URL
+      this.transactionsService.updatePublicTransaction(this.transactionId, {
+        metadata: {
+          paymentProof: 'payment_proof_uploaded' // Placeholder
+        }
+      }).subscribe({
+        next: () => {
+          this.saving.set(false);
+          // Mark payment as done and close the section
+          this.paymentExpanded.set(false);
+          // Could navigate to success page or show completion message
+        },
+        error: () => {
+          this.saving.set(false);
+        }
+      });
+    }
   }
 
   onDatesSelected(dates: Date[]) {
     this.selectedDatesControl.setValue(dates);
     this.checkCalendarDone();
+  }
+
+  onFileSelected(event: any, fieldName: string) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFiles[fieldName] = file;
+      if (fieldName === 'cinDocument') {
+        this.documentsForm.patchValue({ cinDocument: file });
+        this.checkDocumentsDone();
+      } else if (fieldName === 'paymentProof') {
+        this.paymentForm.patchValue({ paymentProof: file });
+      }
+    }
   }
 }

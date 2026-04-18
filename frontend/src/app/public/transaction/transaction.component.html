@@ -2,13 +2,15 @@
 
 <div class="min-h-screen bg-background-dark pt-24 pb-12">
   <div class="p-8 max-w-4xl mx-auto space-y-12">
-    <header class="text-center">
-      <h1 class="font-serif text-4xl font-bold tracking-tight text-white uppercase silver-glow">
-        {{ 'TRANSACTION.COMPLETE_RESERVATION' | translate }}
-      </h1>
-      <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
-        {{ 'TRANSACTION.COMPLETE_RESERVATION_SUBTITLE' | translate }}
-      </p>
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+          {{ 'TRANSACTION.COMPLETE_RESERVATION' | translate }}
+        </h1>
+        <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+          {{ 'TRANSACTION.COMPLETE_RESERVATION_SUBTITLE' | translate }}
+        </p>
+      </div>
     </header>
 
     <div *ngIf="loading()" class="flex justify-center items-center h-64">
@@ -207,3 +209,4 @@
 </div>
 
 <app-public-footer></app-public-footer>
+

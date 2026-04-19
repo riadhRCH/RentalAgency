@@ -14,6 +14,15 @@ export interface AgencySettings {
   areaCode: string;
 }
 
+export interface PaymentMethod {
+  type: 'bank' | 'mobile' | 'poste';
+  provider: string;
+  rib?: string;
+  accountNumber?: string;
+  accountHolder: string;
+  bankName?: string;
+}
+
 export interface AgencyStats { 
   totalLeads: number; 
   totalVisits: number;
@@ -58,5 +67,21 @@ export class AgencyService {
 
   removeStaff(personnelId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/staff/${personnelId}`);
+  }
+
+  getPaymentMethods(): Observable<PaymentMethod[]> {
+    return this.http.get<PaymentMethod[]>(`${this.apiUrl}/payment-methods`);
+  }
+
+  addPaymentMethod(method: PaymentMethod): Observable<PaymentMethod> {
+    return this.http.post<PaymentMethod>(`${this.apiUrl}/payment-methods`, method);
+  }
+
+  updatePaymentMethod(index: number, method: PaymentMethod): Observable<PaymentMethod> {
+    return this.http.patch<PaymentMethod>(`${this.apiUrl}/payment-methods/${index}`, method);
+  }
+
+  deletePaymentMethod(index: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/payment-methods/${index}`);
   }
 }

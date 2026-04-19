@@ -67,6 +67,12 @@
                 <span class="material-symbols-outlined">badge</span>
                 <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.TEAM_MANAGEMENT' | translate }}</span>
             </a>
+              <a routerLink="/dashboard/bank-details" routerLinkActive="bg-primary/10 text-primary border-primary"
+                (click)="onNavigate()"
+                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
+                <span class="material-symbols-outlined">account_balance</span>
+                <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.PAYMENTS' | translate }}</span>
+            </a>
         </div>
 
         <div class="mt-8 px-4">

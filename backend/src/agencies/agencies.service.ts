@@ -173,6 +173,37 @@ export class AgenciesService {
     return agency.settings;
   }
 
+  async getPaymentMethods(agencyId: string) {
+    const agency = await this.agencyModel.findById(agencyId).select('paymentMethods name');
+    return agency?.paymentMethods || [];
+  }
+
+  async addPaymentMethod(agencyId: string, method: any) {
+    const agency = await this.agencyModel.findById(agencyId).select('paymentMethods name');
+    if (!agency) throw new BadRequestException('Agency not found');
+    agency.paymentMethods.push(method);
+    await agency.save();
+    return agency.paymentMethods;
+  }
+
+  async updatePaymentMethod(agencyId: string, index: number, method: any) {
+    const agency = await this.agencyModel.findById(agencyId).select('paymentMethods name');
+    if (!agency) throw new BadRequestException('Agency not found');
+    if (index < 0 || index >= agency.paymentMethods.length) throw new BadRequestException('Invalid index');
+    agency.paymentMethods[index] = method;
+    await agency.save();
+    return agency.paymentMethods;
+  }
+
+  async deletePaymentMethod(agencyId: string, index: number) {
+    const agency = await this.agencyModel.findById(agencyId).select('paymentMethods name');
+    if (!agency) throw new BadRequestException('Agency not found');
+    if (index < 0 || index >= agency.paymentMethods.length) throw new BadRequestException('Invalid index');
+    agency.paymentMethods.splice(index, 1);
+    await agency.save();
+    return agency.paymentMethods;
+  }
+
   async addStaff(agencyId: string, dto: { phone: string; role: string }) {
     let personnel = await this.personnelModel.findOne({ phone: dto.phone });
     if (!personnel) {

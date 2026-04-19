@@ -50,6 +50,34 @@ export class AgenciesController {
     return this.agenciesService.updateSettings(req.agencyId.toString(), settings);
   }
 
+  // Get payment methods
+  @UseGuards(JwtAuthGuard, AgencyGuard)
+  @Get('payment-methods')
+  async getPaymentMethods(@Request() req) {
+    return this.agenciesService.getPaymentMethods(req.agencyId.toString());
+  }
+
+  // Add payment method
+  @UseGuards(JwtAuthGuard, AgencyGuard)
+  @Post('payment-methods')
+  async addPaymentMethod(@Request() req, @Body() method: any) {
+    return this.agenciesService.addPaymentMethod(req.agencyId.toString(), method);
+  }
+
+  // Update payment method
+  @UseGuards(JwtAuthGuard, AgencyGuard)
+  @Patch('payment-methods/:index')
+  async updatePaymentMethod(@Request() req, @Param('index') index: string, @Body() method: any) {
+    return this.agenciesService.updatePaymentMethod(req.agencyId.toString(), parseInt(index), method);
+  }
+
+  // Delete payment method
+  @UseGuards(JwtAuthGuard, AgencyGuard)
+  @Delete('payment-methods/:index')
+  async deletePaymentMethod(@Request() req, @Param('index') index: string) {
+    return this.agenciesService.deletePaymentMethod(req.agencyId.toString(), parseInt(index));
+  }
+
   // Add staff member to agency
   @UseGuards(JwtAuthGuard, AgencyGuard)
   @Post('staff')

@@ -199,11 +199,12 @@
         <div *ngIf="paymentExpanded()" class="animate-in fade-in slide-in-from-top-2 duration-200 px-8 pb-8 space-y-6 border-t border-white/5">
           <div class="space-y-4">
             <h3 class="text-white font-semibold">{{ 'TRANSACTION.AGENCY_PAYMENT_DETAILS' | translate }}</h3>
-            <div class="bg-white/5 border border-white/10 rounded-lg p-4 space-y-2">
-              <p><strong>{{ 'TRANSACTION.BANK_NAME' | translate }}:</strong> {{ transaction()?.agency?.paymentDetails?.bankName }}</p>
-              <p><strong>{{ 'TRANSACTION.RIB' | translate }}:</strong> {{ transaction()?.agency?.paymentDetails?.rib }}</p>
-              <p><strong>{{ 'TRANSACTION.POSTAL_ACCOUNT' | translate }}:</strong> {{ transaction()?.agency?.paymentDetails?.postalAccount }}</p>
-              <p><strong>{{ 'TRANSACTION.ACCOUNT_HOLDER' | translate }}:</strong> {{ transaction()?.agency?.paymentDetails?.accountHolder }}</p>
+            <div *ngFor="let method of transaction()?.agency?.paymentMethods" class="bg-white/5 border border-white/10 rounded-lg p-4 space-y-2">
+              <p><strong>{{ 'TRANSACTION.PROVIDER' | translate }}:</strong> {{ method.provider }}</p>
+              <p *ngIf="method.type === 'bank'"><strong>{{ 'TRANSACTION.BANK_NAME' | translate }}:</strong> {{ method.bankName }}</p>
+              <p *ngIf="method.rib"><strong>{{ 'TRANSACTION.RIB' | translate }}:</strong> {{ method.rib }}</p>
+              <p *ngIf="method.accountNumber"><strong>{{ 'TRANSACTION.ACCOUNT_NUMBER' | translate }}:</strong> {{ method.accountNumber }}</p>
+              <p><strong>{{ 'TRANSACTION.ACCOUNT_HOLDER' | translate }}:</strong> {{ method.accountHolder }}</p>
             </div>
 
             <div class="space-y-2">

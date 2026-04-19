@@ -22,18 +22,24 @@ class AgencySettings {
   areaCode: string;
 }
 
-class PaymentDetails {
-  @Prop()
-  rib: string;
+class PaymentMethod {
+  @Prop({ required: true, enum: ['bank', 'mobile', 'poste'] })
+  type: string;
+
+  @Prop({ required: true })
+  provider: string;
 
   @Prop()
-  postalAccount: string;
+  rib?: string;
 
   @Prop()
-  bankName: string;
+  accountNumber?: string;
 
-  @Prop()
+  @Prop({ required: true })
   accountHolder: string;
+
+  @Prop()
+  bankName?: string;
 }
 
 @Schema({ timestamps: true })
@@ -56,8 +62,8 @@ export class RentalAgency {
   @Prop({ type: { forwardingNumber: String, areaCode: String }, default: {} })
   settings: AgencySettings;
 
-  @Prop({ type: { rib: String, postalAccount: String, bankName: String, accountHolder: String }, default: {} })
-  paymentDetails: PaymentDetails;
+  @Prop({ type: [PaymentMethod], default: [] })
+  paymentMethods: PaymentMethod[];
 }
 
 export const RentalAgencySchema = SchemaFactory.createForClass(RentalAgency);

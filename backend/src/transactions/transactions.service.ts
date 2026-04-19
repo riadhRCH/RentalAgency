@@ -152,7 +152,7 @@ export class TransactionsService {
     }
 
     // Get agency payment details
-    const agency = await this.agencyModel.findById(transaction.agencyId).select('paymentDetails name');
+    const agency = await this.agencyModel.findById(transaction.agencyId).select('paymentMethods name');
 
     return {
       ...transaction.toObject(),

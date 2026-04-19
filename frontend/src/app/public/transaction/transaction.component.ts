@@ -30,12 +30,14 @@ interface Transaction {
   };
   agency: {
     name: string;
-    paymentDetails: {
-      rib: string;
-      postalAccount: string;
-      bankName: string;
+    paymentMethods: {
+      type: string;
+      provider: string;
+      rib?: string;
+      accountNumber?: string;
       accountHolder: string;
-    };
+      bankName?: string;
+    }[];
   };
 }
 

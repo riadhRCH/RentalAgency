@@ -21,6 +21,7 @@ import { PropertyDetailsComponent } from './public/property-details/property-det
 import { ThankYouComponent } from './public/thank-you/thank-you.component';
 import { CarouselComponent } from './public/carousel/carousel.component';
 import { TransactionComponent } from './public/transaction/transaction.component';
+import { BankDetailsComponent } from './dashboard/bank-details/bank-details.component';
 
 export const routes: Routes = [
     { path: '', component: LandingPage },
@@ -57,7 +58,8 @@ export const routes: Routes = [
             { path: 'transactions/provision', component: TransactionProvisioningComponent },
             { path: 'transactions/:id', component: TransactionDetailComponent },
             { path: 'teams', component: TeamsComponent },
-            { path: 'config', component: ConfigComponent }
+            { path: 'config', component: ConfigComponent },
+            { path: 'bank-details', component: BankDetailsComponent }
         ]
     }
 ];

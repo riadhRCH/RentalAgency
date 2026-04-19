@@ -1,7 +1,8 @@
-import { IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { IsValidPhone } from '../../shared/validators/is-valid-phone.validator';
 
 export class LoginDto {
-  @IsPhoneNumber()
+  @IsValidPhone()
   phone: string;
 
   @IsString()

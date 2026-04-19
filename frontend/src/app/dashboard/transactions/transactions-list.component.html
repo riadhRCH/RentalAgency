@@ -1,13 +1,18 @@
-<div class="p-6">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold text-gray-900">{{ 'TRANSACTIONS.TITLE' | translate }}</h1>
-    <a routerLink="/dashboard/transactions/provision" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+<div class="p-8 max-w-7xl mx-auto space-y-10">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+        {{ 'TRANSACTIONS.TITLE' | translate }}
+      </h1>
+    </div>
+    <button (click)="onNewTransaction()" class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center gap-2 whitespace-nowrap">
+      <span class="material-symbols-outlined text-sm">add</span>
       {{ 'TRANSACTIONS.NEW_TRANSACTION' | translate }}
-    </a>
-  </div>
+    </button>
+  </header>
 
   <div *ngIf="isLoading()" class="flex justify-center items-center h-64">
-    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
   </div>
 
   <div *ngIf="!isLoading() && transactions.length === 0" class="mt-8">
@@ -20,57 +25,59 @@
     </app-empty-state>
   </div>
 
-  <div *ngIf="!isLoading() && transactions.length > 0" class="bg-white rounded-xl shadow-sm overflow-hidden">
-    <table class="min-w-full divide-y divide-gray-200 text-left">
-      <thead class="bg-gray-50">
-        <tr>
-          <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'TRANSACTIONS.PROPERTY' | translate }}</th>
-          <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'TRANSACTIONS.TENANT' | translate }}</th>
-          <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'TRANSACTIONS.RENT' | translate }}</th>
-          <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'TRANSACTIONS.DATES' | translate }}</th>
-          <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'COMMON.STATUS' | translate }}</th>
-          <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'LEADS.ACTIONS' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-gray-200">
-        <tr *ngFor="let transaction of transactions" class="hover:bg-gray-50 transition-colors">
-          <td class="px-6 py-4 whitespace-nowrap">
-            <div class="text-sm font-medium text-gray-900">{{ transaction.propertyId?.reference }}</div>
-            <div class="text-xs text-gray-500">{{ transaction.propertyId?.address }}</div>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <div class="text-sm text-gray-900">{{ transaction.personnelId?.firstName }} {{ transaction.personnelId?.lastName }}</div>
-            <div class="text-xs text-gray-500">{{ transaction.personnelId?.phone }}</div>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-            {{ transaction.financialDetails.rentAmount | currency:'TND' }}
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-            <div>{{ transaction.timeline.startDate | date:'shortDate' }} - {{ transaction.timeline.endDate | date:'shortDate' }}</div>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="getStatusBadgeClass(transaction.status)">
-              {{ getTransactionStatusLabel(transaction.status) }}
-            </span>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-            <div class="flex space-x-3">
-              <button (click)="copyTransactionLink(transaction._id!)" class="text-blue-600 hover:text-blue-900" [title]="'TRANSACTIONS.COPY_LINK' | translate">
-                <i class="fas fa-link"></i>
-              </button>
-              <a [routerLink]="['/dashboard/transactions', transaction._id]" class="text-indigo-600 hover:text-indigo-900" [title]="'TRANSACTIONS.VIEW_DETAILS' | translate">
-                <i class="fas fa-eye"></i>
-              </a>
-              <button (click)="closeTransaction(transaction._id!)" class="text-amber-600 hover:text-amber-900" [title]="'TRANSACTIONS.CLOSE_TRANSACTION' | translate">
-                <i class="fas fa-file-contract"></i>
-              </button>
-              <button (click)="deleteTransaction(transaction._id!)" class="text-red-600 hover:text-red-900" [title]="'TRANSACTIONS.DELETE_TRANSACTION' | translate">
-                <i class="fas fa-trash"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div *ngIf="!isLoading() && transactions.length > 0" class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead class="bg-white/5 border-b border-white/10">
+          <tr>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'TRANSACTIONS.PROPERTY' | translate }}</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'TRANSACTIONS.TENANT' | translate }}</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'TRANSACTIONS.RENT' | translate }}</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'TRANSACTIONS.DATES' | translate }}</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'COMMON.STATUS' | translate }}</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">{{ 'LEADS.ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          <tr *ngFor="let transaction of transactions" class="group hover:bg-white/5 transition-colors">
+            <td class="p-6">
+              <div class="text-sm font-bold text-slate-900 dark:text-white">{{ transaction.propertyId?.reference }}</div>
+              <div class="text-[11px] text-slate-500">{{ transaction.propertyId?.address }}</div>
+            </td>
+            <td class="p-6">
+              <div class="text-sm text-slate-900 dark:text-white">{{ transaction.personnelId?.firstName }} {{ transaction.personnelId?.lastName }}</div>
+              <div class="text-[11px] text-slate-500">{{ transaction.personnelId?.phone }}</div>
+            </td>
+            <td class="p-6 text-sm text-slate-900 dark:text-white">
+              {{ transaction.financialDetails.rentAmount | currency:'TND' }}
+            </td>
+            <td class="p-6 text-sm text-slate-500">
+              <div>{{ transaction.timeline.startDate | date:'shortDate' }} - {{ transaction.timeline.endDate | date:'shortDate' }}</div>
+            </td>
+            <td class="p-6">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold" [ngClass]="getStatusBadgeClass(transaction.status)">
+                {{ getTransactionStatusLabel(transaction.status) }}
+              </span>
+            </td>
+            <td class="p-6 text-right">
+              <div class="flex items-center justify-end gap-3">
+                <button (click)="copyTransactionLink(transaction._id!)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-slate-100 transition-all" [title]="'TRANSACTIONS.COPY_LINK' | translate">
+                  <span class="material-symbols-outlined text-sm">link</span>
+                </button>
+                <a [routerLink]="['/dashboard/transactions', transaction._id]" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-primary transition-all" [title]="'TRANSACTIONS.VIEW_DETAILS' | translate">
+                  <span class="material-symbols-outlined text-sm">visibility</span>
+                </a>
+                <button (click)="closeTransaction(transaction._id!)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-amber-500 transition-all" [title]="'TRANSACTIONS.CLOSE_TRANSACTION' | translate">
+                  <span class="material-symbols-outlined text-sm">sell</span>
+                </button>
+                <button (click)="deleteTransaction(transaction._id!)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-red-500 transition-all" [title]="'TRANSACTIONS.DELETE_TRANSACTION' | translate">
+                  <span class="material-symbols-outlined text-sm">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

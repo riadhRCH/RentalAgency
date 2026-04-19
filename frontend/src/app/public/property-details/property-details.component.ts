@@ -57,9 +57,11 @@ export class PropertyDetailsComponent implements OnInit {
   phoneInputInvalid = signal(false);
   transactionId = signal<string | null>(null);
 
+  private phonePattern = /^(\+216)?0?[0-9]{8}$/;
+
   constructor() {
     this.reservationForm = this.fb.group({
-      customerPhone: ['', [Validators.required]],
+      customerPhone: ['', [Validators.required, Validators.pattern(this.phonePattern)]],
     });
   }
 
@@ -162,6 +164,17 @@ export class PropertyDetailsComponent implements OnInit {
     }
 
     this.submitReservation([]);
+  }
+
+  getPhoneErrorMessage(): string {
+    const phoneControl = this.reservationForm.get('customerPhone');
+    if (!phoneControl?.value) {
+      return 'COMMON.PHONE_REQUIRED';
+    }
+    if (phoneControl?.hasError('pattern')) {
+      return 'COMMON.PHONE_INVALID_FORMAT';
+    }
+    return 'COMMON.PHONE_REQUIRED';
   }
 
   private submitReservation(selectedDates: Date[]): void {

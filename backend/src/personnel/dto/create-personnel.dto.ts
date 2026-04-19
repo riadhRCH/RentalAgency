@@ -1,7 +1,8 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsValidPhone } from '../../shared/validators/is-valid-phone.validator';
 
 export class CreatePersonnelDto {
-  @IsPhoneNumber()
+  @IsValidPhone()
   @IsNotEmpty()
   phone: string;
 

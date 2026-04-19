@@ -230,14 +230,18 @@
                     type="tel"
                     formControlName="customerPhone"
                     class="w-full bg-white/5 border rounded-lg p-3 text-sm outline-none focus:border-primary transition-all"
-                    [class.border-red-500]="phoneInputInvalid()"
-                    [class.border-white/10]="!phoneInputInvalid()"
+                    [class.border-red-500]="phoneInputInvalid() || (reservationForm.get('customerPhone')?.touched && reservationForm.get('customerPhone')?.invalid)"
+                    [class.border-white/10]="!phoneInputInvalid() && !(reservationForm.get('customerPhone')?.touched && reservationForm.get('customerPhone')?.invalid)"
                     placeholder="+216 12345678"
                   />
-                  @if (phoneInputInvalid()) {
+                  @if (phoneInputInvalid() || (reservationForm.get('customerPhone')?.touched && reservationForm.get('customerPhone')?.invalid)) {
                     <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1 flex items-center gap-1">
                       <span class="material-symbols-outlined text-xs">error</span>
-                      {{ 'COMMON.PHONE_REQUIRED' | translate }}
+                      @if (reservationForm.get('customerPhone')?.hasError('required')) {
+                        {{ 'COMMON.PHONE_NUMBER_REQUIRED' | translate }}
+                      } @else if (reservationForm.get('customerPhone')?.hasError('pattern')) {
+                        {{ 'COMMON.PHONE_INVALID_FORMAT' | translate }}
+                      }
                     </div>
                   }
                 </div>

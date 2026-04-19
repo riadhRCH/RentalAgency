@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, ViewChild } from '@angular/core';
+import { Component, OnInit, inject, signal, ViewChild, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -78,7 +78,7 @@ export class TransactionComponent implements OnInit {
   selectedFiles: { [key: string]: File } = {};
 
   // Steps
-  customerInfoExpanded = signal(true);
+  customerInfoExpanded = signal(false);
   calendarExpanded = signal(false);
   documentsExpanded = signal(false);
   paymentExpanded = signal(false);
@@ -88,16 +88,18 @@ export class TransactionComponent implements OnInit {
   calendarDone = signal(false);
   documentsDone = signal(false);
 
+  private phonePattern = /^(\+216)?0?[0-9]{8}$/;
+
   // Calendar data
   propertyCalendarData: any[] = [];
   selectedDatesControl = this.fb.control<Date[]>([]);
 
   constructor() {
     this.customerForm = this.fb.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      phone: ['', [Validators.required, Validators.pattern(/^(\+216|0)[0-9]{8}$/)]],
-      email: ['', [Validators.email]]
+      firstName: [''],
+      lastName: [''],
+      phone: ['', [Validators.required, Validators.pattern(this.phonePattern)]],
+      email: ['']
     });
 
     this.documentsForm = this.fb.group({
@@ -107,6 +109,12 @@ export class TransactionComponent implements OnInit {
     this.paymentForm = this.fb.group({
       paymentProof: [null, Validators.required]
     });
+
+    effect(() => {
+      console.log('this.customerInfoDone()', this.customerInfoDone())
+      console.log('this.calendarDone()', this.calendarDone())
+      console.log('this.documentsDone()', this.documentsDone())
+    })
   }
 
   ngOnInit() {
@@ -154,6 +162,7 @@ export class TransactionComponent implements OnInit {
   autoOpenFirstUndoneStep() {
     if (!this.customerInfoDone()) {
       this.customerInfoExpanded.set(true);
+      this.customerForm.markAllAsTouched()
     } else if (!this.calendarDone()) {
       this.calendarExpanded.set(true);
     } else if (!this.documentsDone()) {
@@ -171,7 +180,14 @@ export class TransactionComponent implements OnInit {
   }
 
   checkCustomerInfoDone() {
-    this.customerInfoDone.set(this.customerForm.valid);
+    console.log('this.customerForm.valid', this.customerForm.valid, this.customerForm)
+    console.log('this.isCustomerPhoneValid', this.isCustomerPhoneValid())
+    this.customerInfoDone.set(this.customerForm.valid || this.isCustomerPhoneValid());
+  }
+
+  private isCustomerPhoneValid(): boolean {
+    const phone = this.customerForm.get('phone')?.value || this.transaction()?.personnelId?.phone;
+    return !!phone && this.phonePattern.test(phone);
   }
 
   checkCalendarDone() {

@@ -19,7 +19,7 @@ export class Personnel {
 
   @Prop({
     type: String,
-    enum: ['call', 'manual', 'registration'],
+    enum: ['call', 'manual', 'registration', 'public'],
     default: 'manual',
   })
   source: string;

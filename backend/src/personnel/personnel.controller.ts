@@ -13,6 +13,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreatePersonnelDto } from './dto/create-personnel.dto';
 import { UpdatePersonnelDto } from './dto/update-personnel.dto';
 import { PersonnelService } from './personnel.service';
+import { Public } from 'src/auth/public.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Controller('personnel')
@@ -44,6 +45,7 @@ export class PersonnelController {
     return this.personnelService.create(dto);
   }
 
+  @Public()
   @Post('public')
   createPublic(@Body() dto: CreatePersonnelDto) {
     return this.personnelService.createPublic(dto);

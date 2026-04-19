@@ -1,11 +1,12 @@
-import { IsNotEmpty, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsValidPhone } from '../../shared/validators/is-valid-phone.validator';
 
 export class CreateAgencyDto {
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @IsPhoneNumber()
+  @IsValidPhone()
   @IsNotEmpty()
   ownerPhone: string;
 

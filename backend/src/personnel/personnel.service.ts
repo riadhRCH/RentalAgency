@@ -60,6 +60,28 @@ export class PersonnelService {
   }
 
   async createPublic(dto: CreatePersonnelDto) {
+    // Find existing personnel by phone, if exists update it, otherwise create
+    const existingPerson = await this.personnelModel.findOne({
+      phone: dto.phone,
+      deletedAt: { $exists: false }
+    });
+
+    if (existingPerson) {
+      // Update existing person with new data
+      const updated = await this.personnelModel.findOneAndUpdate(
+        { phone: dto.phone, deletedAt: { $exists: false } },
+        { 
+          $set: {
+            ...dto,
+            source: 'public'
+          }
+        },
+        { new: true }
+      );
+      return updated;
+    }
+
+    // Create new person if doesn't exist
     const person = await this.personnelModel.create({
       ...dto,
       source: 'public'

@@ -1,6 +1,23 @@
-follow same project design guidelines and use the skill .agent\skills\ui-ux-pro-max\SKILL.md to make creative stuff for this task
+LANDING PAGE & PERSONNEL NAVIGATION
 
-- update landing page
-    - current section that display list of available properties is harcoded, needs to get replaced with data from api
-    - add section with buttons (Immobilier, Neuf, Vente, Location, Location vacances), centred, grid, animated, each with a background image
-    - add smth in witch user can select country, and see available properties
+Overview:
+  Refresh the landing page with dynamic public property data and add a new Personnel section in the dashboard sidebar. Use the project design guidelines and the UI/UX skill reference for creative execution.
+
+Acceptance Criteria:
+  ✓ Replace hardcoded property listings with dynamic API data
+  ✓ Add animated category buttons for: Immobilier, Neuf, Vente, Location, Location vacances
+  ✓ Buttons are centered, displayed in a responsive grid, and include background images
+  ✓ Add a country/region selector that filters available public properties
+  ✓ Landing page works responsively on mobile devices
+  ✓ Add sidebar personnel menu with two sub-links:
+      - Team Management
+      - Owners Page
+  ✓ Owners Page displays property owners working with the agency
+
+Technical Notes:
+  - Frontend should consume public property API endpoints
+  - Add new route for Owners Page in dashboard
+  - Ensure mobile-first behavior and accessible controls
+
+Priority: High
+Dependencies: Properties public API, dashboard navigation updates

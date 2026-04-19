@@ -1,7 +1,25 @@
-owner dashboard feature
+SMS VERIFICATION FOR LOGIN AND OWNER DASHBOARD ACCESS
 
-in owners page the agency agent should be able to select an owner and copy a owner dashboard link and send it to owner
+Overview:
+  Add Twilio SMS verification to improve security for platform login and owner dashboard access.
 
-owner dashbord should be a link that will loads owner personal detais and load the properties that he owns and show thel in the page
+Acceptance Criteria:
+  Login Verification:
+    ✓ Send SMS code when user logs in
+    ✓ Require code entry before issuing JWT token
+    ✓ Verify user identity with a 6-digit OTP
+    ✓ OTP expires after a short timeframe
+    ✓ Allow resend with rate limiting
+  Owner Dashboard Verification:
+    ✓ Send SMS code before owner dashboard access is granted
+    ✓ Require OTP validation before viewing owner-specific data
+    ✓ Store verification attempts and expiry securely
 
-the owner shoudl be able to select any property and updates its availablility (open a popup that have the shared calendar component)
+Technical Notes:
+  - Implement Twilio SMS service in backend
+  - Add verification fields to personnel schema
+  - Add login and owner dashboard verification flows in frontend
+  - Use secure OTP generation and expiration
+
+Priority: High
+Dependencies: Auth module, owner dashboard, Twilio setup

@@ -1,3 +1,21 @@
-fix mobile version in entire frontend since this app is designed primarely for mobile
-- in dashboard
-- ..etc
+PERMISSION & DATA ISOLATION SYSTEM
+
+Overview:
+  Implement granular permissions for team members and enforce strict isolation of each member's data while allowing agency owners to review all activity.
+
+Acceptance Criteria:
+  ✓ Add page-level permission controls for team members
+  ✓ Support available pages: leads, transactions, properties, visits, rentals, teams, config
+  ✓ Each member sees only their own assigned data by default
+  ✓ Agency owners can view all data and filter by member
+  ✓ Dashboard shows KPI metrics for each team member
+  ✓ Team permissions are adjustable when adding or updating a member
+
+Technical Notes:
+  - Extend personnel schema with permission fields
+  - Build authorization guard for page access
+  - Filter queries by personnelId and agencyId
+  - Add member filter support in dashboard components
+
+Priority: Critical
+Dependencies: Auth module, personnel module, frontend navigation

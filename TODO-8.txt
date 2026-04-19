@@ -1,10 +1,14 @@
-add an automations page in side bar, that agency users will see available 3rd parties that they can configure in this plateform
+FUTURE FEATURE SLOT
 
-- whatapp business
-- instagram business
-- facebook business
-- meta business
-- ..etc any potential 3rd party that can help serving app's perpose
+Overview:
+  Reserve this slot for future platform enhancements and advanced features once core functionality is stable.
 
-display them all in one page with logos and good design
-when agent selectes one a sub-link in sidebar should get available to contibue with configurations
+Possible Uses:
+  - Reporting and analytics dashboard
+  - Document and contract management
+  - Email and notification center
+  - Webhook management dashboard
+  - API key and custom integration management
+
+Priority: Backlog
+Dependencies: none

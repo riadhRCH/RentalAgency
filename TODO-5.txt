@@ -1,4 +1,20 @@
-add twilio sms to verify identities and add these behaviours
+MOBILE-FIRST FRONTEND OPTIMIZATION
 
-- when copying owner dashboard link : an sms verification to guarentee that only the owner will open the dashboard
-- when logging in to the plateform
+Overview:
+  Optimize the full frontend experience for mobile devices. Ensure the app is responsive, touch-friendly, and performs smoothly on smaller screens.
+
+Acceptance Criteria:
+  ✓ Dashboard and public pages render correctly on mobile
+  ✓ Sidebar collapses to mobile-friendly navigation
+  ✓ Forms and buttons are responsive and thumb-accessible
+  ✓ No horizontal overflow on any page
+  ✓ Property, lead, transaction, and owner screens use mobile-friendly card layouts
+  ✓ Map and calendar views work on mobile devices
+
+Technical Notes:
+  - Apply responsive breakpoints across components
+  - Use mobile-first CSS and touch-friendly layouts
+  - Test across common phone dimensions
+
+Priority: Critical
+Dependencies: None (can be executed early)

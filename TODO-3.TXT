@@ -1,3 +1,20 @@
-agency personnel link in side bar that have two sub-links
-- team management (already exists)
-- owners page (a new page that will display the property owners that works with the agency)
+OWNER DASHBOARD FEATURE
+
+Overview:
+  Add an owner-facing dashboard accessible by a secure shareable link. Property owners can see their details and owned properties, then update availability through a shared calendar.
+
+Acceptance Criteria:
+  ✓ Agent can select an owner and copy a secure owner dashboard link
+  ✓ Shared link loads owner details and their owned properties
+  ✓ Owner can update property availability using the shared calendar component
+  ✓ Owner dashboard requires SMS verification before full access
+  ✓ Owner dashboard link is secure and token-based
+
+Technical Notes:
+  - Create public owner dashboard route and backend endpoints
+  - Store dashboard tokens in the personnel schema
+  - Reuse the existing shared calendar component for availability updates
+  - Add SMS verification flow for owner access
+
+Priority: High
+Dependencies: SMS verification, personnel/owners model, calendar component

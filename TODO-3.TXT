@@ -1,1 +1,3 @@
-agency personnel page && owner dashboard
+agency personnel link in side bar that have two sub-links
+- team management (already exists)
+- owners page (a new page that will display the property owners that works with the agency)

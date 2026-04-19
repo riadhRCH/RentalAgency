@@ -9,12 +9,13 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
 import { PublicNavbarComponent } from '../../shared/components/public-navbar/public-navbar.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer/public-footer.component';
+import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-property-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, PublicNavbarComponent, PublicFooterComponent, GoogleMapsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, PublicNavbarComponent, PublicFooterComponent, GoogleMapsModule, PhoneInputComponent],
   templateUrl: './property-details.component.html',
   styleUrls: ['./property-details.component.scss']
 })
@@ -57,7 +58,7 @@ export class PropertyDetailsComponent implements OnInit {
   phoneInputInvalid = signal(false);
   transactionId = signal<string | null>(null);
 
-  private phonePattern = /^(\+216)?0?[0-9]{8}$/;
+  private phonePattern = /^(\+\d{1,3})?0?[0-9]{8}$/;
 
   constructor() {
     this.reservationForm = this.fb.group({

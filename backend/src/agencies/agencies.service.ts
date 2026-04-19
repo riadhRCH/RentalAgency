@@ -15,21 +15,7 @@ import { Rental, RentalDocument } from '../schemas/rental.schema';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { ProvisionNumberDto } from './dto/provision-number.dto';
 import { Transaction, TransactionDocument } from 'src/schemas/transaction.schema';
-
-const DIAL_CODE_TO_COUNTRY_CODE: Array<{ dialCode: string; countryCode: string }> = [
-  { dialCode: '+971', countryCode: 'AE' },
-  { dialCode: '+974', countryCode: 'QA' },
-  { dialCode: '+966', countryCode: 'SA' },
-  { dialCode: '+216', countryCode: 'TN' },
-  { dialCode: '+213', countryCode: 'DZ' },
-  { dialCode: '+212', countryCode: 'MA' },
-  { dialCode: '+49', countryCode: 'DE' },
-  { dialCode: '+44', countryCode: 'GB' },
-  { dialCode: '+39', countryCode: 'IT' },
-  { dialCode: '+34', countryCode: 'ES' },
-  { dialCode: '+33', countryCode: 'FR' },
-  { dialCode: '+1', countryCode: 'US' },
-];
+import { COUNTRY_DEFAULTS } from '../shared/constants';
 
 @Injectable()
 export class AgenciesService {
@@ -55,13 +41,8 @@ export class AgenciesService {
     );
   }
 
-  private getAgencyCountryCode(forwardingNumber?: string) {  //example +21694669601
-    const normalizedForwardingNumber = (forwardingNumber || '').replace(/[\s()-]/g, '');
-    const matchedCountry = DIAL_CODE_TO_COUNTRY_CODE.find(({ dialCode }) =>
-      normalizedForwardingNumber.startsWith(dialCode),
-    );
-
-    return matchedCountry?.countryCode || 'TN';
+  private getAgencyCountryCode() {
+    return COUNTRY_DEFAULTS.COUNTRY_ISO_CODE;
   }
 
   async getStats(agencyId: string) {
@@ -102,9 +83,7 @@ export class AgenciesService {
         throw new BadRequestException('Agency not found');
       }
 
-      const agencyCountryCode = this.getAgencyCountryCode(
-        currentAgency.settings?.forwardingNumber,
-      );
+      const agencyCountryCode = this.getAgencyCountryCode();
 
       console.log('agencyCountryCode', agencyCountryCode)
 

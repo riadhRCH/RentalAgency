@@ -8,11 +8,12 @@ import { VisitsService } from '../../services/visits.service';
 import { PropertiesService, Property } from '../../services/properties.service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
+import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
 
 @Component({
   selector: 'app-rental-provisioning',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, PhoneInputComponent],
   templateUrl: './rental-provisioning.component.html',
   styleUrls: ['./rental-provisioning.component.scss']
 })
@@ -23,6 +24,8 @@ export class RentalProvisioningComponent implements OnInit {
   properties: Property[] = [];
   sourceInfo: { type: string, id: string } | null = null;
   notification: string | null = null;
+
+  private phonePattern = /^(\+\d{1,3})?0?[0-9]{8}$/;
 
   constructor(
     private fb: FormBuilder,
@@ -37,7 +40,7 @@ export class RentalProvisioningComponent implements OnInit {
       propertyId: ['', Validators.required],
       personnelId: [''],
       customerName: ['', Validators.required],
-      customerPhone: ['', Validators.required],
+      customerPhone: ['', [Validators.required, Validators.pattern(this.phonePattern)]],
       customerEmail: [''],
       identityVerificationStatus: ['PENDING'],
       financialDetails: this.fb.group({

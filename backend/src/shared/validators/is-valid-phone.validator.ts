@@ -4,6 +4,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
+import { COUNTRY_DEFAULTS } from '../constants';
 
 @ValidatorConstraint({ name: 'isValidPhone', async: false })
 export class IsValidPhoneConstraint implements ValidatorConstraintInterface {
@@ -12,17 +13,17 @@ export class IsValidPhoneConstraint implements ValidatorConstraintInterface {
       return false;
     }
 
-    // Pattern: accepts 8-digit numbers, optionally prefixed with +216 or 0
+    // Pattern: accepts 8-digit numbers, optionally prefixed with the configured country code or 0
     // Valid formats:
     // - 94669601
     // - 094669601
-    // - +21694669601
-    const phonePattern = /^(\+216)?0?[0-9]{8}$/;
+    // - +CC94669601
+    const phonePattern = new RegExp(`^(${COUNTRY_DEFAULTS.COUNTRY_CODE})?0?[0-9]{8}$`);
     return phonePattern.test(value.trim());
   }
 
   defaultMessage(): string {
-    return 'phone must be a valid phone number (8 digits, optionally with +216 or 0 prefix)';
+    return `phone must be a valid phone number (8 digits, optionally with ${COUNTRY_DEFAULTS.COUNTRY_CODE} or 0 prefix)`;
   }
 }
 

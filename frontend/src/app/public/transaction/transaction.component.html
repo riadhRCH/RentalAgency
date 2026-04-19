@@ -74,7 +74,7 @@
               </div>
               <div class="space-y-2">
                 <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.PHONE_NUMBER' | translate }}</label>
-                <input type="tel" formControlName="phone" class="w-full bg-white/5 border text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" [class.border-red-500]="customerForm.get('phone')?.touched && customerForm.get('phone')?.invalid" [class.border-white/10]="!(customerForm.get('phone')?.touched && customerForm.get('phone')?.invalid)">
+                <app-phone-input formControlName="phone" [placeholder]="'COMMON.PHONE_NUMBER' | translate"></app-phone-input>
                 @if (customerForm.get('phone')?.touched && customerForm.get('phone')?.invalid) {
                   <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1 flex items-center gap-1">
                     <span class="material-symbols-outlined text-xs">error</span>

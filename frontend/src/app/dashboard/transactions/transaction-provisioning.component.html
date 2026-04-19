@@ -75,7 +75,7 @@
           </div>
           <div class="space-y-2">
             <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.PHONE_NUMBER' | translate }}</label>
-            <input type="text" formControlName="customerPhone" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" placeholder="+216 12345678">
+            <app-phone-input formControlName="customerPhone" [placeholder]="'COMMON.PHONE_NUMBER' | translate"></app-phone-input>
             <div *ngIf="transactionForm.get('customerPhone')?.touched && transactionForm.get('customerPhone')?.invalid" class="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-1 ml-1">{{ 'COMMON.PHONE_REQUIRED' | translate }}</div>
           </div>
           <div class="space-y-2">

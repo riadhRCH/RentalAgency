@@ -5,11 +5,12 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { RentalsService, Rental } from '../../services/rentals.service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
+import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
 
 @Component({
   selector: 'app-rental-detail',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, PhoneInputComponent],
   templateUrl: './rental-detail.component.html',
   styleUrls: ['./rental-detail.component.scss']
 })
@@ -30,7 +31,7 @@ export class RentalDetailComponent implements OnInit {
     this.rentalForm = this.fb.group({
       personnelId: [''],
       customerName: ['', Validators.required],
-      customerPhone: ['', Validators.required],
+      customerPhone: ['', [Validators.required, Validators.pattern(/^(\+\d{1,3})?0?[0-9]{8}$/)]],
       customerEmail: [''],
       identityVerificationStatus: [''],
       financialDetails: this.fb.group({

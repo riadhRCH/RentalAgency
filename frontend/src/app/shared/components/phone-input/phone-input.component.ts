@@ -10,19 +10,7 @@ export interface Country {
 }
 
 const COUNTRIES: Country[] = [
-  { name: 'France', code: 'FR', flag: '🇫🇷', dialCode: '+33' },
-  { name: 'United States', code: 'US', flag: '🇺🇸', dialCode: '+1' },
-  { name: 'United Kingdom', code: 'GB', flag: '🇬🇧', dialCode: '+44' },
-  { name: 'Morocco', code: 'MA', flag: '🇲🇦', dialCode: '+212' },
   { name: 'Tunisia', code: 'TN', flag: '🇹🇳', dialCode: '+216' },
-  { name: 'Algeria', code: 'DZ', flag: '🇩🇿', dialCode: '+213' },
-  { name: 'United Arab Emirates', code: 'AE', flag: '🇦🇪', dialCode: '+971' },
-  { name: 'Saudi Arabia', code: 'SA', flag: '🇸🇦', dialCode: '+966' },
-  { name: 'Qatar', code: 'QA', flag: '🇶🇦', dialCode: '+974' },
-  { name: 'Germany', code: 'DE', flag: '🇩🇪', dialCode: '+49' },
-  { name: 'Spain', code: 'ES', flag: '🇪🇸', dialCode: '+34' },
-  { name: 'Italy', code: 'IT', flag: '🇮🇹', dialCode: '+39' },
-  { name: 'Canada', code: 'CA', flag: '🇨🇦', dialCode: '+1' },
 ];
 
 @Component({
@@ -44,9 +32,9 @@ export class PhoneInputComponent implements ControlValueAccessor {
   @Input() required: boolean = false;
 
   countries = COUNTRIES;
-  selectedCountry = signal<Country>(COUNTRIES.find(c => c.code === 'TN') || COUNTRIES[0]);
+  selectedCountry = signal<Country>(COUNTRIES[0]);
   phoneNumber = signal<string>('');
-  showDropdown = signal<boolean>(false);
+  showDropdown = signal<boolean>(false); // Not used anymore, but keeping for compatibility
 
   fullNumber = computed(() => {
     const phone = this.phoneNumber().replace(/\s+/g, '');
@@ -81,9 +69,7 @@ export class PhoneInputComponent implements ControlValueAccessor {
   }
 
   selectCountry(country: Country) {
-    this.selectedCountry.set(country);
-    this.showDropdown.set(false);
-    this.onPhoneChange();
+    // Not used since only Tunisia is supported
   }
 
   onPhoneChange() {
@@ -91,6 +77,6 @@ export class PhoneInputComponent implements ControlValueAccessor {
   }
 
   toggleDropdown() {
-    this.showDropdown.update(v => !v);
+    // Not used since only Tunisia is supported
   }
 }

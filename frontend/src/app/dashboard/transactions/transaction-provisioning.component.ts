@@ -9,11 +9,12 @@ import { PropertiesService, Property } from '../../services/properties.service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
 import { CalendarSelectorComponent } from '../../shared/components/calendar/calendar-selector.component';
+import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
 
 @Component({
   selector: 'app-transaction-provisioning',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, CalendarSelectorComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, CalendarSelectorComponent, PhoneInputComponent],
   templateUrl: './transaction-provisioning.component.html',
   styleUrls: ['./transaction-provisioning.component.scss']
 })
@@ -39,7 +40,7 @@ export class TransactionProvisioningComponent implements OnInit {
       propertyId: ['', Validators.required],
       personnelId: [''],
       customerName: ['', Validators.required],
-      customerPhone: ['', Validators.required],
+      customerPhone: ['', [Validators.required, Validators.pattern(/^(\+\d{1,3})?0?[0-9]{8}$/)]],
       customerEmail: [''],
       identityVerificationStatus: ['PENDING'],
       financialDetails: this.fb.group({

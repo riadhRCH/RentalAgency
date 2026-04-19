@@ -10,6 +10,7 @@ import { I18nService } from '../../i18n/i18n.service';
 import { CalendarSelectorComponent } from '../../shared/components/calendar/calendar-selector.component';
 import { PublicNavbarComponent } from '../../shared/components/public-navbar/public-navbar.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer/public-footer.component';
+import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
 import { PaymentFrequency } from '../../shared/enums';
 
 interface Transaction {
@@ -50,7 +51,8 @@ interface Transaction {
     TranslatePipe,
     CalendarSelectorComponent,
     PublicNavbarComponent,
-    PublicFooterComponent
+    PublicFooterComponent,
+    PhoneInputComponent
   ],
   templateUrl: './transaction.component.html',
   styleUrl: './transaction.component.scss'
@@ -88,7 +90,7 @@ export class TransactionComponent implements OnInit {
   calendarDone = signal(false);
   documentsDone = signal(false);
 
-  private phonePattern = /^(\+216)?0?[0-9]{8}$/;
+  private phonePattern = /^(\+\d{1,3})?0?[0-9]{8}$/;
 
   // Calendar data
   propertyCalendarData: any[] = [];

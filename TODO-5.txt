@@ -1,0 +1,3 @@
+fix mobile version in entire frontend since this app is designed primarely for mobile
+- in dashboard
+- ..etc

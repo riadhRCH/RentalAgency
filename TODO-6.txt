@@ -1,0 +1,5 @@
+code cleanup tasks:
+
+1- annihalate compeltely anything related to (coutry code, +216) in th entire plateform in both backend and frontend projects
+2- make global default variable in backend that holds country related info and set them to tunisia { '+216', 'TND', ..ec } and use them in 3ed parties api's if needed (the only country supported now is tunisia)
+3- unify phone input in frontend : use frontend\src\app\shared\components\phone-input\phone-input.component.ts component in all pages that still dont use it for inputting a phone number

@@ -1,1 +1,4 @@
-add twilio sms to verify identities
+add twilio sms to verify identities and add these behaviours
+
+- when copying owner dashboard link : an sms verification to guarentee that only the owner will open the dashboard
+- when logging in to the plateform

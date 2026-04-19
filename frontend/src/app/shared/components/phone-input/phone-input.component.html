@@ -2,36 +2,11 @@
   <!-- Call Icon -->
   <span class="material-symbols-outlined text-primary text-xl">call</span>
 
-  <!-- Country Selector -->
-  <div class="relative border-r border-white/10 pr-2">
-    <button 
-      type="button"
-      (click)="toggleDropdown()"
-      class="flex items-center gap-2 hover:bg-white/5 p-1 rounded transition-colors"
-    >
+  <!-- Country Display (Non-clickable since only Tunisia) -->
+  <div class="border-r border-white/10 pr-2">
+    <div class="flex items-center gap-2 p-1">
       <span class="text-xl leading-none">{{ selectedCountry().flag }}</span>
       <span class="text-xs font-bold text-silver-400 tracking-tighter">{{ selectedCountry().dialCode }}</span>
-      <span class="material-symbols-outlined text-slate-500 text-sm">expand_more</span>
-    </button>
-
-    <!-- Dropdown Menu -->
-    <div 
-      *ngIf="showDropdown()" 
-      class="absolute top-full left-0 mt-2 w-64 max-h-60 overflow-y-auto glass-card rounded-xl border border-white/10 z-[100] py-2 shadow-2xl"
-    >
-      <button 
-        type="button"
-        *ngFor="let country of countries" 
-        (click)="selectCountry(country)"
-        class="w-full flex items-center gap-3 px-4 py-3 hover:bg-primary/10 text-left transition-colors group"
-      >
-        <span class="text-xl">{{ country.flag }}</span>
-        <div class="flex-1">
-          <p class="text-xs font-bold text-white group-hover:text-primary transition-colors">{{ country.name }}</p>
-          <p class="text-[10px] text-slate-500">{{ country.dialCode }}</p>
-        </div>
-        <span *ngIf="selectedCountry().code === country.code" class="material-symbols-outlined text-primary text-sm">check</span>
-      </button>
     </div>
   </div>
 

@@ -1,11 +1,6 @@
-- whatsapp api integration
-- update homepage
-    - section to display availble properties
-    - buttons (Immobilier, Neuf, Vente, Location, Location vacances)
-- ooredo integration   
-- active nombers page (list of client and owners) 
-- add permission in teams managements and configurate phone/password
-- complete isolation btw data (leads, properties, visits, management) btw members of the agency
-- infobip
-- whatapp
-- instagram
+follow same project design guidelines and use the skill .agent\skills\ui-ux-pro-max\SKILL.md to make creative stuff for this task
+
+- update landing page
+    - current section that display list of available properties is harcoded, needs to get replaced with data from api
+    - add section with buttons (Immobilier, Neuf, Vente, Location, Location vacances), centred, grid, animated, each with a background image
+    - add smth in witch user can select country, and see available properties

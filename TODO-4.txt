@@ -1,4 +1,7 @@
-add twilio sms to verify identities and add these behaviours
+owner dashboard feature
 
-- when copying owner dashboard link : an sms verification to guarentee that only the owner will open the dashboard
-- when logging in to the plateform
+in owners page the agency agent should be able to select an owner and copy a owner dashboard link and send it to owner
+
+owner dashbord should be a link that will loads owner personal detais and load the properties that he owns and show thel in the page
+
+the owner shoudl be able to select any property and updates its availablility (open a popup that have the shared calendar component)

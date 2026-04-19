@@ -1,0 +1,10 @@
+add an automations page in side bar, that agency users will see available 3rd parties that they can configure in this plateform
+
+- whatapp business
+- instagram business
+- facebook business
+- meta business
+- ..etc any potential 3rd party that can help serving app's perpose
+
+display them all in one page with logos and good design
+when agent selectes one a sub-link in sidebar should get available to contibue with configurations

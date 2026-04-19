@@ -1,0 +1,6 @@
+- when adding a member in teams management page, add select permissions setup phone/password
+    - permissions should be available pages in the dashboard (leads, transactions, properties, ...etc)
+- complete isolation btw data (leads, properties, visits, management) btw members of the agency
+    - each logged in member should see his own data, his properties, his transactions, his clients ....etc 
+    - and agency owner account should be able to see everything and filter anything with member, (EX: filter transactions by a selected team member)
+    - agency onwer should be able to see a stats page that have KPI's of each team member

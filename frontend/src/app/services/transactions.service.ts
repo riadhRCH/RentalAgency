@@ -18,6 +18,7 @@ export interface Transaction {
     duration: number;
     endDate: string | Date;
     renewalDate?: string | Date;
+    selectedDates?: string[];
   };
   metadata?: {
     documents?: string[];

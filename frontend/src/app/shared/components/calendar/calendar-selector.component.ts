@@ -1,6 +1,7 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, signal, effect } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { DayAvailability } from '../../../services/properties.service';
 
@@ -11,9 +12,26 @@ import { DayAvailability } from '../../../services/properties.service';
   templateUrl: './calendar-selector.component.html',
   styleUrls: ['./calendar-selector.component.scss']
 })
-export class CalendarSelectorComponent implements OnInit, OnChanges {
-  @Input() propertyCalendarData: DayAvailability[] = [];
-  @Input() selectedDatesControl: FormControl;
+export class CalendarSelectorComponent implements OnInit, OnDestroy {
+  private propertyCalendarDataSignal = signal<DayAvailability[]>([]);
+  private selectedDatesControlSignal = signal<FormControl>(new FormControl([]));
+
+  @Input()
+  set propertyCalendarData(value: DayAvailability[]) {
+    this.propertyCalendarDataSignal.set(value || []);
+  }
+  get propertyCalendarData(): DayAvailability[] {
+    return this.propertyCalendarDataSignal();
+  }
+
+  @Input()
+  set selectedDatesControl(value: FormControl) {
+    this.selectedDatesControlSignal.set(value);
+  }
+  get selectedDatesControl(): FormControl {
+    return this.selectedDatesControlSignal();
+  }
+
   @Output() datesSelected = new EventEmitter<Date[]>();
 
   currentMonth = signal(new Date());
@@ -21,20 +39,41 @@ export class CalendarSelectorComponent implements OnInit, OnChanges {
   selectedDates = signal<Set<string>>(new Set());
 
   private availableDatesMap = new Map<string, DayAvailability>();
+  private selectedDatesSubscription: Subscription | null = null;
 
   constructor() {
-    this.selectedDatesControl = new FormControl([]);
   }
 
   ngOnInit(): void {
     this.generateCalendarDays();
     this.loadSelectedDates();
-  }
+    this.subscribeToControl();
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['propertyCalendarData']) {
+    effect(() => {
+      this.propertyCalendarData;
       this.buildAvailabilityMap();
       this.generateCalendarDays();
+    });
+
+    effect(() => {
+      const control = this.selectedDatesControl;
+      if (control) {
+        this.subscribeToControl(control);
+        this.loadSelectedDates();
+      }
+    });
+  }
+
+  private subscribeToControl(control?: FormControl): void {
+    if (this.selectedDatesSubscription) {
+      this.selectedDatesSubscription.unsubscribe();
+    }
+
+    const formControl = control ?? this.selectedDatesControl;
+    if (formControl) {
+      this.selectedDatesSubscription = formControl.valueChanges.subscribe(() => {
+        this.loadSelectedDates();
+      });
     }
   }
 
@@ -47,13 +86,15 @@ export class CalendarSelectorComponent implements OnInit, OnChanges {
   }
 
   private loadSelectedDates(): void {
-    const dates = this.selectedDatesControl.value || [];
+    const dates = this.selectedDatesControl?.value || [];
     if (Array.isArray(dates)) {
       const selectedSet = new Set<string>();
       dates.forEach(dateStr => {
         selectedSet.add(dateStr);
       });
       this.selectedDates.set(selectedSet);
+    } else {
+      this.selectedDates.set(new Set());
     }
   }
 
@@ -136,7 +177,13 @@ export class CalendarSelectorComponent implements OnInit, OnChanges {
 
   private updateFormControl(): void {
     const datesArray = Array.from(this.selectedDates()).sort();
-    this.selectedDatesControl.setValue(datesArray);
+    this.selectedDatesControl?.setValue(datesArray);
+  }
+
+  ngOnDestroy(): void {
+    if (this.selectedDatesSubscription) {
+      this.selectedDatesSubscription.unsubscribe();
+    }
   }
 
   getMonthYear(): string {

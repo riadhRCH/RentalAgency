@@ -1,6 +1,6 @@
-contract auto generation from 
-- properties in the offer details (location, price, size, etc)
-- client cin card
--  properties owner cin card
-- price
-- 5% annual commission
+contract auto generation from transactions
+should be able to select any transaction from the app and click generate contract, user should be redirected a page that have the contract pregenerated following a base model
+a sample of a base contract is in ./Contrat_Location.docx file
+the user should be able to edit any section of the contract, or remove/add sections
+the generated contracts from this app should have the agency logo in the top
+the generated contracts should have a professional clean design that represents a rental contract

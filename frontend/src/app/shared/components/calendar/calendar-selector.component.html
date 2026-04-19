@@ -45,16 +45,16 @@
           [disabled]="!isDayAvailable(day)"
           class="aspect-square rounded-lg font-semibold text-sm transition-all relative overflow-hidden"
           [ngClass]="{
-            'bg-primary text-white': isDaySelected(day),
-            'bg-white/5 hover:bg-primary/20': !isDaySelected(day) && isDayAvailable(day),
-            'bg-white/2': !isDaySelected(day) && !isDayAvailable(day)
+            'bg-gradient-to-br from-amber-500 via-orange-500 to-pink-500 text-white shadow-[0_0_0_2px_rgba(251,191,36,0.7)]': isDaySelected(day),
+            'bg-slate-800 text-slate-100 hover:bg-slate-700': !isDaySelected(day) && isDayAvailable(day),
+            'bg-rose-600/20 text-slate-400 border border-rose-500/20': !isDaySelected(day) && !isDayAvailable(day)
           }"
         >
           {{ day }}
 
           <!-- Availability indicator dot -->
           @if (isDayAvailable(day) && !isDaySelected(day)) {
-            <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></div>
+            <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-emerald-400 rounded-full"></div>
           }
         </button>
       }

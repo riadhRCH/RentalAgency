@@ -18,7 +18,8 @@ export class IsValidPhoneConstraint implements ValidatorConstraintInterface {
     // - 94669601
     // - 094669601
     // - +CC94669601
-    const phonePattern = new RegExp(`^(${COUNTRY_DEFAULTS.COUNTRY_CODE})?0?[0-9]{8}$`);
+    const escapedCountryCode = COUNTRY_DEFAULTS.COUNTRY_CODE.replace(/\+/g, '\\+');
+    const phonePattern = new RegExp(`^(${escapedCountryCode})?0?[0-9]{8}$`);
     return phonePattern.test(value.trim());
   }
 

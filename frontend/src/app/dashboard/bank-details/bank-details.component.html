@@ -23,7 +23,7 @@
         <div *ngFor="let method of paymentMethods; let i = index" class="glass-card p-6 rounded-2xl border border-white/10">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
-              <span class="material-symbols-outlined text-2xl text-primary">{{ getProviderIcon(method.provider) }}</span>
+              <img [src]="getProviderLogo(method.provider)" [alt]="method.provider + ' logo'" class="provider-logo" />
               <div>
                 <h3 class="text-white font-semibold">{{ method.provider }}</h3>
                 <p class="text-slate-400 text-sm">{{ method.accountHolder }}</p>
@@ -72,6 +72,12 @@
 
           <div class="space-y-2">
             <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{{ 'BANK_DETAILS.PROVIDER' | translate }}</label>
+            <div class="provider-preview">
+              <img [src]="getSelectedProviderLogo()" [alt]="addForm.get('provider')?.value ? addForm.get('provider')?.value + ' logo' : 'provider logo'" class="selected-provider-logo" />
+              <span class="provider-preview-name">
+                {{ addForm.get('provider')?.value || ('COMMON.SELECT' | translate) }}
+              </span>
+            </div>
             <select
               formControlName="provider"
               class="w-full appearance-none bg-white/5 border border-white/10 rounded p-3 pr-10 text-xs font-bold text-white outline-none focus:border-primary transition-all"

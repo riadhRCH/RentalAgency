@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <rect width="120" height="120" rx="24" fill="#dc2626" />
+  <text x="50%" y="57%" fill="#fff" font-family="Inter, sans-serif" font-size="28" font-weight="700" text-anchor="middle">BH</text>
+  <text x="50%" y="75%" fill="#fff" font-family="Inter, sans-serif" font-size="12" font-weight="700" text-anchor="middle">Bank</text>
+</svg>

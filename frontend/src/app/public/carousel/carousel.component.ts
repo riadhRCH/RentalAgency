@@ -19,23 +19,23 @@ export class CarouselComponent implements OnInit, OnDestroy {
   items: CarouselItem[] = [
     {
       id: 1,
-      image: '/caroussel/lion.png',
+      image: '/assets/caroussel/lion.png',
       title: 'اشخر يا الطليانة'
     },
     {
       id: 2,
-      image: '/caroussel/chil-ayounak.png',
+      image: '/assets/caroussel/chil-ayounak.png',
       title: 'شيل عيونك عني',
     },
     {
       id: 3,
-      image: '/caroussel/a3nnn.png',
+      image: '/assets/caroussel/a3nnn.png',
       title: 'نمر lion',
       description: 'aaaaa33nnnnnn'
     },
     {
       id: 4,
-      image: '/caroussel/bch-netchalou-lkol.png',
+      image: '/assets/caroussel/bch-netchalou-lkol.png',
       title: 'بش نتشالو لكل',
     }
   ];

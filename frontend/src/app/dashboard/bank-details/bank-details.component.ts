@@ -18,6 +18,7 @@ interface ProviderOption {
   name: string;
   type: 'bank' | 'mobile' | 'poste';
   icon: string;
+  logo: string;
 }
 
 @Component({
@@ -34,13 +35,13 @@ export class BankDetailsComponent implements OnInit {
 
   paymentMethods: PaymentMethod[] = [];
   providerOptions: ProviderOption[] = [
-    { name: 'BIAT', type: 'bank', icon: 'account_balance' },
-    { name: 'ATB', type: 'bank', icon: 'account_balance' },
-    { name: 'STB', type: 'bank', icon: 'account_balance' },
-    { name: 'BH Bank', type: 'bank', icon: 'account_balance' },
-    { name: 'UIB', type: 'bank', icon: 'account_balance' },
-    { name: 'WafaCash', type: 'mobile', icon: 'smartphone' },
-    { name: 'Poste Tunisienne', type: 'poste', icon: 'local_post_office' },
+    { name: 'BIAT', type: 'bank', icon: 'account_balance', logo: '/assets/payment-providers/biat.svg' },
+    { name: 'ATB', type: 'bank', icon: 'account_balance', logo: '/assets/payment-providers/atb.svg' },
+    { name: 'STB', type: 'bank', icon: 'account_balance', logo: '/assets/payment-providers/stb.svg' },
+    { name: 'BH Bank', type: 'bank', icon: 'account_balance', logo: '/assets/payment-providers/bh-bank.svg' },
+    { name: 'UIB', type: 'bank', icon: 'account_balance', logo: '/assets/payment-providers/uib.svg' },
+    { name: 'WafaCash', type: 'mobile', icon: 'smartphone', logo: '/assets/payment-providers/wafacash.svg' },
+    { name: 'Poste Tunisienne', type: 'poste', icon: 'local_post_office', logo: '/assets/payment-providers/poste-tunisienne.svg' },
   ];
 
   addForm: FormGroup = {} as any;
@@ -158,8 +159,13 @@ export class BankDetailsComponent implements OnInit {
     this.addForm.reset({ type: 'bank' });
   }
 
-  getProviderIcon(provider: string): string {
+  getProviderLogo(provider: string): string {
     const option = this.providerOptions.find(o => o.name === provider);
-    return option ? option.icon : 'payment';
+    return option ? option.logo : '/assets/payment-providers/generic-provider.svg';
+  }
+
+  getSelectedProviderLogo(): string {
+    const provider = this.addForm.get('provider')?.value;
+    return provider ? this.getProviderLogo(provider) : '/assets/payment-providers/generic-provider.svg';
   }
 }

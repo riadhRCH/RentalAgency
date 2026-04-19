@@ -5,6 +5,47 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+select {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+select option {
+  background: rgba(8, 13, 28, 0.95);
+  color: #ffffff;
+}
+
+select option:hover,
+select option:checked {
+  background: rgba(15, 118, 110, 0.15);
+}
+
+.provider-logo,
+.selected-provider-logo {
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.07);
+  object-fit: contain;
+  padding: 0.35rem;
+}
+
+.provider-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.provider-preview-name {
+  color: #f8fafc;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 .silver-glow {
   text-shadow: 0 0 10px rgba(192, 192, 192, 0.5);
 }

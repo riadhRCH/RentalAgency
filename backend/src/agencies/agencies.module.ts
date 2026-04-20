@@ -24,5 +24,6 @@ import { Transaction, TransactionSchema } from 'src/schemas/transaction.schema';
   ],
   controllers: [AgenciesController],
   providers: [AgenciesService],
+  exports: [AgenciesService],
 })
 export class AgenciesModule {}

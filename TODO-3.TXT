@@ -23,3 +23,5 @@ Technical Notes:
 
 Priority: High
 Dependencies: SMS verification, personnel/owners model, calendar component
+
+dont impletment the sms verification in this todo, just add comment in the owner dashboard page that the sms verification will be added in future

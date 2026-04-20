@@ -35,29 +35,29 @@ export class PropertiesController {
     return this.propertiesService.getPublicProperty(id);
   }
 
-  @Public()
-  @Get('public')
-  getPublicProperties(
-    @Query('page') page = '1',
-    @Query('limit') limit = '20',
-    @Query('type') type?: string,
-    @Query('country') country?: string,
-    @Query('region') region?: string,
-    @Query('minPrice') minPrice?: string,
-    @Query('maxPrice') maxPrice?: string,
-  ) {
-    return this.propertiesService.getPublicProperties(
-      parseInt(page),
-      parseInt(limit),
-      {
-        type,
-        country,
-        region,
-        minPrice: minPrice ? parseFloat(minPrice) : undefined,
-        maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
-      },
-    );
-  }
+  // @Public()
+  // @Get('public')
+  // getPublicProperties(
+  //   @Query('page') page = '1',
+  //   @Query('limit') limit = '20',
+  //   @Query('type') type?: string,
+  //   @Query('country') country?: string,
+  //   @Query('region') region?: string,
+  //   @Query('minPrice') minPrice?: string,
+  //   @Query('maxPrice') maxPrice?: string,
+  // ) {
+  //   return this.propertiesService.getPublicProperties(
+  //     parseInt(page),
+  //     parseInt(limit),
+  //     {
+  //       type,
+  //       country,
+  //       region,
+  //       minPrice: minPrice ? parseFloat(minPrice) : undefined,
+  //       maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+  //     },
+  //   );
+  // }
 
   @UseGuards(AgencyGuard)
   @Post('upload')

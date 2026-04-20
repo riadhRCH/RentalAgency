@@ -13,4 +13,8 @@ export class CreateAgencyDto {
   @IsString()
   @IsOptional()
   forwardingNumber?: string;
+
+  @IsString()
+  @IsOptional()
+  logo?: string;
 }

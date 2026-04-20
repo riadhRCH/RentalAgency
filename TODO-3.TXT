@@ -10,6 +10,11 @@ Acceptance Criteria:
   ✓ Owner dashboard requires SMS verification before full access
   ✓ Owner dashboard link is secure and token-based
 
+features requires on owner dashboard
+  ✓ owner should be able to see his properties, 
+  ✓ owner should be able to update property disponibility (open shared calendar in a popup)
+  ✓ owner should be able to change property price details (open a popup maybe or smth else)
+
 Technical Notes:
   - Create public owner dashboard route and backend endpoints
   - Store dashboard tokens in the personnel schema

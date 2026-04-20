@@ -71,6 +71,7 @@ export class AgenciesService {
       ownerId: personnel._id,
       staff: [{ personnelId: personnel._id, role: 'admin' }],
       settings: { forwardingNumber: dto.forwardingNumber || '', areaCode: '' },
+      logo: dto.logo,
     });
 
     return agency;

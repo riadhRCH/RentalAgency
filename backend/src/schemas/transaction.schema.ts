@@ -48,6 +48,9 @@ class TransactionMetadata {
 
   @Prop()
   emergencyContact: string;
+
+  @Prop({ type: [String], default: [] })
+  contracts: string[]; // Contract IDs
 }
 
 @Schema({ timestamps: true })

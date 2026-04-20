@@ -64,6 +64,9 @@ export class RentalAgency {
 
   @Prop({ type: [PaymentMethod], default: [] })
   paymentMethods: PaymentMethod[];
+
+  @Prop()
+  logo?: string;
 }
 
 export const RentalAgencySchema = SchemaFactory.createForClass(RentalAgency);

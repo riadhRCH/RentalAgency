@@ -25,7 +25,7 @@ export class ContractsService {
       ...createContractDto,
       agencyId: new Types.ObjectId(agencyId),
       transactionId: new Types.ObjectId(createContractDto.transactionId),
-      title: createContractDto.title || `Contract for ${transaction.propertyId?.reference}`,
+      title: createContractDto.title || `Contract for Transaction ${createContractDto.transactionId}`,
     });
 
     const savedContract = await contract.save();

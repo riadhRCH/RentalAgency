@@ -93,6 +93,54 @@ export class PropertiesService {
     return property;
   }
 
+  async getPublicProperties(
+    page = 1,
+    limit = 20,
+    filters?: {
+      type?: string;
+      country?: string;
+      region?: string;
+      minPrice?: number;
+      maxPrice?: number;
+    },
+  ) {
+    const query: any = {
+      status: { $ne: 'sold' },
+      deletedAt: { $exists: false },
+    };
+
+    if (filters?.type) query.type = filters.type;
+    if (filters?.country) query.address = { $regex: filters.country, $options: 'i' };
+    if (filters?.region) query.address = { $regex: filters.region, $options: 'i' };
+    if (filters?.minPrice || filters?.maxPrice) {
+      query.price = {};
+      if (filters.minPrice) query.price.$gte = filters.minPrice;
+      if (filters.maxPrice) query.price.$lte = filters.maxPrice;
+    }
+
+    const skip = (page - 1) * limit;
+    const [properties, total] = await Promise.all([
+      this.propertyModel
+        .find(query)
+        .populate('ownerId')
+        .select(
+          'reference type address gpsLocation surface price agencyId paymentFrequency googleMapsLink description photos videos previewVideo amenities calendarData ownerId createdAt',
+        )
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      this.propertyModel.countDocuments(query),
+    ]);
+
+    return {
+      data: properties,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
   async create(agencyId: string, dto: CreatePropertyDto) {
     let ownerId = dto.ownerId;
 

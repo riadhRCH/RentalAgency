@@ -1,0 +1,37 @@
+<div class="owners-page">
+    <div class="page-header mb-8">
+        <h1 class="text-2xl font-bold text-white mb-2">Property Owners</h1>
+        <p class="text-silver-400">Manage and view all property owners working with the agency</p>
+    </div>
+
+    <div class="owners-grid" *ngIf="!loading">
+        <div *ngFor="let owner of owners" class="owner-card glass-card p-6 rounded-lg border border-white/5">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center text-primary border border-primary/20">
+                    <span class="material-symbols-outlined">person</span>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white">{{ owner.firstName }} {{ owner.lastName }}</h3>
+                    <p class="text-silver-400 text-sm">{{ owner.phone }}</p>
+                    <p class="text-silver-400 text-sm" *ngIf="owner.email">{{ owner.email }}</p>
+                </div>
+            </div>
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-silver-500">
+                    <span class="font-medium">{{ owner.propertiesCount }}</span> properties
+                </div>
+                <button class="px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 transition-colors">
+                    View Details
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="flex justify-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+    </div>
+
+    <div *ngIf="!loading && owners.length === 0" class="text-center py-12">
+        <div class="text-silver-400">No property owners found</div>
+    </div>
+</div>

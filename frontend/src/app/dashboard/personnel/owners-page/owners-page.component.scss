@@ -1,0 +1,16 @@
+.owners-page {
+  .owners-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .owner-card {
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      border-color: rgba(19, 91, 236, 0.2);
+    }
+  }
+}

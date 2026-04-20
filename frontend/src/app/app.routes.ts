@@ -22,6 +22,7 @@ import { ThankYouComponent } from './public/thank-you/thank-you.component';
 import { CarouselComponent } from './public/carousel/carousel.component';
 import { TransactionComponent } from './public/transaction/transaction.component';
 import { BankDetailsComponent } from './dashboard/bank-details/bank-details.component';
+import { OwnersPageComponent } from './dashboard/personnel/owners-page/owners-page.component';
 
 export const routes: Routes = [
     { path: '', component: LandingPage },
@@ -57,6 +58,8 @@ export const routes: Routes = [
             { path: 'properties/edit/:id', component: AddPropertyComponent },
             { path: 'transactions/provision', component: TransactionProvisioningComponent },
             { path: 'transactions/:id', component: TransactionDetailComponent },
+            { path: 'personnel/team', component: TeamsComponent },
+            { path: 'personnel/owners', component: OwnersPageComponent },
             { path: 'teams', component: TeamsComponent },
             { path: 'config', component: ConfigComponent },
             { path: 'bank-details', component: BankDetailsComponent }

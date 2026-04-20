@@ -82,6 +82,40 @@
             </div>
         </div>
     </section>
+    <section class="py-16 px-4 max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-light text-slate-900 dark:text-white mb-8">Explore Properties</h2>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                <button *ngFor="let category of categories"
+                        (click)="onCategoryClick(category)"
+                        class="group relative overflow-hidden rounded-lg aspect-square bg-cover bg-center transition-transform duration-300 hover:scale-105"
+                        [style.background-image]="'url(' + category.image + ')'">
+                    <div class="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-colors"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="text-white font-bold text-sm md:text-lg">{{ category.name }}</span>
+                    </div>
+                </button>
+            </div>
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+                <select [(ngModel)]="selectedCountry"
+                        (change)="onCountryChange()"
+                        class="bg-white dark:bg-background-dark border border-slate-300 dark:border-slate-700 px-4 py-2 rounded text-sm">
+                    <option value="">All Countries</option>
+                    <option value="France">France</option>
+                    <option value="UAE">UAE</option>
+                    <option value="USA">USA</option>
+                </select>
+                <select [(ngModel)]="selectedRegion"
+                        (change)="onRegionChange()"
+                        class="bg-white dark:bg-background-dark border border-slate-300 dark:border-slate-700 px-4 py-2 rounded text-sm">
+                    <option value="">All Regions</option>
+                    <option value="Paris">Paris</option>
+                    <option value="Dubai">Dubai</option>
+                    <option value="California">California</option>
+                </select>
+            </div>
+        </div>
+    </section>
     <section class="py-24 px-4 max-w-7xl mx-auto">
         <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
             <div class="max-w-xl">
@@ -99,90 +133,38 @@
                 </button>
             </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="group cursor-pointer">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8" *ngIf="!loading">
+            <div *ngFor="let property of properties" class="group cursor-pointer">
                 <div class="relative aspect-[4/5] overflow-hidden rounded-xl mb-6">
                     <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        data-alt="Ultra-modern white villa with infinity pool"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuANpsyUaU39mcrcG2OMNXyCJGJn_tIYCu6Mkkl2njZ9aXdOAlSRgANHVftMtrmrFKfcDyXt2QmbxlgBH_Kq4X_Minjh1imyjFMxMaJ4OxNIvmks3hsF4Gw8YAc66Lb0QC7M8DocKeNlq1uZS8CwqYKkiSl6YBRUFdvevPYpH-vX8KMCdSpLmjL-wA53I15QIPeTuZaEOpg1b1z1vGtPY2AfH8hm1GxyoFX0pzUv1dt3Y3yVJ7u2hd0lB6Pt9E1jzxPJ1pwDgfGRUH4" />
+                        [src]="property.photos[0] || '/assets/placeholder-property.jpg'"
+                        [alt]="property.description" />
                     <div
-                        class="absolute top-4 left-4 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-[10px] text-white uppercase tracking-widest">
-                        New Release
+                        class="absolute top-4 left-4 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-[10px] text-white uppercase tracking-widest"
+                        *ngIf="property.status === 'available'">
+                        Available
                     </div>
                     <div
                         class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                     </div>
                 </div>
                 <div class="space-y-1">
-                    <h4 class="text-xl font-bold dark:text-white group-hover:text-primary transition-colors">The
-                        Obsidian Pavilion</h4>
-                    <p class="text-slate-500 dark:text-silver-500 text-sm font-medium tracking-wide">Beverly Hills,
-                        California</p>
+                    <h4 class="text-xl font-bold dark:text-white group-hover:text-primary transition-colors">{{ property.reference }}</h4>
+                    <p class="text-slate-500 dark:text-silver-500 text-sm font-medium tracking-wide">{{ property.address }}</p>
                     <div class="pt-4 flex items-center justify-between border-t border-slate-800 mt-4">
-                        <span class="text-primary font-bold tracking-tighter text-lg">$24,500,000</span>
+                        <span class="text-primary font-bold tracking-tighter text-lg">${{ property.price.toLocaleString() }}</span>
                         <div class="flex gap-4 text-xs text-silver-400">
-                            <span class="flex items-center gap-1"><span
-                                    class="material-symbols-outlined text-sm">bed</span> 6</span>
-                            <span class="flex items-center gap-1"><span
-                                    class="material-symbols-outlined text-sm">bathtub</span> 8</span>
+                            <span class="flex items-center gap-1" *ngIf="property.amenities['bedrooms']"><span
+                                    class="material-symbols-outlined text-sm">bed</span> {{ property.amenities['bedrooms'] }}</span>
+                            <span class="flex items-center gap-1" *ngIf="property.amenities['bathrooms']"><span
+                                    class="material-symbols-outlined text-sm">bathtub</span> {{ property.amenities['bathrooms'] }}</span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="group cursor-pointer">
-                <div class="relative aspect-[4/5] overflow-hidden rounded-xl mb-6">
-                    <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        data-alt="Contemporary waterfront mansion with glass walls"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-5PnIfbysYGd9EeE0_jYOO1yI-oovK3z8JqyaNFmlu-GU6msntKzJrdTpDx_qZWXuYdUMH4Ka0GS8eZKTqMFtBXPiflf9MQCNUo6Ouc5r6BZasXfsMJmE_tj0jSKcO6LTNluO7H4gzm4a3Ns9p_eqd-3MX1_eNobXZv28kWgVYXFI2oEf5go3b5btRzaaDgGiNp2iUNMVMQLYeefPFvjEv-UHDAhUH4Y9gkYRoGAtGoTMOMQlF28iRMNTyAHjLZlQAaRr-ZHC5FI" />
-                    <div
-                        class="absolute top-4 left-4 bg-primary px-3 py-1 rounded-full text-[10px] text-white uppercase tracking-widest font-bold">
-                        Off-Market
-                    </div>
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <h4 class="text-xl font-bold dark:text-white group-hover:text-primary transition-colors">Lumière
-                        Residence</h4>
-                    <p class="text-slate-500 dark:text-silver-500 text-sm font-medium tracking-wide">Cap d'Antibes,
-                        France</p>
-                    <div class="pt-4 flex items-center justify-between border-t border-slate-800 mt-4">
-                        <span class="text-primary font-bold tracking-tighter text-lg">Price Upon Request</span>
-                        <div class="flex gap-4 text-xs text-silver-400">
-                            <span class="flex items-center gap-1"><span
-                                    class="material-symbols-outlined text-sm">bed</span> 9</span>
-                            <span class="flex items-center gap-1"><span
-                                    class="material-symbols-outlined text-sm">bathtub</span> 12</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="group cursor-pointer">
-                <div class="relative aspect-[4/5] overflow-hidden rounded-xl mb-6">
-                    <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        data-alt="Sleek minimalist penthouse interior with city view"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQP0zL7_Qzim4tdJXIYStY0vw4gropNwTKulwY2NYSGDMXVybGY8FM1Fs7TsPTxe2cuU3gaYjZ7jkNt_IrhNZMMkmQ38ZnDTw-IH-lC0Xh7RUYjq8mh2qTQheHWQEjOc1nUIkfJUWXsxAhKlMkLlBMCVFCppl21rhUKN1wx0G3eQa1k7RTQ8a9ZrrplW31Pl_kIuiY0_87op4CKVI8EUE1mLlWWCsPz2RyZSDABHrRN7SwtpfqVyk9G2LsLx_NKzqcZ77J-MPGJJY" />
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <h4 class="text-xl font-bold dark:text-white group-hover:text-primary transition-colors">The Silver
-                        Peak</h4>
-                    <p class="text-slate-500 dark:text-silver-500 text-sm font-medium tracking-wide">Dubai Marina, UAE
-                    </p>
-                    <div class="pt-4 flex items-center justify-between border-t border-slate-800 mt-4">
-                        <span class="text-primary font-bold tracking-tighter text-lg">$18,750,000</span>
-                        <div class="flex gap-4 text-xs text-silver-400">
-                            <span class="flex items-center gap-1"><span
-                                    class="material-symbols-outlined text-sm">bed</span> 4</span>
-                            <span class="flex items-center gap-1"><span
-                                    class="material-symbols-outlined text-sm">bathtub</span> 5</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        </div>
+        <div *ngIf="loading" class="flex justify-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
     </section>
     <section class="bg-black py-32 relative overflow-hidden">

@@ -228,4 +228,72 @@ export class PersonnelService {
     if (!property) throw new NotFoundException('Property not found or access denied');
     return property;
   }
+
+  async findOwnersByAgency(agencyId: string, page = 1, limit = 20) {
+    const agencyObjectId = new Types.ObjectId(agencyId);
+
+    // Aggregate properties to get unique ownerIds and their property counts
+    const ownerAggregation = await this.propertyModel.aggregate([
+      {
+        $match: {
+          agencyId: agencyObjectId,
+          deletedAt: { $exists: false },
+        },
+      },
+      {
+        $group: {
+          _id: '$ownerId',
+          propertiesCount: { $sum: 1 },
+        },
+      },
+    ]);
+
+    if (ownerAggregation.length === 0) {
+      return {
+        data: [],
+        total: 0,
+        page,
+        limit,
+        totalPages: 0,
+      };
+    }
+
+    // Build a map of ownerId -> propertiesCount
+    const ownerCountMap = new Map<string, number>();
+    const ownerIds: Types.ObjectId[] = [];
+    for (const entry of ownerAggregation) {
+      ownerIds.push(entry._id);
+      ownerCountMap.set(entry._id.toString(), entry.propertiesCount);
+    }
+
+    const total = ownerIds.length;
+    const totalPages = Math.ceil(total / limit);
+
+    // Paginate the ownerIds
+    const skip = (page - 1) * limit;
+    const paginatedOwnerIds = ownerIds.slice(skip, skip + limit);
+
+    // Fetch the personnel records for the paginated ownerIds
+    const owners = await this.personnelModel.find({
+      _id: { $in: paginatedOwnerIds },
+      deletedAt: { $exists: false },
+    });
+
+    // Attach propertiesCount to each owner
+    const data = owners.map((owner) => {
+      const ownerObj = owner.toObject();
+      return {
+        ...ownerObj,
+        propertiesCount: ownerCountMap.get(owner._id.toString()) || 0,
+      };
+    });
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages,
+    };
+  }
 }

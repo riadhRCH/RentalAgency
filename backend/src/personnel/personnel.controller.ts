@@ -7,9 +7,11 @@ import {
   Patch,
   Post,
   Query,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AgencyGuard } from '../auth/agency.guard';
 import { CreatePersonnelDto } from './dto/create-personnel.dto';
 import { UpdatePersonnelDto } from './dto/update-personnel.dto';
 import { PersonnelService } from './personnel.service';
@@ -32,6 +34,20 @@ export class PersonnelController {
       parseInt(limit),
       source,
       status,
+    );
+  }
+
+  @UseGuards(AgencyGuard)
+  @Get('owners')
+  findOwnersByAgency(
+    @Request() req,
+    @Query('page') page = '1',
+    @Query('limit') limit = '20',
+  ) {
+    return this.personnelService.findOwnersByAgency(
+      req.agencyId.toString(),
+      parseInt(page),
+      parseInt(limit),
     );
   }
 

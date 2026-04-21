@@ -1,8 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { PersonnelService } from '../../../services/personnel.service';
 import { environment } from '../../../../environments/environment';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
+import { I18nService } from '../../../i18n/i18n.service';
 
 interface Owner {
   _id: string;
@@ -17,14 +19,15 @@ interface Owner {
 @Component({
   selector: 'app-owners-page',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './owners-page.component.html',
   styleUrl: './owners-page.component.scss',
 })
 export class OwnersPageComponent implements OnInit {
   personnelService = inject(PersonnelService);
+  readonly i18n = inject(I18nService);
   owners: Owner[] = [];
-  loading = false;
+  loading = signal(false);
   generatingToken: { [key: string]: boolean } = {};
   copiedOwnerId: string | null = null;
 
@@ -33,26 +36,24 @@ export class OwnersPageComponent implements OnInit {
   }
 
   loadOwners() {
-    this.loading = true;
-    this.personnelService.getPersonnel().subscribe({
+    this.loading.set(true);
+    this.personnelService.getOwners().subscribe({
       next: (response) => {
-        // Get all personnel
-        this.owners = response.data
-          .map((owner: any) => ({
-            ...owner,
-            propertiesCount: 0
-          }));
-        this.loading = false;
+        this.owners = response.data.map((owner: any) => ({
+          ...owner,
+          propertiesCount: owner.propertiesCount || 0
+        }));
+        this.loading.set(false);
       },
       error: () => {
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
 
   generateDashboardLink(ownerId: string, ownerName: string) {
     this.generatingToken[ownerId] = true;
-    
+
     this.personnelService.generateDashboardToken(ownerId).subscribe({
       next: (response) => {
         const owner = this.owners.find(o => o._id === ownerId);
@@ -63,7 +64,7 @@ export class OwnersPageComponent implements OnInit {
       },
       error: () => {
         this.generatingToken[ownerId] = false;
-        alert('Failed to generate dashboard link');
+        alert(this.i18n.translate('OWNERS.GENERATE_FAILED'));
       }
     });
   }
@@ -71,19 +72,19 @@ export class OwnersPageComponent implements OnInit {
   copyDashboardLink(ownerId: string, ownerName: string) {
     const owner = this.owners.find(o => o._id === ownerId);
     if (!owner || !owner.dashboardToken) {
-      alert('Please generate a dashboard link first');
+      alert(this.i18n.translate('OWNERS.GENERATE_FIRST'));
       return;
     }
 
     const link = `${environment.appUrl}/owner-dashboard/${owner.dashboardToken}`;
-    
+
     navigator.clipboard.writeText(link).then(() => {
       this.copiedOwnerId = ownerId;
       setTimeout(() => {
         this.copiedOwnerId = null;
       }, 2000);
     }).catch(() => {
-      alert('Failed to copy link to clipboard');
+      alert(this.i18n.translate('OWNERS.COPY_FAILED'));
     });
   }
 

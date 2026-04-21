@@ -25,6 +25,10 @@ export class PersonnelService {
     return this.http.get(`${this.apiUrl}?page=${page}&limit=${limit}`);
   }
 
+  getOwners(page = 1, limit = 100): Observable<any> {
+    return this.http.get(`${this.apiUrl}/owners?page=${page}&limit=${limit}`);
+  }
+
   getOnePersonnel(id: string): Observable<Personnel> {
     return this.http.get<Personnel>(`${this.apiUrl}/${id}`);
   }

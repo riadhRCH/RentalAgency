@@ -14,33 +14,22 @@ import { DayAvailability } from '../../../services/properties.service';
 export class CalendarSelectorComponent implements OnInit {
   propertyAvailability = input<DayAvailability[]>([]);
   selectedDates = input<string[]>([]);
-
   datesSelected = output<Date[]>();
 
   currentMonth = signal(new Date());
   daysInMonth = signal<(number | null)[]>([]);
 
-  // null = user hasn't interacted yet → fall back to input
-  private _userDates = signal<Set<string> | null>(null);
+  private toDateKey = (date: string | Date): string =>
+    (date instanceof Date ? date : new Date(date)).toISOString().split('T')[0];
 
-  // Normalize any date string to YYYY-MM-DD
-private toDateKey = (dateStr: string | Date): string =>
-  (dateStr instanceof Date ? dateStr : new Date(dateStr)).toISOString().split('T')[0];
+  // Derived directly from inputs — no intermediate signals needed
+  private availableDatesMap = computed(() =>
+    new Map(this.propertyAvailability().map(d => [this.toDateKey(d.date), d]))
+  );
 
-  private availableDatesMap = computed(() => {
-    const map = new Map<string, DayAvailability>();
-    this.propertyAvailability().forEach(day => {
-      map.set(this.toDateKey(day.date), day);
-    });
-    return map;
-  });
-
-  // Single source of truth — normalized keys always
-  private effectiveSelectedDates = computed(() => {
-    const userDates = this._userDates();
-    if (userDates !== null) return userDates;
-    return new Set(this.selectedDates().map(this.toDateKey));
-  });
+  selectedKeys = computed(() =>
+    new Set(this.selectedDates().map(this.toDateKey))
+  );
 
   ngOnInit(): void {
     this.generateCalendarDays();
@@ -49,13 +38,9 @@ private toDateKey = (dateStr: string | Date): string =>
   private generateCalendarDays(): void {
     const year = this.currentMonth().getFullYear();
     const month = this.currentMonth().getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
     const days: (number | null)[] = [];
-
-    for (let i = 0; i < firstDay.getDay(); i++) days.push(null);
-    for (let d = 1; d <= lastDay.getDate(); d++) days.push(d);
-
+    for (let i = 0; i < new Date(year, month, 1).getDay(); i++) days.push(null);
+    for (let d = 1; d <= new Date(year, month + 1, 0).getDate(); d++) days.push(d);
     this.daysInMonth.set(days);
   }
 
@@ -74,31 +59,29 @@ private toDateKey = (dateStr: string | Date): string =>
   }
 
   getDateKey(day: number): string {
-    const year = this.currentMonth().getFullYear();
-    const month = String(this.currentMonth().getMonth() + 1).padStart(2, '0');
-    return `${year}-${month}-${String(day).padStart(2, '0')}`;
+    const y = this.currentMonth().getFullYear();
+    const m = String(this.currentMonth().getMonth() + 1).padStart(2, '0');
+    return `${y}-${m}-${String(day).padStart(2, '0')}`;
   }
 
   isDayAvailable(day: number): boolean {
-    const dayData = this.availableDatesMap().get(this.getDateKey(day));
-    return !dayData || dayData.isAvailable !== false;
+    const data = this.availableDatesMap().get(this.getDateKey(day));
+    return !data || data.isAvailable !== false;
   }
 
   isDaySelected(day: number): boolean {
-    return this.effectiveSelectedDates().has(this.getDateKey(day));
+    return this.selectedKeys().has(this.getDateKey(day));
   }
 
   selectDay(day: number): void {
     if (!this.isDayAvailable(day)) return;
     const key = this.getDateKey(day);
-    const newSet = new Set(this.effectiveSelectedDates());
-    newSet.has(key) ? newSet.delete(key) : newSet.add(key);
-    this._userDates.set(newSet);
-    this.datesSelected.emit(Array.from(newSet).sort().map(d => new Date(d)));
+    const next = new Set(this.selectedKeys());
+    next.has(key) ? next.delete(key) : next.add(key);
+    this.datesSelected.emit(Array.from(next).sort().map(d => new Date(d)));
   }
 
   clearSelection(): void {
-    this._userDates.set(new Set());
     this.datesSelected.emit([]);
   }
 
@@ -110,6 +93,6 @@ private toDateKey = (dateStr: string | Date): string =>
     ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i];
 
   getSelectedDatesArray(): string[] {
-    return Array.from(this.effectiveSelectedDates()).sort();
+    return Array.from(this.selectedKeys()).sort();
   }
 }

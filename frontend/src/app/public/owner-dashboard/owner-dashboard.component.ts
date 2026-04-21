@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -35,7 +35,7 @@ export class OwnerDashboardComponent implements OnInit {
   private propertiesService = inject(PropertiesService);
 
   dashboardData: OwnerDashboardData | null = null;
-  loading = false;
+  loading = signal(false);
   error: string | null = null;
   token: string = '';
 
@@ -54,25 +54,25 @@ export class OwnerDashboardComponent implements OnInit {
   }
 
   loadDashboardData() {
-    this.loading = true;
+    this.loading.set(true);
     this.error = null;
-    
+
     this.personnelService.getOwnerDashboard(this.token).subscribe({
       next: (data) => {
         this.dashboardData = data;
-        
+
         // Initialize edit modes and controls for each property
         data.properties.forEach((prop: Property) => {
           this.propertyEditMode[prop._id] = 'view';
           this.editingPrices[prop._id] = prop.price;
           this.selectedDatesControls[prop._id] = new FormControl([]);
         });
-        
-        this.loading = false;
+
+        this.loading.set(false);
       },
       error: (err) => {
         this.error = 'Failed to load dashboard. The token may be invalid or expired.';
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
@@ -96,7 +96,7 @@ export class OwnerDashboardComponent implements OnInit {
 
   saveAvailability(propertyId: string) {
     const calendarData = this.selectedDatesControls[propertyId].value || [];
-    
+
     this.personnelService.updatePropertyAvailability(this.token, propertyId, calendarData).subscribe({
       next: () => {
         this.propertyEditMode[propertyId] = 'view';
@@ -114,7 +114,7 @@ export class OwnerDashboardComponent implements OnInit {
 
   savePrice(propertyId: string) {
     const newPrice = this.editingPrices[propertyId];
-    
+
     this.personnelService.updatePropertyPrice(this.token, propertyId, newPrice).subscribe({
       next: () => {
         this.propertyEditMode[propertyId] = 'view';

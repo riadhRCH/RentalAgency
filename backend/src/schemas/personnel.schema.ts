@@ -38,6 +38,12 @@ export class Personnel {
   lastLoginAt?: Date;
 
   @Prop()
+  dashboardToken?: string;
+
+  @Prop()
+  dashboardTokenExpiresAt?: Date;
+
+  @Prop()
   deletedAt: Date;
 }
 

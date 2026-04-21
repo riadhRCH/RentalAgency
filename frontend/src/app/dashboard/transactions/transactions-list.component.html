@@ -39,7 +39,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-white/5">
-          <tr *ngFor="let transaction of transactions" class="group hover:bg-white/5 transition-colors">
+          <tr *ngFor="let transaction of transactions" class="group hover:bg-white/5 transition-colors" (click)="viewTransaction(transaction._id)">
             <td class="p-6">
               <div class="text-sm font-bold text-slate-900 dark:text-white">{{ transaction.propertyId?.reference }}</div>
               <div class="text-[11px] text-slate-500">{{ transaction.propertyId?.address }}</div>
@@ -61,16 +61,13 @@
             </td>
             <td class="p-6 text-right">
               <div class="flex items-center justify-end gap-3">
-                <button (click)="copyTransactionLink(transaction._id!)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-slate-100 transition-all" [title]="'TRANSACTIONS.COPY_LINK' | translate">
+                <button (click)="$event.stopPropagation(); copyTransactionLink(transaction._id!)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-slate-100 transition-all" [title]="'TRANSACTIONS.COPY_LINK' | translate">
                   <span class="material-symbols-outlined text-sm">link</span>
                 </button>
-                <a [routerLink]="['/dashboard/transactions', transaction._id]" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-primary transition-all" [title]="'TRANSACTIONS.VIEW_DETAILS' | translate">
-                  <span class="material-symbols-outlined text-sm">visibility</span>
-                </a>
-                <button (click)="closeTransaction(transaction._id!)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-amber-500 transition-all" [title]="'TRANSACTIONS.CLOSE_TRANSACTION' | translate">
+                <button (click)="$event.stopPropagation(); closeTransaction(transaction._id!)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-amber-500 transition-all" [title]="'TRANSACTIONS.CLOSE_TRANSACTION' | translate">
                   <span class="material-symbols-outlined text-sm">sell</span>
                 </button>
-                <button (click)="deleteTransaction(transaction._id!)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-red-500 transition-all" [title]="'TRANSACTIONS.DELETE_TRANSACTION' | translate">
+                <button (click)="$event.stopPropagation(); deleteTransaction(transaction._id!)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-red-500 transition-all" [title]="'TRANSACTIONS.DELETE_TRANSACTION' | translate">
                   <span class="material-symbols-outlined text-sm">delete</span>
                 </button>
               </div>

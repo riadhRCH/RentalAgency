@@ -79,4 +79,8 @@ export class TransactionsListComponent implements OnInit {
       alert(this.i18n.translate('TRANSACTIONS.LINK_COPIED'));
     });
   }
+
+  viewTransaction(transactionId?: string): void {
+    this.router.navigate(['/dashboard/transactions', transactionId]);
+  }
 }

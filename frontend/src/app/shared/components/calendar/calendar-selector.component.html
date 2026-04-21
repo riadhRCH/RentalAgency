@@ -40,10 +40,10 @@
         <button
           type="button"
           (click)="selectDay(day)"
-          [class.opacity-30]="!isDayAvailable(day)"
-          [class.cursor-not-allowed]="!isDayAvailable(day)"
           [disabled]="!isDayAvailable(day)"
           class="aspect-square rounded-lg font-semibold text-sm transition-all relative overflow-hidden"
+          [class.opacity-30]="!isDayAvailable(day)"
+          [class.cursor-not-allowed]="!isDayAvailable(day)"
           [ngClass]="{
             'bg-gradient-to-br from-amber-500 via-orange-500 to-pink-500 text-white shadow-[0_0_0_2px_rgba(251,191,36,0.7)]': isDaySelected(day),
             'bg-slate-800 text-slate-100 hover:bg-slate-700': !isDaySelected(day) && isDayAvailable(day),
@@ -52,9 +52,8 @@
         >
           {{ day }}
 
-          <!-- Availability indicator dot -->
           @if (isDayAvailable(day) && !isDaySelected(day)) {
-            <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-emerald-400 rounded-full"></div>
+            <div class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-emerald-400 rounded-full"></div>
           }
         </button>
       }
@@ -67,7 +66,7 @@
       <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">
         Selected Dates
       </span>
-      @if (selectedDates().size > 0) {
+      @if (getSelectedDatesArray().length > 0) {
         <button
           type="button"
           (click)="clearSelection()"
@@ -78,17 +77,19 @@
       }
     </div>
 
-    @if (selectedDates().size > 0) {
+    @if (getSelectedDatesArray().length > 0) {
       <div class="text-xs text-slate-400 space-y-1">
         <div class="flex flex-wrap gap-2">
           @for (dateStr of getSelectedDatesArray(); track dateStr) {
             <span class="bg-primary/20 text-primary px-2 py-1 rounded text-[10px] font-semibold">
-              {{ dateStr | date: 'MMM DD' }}
+              {{ dateStr | date: 'MMM d' }}
             </span>
           }
         </div>
         <div class="pt-2 border-t border-white/10">
-          <span class="text-slate-500">Total days: <span class="text-white font-semibold">{{ selectedDates().size }}</span></span>
+          <span class="text-slate-500">
+            Total days: <span class="text-white font-semibold">{{ getSelectedDatesArray().length }}</span>
+          </span>
         </div>
       </div>
     } @else {

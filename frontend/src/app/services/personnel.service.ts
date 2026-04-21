@@ -44,4 +44,20 @@ export class PersonnelService {
   createOrUpdatePersonnel(data: any): Observable<Personnel> {
     return this.http.post<Personnel>(`${this.apiUrl}/public`, data);
   }
+
+  generateDashboardToken(id: string): Observable<{ token: string; expiresAt: Date }> {
+    return this.http.post<{ token: string; expiresAt: Date }>(`${this.apiUrl}/${id}/generate-dashboard-token`, {});
+  }
+
+  getOwnerDashboard(token: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/dashboard/${token}`);
+  }
+
+  updatePropertyAvailability(token: string, propertyId: string, calendarData: any): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/dashboard/${token}/property/${propertyId}/availability`, { calendarData });
+  }
+
+  updatePropertyPrice(token: string, propertyId: string, price: number): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/dashboard/${token}/property/${propertyId}/price`, { price });
+  }
 }

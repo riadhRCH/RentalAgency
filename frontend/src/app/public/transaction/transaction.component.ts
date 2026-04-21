@@ -319,6 +319,16 @@ export class TransactionComponent implements OnInit {
     this.checkCalendarDone();
   }
 
+  getSelectedDatesAsStrings(): string[] {
+    const dates = this.selectedDatesControl.value || [];
+    return dates.map(date => {
+      if (date instanceof Date) {
+        return date.toISOString().split('T')[0];
+      }
+      return date as string;
+    });
+  }
+
   onFileSelected(event: any, fieldName: string) {
     const file = event.target.files[0];
     if (file) {

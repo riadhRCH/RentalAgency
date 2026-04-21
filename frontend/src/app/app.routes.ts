@@ -23,11 +23,13 @@ import { CarouselComponent } from './public/carousel/carousel.component';
 import { TransactionComponent } from './public/transaction/transaction.component';
 import { BankDetailsComponent } from './dashboard/bank-details/bank-details.component';
 import { OwnersPageComponent } from './dashboard/personnel/owners-page/owners-page.component';
+import { OwnerDashboardComponent } from './public/owner-dashboard/owner-dashboard.component';
 
 export const routes: Routes = [
     { path: '', component: LandingPage },
     { path: 'property/:id', component: PropertyDetailsComponent },
     { path: 'transaction/:id', component: TransactionComponent },
+    { path: 'owner-dashboard/:token', component: OwnerDashboardComponent },
     { path: 'thank-you', component: ThankYouComponent },
     { path: 'carousel', component: CarouselComponent },
     { path: 'auth/login', component: LoginComponent },

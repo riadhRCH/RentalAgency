@@ -175,6 +175,16 @@ export class TransactionProvisioningComponent implements OnInit {
     return (this.transactionForm.get('timeline.selectedDates') as FormControl) || new FormControl([]);
   }
 
+  getSelectedDatesAsStrings(): string[] {
+    const dates = this.getSelectedDatesControl().value || [];
+    return dates.map((date: any) => {
+      if (date instanceof Date) {
+        return date.toISOString().split('T')[0];
+      }
+      return date as string;
+    });
+  }
+
   onSubmit(): void {
     if (this.transactionForm.invalid) {
       return;

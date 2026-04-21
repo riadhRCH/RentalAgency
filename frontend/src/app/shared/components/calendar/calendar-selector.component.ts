@@ -1,7 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, signal, effect } from '@angular/core';
+import { Component, OnInit, signal, computed, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { DayAvailability } from '../../../services/properties.service';
 
@@ -12,90 +11,39 @@ import { DayAvailability } from '../../../services/properties.service';
   templateUrl: './calendar-selector.component.html',
   styleUrls: ['./calendar-selector.component.scss']
 })
-export class CalendarSelectorComponent implements OnInit, OnDestroy {
-  private propertyCalendarDataSignal = signal<DayAvailability[]>([]);
-  private selectedDatesControlSignal = signal<FormControl>(new FormControl([]));
+export class CalendarSelectorComponent implements OnInit {
+  propertyAvailability = input<DayAvailability[]>([]);
+  selectedDates = input<string[]>([]);
 
-  @Input()
-  set propertyCalendarData(value: DayAvailability[]) {
-    this.propertyCalendarDataSignal.set(value || []);
-  }
-  get propertyCalendarData(): DayAvailability[] {
-    return this.propertyCalendarDataSignal();
-  }
-
-  @Input()
-  set selectedDatesControl(value: FormControl) {
-    this.selectedDatesControlSignal.set(value);
-  }
-  get selectedDatesControl(): FormControl {
-    return this.selectedDatesControlSignal();
-  }
-
-  @Output() datesSelected = new EventEmitter<Date[]>();
+  datesSelected = output<Date[]>();
 
   currentMonth = signal(new Date());
   daysInMonth = signal<(number | null)[]>([]);
-  selectedDates = signal<Set<string>>(new Set());
 
-  private availableDatesMap = new Map<string, DayAvailability>();
-  private selectedDatesSubscription: Subscription | null = null;
+  // null = user hasn't interacted yet → fall back to input
+  private _userDates = signal<Set<string> | null>(null);
 
-  constructor() {
-  }
+  // Normalize any date string to YYYY-MM-DD
+private toDateKey = (dateStr: string | Date): string =>
+  (dateStr instanceof Date ? dateStr : new Date(dateStr)).toISOString().split('T')[0];
+
+  private availableDatesMap = computed(() => {
+    const map = new Map<string, DayAvailability>();
+    this.propertyAvailability().forEach(day => {
+      map.set(this.toDateKey(day.date), day);
+    });
+    return map;
+  });
+
+  // Single source of truth — normalized keys always
+  private effectiveSelectedDates = computed(() => {
+    const userDates = this._userDates();
+    if (userDates !== null) return userDates;
+    return new Set(this.selectedDates().map(this.toDateKey));
+  });
 
   ngOnInit(): void {
     this.generateCalendarDays();
-    this.loadSelectedDates();
-    this.subscribeToControl();
-
-    effect(() => {
-      this.propertyCalendarData;
-      this.buildAvailabilityMap();
-      this.generateCalendarDays();
-    });
-
-    effect(() => {
-      const control = this.selectedDatesControl;
-      if (control) {
-        this.subscribeToControl(control);
-        this.loadSelectedDates();
-      }
-    });
-  }
-
-  private subscribeToControl(control?: FormControl): void {
-    if (this.selectedDatesSubscription) {
-      this.selectedDatesSubscription.unsubscribe();
-    }
-
-    const formControl = control ?? this.selectedDatesControl;
-    if (formControl) {
-      this.selectedDatesSubscription = formControl.valueChanges.subscribe(() => {
-        this.loadSelectedDates();
-      });
-    }
-  }
-
-  private buildAvailabilityMap(): void {
-    this.availableDatesMap.clear();
-    this.propertyCalendarData.forEach(day => {
-      const dateStr = new Date(day.date).toISOString().split('T')[0];
-      this.availableDatesMap.set(dateStr, day);
-    });
-  }
-
-  private loadSelectedDates(): void {
-    const dates = this.selectedDatesControl?.value || [];
-    if (Array.isArray(dates)) {
-      const selectedSet = new Set<string>();
-      dates.forEach(dateStr => {
-        selectedSet.add(dateStr);
-      });
-      this.selectedDates.set(selectedSet);
-    } else {
-      this.selectedDates.set(new Set());
-    }
   }
 
   private generateCalendarDays(): void {
@@ -103,102 +51,65 @@ export class CalendarSelectorComponent implements OnInit, OnDestroy {
     const month = this.currentMonth().getMonth();
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-    const daysArray: (number | null)[] = [];
+    const days: (number | null)[] = [];
 
-    // Add empty cells for days before month starts
-    for (let i = 0; i < firstDay.getDay(); i++) {
-      daysArray.push(null);
-    }
+    for (let i = 0; i < firstDay.getDay(); i++) days.push(null);
+    for (let d = 1; d <= lastDay.getDate(); d++) days.push(d);
 
-    // Add days of the month
-    for (let day = 1; day <= lastDay.getDate(); day++) {
-      daysArray.push(day);
-    }
-
-    this.daysInMonth.set(daysArray);
+    this.daysInMonth.set(days);
   }
 
   previousMonth(): void {
-    const newDate = new Date(this.currentMonth());
-    newDate.setMonth(newDate.getMonth() - 1);
-    this.currentMonth.set(newDate);
+    const d = new Date(this.currentMonth());
+    d.setMonth(d.getMonth() - 1);
+    this.currentMonth.set(d);
     this.generateCalendarDays();
   }
 
   nextMonth(): void {
-    const newDate = new Date(this.currentMonth());
-    newDate.setMonth(newDate.getMonth() + 1);
-    this.currentMonth.set(newDate);
+    const d = new Date(this.currentMonth());
+    d.setMonth(d.getMonth() + 1);
+    this.currentMonth.set(d);
     this.generateCalendarDays();
   }
 
-  getDateFromDay(day: number): string {
+  getDateKey(day: number): string {
     const year = this.currentMonth().getFullYear();
     const month = String(this.currentMonth().getMonth() + 1).padStart(2, '0');
-    const dayStr = String(day).padStart(2, '0');
-    return `${year}-${month}-${dayStr}`;
+    return `${year}-${month}-${String(day).padStart(2, '0')}`;
   }
 
   isDayAvailable(day: number): boolean {
-    if (!day) return false;
-    const dateStr = this.getDateFromDay(day);
-    const dayData = this.availableDatesMap.get(dateStr);
-    if (!dayData) return true; // If not in calendar data, assume available
-    return dayData.isAvailable !== false;
+    const dayData = this.availableDatesMap().get(this.getDateKey(day));
+    return !dayData || dayData.isAvailable !== false;
   }
 
   isDaySelected(day: number): boolean {
-    if (!day) return false;
-    const dateStr = this.getDateFromDay(day);
-    return this.selectedDates().has(dateStr);
+    return this.effectiveSelectedDates().has(this.getDateKey(day));
   }
 
   selectDay(day: number): void {
     if (!this.isDayAvailable(day)) return;
-
-    const dateStr = this.getDateFromDay(day);
-    const newSet = new Set(this.selectedDates());
-
-    if (newSet.has(dateStr)) {
-      newSet.delete(dateStr);
-    } else {
-      newSet.add(dateStr);
-    }
-
-    this.selectedDates.set(newSet);
-    this.updateFormControl();
+    const key = this.getDateKey(day);
+    const newSet = new Set(this.effectiveSelectedDates());
+    newSet.has(key) ? newSet.delete(key) : newSet.add(key);
+    this._userDates.set(newSet);
     this.datesSelected.emit(Array.from(newSet).sort().map(d => new Date(d)));
   }
 
   clearSelection(): void {
-    this.selectedDates.set(new Set());
-    this.updateFormControl();
-  }
-
-  private updateFormControl(): void {
-    const datesArray = Array.from(this.selectedDates()).sort();
-    this.selectedDatesControl?.setValue(datesArray);
-  }
-
-  ngOnDestroy(): void {
-    if (this.selectedDatesSubscription) {
-      this.selectedDatesSubscription.unsubscribe();
-    }
+    this._userDates.set(new Set());
+    this.datesSelected.emit([]);
   }
 
   getMonthYear(): string {
-    return this.currentMonth().toLocaleDateString('en-US', {
-      month: 'long',
-      year: 'numeric'
-    });
+    return this.currentMonth().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   }
 
-  getDayOfWeekHeader(index: number): string {
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    return days[index];
-  }
+  getDayOfWeekHeader = (i: number): string =>
+    ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i];
 
   getSelectedDatesArray(): string[] {
-    return Array.from(this.selectedDates()).sort();
+    return Array.from(this.effectiveSelectedDates()).sort();
   }
 }

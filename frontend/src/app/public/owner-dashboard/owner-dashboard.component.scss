@@ -1,0 +1,40 @@
+.owner-dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #000000 0%, #1a1a2e 100%);
+  padding: 2rem;
+
+  .dashboard-header {
+    margin-bottom: 2rem;
+  }
+
+  .properties-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .property-card {
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      border-color: rgba(19, 91, 236, 0.2);
+    }
+  }
+
+  .owner-info-card {
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: rgba(19, 91, 236, 0.2);
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+
+    .properties-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

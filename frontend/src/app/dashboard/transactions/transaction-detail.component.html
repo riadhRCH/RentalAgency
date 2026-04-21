@@ -126,8 +126,8 @@
           <div class="text-center">
             <h3 class="text-lg font-semibold text-white mb-4">{{ 'TRANSACTION_FORM.SELECT_DATES' | translate }}</h3>
             <app-calendar-selector
-              [propertyCalendarData]="propertyCalendarData"
-              [selectedDatesControl]="selectedDatesControl"
+              [propertyAvailability]="propertyCalendarData"
+              [selectedDates]="selectedDates"
               (datesSelected)="onDatesSelected($event)">
             </app-calendar-selector>
           </div>

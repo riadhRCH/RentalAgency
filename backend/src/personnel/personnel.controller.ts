@@ -70,4 +70,35 @@ export class PersonnelController {
   getContext(@Param('id') id: string) {
     return this.personnelService.getContext(id);
   }
+
+  @Post(':id/generate-dashboard-token')
+  generateDashboardToken(@Param('id') id: string) {
+    return this.personnelService.generateDashboardToken(id);
+  }
+
+  @Public()
+  @Get('dashboard/:token')
+  getOwnerDashboard(@Param('token') token: string) {
+    return this.personnelService.getOwnerDashboardData(token);
+  }
+
+  @Public()
+  @Patch('dashboard/:token/property/:propertyId/availability')
+  updatePropertyAvailability(
+    @Param('token') token: string,
+    @Param('propertyId') propertyId: string,
+    @Body('calendarData') calendarData: any,
+  ) {
+    return this.personnelService.updatePropertyAvailability(token, propertyId, calendarData);
+  }
+
+  @Public()
+  @Patch('dashboard/:token/property/:propertyId/price')
+  updatePropertyPrice(
+    @Param('token') token: string,
+    @Param('propertyId') propertyId: string,
+    @Body('price') price: number,
+  ) {
+    return this.personnelService.updatePropertyPrice(token, propertyId, price);
+  }
 }

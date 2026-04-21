@@ -16,13 +16,51 @@
                     <p class="text-silver-400 text-sm" *ngIf="owner.email">{{ owner.email }}</p>
                 </div>
             </div>
-            <div class="flex items-center justify-between">
+            
+            <div class="flex items-center justify-between mb-4">
                 <div class="text-sm text-silver-500">
                     <span class="font-medium">{{ owner.propertiesCount }}</span> properties
                 </div>
-                <button class="px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 transition-colors">
-                    View Details
-                </button>
+            </div>
+
+            <!-- Dashboard Link Section -->
+            <div class="border-t border-white/10 pt-4">
+                <p class="text-xs text-silver-500 font-semibold uppercase mb-3">Owner Dashboard</p>
+                
+                <!-- Show link if generated -->
+                <div *ngIf="owner.dashboardToken" class="bg-slate-900/50 rounded-lg p-3 mb-3 border border-slate-700">
+                    <p class="text-xs text-silver-400 break-all">{{ getDashboardLink(owner._id) }}</p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-2">
+                    <button *ngIf="!owner.dashboardToken"
+                            (click)="generateDashboardLink(owner._id, owner.firstName + ' ' + owner.lastName)"
+                            [disabled]="generatingToken[owner._id]"
+                            class="flex-1 px-3 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 transition-colors text-sm font-semibold disabled:opacity-50">
+                        <span *ngIf="!generatingToken[owner._id]" class="material-symbols-outlined text-sm">link</span>
+                        <span *ngIf="generatingToken[owner._id]" class="material-symbols-outlined text-sm animate-spin">hourglass_empty</span>
+                        {{ generatingToken[owner._id] ? 'Generating...' : 'Generate Link' }}
+                    </button>
+
+                    <button *ngIf="owner.dashboardToken"
+                            (click)="copyDashboardLink(owner._id, owner.firstName + ' ' + owner.lastName)"
+                            [class.bg-green-500/20]="copiedOwnerId === owner._id"
+                            [class.text-green-400]="copiedOwnerId === owner._id"
+                            [class.border-green-500/20]="copiedOwnerId === owner._id"
+                            class="flex-1 px-3 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 transition-colors text-sm font-semibold">
+                        <span class="material-symbols-outlined text-sm">{{ copiedOwnerId === owner._id ? 'check' : 'content_copy' }}</span>
+                        {{ copiedOwnerId === owner._id ? 'Copied!' : 'Copy Link' }}
+                    </button>
+
+                    <button *ngIf="owner.dashboardToken"
+                            [routerLink]="getDashboardLink(owner._id)"
+                            [queryParams]="{ external: true }"
+                            class="flex-1 px-3 py-2 bg-secondary/10 text-secondary border border-secondary/20 rounded-lg hover:bg-secondary/20 transition-colors text-sm font-semibold">
+                        <span class="material-symbols-outlined text-sm">open_in_new</span>
+                        Preview
+                    </button>
+                </div>
             </div>
         </div>
     </div>

@@ -149,4 +149,83 @@ export class PersonnelService {
       })),
     };
   }
+
+  async generateDashboardToken(id: string) {
+    // Generate a secure token
+    const token = Buffer.from(`${id}-${Date.now()}-${Math.random()}`).toString('base64');
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+
+    const person = await this.personnelModel.findOneAndUpdate(
+      { _id: new Types.ObjectId(id), deletedAt: { $exists: false } },
+      { $set: { dashboardToken: token, dashboardTokenExpiresAt: expiresAt } },
+      { new: true },
+    );
+    if (!person) throw new NotFoundException('Personnel not found');
+    return { token, expiresAt };
+  }
+
+  async getOwnerDashboardData(token: string) {
+    const person = await this.personnelModel.findOne({
+      dashboardToken: token,
+      dashboardTokenExpiresAt: { $gt: new Date() },
+      deletedAt: { $exists: false }
+    });
+
+    if (!person) throw new NotFoundException('Invalid or expired dashboard token');
+
+    const personId = new Types.ObjectId(person._id);
+    const properties = await this.propertyModel.find(
+      { ownerId: personId, deletedAt: { $exists: false } },
+      { reference: 1, address: 1, type: 1, price: 1, photos: 1, amenities: 1, calendarData: 1 }
+    ).populate('agencyId', 'name');
+
+    return {
+      owner: {
+        _id: person._id,
+        firstName: person.firstName,
+        lastName: person.lastName,
+        phone: person.phone,
+        email: person.email,
+      },
+      properties,
+    };
+  }
+
+  async updatePropertyAvailability(token: string, propertyId: string, calendarData: any) {
+    const person = await this.personnelModel.findOne({
+      dashboardToken: token,
+      dashboardTokenExpiresAt: { $gt: new Date() },
+      deletedAt: { $exists: false }
+    });
+
+    if (!person) throw new NotFoundException('Invalid or expired dashboard token');
+
+    const property = await this.propertyModel.findOneAndUpdate(
+      { _id: new Types.ObjectId(propertyId), ownerId: person._id, deletedAt: { $exists: false } },
+      { $set: { calendarData } },
+      { new: true }
+    );
+
+    if (!property) throw new NotFoundException('Property not found or access denied');
+    return property;
+  }
+
+  async updatePropertyPrice(token: string, propertyId: string, price: number) {
+    const person = await this.personnelModel.findOne({
+      dashboardToken: token,
+      dashboardTokenExpiresAt: { $gt: new Date() },
+      deletedAt: { $exists: false }
+    });
+
+    if (!person) throw new NotFoundException('Invalid or expired dashboard token');
+
+    const property = await this.propertyModel.findOneAndUpdate(
+      { _id: new Types.ObjectId(propertyId), ownerId: person._id, deletedAt: { $exists: false } },
+      { $set: { price } },
+      { new: true }
+    );
+
+    if (!property) throw new NotFoundException('Property not found or access denied');
+    return property;
+  }
 }

@@ -415,6 +415,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'TRANSACTION.FINALIZE_RESERVATION': 'Finalize Reservation',
 
     'TRANSACTION_FORM.TITLE': 'Transaction Provisioning',
+    'TRANSACTION_FORM.SELECTED_DATES': 'Selected Days',
     'TRANSACTION_FORM.SUBTITLE': 'Setup a new transaction agreement',
     'TRANSACTION_FORM.BACK_TO_DIRECTORY': 'Back to Directory',
     'TRANSACTION_FORM.NOTIFICATION_LEAD': 'This transaction is being created from a Lead. The lead will be automatically closed upon completion.',
@@ -909,6 +910,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'TRANSACTION.FINALIZE_RESERVATION': 'Finaliser la reservation',
 
     'TRANSACTION_FORM.TITLE': 'Provisionnement de transaction',
+    'TRANSACTION_FORM.SELECTED_DATES': 'Jours sélectionnés',
     'TRANSACTION_FORM.SUBTITLE': 'Configurer un nouveau contrat de transaction',
     'TRANSACTION_FORM.BACK_TO_DIRECTORY': 'Retour au repertoire',
     'TRANSACTION_FORM.NOTIFICATION_LEAD': 'Cette transaction est creee a partir dun lead. Le lead sera automatiquement cloture a la fin.',

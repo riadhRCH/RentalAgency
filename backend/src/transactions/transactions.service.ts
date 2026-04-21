@@ -118,6 +118,44 @@ export class TransactionsService {
       throw new NotFoundException('Transaction not found');
     }
 
+    console.log('transaction', transaction)
+
+    // Add selected dates from transaction to property as unavailable days
+    if (transaction.timeline.selectedDates && transaction.timeline.selectedDates.length > 0) {
+      const property = await this.propertyModel.findById(transaction.propertyId);
+      if (property) {
+        // Initialize calendar data if it doesn't exist
+        if (!property.calendarData) {
+          property.calendarData = [];
+        }
+
+        // Add each selected date as unavailable
+        for (const selectedDate of transaction.timeline.selectedDates) {
+          const dateStr = new Date(selectedDate).toISOString().split('T')[0];
+          
+          // Check if this date already exists in calendar
+          const existingIndex = property.calendarData.findIndex(day => {
+            const existingDateStr = new Date(day.date).toISOString().split('T')[0];
+            return existingDateStr === dateStr;
+          });
+
+          if (existingIndex !== -1) {
+            // Update existing entry to mark as unavailable
+            property.calendarData[existingIndex].isAvailable = false;
+          } else {
+            // Add new entry as unavailable
+            property.calendarData.push({
+              date: new Date(selectedDate),
+              isAvailable: false
+            } as any);
+          }
+        }
+
+        // Save updated property
+        await property.save();
+      }
+    }
+
     // Set status to CLOSED
     transaction.status = 'CLOSED';
     const savedTransaction = await transaction.save();

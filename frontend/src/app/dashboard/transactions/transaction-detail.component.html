@@ -124,7 +124,7 @@
         <!-- Calendar view for daily payments -->
         <div *ngIf="isDailyPayment()" class="space-y-4">
           <div class="text-center">
-            <h3 class="text-lg font-semibold text-white mb-4">{{ 'TRANSACTION_FORM.SELECT_DATES' | translate }}</h3>
+            <h3 class="text-lg font-semibold text-white mb-4">{{ 'TRANSACTION_FORM.SELECTED_DATES' | translate }}</h3>
             <app-calendar-selector
               [propertyAvailability]="propertyCalendarData"
               [selectedDates]="selectedDates"

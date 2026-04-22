@@ -74,6 +74,7 @@ export class PropertyDetailsComponent implements OnInit {
     const propertyId = this.route.snapshot.paramMap.get('id');
     if (!propertyId) return;
 
+    this.videoLoaded.set(false);
     this.propertiesService.getPublicProperty(propertyId).subscribe({
       next: (data) => {
         this.property.set(data);
@@ -86,8 +87,7 @@ export class PropertyDetailsComponent implements OnInit {
   }
 
   getCoverImage(): string {
-    const prop = this.property();
-    return prop?.previewVideo || (prop?.photos?.[0] || '');
+    return this.property()?.photos?.[0] || '';
   }
 
   getGalleryImages(): string[] {

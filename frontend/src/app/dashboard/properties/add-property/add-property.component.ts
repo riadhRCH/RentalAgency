@@ -219,6 +219,22 @@ export class AddPropertyComponent implements OnInit {
     this.propertiesService.uploadVideo(file).subscribe({
       next: (result) => {
         this.propertyForm.get('previewVideo')?.setValue(result.url);
+
+        if (this.isEditMode() && this.propertyId) {
+          this.propertiesService.updateProperty(this.propertyId, { previewVideo: result.url }).subscribe({
+            next: () => {
+              this.previewVideoUploading.set(false);
+              input.value = '';
+            },
+            error: (err) => {
+              console.error('Error saving preview video to property', err);
+              this.previewVideoUploading.set(false);
+              input.value = '';
+            }
+          });
+          return;
+        }
+
         this.previewVideoUploading.set(false);
         input.value = '';
       },

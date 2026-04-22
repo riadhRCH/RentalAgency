@@ -9,6 +9,7 @@ import { VisitRequest, VisitRequestSchema } from '../schemas/visit-request.schem
 import { Rental, RentalSchema } from '../schemas/rental.schema';
 import { AuthModule } from '../auth/auth.module';
 import { Transaction, TransactionSchema } from 'src/schemas/transaction.schema';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { Transaction, TransactionSchema } from 'src/schemas/transaction.schema';
        { name: Transaction.name, schema: TransactionSchema },
     ]),
     AuthModule,
+    CloudinaryModule,
   ],
   controllers: [AgenciesController],
   providers: [AgenciesService],

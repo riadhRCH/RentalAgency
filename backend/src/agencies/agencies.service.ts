@@ -14,6 +14,7 @@ import { VisitRequest, VisitRequestDocument } from '../schemas/visit-request.sch
 import { Rental, RentalDocument } from '../schemas/rental.schema';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { ProvisionNumberDto } from './dto/provision-number.dto';
+import { UpdateAgencyProfileDto } from './dto/update-agency-profile.dto';
 import { Transaction, TransactionDocument } from 'src/schemas/transaction.schema';
 import { COUNTRY_DEFAULTS } from '../shared/constants';
 
@@ -93,6 +94,32 @@ export class AgenciesService {
     });
 
     return agency;
+  }
+
+  async updateProfile(agencyId: string, profile: UpdateAgencyProfileDto) {
+    const updatePayload: Record<string, any> = {};
+
+    if (profile.logo !== undefined) {
+      updatePayload.logo = profile.logo;
+    }
+
+    const agency = await this.agencyModel.findByIdAndUpdate(
+      agencyId,
+      { $set: updatePayload },
+      { new: true },
+    ).select('name logo settings paymentMethods');
+
+    if (!agency) {
+      throw new BadRequestException('Agency not found');
+    }
+
+    return {
+      id: agency._id.toString(),
+      name: agency.name,
+      logo: agency.logo,
+      settings: agency.settings,
+      paymentMethods: agency.paymentMethods,
+    };
   }
 
   async provisionNumber(agencyId: string, dto: ProvisionNumberDto) {

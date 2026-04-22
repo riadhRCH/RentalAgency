@@ -181,6 +181,41 @@
       </button>
 
       <div *ngIf="imagesExpanded()" class="animate-in fade-in slide-in-from-top-2 duration-200 px-8 pb-8 space-y-4 border-t border-white/5">
+        <div class="space-y-3">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'PROPERTY_FORM.PREVIEW_VIDEO' | translate }}</label>
+          <p class="text-[10px] text-slate-500 uppercase tracking-widest ml-1">{{ 'PROPERTY_FORM.PREVIEW_VIDEO_HELP' | translate }}</p>
+
+          <div class="rounded-xl border border-white/10 bg-white/5 p-4 space-y-4">
+            <div *ngIf="propertyForm.get('previewVideo')?.value as previewVideo; else emptyPreviewVideoState" class="space-y-3">
+              <video [src]="previewVideo" controls class="w-full max-h-64 rounded-lg border border-white/10 bg-black/40"></video>
+              <div class="flex justify-end">
+                <button
+                  type="button"
+                  (click)="clearPreviewVideo()"
+                  class="px-4 py-2 rounded text-[10px] font-bold uppercase tracking-widest border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all">
+                  {{ 'COMMON.REMOVE' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <ng-template #emptyPreviewVideoState>
+              <div class="flex items-center gap-3 text-slate-500">
+                <span class="material-symbols-outlined">video_library</span>
+                <p class="text-[10px] uppercase tracking-widest">{{ 'PROPERTY_FORM.NO_PREVIEW_VIDEO' | translate }}</p>
+              </div>
+            </ng-template>
+
+            <label class="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-dashed border-white/10 px-4 py-3 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all">
+             <input type="file" accept="video/mp4,video/webm,video/ogg,video/avi,video/mov" (change)="onPreviewVideoSelected($event)" class="hidden">
+              <span *ngIf="!previewVideoUploading()" class="material-symbols-outlined text-slate-400">upload</span>
+              <span *ngIf="previewVideoUploading()" class="material-symbols-outlined animate-spin text-primary">progress_activity</span>
+              <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                {{ previewVideoUploading() ? ('PROPERTY_FORM.UPLOADING_VIDEO' | translate) : ('PROPERTY_FORM.UPLOAD_PREVIEW_VIDEO' | translate) }}
+              </span>
+            </label>
+          </div>
+        </div>
+
         <div class="flex flex-wrap gap-4">
           <div *ngFor="let photo of uploadedPhotos(); let i = index" class="relative w-24 h-24 rounded-lg overflow-hidden border border-white/10 group">
             <img [src]="photo" class="w-full h-full object-cover">

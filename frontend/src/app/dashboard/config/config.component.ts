@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
+import { forkJoin } from 'rxjs';
 
 interface AreaCodeOption {
   code: string;
@@ -27,6 +28,7 @@ export class ConfigComponent implements OnInit {
   ];
 
   settings: AgencySettings = { forwardingNumber: '', areaCode: '' };
+  agencyLogo = '';
   virtualNumbers: VirtualNumber[] = [];
   
   newNumber = {
@@ -35,6 +37,7 @@ export class ConfigComponent implements OnInit {
   };
 
   loading = signal(true);
+  logoUploading = signal(false);
   saving = false;
   provisioning = false;
   message = '';
@@ -46,12 +49,16 @@ export class ConfigComponent implements OnInit {
 
   loadData() {
     this.loading.set(true);
-    this.agencyService.getSettings().subscribe({
-      next: (s) => {
+    forkJoin({
+      settings: this.agencyService.getSettings(),
+      profile: this.agencyService.getProfile(),
+    }).subscribe({
+      next: ({ settings, profile }) => {
         this.settings = {
-          forwardingNumber: s?.forwardingNumber || '',
-          areaCode: this.normalizeAreaCode(s?.areaCode || '')
+          forwardingNumber: settings?.forwardingNumber || '',
+          areaCode: this.normalizeAreaCode(settings?.areaCode || '')
         };
+        this.agencyLogo = profile?.logo || '';
         this.ensureAreaCodeOptionExists(this.settings.areaCode);
         this.newNumber.areaCode = this.settings.areaCode;
         this.loading.set(false);
@@ -77,8 +84,12 @@ export class ConfigComponent implements OnInit {
       return;
     }
 
-    this.agencyService.updateSettings(this.settings).subscribe({
+    forkJoin({
+      settings: this.agencyService.updateSettings(this.settings),
+      profile: this.agencyService.updateProfile({ logo: this.agencyLogo.trim() }),
+    }).subscribe({
       next: () => {
+        this.agencyLogo = this.agencyLogo.trim();
         this.newNumber.areaCode = this.settings.areaCode;
         this.message = this.i18n.translate('CONFIG.SETTINGS_UPDATED');
         this.saving = false;
@@ -146,5 +157,34 @@ export class ConfigComponent implements OnInit {
         this.provisioning = false;
       }
     });
+  }
+
+  onLogoSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    this.logoUploading.set(true);
+    this.error = '';
+
+    this.agencyService.uploadLogo(file).subscribe({
+      next: (result) => {
+        this.agencyLogo = result.url;
+        this.logoUploading.set(false);
+        input.value = '';
+      },
+      error: () => {
+        this.error = this.i18n.translate('CONFIG.LOGO_UPLOAD_FAILED');
+        this.logoUploading.set(false);
+        input.value = '';
+      }
+    });
+  }
+
+  clearLogo() {
+    this.agencyLogo = '';
   }
 }

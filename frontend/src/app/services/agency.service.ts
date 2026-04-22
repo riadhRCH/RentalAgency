@@ -14,6 +14,10 @@ export interface AgencySettings {
   areaCode: string;
 }
 
+export interface UpdateAgencyProfilePayload {
+  logo?: string;
+}
+
 export interface PaymentMethod {
   type: 'bank' | 'mobile' | 'poste';
   provider: string;
@@ -67,6 +71,16 @@ export class AgencyService {
 
   updateSettings(settings: AgencySettings): Observable<AgencySettings> {
     return this.http.patch<AgencySettings>(`${this.apiUrl}/settings`, settings);
+  }
+
+  updateProfile(profile: UpdateAgencyProfilePayload): Observable<AgencyProfile> {
+    return this.http.patch<AgencyProfile>(`${this.apiUrl}/profile`, profile);
+  }
+
+  uploadLogo(file: File): Observable<{ url: string; public_id: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ url: string; public_id: string }>(`${this.apiUrl}/upload-logo`, formData);
   }
 
   getStaff(): Observable<any[]> {

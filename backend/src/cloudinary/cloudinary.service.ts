@@ -12,16 +12,32 @@ export class CloudinaryService {
     });
   }
 
-  async uploadImage(
+  async uploadFile(
     file: Express.Multer.File,
+    resourceType: 'image' | 'video' | 'auto' = 'auto',
   ): Promise<UploadApiResponse | UploadApiErrorResponse> {
     return new Promise((resolve, reject) => {
-      const upload = cloudinary.uploader.upload_stream((error, result) => {
-        if (error) return reject(error);
-        resolve(result);
-      });
+      const upload = cloudinary.uploader.upload_stream(
+        { resource_type: resourceType },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        },
+      );
 
       upload.end(file.buffer);
     });
+  }
+
+  async uploadImage(
+    file: Express.Multer.File,
+  ): Promise<UploadApiResponse | UploadApiErrorResponse> {
+    return this.uploadFile(file, 'image');
+  }
+
+  async uploadVideo(
+    file: Express.Multer.File,
+  ): Promise<UploadApiResponse | UploadApiErrorResponse> {
+    return this.uploadFile(file, 'video');
   }
 }

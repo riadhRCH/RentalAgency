@@ -1,13 +1,19 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { AgenciesService } from './agencies.service';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { ProvisionNumberDto } from './dto/provision-number.dto';
+import { UpdateAgencyProfileDto } from './dto/update-agency-profile.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AgencyGuard } from '../auth/agency.guard';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Controller('agencies')
 export class AgenciesController {
-  constructor(private readonly agenciesService: AgenciesService) {}
+  constructor(
+    private readonly agenciesService: AgenciesService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @UseGuards(JwtAuthGuard, AgencyGuard)
   @Get('stats')
@@ -20,6 +26,23 @@ export class AgenciesController {
   @Get('profile')
   async getProfile(@Request() req) {
     return this.agenciesService.getProfile(req.agencyId.toString());
+  }
+
+  @UseGuards(JwtAuthGuard, AgencyGuard)
+  @Patch('profile')
+  async updateProfile(@Request() req, @Body() profile: UpdateAgencyProfileDto) {
+    return this.agenciesService.updateProfile(req.agencyId.toString(), profile);
+  }
+
+  @UseGuards(JwtAuthGuard, AgencyGuard)
+  @Post('upload-logo')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadLogo(@UploadedFile() file: Express.Multer.File) {
+    const result = await this.cloudinaryService.uploadImage(file);
+    return {
+      url: result.secure_url,
+      public_id: result.public_id,
+    };
   }
 
   // Admin: create a new agency

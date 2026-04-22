@@ -85,6 +85,12 @@ export class PropertiesService {
     return this.http.post<{ url: string; public_id: string }>(`${this.apiUrl}/upload`, formData);
   }
 
+  uploadVideo(file: File): Observable<{ url: string; public_id: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ url: string; public_id: string }>(`${this.apiUrl}/upload-video`, formData);
+  }
+
   updateProperty(id: string, data: any): Observable<Property> {
     return this.http.patch<Property>(`${this.apiUrl}/${id}`, data);
   }

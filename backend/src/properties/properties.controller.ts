@@ -71,6 +71,17 @@ export class PropertiesController {
   }
 
   @UseGuards(AgencyGuard)
+  @Post('upload-video')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadVideo(@UploadedFile() file: Express.Multer.File) {
+    const result = await this.cloudinaryService.uploadVideo(file);
+    return {
+      url: result.secure_url,
+      public_id: result.public_id,
+    };
+  }
+
+  @UseGuards(AgencyGuard)
   @Get()
   findAll(
     @Request() req,

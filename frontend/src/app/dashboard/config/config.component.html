@@ -25,6 +25,43 @@
         </p>
 
         <form (ngSubmit)="saveSettings()" class="space-y-6">
+          <div class="space-y-3">
+            <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{{ 'CONFIG.AGENCY_LOGO' | translate }}</label>
+            <p class="text-[10px] text-slate-500 uppercase tracking-widest">
+              {{ 'CONFIG.AGENCY_LOGO_DESC' | translate }}
+            </p>
+
+            <div class="rounded-xl border border-white/10 bg-white/5 p-4 space-y-4">
+              <div *ngIf="agencyLogo; else emptyLogoState" class="flex items-center gap-4">
+                <img [src]="agencyLogo" [alt]="'CONFIG.AGENCY_LOGO' | translate" class="h-16 w-16 rounded-lg object-cover border border-white/10 bg-black/20">
+                <div>
+                  <p class="text-xs font-bold uppercase tracking-widest text-white">{{ 'CONFIG.LOGO_PREVIEW' | translate }}</p>
+                  <button
+                    type="button"
+                    (click)="clearLogo()"
+                    class="mt-2 px-3 py-2 rounded text-[10px] font-bold uppercase tracking-widest border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all">
+                    {{ 'COMMON.REMOVE' | translate }}
+                  </button>
+                </div>
+              </div>
+              <ng-template #emptyLogoState>
+                <div class="flex items-center gap-3 text-slate-500">
+                  <span class="material-symbols-outlined">image</span>
+                  <p class="text-[10px] uppercase tracking-widest">{{ 'CONFIG.NO_LOGO' | translate }}</p>
+                </div>
+              </ng-template>
+
+              <label class="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-dashed border-white/10 px-4 py-3 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all">
+                <input type="file" accept="image/*" (change)="onLogoSelected($event)" class="hidden">
+                <span *ngIf="!logoUploading()" class="material-symbols-outlined text-slate-400">upload</span>
+                <span *ngIf="logoUploading()" class="material-symbols-outlined animate-spin text-primary">progress_activity</span>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  {{ logoUploading() ? ('CONFIG.UPLOADING_LOGO' | translate) : ('CONFIG.UPLOAD_LOGO' | translate) }}
+                </span>
+              </label>
+            </div>
+          </div>
+
           <div class="space-y-2">
             <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{{ 'CONFIG.FORWARDING_NUMBER' | translate }}</label>
             <app-phone-input 

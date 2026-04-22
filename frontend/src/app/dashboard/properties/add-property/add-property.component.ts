@@ -39,6 +39,7 @@ export class AddPropertyComponent implements OnInit {
   uploading = signal(false);
   personnel = signal<any[]>([]);
   uploadedPhotos = signal<string[]>([]);
+  previewVideoUploading = signal(false);
   ownerSelectionMode = signal<'existing' | 'new'>('existing');
   propertyId: string | null = null;
   isEditMode = signal(false);
@@ -86,6 +87,7 @@ export class AddPropertyComponent implements OnInit {
       }),
       photos: [[]],
       videos: [[]],
+      previewVideo: [''],
       amenities: this.fb.group({
         bedrooms: [0],
         bathrooms: [0],
@@ -149,6 +151,7 @@ export class AddPropertyComponent implements OnInit {
             description: prop.description,
             status: prop.status,
             ownerId: prop.ownerId?._id || prop.ownerId,
+            previewVideo: prop.previewVideo || '',
             gpsLocation: prop.gpsLocation,
             amenities: prop.amenities
           });
@@ -202,6 +205,33 @@ export class AddPropertyComponent implements OnInit {
   removePhoto(index: number) {
     this.uploadedPhotos.update(photos => photos.filter((_, i) => i !== index));
     this.propertyForm.get('photos')?.setValue(this.uploadedPhotos());
+  }
+
+  onPreviewVideoSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    this.previewVideoUploading.set(true);
+    this.propertiesService.uploadVideo(file).subscribe({
+      next: (result) => {
+        this.propertyForm.get('previewVideo')?.setValue(result.url);
+        this.previewVideoUploading.set(false);
+        input.value = '';
+      },
+      error: (err) => {
+        console.error('Error uploading preview video', err);
+        this.previewVideoUploading.set(false);
+        input.value = '';
+      }
+    });
+  }
+
+  clearPreviewVideo() {
+    this.propertyForm.get('previewVideo')?.setValue('');
   }
 
   onSubmit() {

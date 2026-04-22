@@ -1,13 +1,3 @@
-contract page improvements
+in page http://localhost:4200/dashboard/config
 
-i want the preview in the contract in the full page (remove the forms)
-
-make the text editable in the contract (user selects a clause and edit it or edits its title directly in the preview)
-
-use this as a base contract `Contrat_Location.docx`
-
-allow user to add/remove clauses from contract, 
-
-add agency logo in the contract 
-
-make contract design professional
+i want to to add an input logo for the agency

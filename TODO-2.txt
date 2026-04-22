@@ -1,3 +1,0 @@
-this page http://localhost:4200/dashboard/personnel/owners should load a list of owners via api
-
-the api shoud receive the agency id, fetch all properties related to the agency and return the list of thse propertiy owners as a list of personnel

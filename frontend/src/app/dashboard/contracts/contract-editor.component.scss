@@ -1,0 +1,482 @@
+:host {
+  display: block;
+}
+
+.contract-editor-shell {
+  --paper: #f7f0e2;
+  --paper-shadow: rgba(15, 23, 42, 0.25);
+  --ink: #1e293b;
+  --muted: #64748b;
+  --accent: #c9a35f;
+  --accent-dark: #8a6430;
+  min-height: 100vh;
+  padding: 2rem;
+  background:
+    radial-gradient(circle at top left, rgba(201, 163, 95, 0.14), transparent 28%),
+    linear-gradient(180deg, #0f172a 0%, #111827 45%, #172033 100%);
+}
+
+.editor-topbar {
+  max-width: 1200px;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.editor-intro h1 {
+  margin: 0.2rem 0;
+  color: white;
+  font-size: clamp(2rem, 3vw, 3.2rem);
+  line-height: 1.05;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.editor-intro p:last-child {
+  margin: 0;
+  max-width: 56rem;
+  color: rgba(226, 232, 240, 0.74);
+}
+
+.editor-eyebrow {
+  margin: 0;
+  color: rgba(201, 163, 95, 0.92);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.ghost-action,
+.primary-action {
+  border-radius: 999px;
+  padding: 0.9rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-weight: 600;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.ghost-action {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fafc;
+}
+
+.ghost-action.strong {
+  background: rgba(201, 163, 95, 0.14);
+  border-color: rgba(201, 163, 95, 0.3);
+}
+
+.primary-action {
+  background: linear-gradient(135deg, #d4b06f, #f3d49d);
+  color: #20150a;
+  border-color: transparent;
+}
+
+.ghost-action:hover,
+.primary-action:hover {
+  transform: translateY(-1px);
+}
+
+.ghost-action:disabled,
+.primary-action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.status-card {
+  max-width: 1200px;
+  margin: 0 auto 1rem;
+  border-radius: 1.5rem;
+  padding: 1rem 1.25rem;
+}
+
+.loading-card {
+  display: flex;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.error-card {
+  background: rgba(239, 68, 68, 0.12);
+  color: #fecaca;
+  border: 1px solid rgba(239, 68, 68, 0.16);
+}
+
+.success-card {
+  background: rgba(16, 185, 129, 0.12);
+  color: #bbf7d0;
+  border: 1px solid rgba(16, 185, 129, 0.16);
+}
+
+.spinner {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  border: 3px solid rgba(201, 163, 95, 0.25);
+  border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+
+.document-stage {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.document-hints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  color: rgba(226, 232, 240, 0.82);
+  font-size: 0.92rem;
+}
+
+.document-hints p {
+  margin: 0;
+}
+
+.template-chip {
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.contract-page {
+  position: relative;
+  padding: 3rem;
+  border-radius: 2rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0)) 0 0 / 100% 12rem no-repeat,
+    linear-gradient(135deg, #fbf6ec 0%, var(--paper) 42%, #f1e5d0 100%);
+  box-shadow: 0 30px 70px var(--paper-shadow);
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.contract-watermark {
+  position: absolute;
+  inset: 1.8rem;
+  border: 1px solid rgba(138, 100, 48, 0.14);
+  border-radius: 1.5rem;
+  pointer-events: none;
+}
+
+.contract-header,
+.hero-block,
+.parties-grid,
+.property-summary,
+.description-band,
+.clauses-stack,
+.closing-panel,
+.signature-grid {
+  position: relative;
+  z-index: 1;
+}
+
+.contract-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+.brand-lockup {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.brand-logo {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 1.5rem;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #1f2937, #334155);
+  color: #f8fafc;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  overflow: hidden;
+}
+
+.brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.brand-copy h2 {
+  margin: 0.2rem 0;
+  font-size: 1.5rem;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.brand-copy p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.brand-kicker {
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--accent-dark);
+  font-weight: 700;
+}
+
+.contract-meta {
+  min-width: 11rem;
+  text-align: right;
+}
+
+.contract-meta p {
+  margin: 0 0 0.5rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+}
+
+.hero-block {
+  padding: 2.3rem 0 2rem;
+}
+
+.hero-kicker {
+  margin: 0;
+  color: var(--accent-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.hero-summary {
+  margin: 0.75rem 0 0;
+  max-width: 42rem;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.editable-title {
+  margin: 0.3rem 0 0;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  line-height: 0.98;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+}
+
+.parties-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.party-card,
+.description-band,
+.closing-panel {
+  padding: 1.4rem;
+  border-radius: 1.4rem;
+  background: rgba(255, 255, 255, 0.44);
+  border: 1px solid rgba(138, 100, 48, 0.12);
+}
+
+.property-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.property-summary > div {
+  padding: 1.1rem 1rem;
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, 0.34);
+  border: 1px solid rgba(138, 100, 48, 0.1);
+}
+
+.description-band,
+.closing-panel {
+  margin-top: 1rem;
+}
+
+.card-label {
+  margin: 0 0 0.65rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.editable-heading,
+.editable-line,
+.editable-paragraph,
+.editable-clause-title,
+.editable-clause-body,
+.editable-signature,
+.editable-title {
+  outline: none;
+  transition: background 140ms ease, box-shadow 140ms ease;
+  border-radius: 0.6rem;
+}
+
+.editable-heading:hover,
+.editable-line:hover,
+.editable-paragraph:hover,
+.editable-clause-title:hover,
+.editable-clause-body:hover,
+.editable-signature:hover,
+.editable-title:hover,
+.editable-heading:focus,
+.editable-line:focus,
+.editable-paragraph:focus,
+.editable-clause-title:focus,
+.editable-clause-body:focus,
+.editable-signature:focus,
+.editable-title:focus {
+  background: rgba(201, 163, 95, 0.14);
+  box-shadow: 0 0 0 2px rgba(201, 163, 95, 0.15);
+}
+
+.editable-heading,
+.editable-line,
+.editable-signature {
+  padding: 0.2rem 0.3rem;
+}
+
+.editable-heading {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.35rem;
+}
+
+.editable-line {
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.editable-line--strong {
+  font-weight: 700;
+}
+
+.editable-paragraph,
+.editable-clause-body {
+  white-space: pre-wrap;
+  line-height: 1.8;
+  min-height: 2rem;
+  padding: 0.25rem 0.35rem;
+}
+
+.clauses-stack {
+  margin-top: 1.25rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.clause-card {
+  padding: 1.25rem 1.25rem 1.1rem;
+  border-radius: 1.35rem;
+  background: rgba(255, 255, 255, 0.48);
+  border: 1px solid rgba(138, 100, 48, 0.12);
+}
+
+.clause-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.remove-clause {
+  border: none;
+  background: transparent;
+  color: #991b1b;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 0.85rem;
+}
+
+.editable-clause-title {
+  margin: 0 0 0.7rem;
+  font-size: 1.15rem;
+  line-height: 1.45;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+}
+
+.signature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+}
+
+.signature-card {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.signature-line {
+  display: block;
+  border-bottom: 1px solid rgba(30, 41, 59, 0.45);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 900px) {
+  .contract-editor-shell {
+    padding: 1rem;
+  }
+
+  .editor-topbar,
+  .contract-header,
+  .parties-grid,
+  .property-summary,
+  .signature-grid {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .editor-actions {
+    justify-content: flex-start;
+  }
+
+  .contract-page {
+    padding: 1.4rem;
+  }
+
+  .brand-lockup {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .contract-meta {
+    text-align: left;
+  }
+}

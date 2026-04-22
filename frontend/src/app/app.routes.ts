@@ -17,6 +17,7 @@ import { DashboardLayoutComponent } from './dashboard/layout/dashboard-layout.co
 import { TransactionsListComponent } from './dashboard/transactions/transactions-list.component';
 import { TransactionProvisioningComponent } from './dashboard/transactions/transaction-provisioning.component';
 import { TransactionDetailComponent } from './dashboard/transactions/transaction-detail.component';
+import { ContractEditorComponent } from './dashboard/contracts/contract-editor.component';
 import { PropertyDetailsComponent } from './public/property-details/property-details.component';
 import { ThankYouComponent } from './public/thank-you/thank-you.component';
 import { CarouselComponent } from './public/carousel/carousel.component';
@@ -59,6 +60,7 @@ export const routes: Routes = [
             { path: 'properties/add', component: AddPropertyComponent },
             { path: 'properties/edit/:id', component: AddPropertyComponent },
             { path: 'transactions/provision', component: TransactionProvisioningComponent },
+            { path: 'transactions/:id/contract', component: ContractEditorComponent },
             { path: 'transactions/:id', component: TransactionDetailComponent },
             { path: 'personnel/team', component: TeamsComponent },
             { path: 'personnel/owners', component: OwnersPageComponent },

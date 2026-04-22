@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Request, Res } from '@nestjs/common';
 import { ContractsService } from './contracts.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AgencyGuard } from '../auth/agency.guard';
+import { Response } from 'express';
 
 @Controller('contracts')
 @UseGuards(JwtAuthGuard, AgencyGuard)
@@ -35,6 +36,12 @@ export class ContractsController {
   @Post(':id/generate')
   async generateContract(@Param('id') id: string) {
     return this.contractsService.generateContract(id);
+  }
+
+  @Get(':id/download')
+  async downloadContract(@Param('id') id: string, @Res() res: Response) {
+    const fileInfo = await this.contractsService.getGeneratedFileInfo(id);
+    return res.download(fileInfo.path, fileInfo.fileName);
   }
 
   @Delete(':id')

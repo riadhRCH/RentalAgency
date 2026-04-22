@@ -1,0 +1,275 @@
+<div class="contract-editor-shell">
+  <header class="editor-topbar">
+    <div class="editor-intro">
+      <p class="editor-eyebrow">{{ 'CONTRACT_EDITOR.EYEBROW' | translate }}</p>
+      <h1>{{ 'CONTRACT_EDITOR.TITLE' | translate }}</h1>
+      <p>{{ 'CONTRACT_EDITOR.SUBTITLE' | translate }}</p>
+    </div>
+
+    <div class="editor-actions">
+      <button type="button" (click)="backToTransaction()" class="ghost-action">
+        {{ 'CONTRACT_EDITOR.BACK_TO_TRANSACTION' | translate }}
+      </button>
+      <button type="button" (click)="addClause()" [disabled]="isLoading()" class="ghost-action">
+        {{ 'CONTRACT_EDITOR.ADD_CLAUSE' | translate }}
+      </button>
+      <button type="button" (click)="saveContract()" [disabled]="isSaving() || isLoading() || !documentModel" class="ghost-action strong">
+        <span *ngIf="!isSaving()">{{ 'COMMON.SAVE_CHANGES' | translate }}</span>
+        <span *ngIf="isSaving()">{{ 'COMMON.SAVING' | translate }}</span>
+      </button>
+      <button type="button" (click)="generateContract()" [disabled]="isGenerating() || isLoading() || !documentModel" class="primary-action">
+        <span *ngIf="!isGenerating()">{{ 'CONTRACT_EDITOR.GENERATE_ACTION' | translate }}</span>
+        <span *ngIf="isGenerating()">{{ 'CONTRACT_EDITOR.GENERATING' | translate }}</span>
+      </button>
+      <a *ngIf="contract?.generatedFileUrl" [href]="contract?.generatedFileUrl" target="_blank" rel="noopener" class="ghost-action">
+        {{ 'CONTRACT_EDITOR.DOWNLOAD_ACTION' | translate }}
+      </a>
+    </div>
+  </header>
+
+  <div *ngIf="isLoading()" class="status-card loading-card">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error && !isLoading()" class="status-card error-card">
+    {{ error }}
+  </div>
+
+  <div *ngIf="successMessage && !isLoading()" class="status-card success-card">
+    {{ successMessage }}
+  </div>
+
+  <section *ngIf="!isLoading() && documentModel" class="document-stage">
+    <aside class="document-hints">
+      <p>{{ 'CONTRACT_EDITOR.EDIT_HINT' | translate }}</p>
+      <p>{{ 'CONTRACT_EDITOR.CLAUSE_HINT' | translate }}</p>
+      <p class="template-chip">{{ 'CONTRACT_EDITOR.TEMPLATE_LABEL' | translate }}: `Contrat_Location.docx`</p>
+    </aside>
+
+    <article class="contract-page">
+      <div class="contract-watermark"></div>
+
+      <header class="contract-header">
+        <div class="brand-lockup">
+          <div class="brand-logo" [class.brand-logo--image]="!!agencyProfile?.logo">
+            <img *ngIf="agencyProfile?.logo" [src]="agencyProfile?.logo" [alt]="agencyName" />
+            <span *ngIf="!agencyProfile?.logo">{{ agencyInitials }}</span>
+          </div>
+
+          <div class="brand-copy">
+            <p class="brand-kicker">{{ 'CONTRACT_EDITOR.PROFESSIONAL_LEASE' | translate }}</p>
+            <h2>{{ agencyName }}</h2>
+            <p>{{ 'CONTRACT_EDITOR.CONFIDENTIAL_NOTICE' | translate }}</p>
+          </div>
+        </div>
+
+        <div class="contract-meta">
+          <p>{{ 'CONTRACT_EDITOR.PREVIEW_META' | translate }}</p>
+          <div
+            class="editable-line editable-line--strong"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('contractDate', editableText($event))"
+          >{{ documentModel.contractDate }}</div>
+          <div
+            class="editable-line"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('city', editableText($event))"
+          >{{ documentModel.city }}</div>
+        </div>
+      </header>
+
+      <section class="hero-block">
+        <p class="hero-kicker">{{ 'CONTRACT_EDITOR.DOCUMENT_LABEL' | translate }}</p>
+        <h1
+          class="editable-title"
+          contenteditable="true"
+          spellcheck="false"
+          (blur)="updateField('title', editableText($event))"
+        >{{ documentModel.title }}</h1>
+        <p class="hero-summary">{{ 'CONTRACT_EDITOR.HERO_SUMMARY' | translate }}</p>
+      </section>
+
+      <section class="parties-grid">
+        <div class="party-card">
+          <p class="card-label">{{ 'CONTRACT_EDITOR.LANDLORD_NAME' | translate }}</p>
+          <h3
+            class="editable-heading"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('landlordName', editableText($event))"
+          >{{ documentModel.landlordName || ('CONTRACT_EDITOR.LANDLORD_PLACEHOLDER' | translate) }}</h3>
+          <div
+            class="editable-paragraph"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('landlordDetails', editableMultilineText($event))"
+          >{{ documentModel.landlordDetails || ('CONTRACT_EDITOR.LANDLORD_DETAILS_PLACEHOLDER' | translate) }}</div>
+        </div>
+
+        <div class="party-card">
+          <p class="card-label">{{ 'CONTRACT_EDITOR.TENANT_NAME' | translate }}</p>
+          <h3
+            class="editable-heading"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('tenantName', editableText($event))"
+          >{{ documentModel.tenantName || ('CONTRACT_EDITOR.TENANT_PLACEHOLDER' | translate) }}</h3>
+          <div
+            class="editable-paragraph"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('tenantDetails', editableMultilineText($event))"
+          >{{ documentModel.tenantDetails || ('CONTRACT_EDITOR.TENANT_DETAILS_PLACEHOLDER' | translate) }}</div>
+        </div>
+      </section>
+
+      <section class="property-summary">
+        <div>
+          <p class="card-label">{{ 'TRANSACTION_DETAIL.PROPERTY_REFERENCE' | translate }}</p>
+          <div
+            class="editable-line editable-line--strong"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('propertyReference', editableText($event))"
+          >{{ documentModel.propertyReference }}</div>
+        </div>
+        <div>
+          <p class="card-label">{{ 'PROPERTY_FORM.ADDRESS' | translate }}</p>
+          <div
+            class="editable-line"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('propertyAddress', editableText($event))"
+          >{{ documentModel.propertyAddress }}</div>
+        </div>
+        <div>
+          <p class="card-label">{{ 'TRANSACTION_FORM.RENT_AMOUNT' | translate }}</p>
+          <div
+            class="editable-line"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('rentAmount', +editableText($event) || 0)"
+          >{{ documentModel.rentAmount }}</div>
+        </div>
+        <div>
+          <p class="card-label">{{ 'TRANSACTION_FORM.DEPOSIT_AMOUNT' | translate }}</p>
+          <div
+            class="editable-line"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('depositAmount', +editableText($event) || 0)"
+          >{{ documentModel.depositAmount }}</div>
+        </div>
+        <div>
+          <p class="card-label">{{ 'TRANSACTION_FORM.START_DATE' | translate }}</p>
+          <div
+            class="editable-line"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('startDate', editableText($event))"
+          >{{ documentModel.startDate }}</div>
+        </div>
+        <div>
+          <p class="card-label">{{ 'TRANSACTION_FORM.END_DATE' | translate }}</p>
+          <div
+            class="editable-line"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('endDate', editableText($event))"
+          >{{ documentModel.endDate }}</div>
+        </div>
+        <div>
+          <p class="card-label">{{ 'TRANSACTION_FORM.DURATION' | translate }}</p>
+          <div
+            class="editable-line"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('duration', editableText($event))"
+          >{{ documentModel.duration }}</div>
+        </div>
+        <div>
+          <p class="card-label">{{ 'TRANSACTION_FORM.PAYMENT_FREQUENCY' | translate }}</p>
+          <div
+            class="editable-line"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('paymentFrequency', editableText($event))"
+          >{{ documentModel.paymentFrequency }}</div>
+        </div>
+      </section>
+
+      <section class="description-band">
+        <p class="card-label">{{ 'CONTRACT_EDITOR.PROPERTY_DESCRIPTION' | translate }}</p>
+        <div
+          class="editable-paragraph"
+          contenteditable="true"
+          spellcheck="false"
+          (blur)="updateField('propertyDescription', editableMultilineText($event))"
+        >{{ documentModel.propertyDescription }}</div>
+      </section>
+
+      <section class="clauses-stack">
+        <article *ngFor="let clause of documentModel.clauses; let i = index" class="clause-card">
+          <div class="clause-toolbar">
+            <span>{{ 'CONTRACT_EDITOR.CLAUSE' | translate }} {{ i + 1 }}</span>
+            <button
+              type="button"
+              *ngIf="clause.removable !== false"
+              (click)="removeClause(i)"
+              class="remove-clause"
+            >
+              {{ 'CONTRACT_EDITOR.REMOVE_CLAUSE' | translate }}
+            </button>
+          </div>
+
+          <h3
+            class="editable-clause-title"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateClause(i, 'title', editableText($event))"
+          >{{ clause.title }}</h3>
+
+          <div
+            class="editable-clause-body"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateClause(i, 'body', editableMultilineText($event))"
+          >{{ clause.body }}</div>
+        </article>
+      </section>
+
+      <section class="closing-panel">
+        <p class="card-label">{{ 'CONTRACT_EDITOR.CLOSING_SECTION' | translate }}</p>
+        <div
+          class="editable-paragraph"
+          contenteditable="true"
+          spellcheck="false"
+          (blur)="updateField('closingStatement', editableMultilineText($event))"
+        >{{ documentModel.closingStatement }}</div>
+      </section>
+
+      <footer class="signature-grid">
+        <div class="signature-card">
+          <div
+            class="editable-signature"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('signatureLabelOwner', editableText($event))"
+          >{{ documentModel.signatureLabelOwner }}</div>
+          <span class="signature-line"></span>
+        </div>
+        <div class="signature-card">
+          <div
+            class="editable-signature"
+            contenteditable="true"
+            spellcheck="false"
+            (blur)="updateField('signatureLabelTenant', editableText($event))"
+          >{{ documentModel.signatureLabelTenant }}</div>
+          <span class="signature-line"></span>
+        </div>
+      </footer>
+    </article>
+  </section>
+</div>

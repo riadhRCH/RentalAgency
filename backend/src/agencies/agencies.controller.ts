@@ -16,6 +16,12 @@ export class AgenciesController {
     return this.agenciesService.getStats(agencyId);
   }
 
+  @UseGuards(JwtAuthGuard, AgencyGuard)
+  @Get('profile')
+  async getProfile(@Request() req) {
+    return this.agenciesService.getProfile(req.agencyId.toString());
+  }
+
   // Admin: create a new agency
   @Post('create')
   async create(@Body() dto: CreateAgencyDto) {

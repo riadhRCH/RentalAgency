@@ -56,6 +56,24 @@ export class AgenciesService {
     return { totalLeads, totalVisits, totalTransactions };
   }
 
+  async getProfile(agencyId: string) {
+    const agency = await this.agencyModel
+      .findById(agencyId)
+      .select('name logo settings paymentMethods');
+
+    if (!agency) {
+      throw new BadRequestException('Agency not found');
+    }
+
+    return {
+      id: agency._id.toString(),
+      name: agency.name,
+      logo: agency.logo,
+      settings: agency.settings,
+      paymentMethods: agency.paymentMethods,
+    };
+  }
+
   async create(dto: CreateAgencyDto) {
     let personnel = await this.personnelModel.findOne({ phone: dto.ownerPhone });
     

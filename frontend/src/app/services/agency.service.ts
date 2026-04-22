@@ -29,6 +29,14 @@ export interface AgencyStats {
   totalTransactions: number
 }
 
+export interface AgencyProfile {
+  id: string;
+  name: string;
+  logo?: string;
+  settings?: AgencySettings;
+  paymentMethods?: PaymentMethod[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -39,6 +47,10 @@ export class AgencyService {
 
   getStats(): Observable<AgencyStats> {
     return this.http.get<AgencyStats>(`${this.apiUrl}/stats`);
+  }
+
+  getProfile(): Observable<AgencyProfile> {
+    return this.http.get<AgencyProfile>(`${this.apiUrl}/profile`);
   }
 
   getActiveNumbers(): Observable<VirtualNumber[]> {

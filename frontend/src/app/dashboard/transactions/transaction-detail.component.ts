@@ -186,4 +186,16 @@ export class TransactionDetailComponent implements OnInit {
       });
     }
   }
+
+  openContractEditor(): void {
+    if (!this.transaction?._id) {
+      return;
+    }
+
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree(['/dashboard/transactions', this.transaction._id, 'contract'])
+    );
+
+     this.router.navigate(['/dashboard/transactions', this.transaction._id, 'contract']);
+  }
 }

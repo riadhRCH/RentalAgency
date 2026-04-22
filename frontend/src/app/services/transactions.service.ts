@@ -24,6 +24,7 @@ export interface Transaction {
     documents?: string[];
     utilityNotes?: string;
     emergencyContact?: string;
+    contracts?: string[];
   };
   status: 'CURRENT' | 'EXPIRING_SOON' | 'OVERDUE' | 'CLOSED';
   identityVerificationStatus?: string;

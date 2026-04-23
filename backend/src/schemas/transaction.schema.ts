@@ -50,6 +50,9 @@ class TransactionMetadata {
   numberOfPersons: number;
 
   @Prop()
+  paymentProof: string;
+
+  @Prop()
   utilityNotes: string;
 
   @Prop()

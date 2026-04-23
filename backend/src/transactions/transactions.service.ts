@@ -34,6 +34,39 @@ export class TransactionsService {
     return person;
   }
 
+  private buildTransactionCompletion(transaction: any) {
+    const paymentFrequency = transaction.financialDetails?.paymentFrequency;
+    const totalSteps = paymentFrequency === 'DAILY' ? 4 : 3;
+
+    let stepsDone = 0;
+
+    const hasTimeline =
+      paymentFrequency === 'DAILY'
+        ? (transaction.timeline?.selectedDates?.length ?? 0) > 0
+        : !!transaction.timeline?.startDate && !!transaction.timeline?.endDate;
+
+    const hasCustomer = !!transaction.personnelId?.phone;
+    const hasDocuments = !!transaction.metadata?.cinNumber
+      && !!transaction.metadata?.numberOfPersons
+      && !!transaction.metadata?.documents?.length;
+    const hasPayment = !!transaction.metadata?.paymentProof;
+
+    if (hasTimeline) stepsDone += 1;
+    if (hasCustomer) stepsDone += 1;
+    if (hasDocuments) stepsDone += 1;
+    if (paymentFrequency === 'DAILY' && hasPayment) {
+      stepsDone += 1;
+    }
+
+    return {
+      stepsDone,
+      totalSteps,
+      percent: Math.round((stepsDone / totalSteps) * 100),
+      isComplete: stepsDone === totalSteps,
+      paymentStatus: hasPayment ? 'PAID' : 'UNPAID',
+    };
+  }
+
   async create(agencyId: string, createTransactionDto: CreateTransactionDto): Promise<TransactionDocument> {
     const { propertyId, personnelId, customerName, customerPhone, source, ...transactionData } = createTransactionDto;
 
@@ -80,13 +113,21 @@ export class TransactionsService {
     return savedTransaction;
   }
 
-  async findAll(agencyId: string): Promise<TransactionDocument[]> {
+  async findAll(agencyId: string): Promise<any[]> {
     console.log('agencyId', agencyId)
-    return this.transactionModel
+    const transactions = await this.transactionModel
       .find({ agencyId: new Types.ObjectId(agencyId) })
       .populate(['propertyId', 'personnelId'])
       .sort({ createdAt: -1 })
       .exec();
+
+    return transactions.map((transaction) => {
+      const plainTransaction = transaction.toObject();
+      return {
+        ...plainTransaction,
+        completion: this.buildTransactionCompletion(plainTransaction),
+      };
+    });
   }
 
   async findOne(id: string): Promise<TransactionDocument> {
@@ -223,38 +264,6 @@ export class TransactionsService {
     if (!updatedTransaction) {
       throw new NotFoundException('Transaction not found');
     }
-    return updatedTransaction;
-  }
-
-  async updatePublicDocumentUrl(id: string, url: string): Promise<TransactionDocument> {
-    const updatedTransaction = await this.transactionModel
-      .findByIdAndUpdate(
-        id,
-        { $set: { 'metadata.documents': [url] } },
-        { new: true },
-      )
-      .exec();
-
-    if (!updatedTransaction) {
-      throw new NotFoundException('Transaction not found');
-    }
-
-    return updatedTransaction;
-  }
-
-  async updatePublicPaymentProofUrl(id: string, url: string): Promise<TransactionDocument> {
-    const updatedTransaction = await this.transactionModel
-      .findByIdAndUpdate(
-        id,
-        { $set: { 'metadata.paymentProof': url } },
-        { new: true },
-      )
-      .exec();
-
-    if (!updatedTransaction) {
-      throw new NotFoundException('Transaction not found');
-    }
-
     return updatedTransaction;
   }
 

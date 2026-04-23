@@ -419,29 +419,48 @@ export class TransactionComponent implements OnInit {
       this.paymentUploading.set(true);
     }
 
-    this.transactionsService.uploadPublicTransactionFile(this.transactionId, kind, file).subscribe({
-      next: (result) => {
-        const currentTransaction = this.transaction();
-        if (currentTransaction) {
-          this.transaction.set({
-            ...currentTransaction,
-            metadata: {
-              ...currentTransaction.metadata,
-              ...(kind === 'document'
-                ? { documents: [result.url] }
-                : { paymentProof: result.url }),
-            },
-          });
-        }
+    this.transactionsService.uploadFile(file).subscribe({
+      next: (uploadResult) => {
+        const transactionPatch =
+          kind === 'document'
+            ? { metadata: { documents: [uploadResult.url] } }
+            : { metadata: { paymentProof: uploadResult.url } };
 
-        if (kind === 'document') {
-          this.documentsForm.patchValue({ cinDocument: result.url });
-          this.documentUploading.set(false);
-          this.checkDocumentsDone();
-        } else {
-          this.paymentForm.patchValue({ paymentProof: result.url });
-          this.paymentUploading.set(false);
-        }
+        this.transactionsService.updatePublicTransaction(this.transactionId, transactionPatch).subscribe({
+          next: () => {
+            const currentTransaction = this.transaction();
+            if (currentTransaction) {
+              this.transaction.set({
+                ...currentTransaction,
+                metadata: {
+                  ...currentTransaction.metadata,
+                  ...(kind === 'document'
+                    ? { documents: [uploadResult.url] }
+                    : { paymentProof: uploadResult.url }),
+                },
+              });
+            }
+
+            if (kind === 'document') {
+              this.documentsForm.patchValue({ cinDocument: uploadResult.url });
+              this.documentUploading.set(false);
+              this.checkDocumentsDone();
+            } else {
+              this.paymentForm.patchValue({ paymentProof: uploadResult.url });
+              this.paymentUploading.set(false);
+            }
+          },
+          error: () => {
+            if (kind === 'document') {
+              this.documentsForm.patchValue({ cinDocument: null });
+              this.documentUploading.set(false);
+              this.checkDocumentsDone();
+            } else {
+              this.paymentForm.patchValue({ paymentProof: null });
+              this.paymentUploading.set(false);
+            }
+          }
+        });
       },
       error: () => {
         if (kind === 'document') {

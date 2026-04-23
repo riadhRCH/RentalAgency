@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AgenciesModule } from './agencies/agencies.module';
 import { AuthModule } from './auth/auth.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { LeadsModule } from './leads/leads.module';
 import { PersonnelModule } from './personnel/personnel.module';
 import { PropertiesModule } from './properties/properties.module';
@@ -21,6 +22,7 @@ import { AppController } from './app.controller';
 
     // Feature modules
     AuthModule,
+    CloudinaryModule,
     AgenciesModule,
     LeadsModule,
     PersonnelModule,

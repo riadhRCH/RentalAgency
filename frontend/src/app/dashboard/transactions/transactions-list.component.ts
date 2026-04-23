@@ -16,8 +16,12 @@ import { I18nService } from '../../i18n/i18n.service';
 export class TransactionsListComponent implements OnInit {
   private readonly i18n = inject(I18nService);
   transactions: Transaction[] = [];
+  filteredTransactions: Transaction[] = [];
   isLoading = signal(true);
   error: string | null = null;
+  paymentFilter = 'ALL';
+  completionFilter = 'ALL';
+  lifecycleFilter = 'ALL';
 
   constructor(private transactionsService: TransactionsService, private router: Router) {}
 
@@ -30,6 +34,7 @@ export class TransactionsListComponent implements OnInit {
     this.transactionsService.findAll().subscribe({
       next: (data) => {
         this.transactions = data;
+        this.applyFilters();
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -47,6 +52,41 @@ export class TransactionsListComponent implements OnInit {
       case 'CLOSED': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
+  }
+
+  getPaymentBadgeClass(status: string | undefined): string {
+    return status === 'PAID'
+      ? 'bg-emerald-100 text-emerald-800'
+      : 'bg-orange-100 text-orange-800';
+  }
+
+  applyFilters(): void {
+    this.filteredTransactions = this.transactions.filter((transaction) => {
+      const matchesPayment =
+        this.paymentFilter === 'ALL' || transaction.completion?.paymentStatus === this.paymentFilter;
+
+      const matchesCompletion =
+        this.completionFilter === 'ALL'
+        || (this.completionFilter === 'COMPLETE' && !!transaction.completion?.isComplete)
+        || (this.completionFilter === 'INCOMPLETE' && !transaction.completion?.isComplete);
+
+      const matchesLifecycle =
+        this.lifecycleFilter === 'ALL' || transaction.status === this.lifecycleFilter;
+
+      return matchesPayment && matchesCompletion && matchesLifecycle;
+    });
+  }
+
+  onFilterChange(type: 'payment' | 'completion' | 'lifecycle', value: string): void {
+    if (type === 'payment') {
+      this.paymentFilter = value;
+    } else if (type === 'completion') {
+      this.completionFilter = value;
+    } else {
+      this.lifecycleFilter = value;
+    }
+
+    this.applyFilters();
   }
 
   closeTransaction(id: string): void {

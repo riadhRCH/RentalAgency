@@ -35,6 +35,13 @@ export interface Transaction {
     sourceType: 'LEAD' | 'VISIT' | 'DIRECT';
     sourceId?: string;
   };
+  completion?: {
+    stepsDone: number;
+    totalSteps: number;
+    percent: number;
+    isComplete: boolean;
+    paymentStatus: 'PAID' | 'UNPAID';
+  };
   createdAt?: string;
   updatedAt?: string;
 }
@@ -83,9 +90,9 @@ export class TransactionsService {
     return this.http.patch<any>(`${this.apiUrl}/public/${id}`, updateData);
   }
 
-  uploadPublicTransactionFile(id: string, kind: 'document' | 'payment-proof', file: File): Observable<any> {
+  uploadFile(file: File): Observable<{ url: string; public_id: string }> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<any>(`${this.apiUrl}/public/${id}/upload/${kind}`, formData);
+    return this.http.post<{ url: string; public_id: string }>(`${environment.apiBaseUrl}/cloudinary/upload`, formData);
   }
 }

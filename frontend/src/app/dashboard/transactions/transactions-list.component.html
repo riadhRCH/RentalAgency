@@ -15,6 +15,39 @@
     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
   </div>
 
+  <div *ngIf="!isLoading() && transactions.length > 0" class="glass-card rounded-2xl border border-white/10 p-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="space-y-2">
+        <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'TRANSACTIONS.PAYMENT_FILTER' | translate }}</label>
+        <select [value]="paymentFilter" (change)="onFilterChange('payment', $any($event.target).value)" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white outline-none focus:border-primary transition-all">
+          <option value="ALL" class="bg-slate-900">{{ 'TRANSACTIONS.FILTER_ALL' | translate }}</option>
+          <option value="PAID" class="bg-slate-900">{{ 'TRANSACTIONS.PAID' | translate }}</option>
+          <option value="UNPAID" class="bg-slate-900">{{ 'TRANSACTIONS.UNPAID' | translate }}</option>
+        </select>
+      </div>
+
+      <div class="space-y-2">
+        <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'TRANSACTIONS.COMPLETION_FILTER' | translate }}</label>
+        <select [value]="completionFilter" (change)="onFilterChange('completion', $any($event.target).value)" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white outline-none focus:border-primary transition-all">
+          <option value="ALL" class="bg-slate-900">{{ 'TRANSACTIONS.FILTER_ALL' | translate }}</option>
+          <option value="COMPLETE" class="bg-slate-900">{{ 'TRANSACTIONS.COMPLETE' | translate }}</option>
+          <option value="INCOMPLETE" class="bg-slate-900">{{ 'TRANSACTIONS.INCOMPLETE' | translate }}</option>
+        </select>
+      </div>
+
+      <div class="space-y-2">
+        <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'TRANSACTIONS.STATUS_FILTER' | translate }}</label>
+        <select [value]="lifecycleFilter" (change)="onFilterChange('lifecycle', $any($event.target).value)" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white outline-none focus:border-primary transition-all">
+          <option value="ALL" class="bg-slate-900">{{ 'TRANSACTIONS.FILTER_ALL' | translate }}</option>
+          <option value="CURRENT" class="bg-slate-900">{{ 'COMMON.CURRENT' | translate }}</option>
+          <option value="EXPIRING_SOON" class="bg-slate-900">{{ 'COMMON.EXPIRING_SOON' | translate }}</option>
+          <option value="OVERDUE" class="bg-slate-900">{{ 'COMMON.OVERDUE' | translate }}</option>
+          <option value="CLOSED" class="bg-slate-900">{{ 'COMMON.CLOSED' | translate }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
   <div *ngIf="!isLoading() && transactions.length === 0" class="mt-8">
     <app-empty-state
       [title]="'TRANSACTIONS.NO_TRANSACTIONS_TITLE' | translate"
@@ -25,7 +58,11 @@
     </app-empty-state>
   </div>
 
-  <div *ngIf="!isLoading() && transactions.length > 0" class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+  <div *ngIf="!isLoading() && transactions.length > 0 && filteredTransactions.length === 0" class="glass-card rounded-2xl border border-white/10 p-8 text-center text-slate-400">
+    {{ 'TRANSACTIONS.NO_FILTERED_TRANSACTIONS' | translate }}
+  </div>
+
+  <div *ngIf="!isLoading() && filteredTransactions.length > 0" class="glass-card rounded-2xl border border-white/10 overflow-hidden">
     <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse">
         <thead class="bg-white/5 border-b border-white/10">
@@ -34,12 +71,13 @@
             <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'TRANSACTIONS.TENANT' | translate }}</th>
             <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'TRANSACTIONS.RENT' | translate }}</th>
             <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'TRANSACTIONS.DATES' | translate }}</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'TRANSACTIONS.PROGRESS' | translate }}</th>
             <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'COMMON.STATUS' | translate }}</th>
             <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">{{ 'LEADS.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-white/5">
-          <tr *ngFor="let transaction of transactions" class="group hover:bg-white/5 transition-colors" (click)="viewTransaction(transaction._id)">
+          <tr *ngFor="let transaction of filteredTransactions" class="group hover:bg-white/5 transition-colors" (click)="viewTransaction(transaction._id)">
             <td class="p-6">
               <div class="text-sm font-bold text-slate-900 dark:text-white">{{ transaction.propertyId?.reference }}</div>
               <div class="text-[11px] text-slate-500">{{ transaction.propertyId?.address }}</div>
@@ -53,6 +91,24 @@
             </td>
             <td class="p-6 text-sm text-slate-500">
               <div>{{ transaction.timeline.startDate | date:'shortDate' }} - {{ transaction.timeline.endDate | date:'shortDate' }}</div>
+            </td>
+            <td class="p-6 min-w-[220px]">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-xs font-bold uppercase tracking-widest text-slate-400">
+                    {{ transaction.completion?.stepsDone || 0 }}/{{ transaction.completion?.totalSteps || 0 }} {{ 'TRANSACTIONS.STEPS_DONE' | translate }}
+                  </span>
+                  <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold" [ngClass]="getPaymentBadgeClass(transaction.completion?.paymentStatus)">
+                    {{ ('TRANSACTIONS.' + (transaction.completion?.paymentStatus || 'UNPAID')) | translate }}
+                  </span>
+                </div>
+                <div class="h-2 rounded-full bg-white/10 overflow-hidden">
+                  <div class="h-full bg-primary transition-all" [style.width.%]="transaction.completion?.percent || 0"></div>
+                </div>
+                <div class="text-[11px] text-slate-500">
+                  {{ transaction.completion?.percent || 0 }}% {{ 'TRANSACTIONS.COMPLETE' | translate | lowercase }}
+                </div>
+              </div>
             </td>
             <td class="p-6">
               <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold" [ngClass]="getStatusBadgeClass(transaction.status)">

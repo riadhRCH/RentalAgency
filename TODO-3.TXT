@@ -1,0 +1,6 @@
+this page http://localhost:4200/dashboard/transactions/69ea872914dd5425a2404342
+is not displaying everything from transaction
+please display missing things including user uploaded documents ( cin and proof of payments )
+display first photo of the property in `Informations du bien`
+
+organize the page in form of steps like in `http://localhost:4200/transaction/69ea872914dd5425a2404342` page and make those steps collapsables with done/undone marks (do a shared service btw the two components if necessary to tell what are the steps sone of a transaction/ what are the things missing for a transaction ...etc)

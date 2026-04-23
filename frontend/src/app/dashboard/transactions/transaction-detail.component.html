@@ -30,35 +30,65 @@
 
   <form *ngIf="!isLoading() && transaction" [formGroup]="transactionForm" (ngSubmit)="onSubmit()" class="space-y-8">
     <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-      <div class="p-8 space-y-6">
-        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h2 class="text-lg font-bold text-white uppercase tracking-wider">{{ 'TRANSACTION_FORM.PROPERTY_ASSETS' | translate }}</h2>
-          </div>
-        </div>
+      <button type="button" (click)="toggleSection('property')" class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
+        <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <span class="material-symbols-outlined" [class.text-primary]="isStepDone('property')" [class.text-slate-500]="!isStepDone('property')">
+            {{ isStepDone('property') ? 'check_circle' : 'radio_button_unchecked' }}
+          </span>
+          {{ 'TRANSACTION_FORM.PROPERTY_ASSETS' | translate }}
+        </h2>
+        <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!propertyExpanded()">
+          expand_more
+        </span>
+      </button>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/5 p-6 rounded-2xl border border-white/10">
-          <div>
-            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">{{ 'TRANSACTION_DETAIL.PROPERTY_REFERENCE' | translate }}</p>
-            <p class="text-white font-semibold">{{ transaction.propertyId?.reference }}</p>
+      <div *ngIf="propertyExpanded()" class="px-8 pb-8 space-y-6 border-t border-white/5">
+        <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 bg-white/5 p-6 rounded-2xl border border-white/10">
+          <div class="rounded-2xl overflow-hidden border border-white/10 bg-black/20">
+            <img *ngIf="getPropertyPrimaryPhoto(); else noPropertyPhoto" [src]="getPropertyPrimaryPhoto()!" [alt]="transaction.propertyId?.reference" class="w-full h-full min-h-[220px] object-cover" />
+            <ng-template #noPropertyPhoto>
+              <div class="min-h-[220px] flex items-center justify-center text-slate-500">
+                <span class="material-symbols-outlined text-4xl">image</span>
+              </div>
+            </ng-template>
           </div>
-          <div>
-            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">{{ 'PROPERTY_FORM.ADDRESS' | translate }}</p>
-            <p class="text-white font-semibold">{{ transaction.propertyId?.address }}</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">{{ 'TRANSACTION_DETAIL.PROPERTY_REFERENCE' | translate }}</p>
+              <p class="text-white font-semibold">{{ transaction.propertyId?.reference }}</p>
+            </div>
+            <div>
+              <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">{{ 'PROPERTY_FORM.ADDRESS' | translate }}</p>
+              <p class="text-white font-semibold">{{ transaction.propertyId?.address }}</p>
+            </div>
+            <div>
+              <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">{{ 'PROPERTY_FORM.PRICE' | translate }}</p>
+              <p class="text-white font-semibold">{{ transaction.propertyId?.price || transaction.financialDetails?.rentAmount }} TND</p>
+            </div>
+            <div>
+              <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">{{ 'PROPERTY_FORM.PROPERTY_TYPE' | translate }}</p>
+              <p class="text-white font-semibold">{{ transaction.propertyId?.type || ('COMMON.UNKNOWN' | translate) }}</p>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
     <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-      <button type="button" class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
+      <button type="button" (click)="toggleSection('timeline')" class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
         <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">calendar_month</span>
+          <span class="material-symbols-outlined" [class.text-primary]="isStepDone('timeline')" [class.text-slate-500]="!isStepDone('timeline')">
+            {{ isStepDone('timeline') ? 'check_circle' : 'radio_button_unchecked' }}
+          </span>
           {{ 'TRANSACTION_FORM.TIMELINE' | translate }}
         </h2>
+        <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!timelineExpanded()">
+          expand_more
+        </span>
       </button>
 
-      <div class="px-8 pb-8 space-y-6 border-t border-white/5">
+      <div *ngIf="timelineExpanded()" class="px-8 pb-8 space-y-6 border-t border-white/5">
         <div *ngIf="isDailyPayment()" class="space-y-4">
           <div class="text-center">
             <h3 class="text-lg font-semibold text-white mb-4">{{ 'TRANSACTION_FORM.SELECTED_DATES' | translate }}</h3>
@@ -92,14 +122,19 @@
     </section>
 
     <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-      <button type="button" class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
+      <button type="button" (click)="toggleSection('customer')" class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
         <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">person</span>
+          <span class="material-symbols-outlined" [class.text-primary]="isStepDone('customer')" [class.text-slate-500]="!isStepDone('customer')">
+            {{ isStepDone('customer') ? 'check_circle' : 'radio_button_unchecked' }}
+          </span>
           {{ 'TRANSACTION_FORM.CUSTOMER_PROFILE' | translate }}
         </h2>
+        <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!customerExpanded()">
+          expand_more
+        </span>
       </button>
 
-      <div class="px-8 pb-8 space-y-6 border-t border-white/5">
+      <div *ngIf="customerExpanded()" class="px-8 pb-8 space-y-6 border-t border-white/5">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-2">
             <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.FULL_NAME' | translate }}</label>
@@ -126,14 +161,19 @@
     </section>
 
     <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-      <button type="button" class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
+      <button type="button" (click)="toggleSection('financial')" class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
         <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">payments</span>
+          <span class="material-symbols-outlined" [class.text-primary]="isStepDone('financial')" [class.text-slate-500]="!isStepDone('financial')">
+            {{ isStepDone('financial') ? 'check_circle' : 'radio_button_unchecked' }}
+          </span>
           {{ 'TRANSACTION_FORM.FINANCIAL_DETAILS' | translate }}
         </h2>
+        <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!financialExpanded()">
+          expand_more
+        </span>
       </button>
 
-      <div class="px-8 pb-8 space-y-6 border-t border-white/5">
+      <div *ngIf="financialExpanded()" class="px-8 pb-8 space-y-6 border-t border-white/5">
         <div formGroupName="financialDetails" class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="space-y-2">
             <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.RENT_AMOUNT' | translate }}</label>
@@ -157,14 +197,19 @@
     </section>
 
     <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-      <button type="button" class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
+      <button type="button" (click)="toggleSection('documents')" class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
         <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">document_scanner</span>
+          <span class="material-symbols-outlined" [class.text-primary]="isStepDone('documents')" [class.text-slate-500]="!isStepDone('documents')">
+            {{ isStepDone('documents') ? 'check_circle' : 'radio_button_unchecked' }}
+          </span>
           {{ 'TRANSACTION_DETAIL.ADDITIONAL_INFO' | translate }}
         </h2>
+        <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!documentsExpanded()">
+          expand_more
+        </span>
       </button>
 
-      <div class="px-8 pb-8 space-y-6 border-t border-white/5">
+      <div *ngIf="documentsExpanded()" class="px-8 pb-8 space-y-6 border-t border-white/5">
         <div formGroupName="metadata" class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-2">
             <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION.CIN_OR_PASSPORT_NUMBER' | translate }}</label>
@@ -184,18 +229,75 @@
             <textarea formControlName="emergencyContact" rows="3" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all resize-none"></textarea>
           </div>
         </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-3">
+            <div class="flex items-center justify-between gap-3">
+              <h3 class="text-sm font-semibold uppercase tracking-widest text-white">{{ 'TRANSACTION.CIN_OR_PASSPORT' | translate }}</h3>
+              <a *ngIf="getDocumentUrl()" [href]="getDocumentUrl()!" target="_blank" rel="noopener noreferrer" class="text-primary text-xs font-bold uppercase tracking-widest">
+                {{ 'COMMON.PREVIEW' | translate }}
+              </a>
+            </div>
+
+            <a *ngIf="getDocumentUrl(); else noCinDocument" [href]="getDocumentUrl()!" target="_blank" rel="noopener noreferrer" class="block rounded-xl border border-white/10 bg-black/20 overflow-hidden">
+              <img *ngIf="getDocumentUrl()!.match('\\.(jpg|jpeg|png|webp|gif)$'); else cinDocumentFile" [src]="getDocumentUrl()!" [alt]="'CIN document'" class="w-full h-56 object-cover" />
+              <ng-template #cinDocumentFile>
+                <div class="h-56 flex flex-col items-center justify-center text-slate-300 gap-2">
+                  <span class="material-symbols-outlined text-4xl">description</span>
+                  <span class="text-xs font-bold uppercase tracking-widest">{{ 'COMMON.PREVIEW' | translate }}</span>
+                </div>
+              </ng-template>
+            </a>
+
+            <ng-template #noCinDocument>
+              <div class="rounded-xl border border-dashed border-white/10 bg-black/10 p-6 text-sm text-slate-400">
+                {{ 'TRANSACTION_DETAIL.NO_CIN_DOCUMENT' | translate }}
+              </div>
+            </ng-template>
+          </div>
+
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-3">
+            <div class="flex items-center justify-between gap-3">
+              <h3 class="text-sm font-semibold uppercase tracking-widest text-white">{{ 'TRANSACTION.PAYMENT_PROOF' | translate }}</h3>
+              <a *ngIf="getPaymentProofUrl()" [href]="getPaymentProofUrl()!" target="_blank" rel="noopener noreferrer" class="text-primary text-xs font-bold uppercase tracking-widest">
+                {{ 'COMMON.PREVIEW' | translate }}
+              </a>
+            </div>
+
+            <a *ngIf="getPaymentProofUrl(); else noPaymentProof" [href]="getPaymentProofUrl()!" target="_blank" rel="noopener noreferrer" class="block rounded-xl border border-white/10 bg-black/20 overflow-hidden">
+              <img *ngIf="getPaymentProofUrl()!.match('\\.(jpg|jpeg|png|webp|gif)$'); else paymentProofFile" [src]="getPaymentProofUrl()!" [alt]="'Payment proof'" class="w-full h-56 object-cover" />
+              <ng-template #paymentProofFile>
+                <div class="h-56 flex flex-col items-center justify-center text-slate-300 gap-2">
+                  <span class="material-symbols-outlined text-4xl">receipt_long</span>
+                  <span class="text-xs font-bold uppercase tracking-widest">{{ 'TRANSACTION.PAYMENT_PROOF_UPLOADED' | translate }}</span>
+                </div>
+              </ng-template>
+            </a>
+
+            <ng-template #noPaymentProof>
+              <div class="rounded-xl border border-dashed border-white/10 bg-black/10 p-6 text-sm text-slate-400">
+                {{ 'TRANSACTION_DETAIL.NO_PAYMENT_PROOF' | translate }}
+              </div>
+            </ng-template>
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-      <button type="button" class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
+      <button type="button" (click)="toggleSection('status')" class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
         <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">info</span>
+          <span class="material-symbols-outlined" [class.text-primary]="isStepDone('status')" [class.text-slate-500]="!isStepDone('status')">
+            {{ isStepDone('status') ? 'check_circle' : 'radio_button_unchecked' }}
+          </span>
           {{ 'TRANSACTION_DETAIL.CURRENT_STATUS' | translate }}
         </h2>
+        <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!statusExpanded()">
+          expand_more
+        </span>
       </button>
 
-      <div class="px-8 pb-8 space-y-6 border-t border-white/5">
+      <div *ngIf="statusExpanded()" class="px-8 pb-8 space-y-6 border-t border-white/5">
         <div class="space-y-2 md:w-1/2">
           <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_DETAIL.TRANSACTION_STATUS' | translate }}</label>
           <select formControlName="status" class="w-full bg-slate-900/80 border border-slate-700 text-white rounded-xl p-3 text-sm outline-none focus:border-primary focus:bg-slate-950 transition-all">

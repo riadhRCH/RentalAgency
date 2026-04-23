@@ -8,6 +8,7 @@ import { I18nService } from '../../i18n/i18n.service';
 import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
 import { CalendarSelectorComponent } from '../../shared/components/calendar/calendar-selector.component';
 import { PropertiesService } from '../../services/properties.service';
+import { TransactionStepsService, TransactionStepKey } from '../../services/transaction-steps.service';
 
 @Component({
   selector: 'app-transaction-detail',
@@ -18,6 +19,7 @@ import { PropertiesService } from '../../services/properties.service';
 })
 export class TransactionDetailComponent implements OnInit {
   private readonly i18n = inject(I18nService);
+  private readonly transactionSteps = inject(TransactionStepsService);
   transactionForm: FormGroup;
   transaction: Transaction | null = null;
   isLoading = signal(true);
@@ -26,6 +28,12 @@ export class TransactionDetailComponent implements OnInit {
   propertyCalendarData: any[] = [];
   selectedDates: string[] = [];
   selectedDatesControl: FormControl = new FormControl([]);
+  propertyExpanded = signal(false);
+  timelineExpanded = signal(false);
+  customerExpanded = signal(false);
+  financialExpanded = signal(false);
+  documentsExpanded = signal(false);
+  statusExpanded = signal(false);
 
   constructor(
     private fb: FormBuilder,
@@ -59,6 +67,10 @@ export class TransactionDetailComponent implements OnInit {
         emergencyContact: ['']
       }),
       status: ['']
+    });
+
+    this.transactionForm.get('financialDetails.paymentFrequency')?.valueChanges.subscribe(() => {
+      this.updateTimelineValidators();
     });
   }
 
@@ -124,10 +136,12 @@ export class TransactionDetailComponent implements OnInit {
             },
             status: data.status || ''
           });
+          this.updateTimelineValidators();
         } catch (error) {
           console.error('Failed to patch transaction form', error);
           this.error = this.i18n.translate('TRANSACTION_DETAIL.LOAD_FAILED');
         } finally {
+          this.autoOpenFirstUndoneStep();
           this.isLoading.set(false);
         }
       },
@@ -153,6 +167,64 @@ export class TransactionDetailComponent implements OnInit {
     return this.transactionForm.get('financialDetails.paymentFrequency')?.value === 'DAILY';
   }
 
+  private updateTimelineValidators(): void {
+    const timelineGroup = this.transactionForm.get('timeline');
+    if (!timelineGroup) {
+      return;
+    }
+
+    const startDateControl = timelineGroup.get('startDate');
+    const durationControl = timelineGroup.get('duration');
+    const endDateControl = timelineGroup.get('endDate');
+
+    if (this.isDailyPayment()) {
+      startDateControl?.clearValidators();
+      durationControl?.clearValidators();
+      endDateControl?.clearValidators();
+    } else {
+      startDateControl?.setValidators([Validators.required]);
+      durationControl?.setValidators([Validators.required, Validators.min(1)]);
+      endDateControl?.setValidators([Validators.required]);
+    }
+
+    startDateControl?.updateValueAndValidity({ emitEvent: false });
+    durationControl?.updateValueAndValidity({ emitEvent: false });
+    endDateControl?.updateValueAndValidity({ emitEvent: false });
+  }
+
+  toggleSection(section: TransactionStepKey): void {
+    this.propertyExpanded.set(section === 'property' && !this.propertyExpanded());
+    this.timelineExpanded.set(section === 'timeline' && !this.timelineExpanded());
+    this.customerExpanded.set(section === 'customer' && !this.customerExpanded());
+    this.financialExpanded.set(section === 'financial' && !this.financialExpanded());
+    this.documentsExpanded.set(section === 'documents' && !this.documentsExpanded());
+    this.statusExpanded.set(section === 'status' && !this.statusExpanded());
+  }
+
+  isStepDone(step: TransactionStepKey): boolean {
+    return this.transactionSteps.isStepDone(step, this.transaction, this.transactionForm.getRawValue());
+  }
+
+  getPropertyPrimaryPhoto(): string | null {
+    return this.transaction?.propertyId?.photos?.[0] || null;
+  }
+
+  getDocumentUrl(): string | null {
+    return this.transaction?.metadata?.documents?.[0] || null;
+  }
+
+  getPaymentProofUrl(): string | null {
+    return this.transaction?.metadata?.paymentProof || null;
+  }
+
+  private autoOpenFirstUndoneStep(): void {
+    const firstUndoneStep = this.transactionSteps.getFirstUndoneStep(
+      this.transaction,
+      this.transactionForm.getRawValue(),
+    );
+    this.toggleSection(firstUndoneStep);
+  }
+
   onDatesSelected(dates: Date[]): void {
     this.selectedDates = dates.map(date => date.toISOString().split('T')[0]);
     this.selectedDatesControl.setValue(this.selectedDates);
@@ -171,7 +243,17 @@ export class TransactionDetailComponent implements OnInit {
     }
 
     this.isSaving = true;
-    this.transactionsService.update(this.transaction._id, this.transactionForm.value).subscribe({
+    const formValue = this.transactionForm.getRawValue();
+    const updatePayload = {
+      ...formValue,
+      metadata: {
+        ...formValue.metadata,
+        documents: this.transaction?.metadata?.documents || [],
+        paymentProof: this.transaction?.metadata?.paymentProof || '',
+      }
+    };
+
+    this.transactionsService.update(this.transaction._id, updatePayload).subscribe({
       next: () => {
         this.isSaving = false;
         this.router.navigate(['/dashboard/transactions']);

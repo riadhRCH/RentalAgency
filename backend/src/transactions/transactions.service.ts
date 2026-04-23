@@ -226,6 +226,38 @@ export class TransactionsService {
     return updatedTransaction;
   }
 
+  async updatePublicDocumentUrl(id: string, url: string): Promise<TransactionDocument> {
+    const updatedTransaction = await this.transactionModel
+      .findByIdAndUpdate(
+        id,
+        { $set: { 'metadata.documents': [url] } },
+        { new: true },
+      )
+      .exec();
+
+    if (!updatedTransaction) {
+      throw new NotFoundException('Transaction not found');
+    }
+
+    return updatedTransaction;
+  }
+
+  async updatePublicPaymentProofUrl(id: string, url: string): Promise<TransactionDocument> {
+    const updatedTransaction = await this.transactionModel
+      .findByIdAndUpdate(
+        id,
+        { $set: { 'metadata.paymentProof': url } },
+        { new: true },
+      )
+      .exec();
+
+    if (!updatedTransaction) {
+      throw new NotFoundException('Transaction not found');
+    }
+
+    return updatedTransaction;
+  }
+
   private getNestedValue(obj: any, path: string): any {
     return path.split('.').reduce((current, key) => current?.[key], obj);
   }

@@ -24,6 +24,7 @@ export interface Transaction {
     documents?: string[];
     cinNumber?: string;
     numberOfPersons?: number;
+    paymentProof?: string;
     utilityNotes?: string;
     emergencyContact?: string;
     contracts?: string[];
@@ -80,5 +81,11 @@ export class TransactionsService {
 
   updatePublicTransaction(id: string, updateData: any): Observable<any> {
     return this.http.patch<any>(`${this.apiUrl}/public/${id}`, updateData);
+  }
+
+  uploadPublicTransactionFile(id: string, kind: 'document' | 'payment-proof', file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<any>(`${this.apiUrl}/public/${id}/upload/${kind}`, formData);
   }
 }

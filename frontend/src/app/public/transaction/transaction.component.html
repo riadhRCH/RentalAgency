@@ -182,18 +182,26 @@
               <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION.CIN_OR_PASSPORT' | translate }}</label>
               <input
                 type="file"
-                formControlName="cinDocument"
                 accept="image/*,.pdf"
                 (change)="onFileSelected($event, 'cinDocument')"
+                [disabled]="documentUploading()"
                 class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90"
               />
               <p class="text-xs text-slate-400">{{ 'TRANSACTION.CIN_OR_PASSPORT_DESCRIPTION' | translate }}</p>
+              <div *ngIf="documentUploading()" class="flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest">
+                <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                {{ 'TRANSACTION.UPLOADING_DOCUMENT' | translate }}
+              </div>
+              <div *ngIf="!documentUploading() && transaction()?.metadata?.documents?.length" class="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-widest">
+                <span class="material-symbols-outlined text-sm">check_circle</span>
+                {{ 'TRANSACTION.DOCUMENT_UPLOADED' | translate }}
+              </div>
             </div>
 
             <div class="flex justify-end">
               <button
                 type="submit"
-                [disabled]="saving() || !documentsForm.valid"
+                [disabled]="saving() || documentUploading() || !documentsDone()"
                 class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all"
               >
                 {{ 'COMMON.NEXT' | translate }}
@@ -236,19 +244,28 @@
               <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION.PAYMENT_PROOF' | translate }}</label>
               <input
                 type="file"
-                formControlName="paymentProof"
                 accept="image/*,.pdf"
                 (change)="onFileSelected($event, 'paymentProof')"
+                [disabled]="paymentUploading()"
                 class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90"
               />
               <p class="text-xs text-slate-400">{{ 'TRANSACTION.PAYMENT_PROOF_DESCRIPTION' | translate }}</p>
+              <div *ngIf="paymentUploading()" class="flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest">
+                <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                {{ 'TRANSACTION.UPLOADING_PAYMENT_PROOF' | translate }}
+              </div>
+              <div *ngIf="!paymentUploading() && transaction()?.metadata?.paymentProof" class="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-widest">
+                <span class="material-symbols-outlined text-sm">check_circle</span>
+                {{ 'TRANSACTION.PAYMENT_PROOF_UPLOADED' | translate }}
+              </div>
             </div>
 
             <div class="flex justify-end">
               <button
                 type="button"
                 (click)="onPaymentSubmit()"
-                class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all"
+                [disabled]="paymentUploading() || !paymentForm.valid"
+                class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all"
               >
                 {{ 'TRANSACTION.FINALIZE_RESERVATION' | translate }}
               </button>

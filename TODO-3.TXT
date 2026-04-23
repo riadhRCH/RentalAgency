@@ -1,7 +1,3 @@
-in `http://localhost:4200/transaction/69ea872914dd5425a2404342` page,
-i want you to make the `Selectionner les dates` as a first step instead of 2nd
-i want you to add some info in `Informations client` step
-    - add string input for user cin or passport
-    - add how many persons will be included (context is user is trying to make a rent and he should indicate to the agency how many peaple he is bringing in)
+in page `http://localhost:4200/transaction/69ea872914dd5425a2404342`
 
-reflect changes in `http://localhost:4200/dashboard/transactions/69ea872914dd5425a2404342` page
+when user selects a document in documents step, or a document as a proof of payment in payment step, i want you to directly uplaod the file and save its ur lin transaction (show a correct loader)

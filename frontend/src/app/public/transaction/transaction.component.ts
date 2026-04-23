@@ -71,6 +71,8 @@ export class TransactionComponent implements OnInit {
   transaction = signal<Transaction | null>(null);
   loading = signal(true);
   saving = signal(false);
+  documentUploading = signal(false);
+  paymentUploading = signal(false);
 
   // Forms
   customerForm: FormGroup;
@@ -175,7 +177,16 @@ export class TransactionComponent implements OnInit {
       });
     }
 
+    if (transaction?.metadata?.documents?.length) {
+      this.documentsForm.patchValue({ cinDocument: transaction.metadata.documents[0] });
+    }
+
+    if (transaction?.metadata?.paymentProof) {
+      this.paymentForm.patchValue({ paymentProof: transaction.metadata.paymentProof });
+    }
+
     this.checkCustomerInfoDone();
+    this.checkDocumentsDone();
   }
 
   autoOpenFirstUndoneStep() {
@@ -221,7 +232,8 @@ export class TransactionComponent implements OnInit {
   }
 
   checkDocumentsDone() {
-    this.documentsDone.set(this.documentsForm.valid);
+    const hasUploadedDocument = !!this.transaction()?.metadata?.documents?.length;
+    this.documentsDone.set(this.documentsForm.valid || hasUploadedDocument);
   }
 
   onCustomerInfoSubmit() {
@@ -286,54 +298,15 @@ export class TransactionComponent implements OnInit {
   }
 
   onDocumentsSubmit() {
-    if (this.documentsForm.valid && this.selectedFiles['cinDocument']) {
-      this.saving.set(true);
-      const formData = new FormData();
-      formData.append('cinDocument', this.selectedFiles['cinDocument']);
-
-      // For now, just mark as done since file upload handling would need backend support
-      // In a real implementation, you'd upload the file and get back a URL
-      this.transactionsService.updatePublicTransaction(this.transactionId, {
-        metadata: {
-          documents: ['cin_document_uploaded'] // Placeholder
-        }
-      }).subscribe({
-        next: () => {
-          this.saving.set(false);
-          this.documentsDone.set(true);
-          this.documentsExpanded.set(false);
-          this.autoOpenFirstUndoneStep();
-        },
-        error: () => {
-          this.saving.set(false);
-        }
-      });
+    if (this.documentsDone() && !this.documentUploading()) {
+      this.documentsExpanded.set(false);
+      this.autoOpenFirstUndoneStep();
     }
   }
 
   onPaymentSubmit() {
-    if (this.paymentForm.valid && this.selectedFiles['paymentProof']) {
-      this.saving.set(true);
-      const formData = new FormData();
-      formData.append('paymentProof', this.selectedFiles['paymentProof']);
-
-      // For now, just mark as done since file upload handling would need backend support
-      // In a real implementation, you'd upload the file and get back a URL
-      this.transactionsService.updatePublicTransaction(this.transactionId, {
-        metadata: {
-          paymentProof: 'payment_proof_uploaded' // Placeholder
-        }
-      }).subscribe({
-        next: () => {
-          this.saving.set(false);
-          // Mark payment as done and close the section
-          this.paymentExpanded.set(false);
-          // Could navigate to success page or show completion message
-        },
-        error: () => {
-          this.saving.set(false);
-        }
-      });
+    if (this.paymentForm.valid && !this.paymentUploading()) {
+      this.paymentExpanded.set(false);
     }
   }
 
@@ -362,10 +335,55 @@ export class TransactionComponent implements OnInit {
       this.selectedFiles[fieldName] = file;
       if (fieldName === 'cinDocument') {
         this.documentsForm.patchValue({ cinDocument: file });
-        this.checkDocumentsDone();
+        this.uploadTransactionFile(file, 'document');
       } else if (fieldName === 'paymentProof') {
         this.paymentForm.patchValue({ paymentProof: file });
+        this.uploadTransactionFile(file, 'payment-proof');
       }
     }
+  }
+
+  private uploadTransactionFile(file: File, kind: 'document' | 'payment-proof') {
+    if (kind === 'document') {
+      this.documentUploading.set(true);
+    } else {
+      this.paymentUploading.set(true);
+    }
+
+    this.transactionsService.uploadPublicTransactionFile(this.transactionId, kind, file).subscribe({
+      next: (result) => {
+        const currentTransaction = this.transaction();
+        if (currentTransaction) {
+          this.transaction.set({
+            ...currentTransaction,
+            metadata: {
+              ...currentTransaction.metadata,
+              ...(kind === 'document'
+                ? { documents: [result.url] }
+                : { paymentProof: result.url }),
+            },
+          });
+        }
+
+        if (kind === 'document') {
+          this.documentsForm.patchValue({ cinDocument: result.url });
+          this.documentUploading.set(false);
+          this.checkDocumentsDone();
+        } else {
+          this.paymentForm.patchValue({ paymentProof: result.url });
+          this.paymentUploading.set(false);
+        }
+      },
+      error: () => {
+        if (kind === 'document') {
+          this.documentsForm.patchValue({ cinDocument: null });
+          this.documentUploading.set(false);
+          this.checkDocumentsDone();
+        } else {
+          this.paymentForm.patchValue({ paymentProof: null });
+          this.paymentUploading.set(false);
+        }
+      }
+    });
   }
 }

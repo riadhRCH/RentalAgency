@@ -99,6 +99,10 @@ export class AgenciesService {
   async updateProfile(agencyId: string, profile: UpdateAgencyProfileDto) {
     const updatePayload: Record<string, any> = {};
 
+    if (profile.name !== undefined) {
+      updatePayload.name = profile.name;
+    }
+
     if (profile.logo !== undefined) {
       updatePayload.logo = profile.logo;
     }

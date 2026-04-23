@@ -28,6 +28,7 @@ export class ConfigComponent implements OnInit {
   ];
 
   settings: AgencySettings = { forwardingNumber: '', areaCode: '' };
+  agencyName = '';
   agencyLogo = '';
   virtualNumbers: VirtualNumber[] = [];
   
@@ -58,6 +59,7 @@ export class ConfigComponent implements OnInit {
           forwardingNumber: settings?.forwardingNumber || '',
           areaCode: this.normalizeAreaCode(settings?.areaCode || '')
         };
+        this.agencyName = profile?.name || '';
         this.agencyLogo = profile?.logo || '';
         this.ensureAreaCodeOptionExists(this.settings.areaCode);
         this.newNumber.areaCode = this.settings.areaCode;
@@ -86,9 +88,13 @@ export class ConfigComponent implements OnInit {
 
     forkJoin({
       settings: this.agencyService.updateSettings(this.settings),
-      profile: this.agencyService.updateProfile({ logo: this.agencyLogo.trim() }),
+      profile: this.agencyService.updateProfile({
+        name: this.agencyName.trim(),
+        logo: this.agencyLogo.trim()
+      }),
     }).subscribe({
-      next: () => {
+      next: ({ profile }) => {
+        this.agencyName = profile.name.trim();
         this.agencyLogo = this.agencyLogo.trim();
         this.newNumber.areaCode = this.settings.areaCode;
         this.message = this.i18n.translate('CONFIG.SETTINGS_UPDATED');

@@ -15,6 +15,7 @@ export interface AgencySettings {
 }
 
 export interface UpdateAgencyProfilePayload {
+  name?: string;
   logo?: string;
 }
 

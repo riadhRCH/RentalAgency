@@ -1,0 +1,3 @@
+show transaction completion progress in dashboard for each transaction
+
+add filters to show paid/unpaid/en cours/cloturer transactions

@@ -2,6 +2,7 @@ SMS VERIFICATION FOR LOGIN AND OWNER DASHBOARD ACCESS
 
 Overview:
   Add Twilio SMS verification to improve security for platform login and owner dashboard access.
+  make plans for a whatsapp verification SMS as a fallback in case of Twilio raieed an error in this operation
 
 Acceptance Criteria:
   Login Verification:

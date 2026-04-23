@@ -37,8 +37,12 @@ export class AgenciesController {
   @UseGuards(JwtAuthGuard, AgencyGuard)
   @Post('upload-logo')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadLogo(@UploadedFile() file: Express.Multer.File) {
+  async uploadLogo(@Request() req, @UploadedFile() file: Express.Multer.File) {
     const result = await this.cloudinaryService.uploadImage(file);
+    await this.agenciesService.updateProfile(req.agencyId.toString(), {
+      logo: result.secure_url,
+    });
+
     return {
       url: result.secure_url,
       public_id: result.public_id,

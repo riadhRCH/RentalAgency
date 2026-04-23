@@ -33,7 +33,7 @@ interface Transaction {
   agency: {
     name: string;
     paymentMethods: {
-      type: string;
+      type: 'bank' | 'mobile' | 'poste';
       provider: string;
       rib?: string;
       accountNumber?: string;
@@ -307,6 +307,7 @@ export class TransactionComponent implements OnInit {
   onPaymentSubmit() {
     if (this.paymentForm.valid && !this.paymentUploading()) {
       this.paymentExpanded.set(false);
+      this.router.navigate(['/thank-you']);
     }
   }
 
@@ -327,6 +328,74 @@ export class TransactionComponent implements OnInit {
 
   isDailyPayment(): boolean {
     return this.transaction()?.financialDetails?.paymentFrequency === PaymentFrequency.DAILY;
+  }
+
+  getSelectedDaysCount(): number {
+    return this.selectedDatesControl.value?.length ?? this.transaction()?.timeline?.selectedDates?.length ?? 0;
+  }
+
+  getDailyRate(): number {
+    return Number(this.transaction()?.financialDetails?.rentAmount ?? 0);
+  }
+
+  getTotalAmountToPay(): number {
+    if (this.isDailyPayment()) {
+      return this.getSelectedDaysCount() * this.getDailyRate();
+    }
+
+    return this.getDailyRate();
+  }
+
+  getGuaranteeAmount(): number {
+    return this.getTotalAmountToPay() * 0.2;
+  }
+
+  formatAmount(value: number): string {
+    return new Intl.NumberFormat('fr-TN', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(value);
+  }
+
+  getPaymentMethodLogo(method: Transaction['agency']['paymentMethods'][number]): string {
+    if (method.type === 'poste') {
+      return '/assets/payment-providers/poste-tunisienne.svg';
+    }
+
+    const normalized = `${method.provider || ''} ${method.bankName || ''}`.toLowerCase();
+
+    if (normalized.includes('biat')) {
+      return '/assets/payment-providers/biat.svg';
+    }
+    if (normalized.includes('atb')) {
+      return '/assets/payment-providers/atb.svg';
+    }
+    if (normalized.includes('stb')) {
+      return '/assets/payment-providers/stb.svg';
+    }
+    if (normalized.includes('bh')) {
+      return '/assets/payment-providers/bh-bank.svg';
+    }
+    if (normalized.includes('uib')) {
+      return '/assets/payment-providers/uib.svg';
+    }
+    if (normalized.includes('wafa')) {
+      return '/assets/payment-providers/wafacash.svg';
+    }
+
+    return '/assets/payment-providers/generic-provider.svg';
+  }
+
+  getPaymentMethodBadge(method: Transaction['agency']['paymentMethods'][number]): string {
+    if (method.type === 'poste') {
+      return this.i18n.translate('TRANSACTION.POSTAL_ACCOUNT');
+    }
+
+    if (method.type === 'bank') {
+      return this.i18n.translate('TRANSACTION.BANK_TRANSFER');
+    }
+
+    return method.type;
   }
 
   onFileSelected(event: any, fieldName: string) {

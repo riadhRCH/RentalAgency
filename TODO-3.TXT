@@ -1,3 +1,0 @@
-in page `http://localhost:4200/transaction/69ea872914dd5425a2404342`
-
-when user selects a document in documents step, or a document as a proof of payment in payment step, i want you to directly uplaod the file and save its ur lin transaction (show a correct loader)

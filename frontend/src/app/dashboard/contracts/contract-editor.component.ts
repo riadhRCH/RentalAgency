@@ -1,7 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ContractsService, Contract } from '../../services/contracts.service';
 import { TransactionsService, Transaction } from '../../services/transactions.service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
@@ -50,7 +49,6 @@ export class ContractEditorComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly transactionsService = inject(TransactionsService);
-  private readonly contractsService = inject(ContractsService);
   private readonly agencyService = inject(AgencyService);
   private readonly authService = inject(AuthService);
   private readonly i18n = inject(I18nService);
@@ -58,11 +56,10 @@ export class ContractEditorComponent implements OnInit {
 
   readonly isLoading = signal(true);
   readonly isSaving = signal(false);
-  readonly isGenerating = signal(false);
+  readonly isPrinting = signal(false);
+  readonly isDownloading = signal(false);
 
   transaction: Transaction | null = null;
-  contract: Contract | null = null;
-  contractId: string | null = null;
   agencyProfile: AgencyProfile | null = null;
   error: string | null = null;
   successMessage: string | null = null;
@@ -93,7 +90,7 @@ export class ContractEditorComponent implements OnInit {
         if (fallbackAgency) {
           this.agencyProfile = {
             id: fallbackAgency.id,
-            name: fallbackAgency.name
+            name: fallbackAgency.name,
           };
         }
       }
@@ -104,7 +101,8 @@ export class ContractEditorComponent implements OnInit {
     this.transactionsService.findOne(transactionId).subscribe({
       next: (transaction) => {
         this.transaction = transaction;
-        this.resolveContract(transaction);
+        this.documentModel = this.buildDocumentModel(transaction);
+        this.isLoading.set(false);
       },
       error: () => {
         this.error = this.i18n.translate('CONTRACT_EDITOR.LOAD_TRANSACTION_FAILED');
@@ -113,105 +111,56 @@ export class ContractEditorComponent implements OnInit {
     });
   }
 
-  private resolveContract(transaction: Transaction): void {
-    const existingContractId = transaction.metadata?.contracts?.[0];
+  private buildDocumentModel(transaction: Transaction): ContractDocumentModel {
+    const baseModel: ContractDocumentModel = {
+      title: `Contrat de location - ${transaction.propertyId?.reference ?? transaction._id}`,
+      contractDate: this.formatDate(new Date()),
+      city: 'Tunis',
+      landlordName: '',
+      landlordDetails: '',
+      tenantName: `${transaction.personnelId?.firstName ?? ''} ${transaction.personnelId?.lastName ?? ''}`.trim(),
+      tenantDetails: this.buildTenantDetails(transaction),
+      propertyReference: transaction.propertyId?.reference ?? '',
+      propertyAddress: transaction.propertyId?.address ?? '',
+      propertyDescription: this.i18n.translate('CONTRACT_EDITOR.DEFAULT_PROPERTY_DESCRIPTION'),
+      paymentFrequency: this.getPaymentFrequencyLabel(transaction.financialDetails?.paymentFrequency),
+      rentAmount: transaction.financialDetails?.rentAmount ?? 0,
+      depositAmount: transaction.financialDetails?.depositAmount ?? 0,
+      startDate: this.formatDate(transaction.timeline?.startDate),
+      endDate: this.formatDate(transaction.timeline?.endDate),
+      duration: this.getDurationLabel(transaction.timeline?.duration),
+      closingStatement: this.i18n.translate('CONTRACT_EDITOR.DEFAULT_CLOSING'),
+      signatureLabelOwner: this.i18n.translate('CONTRACT_EDITOR.SIGNATURE_OWNER'),
+      signatureLabelTenant: this.i18n.translate('CONTRACT_EDITOR.SIGNATURE_TENANT'),
+      clauses: this.buildLegacyClauses(transaction),
+    };
 
-    if (!existingContractId) {
-      this.createContractFromTransaction(transaction);
-      return;
+    const draft = this.readStoredDraft(transaction._id ?? '');
+    if (!draft) {
+      return baseModel;
     }
 
-    this.contractsService.findOne(existingContractId).subscribe({
-      next: (contract) => {
-        this.applyContract(contract);
-      },
-      error: () => {
-        this.createContractFromTransaction(transaction);
-      }
-    });
-  }
-
-  private createContractFromTransaction(transaction: Transaction): void {
-    const payload = this.buildDefaultContractPayload(transaction);
-
-    this.contractsService.create(payload).subscribe({
-      next: (contract) => {
-        this.applyContract(contract);
-      },
-      error: () => {
-        this.error = this.i18n.translate('CONTRACT_EDITOR.CREATE_FAILED');
-        this.isLoading.set(false);
-      }
-    });
-  }
-
-  private applyContract(contract: Contract): void {
-    this.contract = contract;
-    this.contractId = contract._id ?? null;
-    this.documentModel = this.buildDocumentModel(contract);
-    this.isLoading.set(false);
-  }
-
-  private buildDocumentModel(contract: Contract): ContractDocumentModel {
-    const content = contract.content ?? {};
-    const clauses = this.normalizeClauses(content);
-
     return {
-      title: this.asString(contract.title, this.i18n.translate('CONTRACT_EDITOR.DEFAULT_TITLE')),
-      contractDate: this.asString(content['contractDate'], this.formatDate(new Date())),
-      city: this.asString(content['city'], 'Tunis'),
-      landlordName: this.asString(content['landlordName'], ''),
-      landlordDetails: this.asString(content['landlordDetails'], ''),
-      tenantName: this.asString(content['tenantName'], ''),
-      tenantDetails: this.asString(content['tenantDetails'], this.buildTenantDetails(this.transaction)),
-      propertyReference: this.asString(content['propertyReference'], this.transaction?.propertyId?.reference ?? ''),
-      propertyAddress: this.asString(content['propertyAddress'], this.transaction?.propertyId?.address ?? ''),
-      propertyDescription: this.asString(content['propertyDescription'], this.i18n.translate('CONTRACT_EDITOR.DEFAULT_PROPERTY_DESCRIPTION')),
-      paymentFrequency: this.asString(content['paymentFrequency'], this.getPaymentFrequencyLabel(this.transaction?.financialDetails?.paymentFrequency)),
-      rentAmount: this.asNumber(content['rentAmount'], this.transaction?.financialDetails?.rentAmount ?? 0),
-      depositAmount: this.asNumber(content['depositAmount'], this.transaction?.financialDetails?.depositAmount ?? 0),
-      startDate: this.asString(content['startDate'], this.formatDate(this.transaction?.timeline?.startDate)),
-      endDate: this.asString(content['endDate'], this.formatDate(this.transaction?.timeline?.endDate)),
-      duration: this.asString(content['duration'], this.getDurationLabel(this.transaction?.timeline?.duration)),
-      closingStatement: this.asString(content['closingStatement'], this.i18n.translate('CONTRACT_EDITOR.DEFAULT_CLOSING')),
-      signatureLabelOwner: this.asString(content['signatureLabelOwner'], this.i18n.translate('CONTRACT_EDITOR.SIGNATURE_OWNER')),
-      signatureLabelTenant: this.asString(content['signatureLabelTenant'], this.i18n.translate('CONTRACT_EDITOR.SIGNATURE_TENANT')),
-      clauses
+      ...baseModel,
+      ...draft,
+      clauses: Array.isArray(draft.clauses) && draft.clauses.length > 0 ? draft.clauses : baseModel.clauses,
     };
   }
 
-  private normalizeClauses(content: Record<string, any>): ContractClause[] {
-    const rawClauses = content['clauses'];
-
-    if (Array.isArray(rawClauses) && rawClauses.length > 0) {
-      return rawClauses.map((clause: any, index: number) => ({
-        id: this.asString(clause?.id, this.generateClauseId(index)),
-        title: this.asString(clause?.title, `${this.i18n.translate('CONTRACT_EDITOR.CLAUSE')} ${index + 1}`),
-        body: this.asString(clause?.body, ''),
-        removable: clause?.removable !== false
-      }));
-    }
-
-    return this.buildLegacyClauses(content);
-  }
-
-  private buildLegacyClauses(content: Record<string, any>): ContractClause[] {
-    const startDate = this.formatDate(this.transaction?.timeline?.startDate);
-    const endDate = this.formatDate(this.transaction?.timeline?.endDate);
-    const rentAmount = this.transaction?.financialDetails?.rentAmount ?? 0;
-    const depositAmount = this.transaction?.financialDetails?.depositAmount ?? 0;
-    const propertyAddress = this.transaction?.propertyId?.address ?? '';
-    const propertyReference = this.transaction?.propertyId?.reference ?? '';
-    const utilityNotes = this.transaction?.metadata?.utilityNotes ?? '';
+  private buildLegacyClauses(transaction: Transaction): ContractClause[] {
+    const startDate = this.formatDate(transaction.timeline?.startDate);
+    const endDate = this.formatDate(transaction.timeline?.endDate);
+    const rentAmount = transaction.financialDetails?.rentAmount ?? 0;
+    const depositAmount = transaction.financialDetails?.depositAmount ?? 0;
+    const propertyAddress = transaction.propertyId?.address ?? '';
+    const propertyReference = transaction.propertyId?.reference ?? '';
+    const utilityNotes = transaction.metadata?.utilityNotes ?? '';
 
     return [
       {
         id: this.generateClauseId(1),
         title: 'ARTICLE 1 : Objet du contrat',
-        body: this.asString(
-          content['propertyClause'],
-          `Par le present contrat, le bailleur loue au preneur le bien situe a ${propertyAddress} et reference ${propertyReference}. ${this.i18n.translate('CONTRACT_EDITOR.DEFAULT_PROPERTY_DESCRIPTION')}`
-        ),
+        body: `Par le present contrat, le bailleur loue au preneur le bien situe a ${propertyAddress} et reference ${propertyReference}. ${this.i18n.translate('CONTRACT_EDITOR.DEFAULT_PROPERTY_DESCRIPTION')}`,
         removable: false
       },
       {
@@ -222,15 +171,12 @@ export class ContractEditorComponent implements OnInit {
       {
         id: this.generateClauseId(3),
         title: 'ARTICLE 3 : Duree',
-        body: `Le present bail est consenti pour une duree de ${this.getDurationLabel(this.transaction?.timeline?.duration)} prenant effet du ${startDate} au ${endDate}.`
+        body: `Le present bail est consenti pour une duree de ${this.getDurationLabel(transaction.timeline?.duration)} prenant effet du ${startDate} au ${endDate}.`
       },
       {
         id: this.generateClauseId(4),
         title: 'ARTICLE 4 : Loyer et charges',
-        body: this.asString(
-          content['financialClause'],
-          `Le loyer est fixe a ${rentAmount} TND, payable ${this.getPaymentFrequencyLabel(this.transaction?.financialDetails?.paymentFrequency).toLowerCase()}. Les charges usuelles liees a l occupation sont a la charge du preneur, sauf dispositions contraires.`
-        )
+        body: `Le loyer est fixe a ${rentAmount} TND, payable ${this.getPaymentFrequencyLabel(transaction.financialDetails?.paymentFrequency).toLowerCase()}. Les charges usuelles liees a l occupation sont a la charge du preneur, sauf dispositions contraires.`
       },
       {
         id: this.generateClauseId(5),
@@ -245,15 +191,12 @@ export class ContractEditorComponent implements OnInit {
       {
         id: this.generateClauseId(7),
         title: 'ARTICLE 7 : Obligations des parties',
-        body: this.asString(
-          content['obligationsClause'],
-          'Le bailleur s engage a delivrer un logement en bon etat et a garantir une jouissance paisible. Le preneur s engage a payer le loyer et les charges aux echeances convenues, a entretenir le bien et a signaler tout incident sans delai.'
-        )
+        body: 'Le bailleur s engage a delivrer un logement en bon etat et a garantir une jouissance paisible. Le preneur s engage a payer le loyer et les charges aux echeances convenues, a entretenir le bien et a signaler tout incident sans delai.'
       },
       {
         id: this.generateClauseId(8),
         title: 'ARTICLE 8 : Conditions particulieres',
-        body: this.asString(content['specialConditions'], utilityNotes || 'Aucune condition particuliere supplementaire n est prevue au jour de la signature.')
+        body: utilityNotes || 'Aucune condition particuliere supplementaire n est prevue au jour de la signature.'
       },
       {
         id: this.generateClauseId(9),
@@ -266,70 +209,6 @@ export class ContractEditorComponent implements OnInit {
         body: 'Pour l execution des presentes, les parties elisent domicile a leurs adresses respectives. Tout litige relevera de la competence des juridictions territorialement competentes.'
       }
     ];
-  }
-
-  private buildDefaultContractPayload(transaction: Transaction) {
-    const tenantName = `${transaction.personnelId?.firstName ?? ''} ${transaction.personnelId?.lastName ?? ''}`.trim();
-    const payloadModel = this.buildDocumentModel({
-      title: `Contrat de location - ${transaction.propertyId?.reference ?? transaction._id}`,
-      transactionId: transaction._id!,
-      content: {
-        contractDate: this.formatDate(new Date()),
-        city: 'Tunis',
-        landlordName: '',
-        landlordDetails: '',
-        tenantName,
-        tenantDetails: this.buildTenantDetails(transaction),
-        propertyReference: transaction.propertyId?.reference ?? '',
-        propertyAddress: transaction.propertyId?.address ?? '',
-        propertyDescription: this.i18n.translate('CONTRACT_EDITOR.DEFAULT_PROPERTY_DESCRIPTION'),
-        paymentFrequency: this.getPaymentFrequencyLabel(transaction.financialDetails?.paymentFrequency),
-        rentAmount: transaction.financialDetails?.rentAmount ?? 0,
-        depositAmount: transaction.financialDetails?.depositAmount ?? 0,
-        startDate: this.formatDate(transaction.timeline?.startDate),
-        endDate: this.formatDate(transaction.timeline?.endDate),
-        duration: this.getDurationLabel(transaction.timeline?.duration),
-        closingStatement: this.i18n.translate('CONTRACT_EDITOR.DEFAULT_CLOSING'),
-        signatureLabelOwner: this.i18n.translate('CONTRACT_EDITOR.SIGNATURE_OWNER'),
-        signatureLabelTenant: this.i18n.translate('CONTRACT_EDITOR.SIGNATURE_TENANT')
-      }
-    } as Contract);
-
-    return {
-      transactionId: transaction._id!,
-      title: payloadModel.title,
-      content: this.serializeDocumentModel(payloadModel)
-    };
-  }
-
-  private serializeDocumentModel(model: ContractDocumentModel): Record<string, any> {
-    return {
-      contractDate: model.contractDate,
-      city: model.city,
-      landlordName: model.landlordName,
-      landlordDetails: model.landlordDetails,
-      tenantName: model.tenantName,
-      tenantDetails: model.tenantDetails,
-      propertyReference: model.propertyReference,
-      propertyAddress: model.propertyAddress,
-      propertyDescription: model.propertyDescription,
-      paymentFrequency: model.paymentFrequency,
-      rentAmount: model.rentAmount,
-      depositAmount: model.depositAmount,
-      startDate: model.startDate,
-      endDate: model.endDate,
-      duration: model.duration,
-      closingStatement: model.closingStatement,
-      signatureLabelOwner: model.signatureLabelOwner,
-      signatureLabelTenant: model.signatureLabelTenant,
-      clauses: model.clauses.map((clause) => ({
-        id: clause.id,
-        title: clause.title,
-        body: clause.body,
-        removable: clause.removable !== false
-      })),
-      templateName: 'Contrat_Location.docx'
-    };
   }
 
   private buildTenantDetails(transaction: Transaction | null): string {
@@ -379,12 +258,37 @@ export class ContractEditorComponent implements OnInit {
     return `clause-${seed}-${Math.random().toString(36).slice(2, 8)}`;
   }
 
-  private asString(value: unknown, fallback = ''): string {
-    return typeof value === 'string' ? value : fallback;
+  private getDraftStorageKey(transactionId: string): string {
+    return `contract-draft:${transactionId}`;
   }
 
-  private asNumber(value: unknown, fallback = 0): number {
-    return typeof value === 'number' ? value : fallback;
+  private readStoredDraft(transactionId: string): ContractDocumentModel | null {
+    if (!transactionId) {
+      return null;
+    }
+
+    try {
+      const rawDraft = localStorage.getItem(this.getDraftStorageKey(transactionId));
+      return rawDraft ? JSON.parse(rawDraft) as ContractDocumentModel : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private persistDraft(): void {
+    if (!this.transaction?._id || !this.documentModel) {
+      return;
+    }
+
+    localStorage.setItem(this.getDraftStorageKey(this.transaction._id), JSON.stringify(this.documentModel));
+  }
+
+  private sanitizeFileName(value: string): string {
+    return value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'contract';
   }
 
   get agencyName(): string {
@@ -417,6 +321,7 @@ export class ContractEditorComponent implements OnInit {
       ...this.documentModel,
       [field]: value
     };
+    this.persistDraft();
     this.successMessage = null;
     this.error = null;
   }
@@ -436,6 +341,7 @@ export class ContractEditorComponent implements OnInit {
       ...this.documentModel,
       clauses
     };
+    this.persistDraft();
     this.successMessage = null;
     this.error = null;
   }
@@ -458,6 +364,7 @@ export class ContractEditorComponent implements OnInit {
         }
       ]
     };
+    this.persistDraft();
     this.successMessage = null;
     this.error = null;
   }
@@ -476,60 +383,300 @@ export class ContractEditorComponent implements OnInit {
       ...this.documentModel,
       clauses: this.documentModel.clauses.filter((_, clauseIndex) => clauseIndex !== index)
     };
+    this.persistDraft();
     this.successMessage = null;
     this.error = null;
   }
 
   saveContract(): void {
-    if (!this.contractId || !this.documentModel) {
-      return;
-    }
-
     this.isSaving.set(true);
-    this.successMessage = null;
+    this.persistDraft();
+    this.successMessage = this.i18n.translate('CONTRACT_EDITOR.SAVE_SUCCESS');
     this.error = null;
-
-    this.contractsService.update(this.contractId, {
-      title: this.documentModel.title,
-      content: this.serializeDocumentModel(this.documentModel),
-      metadata: {
-        templateName: 'Contrat_Location.docx',
-        editorMode: 'inline-preview'
-      }
-    }).subscribe({
-      next: (contract) => {
-        this.contract = contract;
-        this.documentModel = this.buildDocumentModel(contract);
-        this.successMessage = this.i18n.translate('CONTRACT_EDITOR.SAVE_SUCCESS');
-        this.isSaving.set(false);
-      },
-      error: () => {
-        this.error = this.i18n.translate('CONTRACT_EDITOR.SAVE_FAILED');
-        this.isSaving.set(false);
-      }
-    });
+    this.isSaving.set(false);
   }
 
-  generateContract(): void {
-    if (!this.contractId) {
+  printContract(): void {
+    if (!this.documentModel) {
       return;
     }
 
-    this.isGenerating.set(true);
-    this.successMessage = null;
-    this.error = null;
+    this.isPrinting.set(true);
+    const printWindow = window.open('', '_blank', 'noopener,noreferrer');
+    if (!printWindow) {
+      this.error = this.i18n.translate('CONTRACT_EDITOR.PRINT_FAILED');
+      this.isPrinting.set(false);
+      return;
+    }
 
-    this.contractsService.generate(this.contractId).subscribe({
-      next: (contract) => {
-        this.contract = contract;
-        this.successMessage = this.i18n.translate('CONTRACT_EDITOR.GENERATE_SUCCESS');
-        this.isGenerating.set(false);
-      },
-      error: () => {
-        this.error = this.i18n.translate('CONTRACT_EDITOR.GENERATE_FAILED');
-        this.isGenerating.set(false);
+    printWindow.document.open();
+    printWindow.document.write(this.buildStandaloneContractHtml());
+    printWindow.document.close();
+    printWindow.focus();
+
+    setTimeout(() => {
+      printWindow.print();
+      this.isPrinting.set(false);
+    }, 250);
+  }
+
+  downloadContract(): void {
+    if (!this.documentModel) {
+      return;
+    }
+
+    this.isDownloading.set(true);
+    const html = this.buildStandaloneContractHtml();
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `${this.sanitizeFileName(this.documentModel.title)}.html`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
+    this.isDownloading.set(false);
+  }
+
+  private buildStandaloneContractHtml(): string {
+    const model = this.documentModel!;
+    const logoMarkup = this.agencyProfile?.logo
+      ? `<img src="${this.escapeHtml(this.agencyProfile.logo)}" alt="${this.escapeHtml(this.agencyName)}" class="brand-logo-image" />`
+      : `<div class="brand-logo-fallback">${this.escapeHtml(this.agencyInitials)}</div>`;
+
+    const clausesMarkup = model.clauses.map((clause) => `
+      <section class="clause-block">
+        <h3>${this.escapeHtml(clause.title)}</h3>
+        ${this.escapeParagraphs(clause.body)}
+      </section>
+    `).join('');
+
+    return `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${this.escapeHtml(model.title)}</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f3f4f6;
+      color: #111111;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .page {
+      max-width: 900px;
+      margin: 24px auto;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      padding: 48px;
+    }
+    .header {
+      text-align: center;
+      border-bottom: 1px solid #d1d5db;
+      padding-bottom: 24px;
+    }
+    .brand-logo-image, .brand-logo-fallback {
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 12px;
+      border: 1px solid #d1d5db;
+      object-fit: contain;
+      display: block;
+      background: #ffffff;
+    }
+    .brand-logo-fallback {
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .agency-name {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0;
+    }
+    .agency-subtitle {
+      margin: 6px 0 0;
+      color: #4b5563;
+      font-size: 14px;
+    }
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px 24px;
+      margin-top: 24px;
+    }
+    .meta-row {
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 8px;
+      font-size: 14px;
+    }
+    .meta-label {
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #374151;
+      font-size: 12px;
+      margin-right: 8px;
+    }
+    .title {
+      text-align: center;
+      margin: 32px 0 24px;
+      font-size: 40px;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .box {
+      border: 1px solid #d1d5db;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .label {
+      margin: 0 0 10px;
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .value {
+      margin: 0;
+      line-height: 1.7;
+    }
+    .four-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .clause-block {
+      border: 1px solid #d1d5db;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+    .clause-block h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      text-transform: uppercase;
+    }
+    .clause-block p {
+      margin: 0 0 10px;
+      line-height: 1.7;
+    }
+    .signature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 32px;
+      margin-top: 32px;
+    }
+    .signature-card {
+      padding-top: 40px;
+    }
+    .signature-line {
+      display: block;
+      border-bottom: 1px solid #111111;
+      margin-top: 48px;
+    }
+    @media print {
+      body {
+        background: #ffffff;
       }
-    });
+      .page {
+        margin: 0;
+        box-shadow: none;
+        border: none;
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <article class="page">
+    <header class="header">
+      ${logoMarkup}
+      <p class="agency-name">${this.escapeHtml(this.agencyName)}</p>
+      <p class="agency-subtitle">${this.escapeHtml(this.i18n.translate('CONTRACT_EDITOR.PROFESSIONAL_LEASE'))}</p>
+      <div class="meta">
+        <div class="meta-row"><span class="meta-label">${this.escapeHtml(this.i18n.translate('CONTRACT_EDITOR.PREVIEW_META'))}</span>${this.escapeHtml(model.contractDate)}</div>
+        <div class="meta-row"><span class="meta-label">${this.escapeHtml(this.i18n.translate('CONTRACT_EDITOR.CITY_LABEL'))}</span>${this.escapeHtml(model.city)}</div>
+      </div>
+    </header>
+
+    <h1 class="title">${this.escapeHtml(model.title)}</h1>
+
+    <section class="grid">
+      <div class="box">
+        <p class="label">${this.escapeHtml(this.i18n.translate('CONTRACT_EDITOR.LANDLORD_NAME'))}</p>
+        <p class="value"><strong>${this.escapeHtml(model.landlordName)}</strong></p>
+        ${this.escapeParagraphs(model.landlordDetails)}
+      </div>
+      <div class="box">
+        <p class="label">${this.escapeHtml(this.i18n.translate('CONTRACT_EDITOR.TENANT_NAME'))}</p>
+        <p class="value"><strong>${this.escapeHtml(model.tenantName)}</strong></p>
+        ${this.escapeParagraphs(model.tenantDetails)}
+      </div>
+    </section>
+
+    <section class="four-grid">
+      <div class="box"><p class="label">${this.escapeHtml(this.i18n.translate('TRANSACTION_DETAIL.PROPERTY_REFERENCE'))}</p><p class="value">${this.escapeHtml(model.propertyReference)}</p></div>
+      <div class="box"><p class="label">${this.escapeHtml(this.i18n.translate('PROPERTY_FORM.ADDRESS'))}</p><p class="value">${this.escapeHtml(model.propertyAddress)}</p></div>
+      <div class="box"><p class="label">${this.escapeHtml(this.i18n.translate('TRANSACTION_FORM.RENT_AMOUNT'))}</p><p class="value">${this.escapeHtml(String(model.rentAmount))}</p></div>
+      <div class="box"><p class="label">${this.escapeHtml(this.i18n.translate('TRANSACTION_FORM.DEPOSIT_AMOUNT'))}</p><p class="value">${this.escapeHtml(String(model.depositAmount))}</p></div>
+      <div class="box"><p class="label">${this.escapeHtml(this.i18n.translate('TRANSACTION_FORM.START_DATE'))}</p><p class="value">${this.escapeHtml(model.startDate)}</p></div>
+      <div class="box"><p class="label">${this.escapeHtml(this.i18n.translate('TRANSACTION_FORM.END_DATE'))}</p><p class="value">${this.escapeHtml(model.endDate)}</p></div>
+      <div class="box"><p class="label">${this.escapeHtml(this.i18n.translate('TRANSACTION_FORM.DURATION'))}</p><p class="value">${this.escapeHtml(model.duration)}</p></div>
+      <div class="box"><p class="label">${this.escapeHtml(this.i18n.translate('TRANSACTION_FORM.PAYMENT_FREQUENCY'))}</p><p class="value">${this.escapeHtml(model.paymentFrequency)}</p></div>
+    </section>
+
+    <section class="box">
+      <p class="label">${this.escapeHtml(this.i18n.translate('CONTRACT_EDITOR.PROPERTY_DESCRIPTION'))}</p>
+      ${this.escapeParagraphs(model.propertyDescription)}
+    </section>
+
+    ${clausesMarkup}
+
+    <section class="box">
+      <p class="label">${this.escapeHtml(this.i18n.translate('CONTRACT_EDITOR.CLOSING_SECTION'))}</p>
+      ${this.escapeParagraphs(model.closingStatement)}
+    </section>
+
+    <section class="signature-grid">
+      <div class="signature-card">
+        <p>${this.escapeHtml(model.signatureLabelOwner)}</p>
+        <span class="signature-line"></span>
+      </div>
+      <div class="signature-card">
+        <p>${this.escapeHtml(model.signatureLabelTenant)}</p>
+        <span class="signature-line"></span>
+      </div>
+    </section>
+  </article>
+</body>
+</html>`;
+  }
+
+  private escapeParagraphs(value: string): string {
+    return (value || '')
+      .split(/\r?\n/)
+      .filter((line) => line.trim().length > 0)
+      .map((line) => `<p class="value">${this.escapeHtml(line)}</p>`)
+      .join('') || '<p class="value"></p>';
+  }
+
+  private escapeHtml(value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   backToTransaction(): void {

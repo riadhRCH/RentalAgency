@@ -17,13 +17,14 @@
         <span *ngIf="!isSaving()">{{ 'COMMON.SAVE_CHANGES' | translate }}</span>
         <span *ngIf="isSaving()">{{ 'COMMON.SAVING' | translate }}</span>
       </button>
-      <button type="button" (click)="generateContract()" [disabled]="isGenerating() || isLoading() || !documentModel" class="primary-action">
-        <span *ngIf="!isGenerating()">{{ 'CONTRACT_EDITOR.GENERATE_ACTION' | translate }}</span>
-        <span *ngIf="isGenerating()">{{ 'CONTRACT_EDITOR.GENERATING' | translate }}</span>
+      <button type="button" (click)="printContract()" [disabled]="isPrinting() || isLoading() || !documentModel" class="ghost-action">
+        <span *ngIf="!isPrinting()">{{ 'CONTRACT_EDITOR.PRINT_ACTION' | translate }}</span>
+        <span *ngIf="isPrinting()">{{ 'CONTRACT_EDITOR.PRINTING' | translate }}</span>
       </button>
-      <a *ngIf="contract?.generatedFileUrl" [href]="contract?.generatedFileUrl" target="_blank" rel="noopener" class="ghost-action">
-        {{ 'CONTRACT_EDITOR.DOWNLOAD_ACTION' | translate }}
-      </a>
+      <button type="button" (click)="downloadContract()" [disabled]="isDownloading() || isLoading() || !documentModel" class="primary-action">
+        <span *ngIf="!isDownloading()">{{ 'CONTRACT_EDITOR.DOWNLOAD_ACTION' | translate }}</span>
+        <span *ngIf="isDownloading()">{{ 'CONTRACT_EDITOR.DOWNLOADING' | translate }}</span>
+      </button>
     </div>
   </header>
 
@@ -43,52 +44,52 @@
     <aside class="document-hints">
       <p>{{ 'CONTRACT_EDITOR.EDIT_HINT' | translate }}</p>
       <p>{{ 'CONTRACT_EDITOR.CLAUSE_HINT' | translate }}</p>
-      <p class="template-chip">{{ 'CONTRACT_EDITOR.TEMPLATE_LABEL' | translate }}: `Contrat_Location.docx`</p>
+      <p class="template-chip">{{ 'CONTRACT_EDITOR.LOCAL_DRAFT_HINT' | translate }}</p>
     </aside>
 
     <article class="contract-page">
-      <div class="contract-watermark"></div>
-
       <header class="contract-header">
-        <div class="brand-lockup">
+        <div class="brand-lockup brand-lockup--centered">
           <div class="brand-logo" [class.brand-logo--image]="!!agencyProfile?.logo">
             <img *ngIf="agencyProfile?.logo" [src]="agencyProfile?.logo" [alt]="agencyName" />
             <span *ngIf="!agencyProfile?.logo">{{ agencyInitials }}</span>
           </div>
 
-          <div class="brand-copy">
-            <p class="brand-kicker">{{ 'CONTRACT_EDITOR.PROFESSIONAL_LEASE' | translate }}</p>
+          <div class="brand-copy brand-copy--centered">
             <h2>{{ agencyName }}</h2>
-            <p>{{ 'CONTRACT_EDITOR.CONFIDENTIAL_NOTICE' | translate }}</p>
+            <p>{{ 'CONTRACT_EDITOR.PROFESSIONAL_LEASE' | translate }}</p>
           </div>
         </div>
 
         <div class="contract-meta">
-          <p>{{ 'CONTRACT_EDITOR.PREVIEW_META' | translate }}</p>
-          <div
-            class="editable-line editable-line--strong"
-            contenteditable="true"
-            spellcheck="false"
-            (blur)="updateField('contractDate', editableText($event))"
-          >{{ documentModel.contractDate }}</div>
-          <div
-            class="editable-line"
-            contenteditable="true"
-            spellcheck="false"
-            (blur)="updateField('city', editableText($event))"
-          >{{ documentModel.city }}</div>
+          <div class="contract-meta-row">
+            <p>{{ 'CONTRACT_EDITOR.PREVIEW_META' | translate }}</p>
+            <div
+              class="editable-line editable-line--strong"
+              contenteditable="true"
+              spellcheck="false"
+              (blur)="updateField('contractDate', editableText($event))"
+            >{{ documentModel.contractDate }}</div>
+          </div>
+          <div class="contract-meta-row">
+            <p>{{ 'CONTRACT_EDITOR.CITY_LABEL' | translate }}</p>
+            <div
+              class="editable-line"
+              contenteditable="true"
+              spellcheck="false"
+              (blur)="updateField('city', editableText($event))"
+            >{{ documentModel.city }}</div>
+          </div>
         </div>
       </header>
 
       <section class="hero-block">
-        <p class="hero-kicker">{{ 'CONTRACT_EDITOR.DOCUMENT_LABEL' | translate }}</p>
         <h1
           class="editable-title"
           contenteditable="true"
           spellcheck="false"
           (blur)="updateField('title', editableText($event))"
         >{{ documentModel.title }}</h1>
-        <p class="hero-summary">{{ 'CONTRACT_EDITOR.HERO_SUMMARY' | translate }}</p>
       </section>
 
       <section class="parties-grid">

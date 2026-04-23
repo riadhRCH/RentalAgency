@@ -50,7 +50,7 @@ export class TransactionsController {
       throw new BadRequestException('Invalid upload kind');
     }
 
-    const result = await this.cloudinaryService.uploadFile(file, 'auto');
+    const result = await this.cloudinaryService.uploadFile(file, 'auto') as any;
 
     const updatedTransaction =
       kind === 'document'

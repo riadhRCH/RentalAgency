@@ -53,6 +53,8 @@ export class TransactionDetailComponent implements OnInit {
         selectedDates: [[]]
       }),
       metadata: this.fb.group({
+        cinNumber: [''],
+        numberOfPersons: [1, [Validators.min(1)]],
         utilityNotes: [''],
         emergencyContact: ['']
       }),
@@ -115,6 +117,8 @@ export class TransactionDetailComponent implements OnInit {
               selectedDates: this.selectedDates
             },
             metadata: {
+              cinNumber: data.metadata?.cinNumber || '',
+              numberOfPersons: data.metadata?.numberOfPersons ?? 1,
               utilityNotes: data.metadata?.utilityNotes || '',
               emergencyContact: data.metadata?.emergencyContact || ''
             },

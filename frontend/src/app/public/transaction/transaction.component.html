@@ -43,6 +43,44 @@
         </div>
       </div>
 
+      <!-- Calendar Step -->
+      <section *ngIf="isDailyPayment()" class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+        <button
+          type="button"
+          (click)="toggleSection('calendar')"
+          class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors"
+        >
+          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+            <span class="material-symbols-outlined" [class.text-primary]="calendarDone()" [class.text-slate-500]="!calendarDone()">
+              {{ calendarDone() ? 'check_circle' : 'radio_button_unchecked' }}
+            </span>
+            {{ 'TRANSACTION.SELECT_DATES' | translate }}
+          </h2>
+          <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!calendarExpanded()">
+            expand_more
+          </span>
+        </button>
+
+        <div *ngIf="calendarExpanded()" class="animate-in fade-in slide-in-from-top-2 duration-200 px-8 pb-8 space-y-6 border-t border-white/5">
+          <app-calendar-selector
+            [propertyAvailability]="propertyCalendarData"
+            [selectedDates]="getSelectedDatesAsStrings()"
+            (datesSelected)="onDatesSelected($event)">
+          </app-calendar-selector>
+
+          <div class="flex justify-end">
+            <button
+              type="button"
+              (click)="onCalendarSubmit()"
+              [disabled]="saving() || !calendarDone()"
+              class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all"
+            >
+              {{ 'COMMON.NEXT' | translate }}
+            </button>
+          </div>
+        </div>
+      </section>
+
       <!-- Customer Information Step -->
       <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
         <button
@@ -89,6 +127,21 @@
               <div class="space-y-2">
                 <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.EMAIL' | translate }}</label>
                 <input type="email" formControlName="email" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+                @if (customerForm.get('email')?.touched && customerForm.get('email')?.hasError('email')) {
+                  <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-xs">error</span>
+                    {{ 'COMMON.EMAIL_INVALID_FORMAT' | translate }}
+                  </div>
+                }
+              </div>
+              <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION.CIN_OR_PASSPORT_NUMBER' | translate }}</label>
+                <input type="text" formControlName="cinNumber" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+              </div>
+              <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION.NUMBER_OF_PERSONS' | translate }}</label>
+                <input type="number" min="1" formControlName="numberOfPersons" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+                <p class="text-xs text-slate-400">{{ 'TRANSACTION.NUMBER_OF_PERSONS_DESCRIPTION' | translate }}</p>
               </div>
             </div>
 
@@ -102,45 +155,6 @@
               </button>
             </div>
           </form>
-        </div>
-      </section>
-
-      <!-- Calendar Step (only for DAILY) -->
-      <section *ngIf="transaction()?.financialDetails?.paymentFrequency === 'DAILY'" class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-        <button
-          type="button"
-          (click)="toggleSection('calendar')"
-          class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors"
-        >
-          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
-            <span class="material-symbols-outlined" [class.text-primary]="calendarDone()" [class.text-slate-500]="!calendarDone()">
-              {{ calendarDone() ? 'check_circle' : 'radio_button_unchecked' }}
-            </span>
-            {{ 'TRANSACTION.SELECT_DATES' | translate }}
-          </h2>
-          <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!calendarExpanded()">
-            expand_more
-          </span>
-        </button>
-
-        <div *ngIf="calendarExpanded()" class="animate-in fade-in slide-in-from-top-2 duration-200 px-8 pb-8 space-y-6 border-t border-white/5">
-          <app-calendar-selector
-           
-            [propertyAvailability]="propertyCalendarData"
-            [selectedDates]="getSelectedDatesAsStrings()"
-            (datesSelected)="onDatesSelected($event)">
-          </app-calendar-selector>
-
-          <div class="flex justify-end">
-            <button
-              type="button"
-              (click)="onCalendarSubmit()"
-              [disabled]="saving() || !calendarDone()"
-              class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all"
-            >
-              {{ 'COMMON.NEXT' | translate }}
-            </button>
-          </div>
         </div>
       </section>
 
@@ -247,4 +261,3 @@
 </div>
 
 <app-public-footer></app-public-footer>
-

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, ViewChild, effect } from '@angular/core';
+import { Component, OnInit, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -27,6 +27,7 @@ interface Transaction {
   metadata: {
     documents?: string[];
     cinNumber?: string;
+    numberOfPersons?: number;
     paymentProof?: string;
   };
   agency: {
@@ -101,7 +102,9 @@ export class TransactionComponent implements OnInit {
       firstName: [''],
       lastName: [''],
       phone: ['', [Validators.required, Validators.pattern(this.phonePattern)]],
-      email: ['']
+      email: ['', [Validators.email]],
+      cinNumber: ['', Validators.required],
+      numberOfPersons: [1, [Validators.required, Validators.min(1)]]
     });
 
     this.documentsForm = this.fb.group({
@@ -150,23 +153,39 @@ export class TransactionComponent implements OnInit {
 
   initializeForms() {
     const transaction = this.transaction();
+    if (transaction?.financialDetails?.paymentFrequency === PaymentFrequency.DAILY) {
+      const selectedDates = transaction.timeline?.selectedDates ?? [];
+      this.selectedDatesControl.setValue(selectedDates);
+      this.checkCalendarDone();
+    }
+
     if (transaction?.personnelId) {
       this.customerForm.patchValue({
         firstName: transaction.personnelId.firstName,
         lastName: transaction.personnelId.lastName,
         phone: transaction.personnelId.phone,
-        email: transaction.personnelId.email
+        email: transaction.personnelId.email,
+        cinNumber: transaction.metadata?.cinNumber || '',
+        numberOfPersons: transaction.metadata?.numberOfPersons ?? 1
       });
-      this.checkCustomerInfoDone();
+    } else {
+      this.customerForm.patchValue({
+        cinNumber: transaction?.metadata?.cinNumber || '',
+        numberOfPersons: transaction?.metadata?.numberOfPersons ?? 1
+      });
     }
+
+    this.checkCustomerInfoDone();
   }
 
   autoOpenFirstUndoneStep() {
-    if (!this.customerInfoDone()) {
-      this.customerInfoExpanded.set(true);
-      this.customerForm.markAllAsTouched()
-    } else if (!this.calendarDone()) {
+    const isDailyPayment = this.isDailyPayment();
+
+    if (isDailyPayment && !this.calendarDone()) {
       this.calendarExpanded.set(true);
+    } else if (!this.customerInfoDone()) {
+      this.customerInfoExpanded.set(true);
+      this.customerForm.markAllAsTouched();
     } else if (!this.documentsDone()) {
       this.documentsExpanded.set(true);
     } else {
@@ -215,14 +234,18 @@ export class TransactionComponent implements OnInit {
         firstName: formValue.firstName,
         lastName: formValue.lastName,
         phone: formValue.phone,
-        email: formValue.email
+        email: formValue.email?.trim() || undefined
       };
 
       this.personnelService.createOrUpdatePersonnel(personnelData).subscribe({
         next: (personnel) => {
           // Update transaction with personnel ID
           this.transactionsService.updatePublicTransaction(this.transactionId, {
-            personnelId: personnel._id
+            personnelId: personnel._id,
+            metadata: {
+              cinNumber: formValue.cinNumber,
+              numberOfPersons: Number(formValue.numberOfPersons)
+            }
           }).subscribe({
             next: () => {
               this.saving.set(false);
@@ -327,6 +350,10 @@ export class TransactionComponent implements OnInit {
       }
       return date as string;
     });
+  }
+
+  isDailyPayment(): boolean {
+    return this.transaction()?.financialDetails?.paymentFrequency === PaymentFrequency.DAILY;
   }
 
   onFileSelected(event: any, fieldName: string) {

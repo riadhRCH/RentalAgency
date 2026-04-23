@@ -44,6 +44,12 @@ class TransactionMetadata {
   documents: string[];
 
   @Prop()
+  cinNumber: string;
+
+  @Prop()
+  numberOfPersons: number;
+
+  @Prop()
   utilityNotes: string;
 
   @Prop()

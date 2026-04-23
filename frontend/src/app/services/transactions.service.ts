@@ -22,6 +22,8 @@ export interface Transaction {
   };
   metadata?: {
     documents?: string[];
+    cinNumber?: string;
+    numberOfPersons?: number;
     utilityNotes?: string;
     emergencyContact?: string;
     contracts?: string[];

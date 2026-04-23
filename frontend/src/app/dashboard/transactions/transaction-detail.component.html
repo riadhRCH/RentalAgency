@@ -53,6 +53,47 @@
     <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
       <button type="button" class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
         <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">calendar_month</span>
+          {{ 'TRANSACTION_FORM.TIMELINE' | translate }}
+        </h2>
+      </button>
+
+      <div class="px-8 pb-8 space-y-6 border-t border-white/5">
+        <div *ngIf="isDailyPayment()" class="space-y-4">
+          <div class="text-center">
+            <h3 class="text-lg font-semibold text-white mb-4">{{ 'TRANSACTION_FORM.SELECTED_DATES' | translate }}</h3>
+            <app-calendar-selector
+              [propertyAvailability]="propertyCalendarData"
+              [selectedDates]="selectedDates"
+              (datesSelected)="onDatesSelected($event)">
+            </app-calendar-selector>
+          </div>
+        </div>
+
+        <div *ngIf="!isDailyPayment()" formGroupName="timeline" class="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.START_DATE' | translate }}</label>
+            <input type="date" formControlName="startDate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" />
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.DURATION' | translate }}</label>
+            <input type="number" formControlName="duration" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" />
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.END_DATE' | translate }}</label>
+            <input type="date" formControlName="endDate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" />
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.PROJECTED_RENEWAL' | translate }}</label>
+            <input type="date" formControlName="renewalDate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+      <button type="button" class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
+        <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
           <span class="material-symbols-outlined text-primary">person</span>
           {{ 'TRANSACTION_FORM.CUSTOMER_PROFILE' | translate }}
         </h2>
@@ -118,49 +159,6 @@
     <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
       <button type="button" class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
         <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">calendar_month</span>
-          {{ 'TRANSACTION_FORM.TIMELINE' | translate }}
-        </h2>
-      </button>
-
-      <div class="px-8 pb-8 space-y-6 border-t border-white/5">
-        <!-- Calendar view for daily payments -->
-        <div *ngIf="isDailyPayment()" class="space-y-4">
-          <div class="text-center">
-            <h3 class="text-lg font-semibold text-white mb-4">{{ 'TRANSACTION_FORM.SELECTED_DATES' | translate }}</h3>
-            <app-calendar-selector
-              [propertyAvailability]="propertyCalendarData"
-              [selectedDates]="selectedDates"
-              (datesSelected)="onDatesSelected($event)">
-            </app-calendar-selector>
-          </div>
-        </div>
-
-        <!-- Traditional date inputs for other payment frequencies -->
-        <div *ngIf="!isDailyPayment()" formGroupName="timeline" class="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.START_DATE' | translate }}</label>
-            <input type="date" formControlName="startDate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" />
-          </div>
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.DURATION' | translate }}</label>
-            <input type="number" formControlName="duration" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" />
-          </div>
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.END_DATE' | translate }}</label>
-            <input type="date" formControlName="endDate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" />
-          </div>
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.PROJECTED_RENEWAL' | translate }}</label>
-            <input type="date" formControlName="renewalDate" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" />
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-      <button type="button" class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
-        <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
           <span class="material-symbols-outlined text-primary">document_scanner</span>
           {{ 'TRANSACTION_DETAIL.ADDITIONAL_INFO' | translate }}
         </h2>
@@ -168,6 +166,15 @@
 
       <div class="px-8 pb-8 space-y-6 border-t border-white/5">
         <div formGroupName="metadata" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION.CIN_OR_PASSPORT_NUMBER' | translate }}</label>
+            <input type="text" formControlName="cinNumber" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" />
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION.NUMBER_OF_PERSONS' | translate }}</label>
+            <input type="number" min="1" formControlName="numberOfPersons" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" />
+            <p class="text-xs text-slate-400">{{ 'TRANSACTION.NUMBER_OF_PERSONS_DESCRIPTION' | translate }}</p>
+          </div>
           <div class="space-y-2">
             <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_DETAIL.UTILITY_HANDOVER_NOTES' | translate }}</label>
             <textarea formControlName="utilityNotes" rows="3" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all resize-none"></textarea>

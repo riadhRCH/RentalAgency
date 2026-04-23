@@ -43,6 +43,14 @@ class TransactionMetadataDto {
 
   @IsOptional()
   @IsString()
+  cinNumber?: string;
+
+  @IsOptional()
+  @IsNumber()
+  numberOfPersons?: number;
+
+  @IsOptional()
+  @IsString()
   utilityNotes?: string;
 
   @IsOptional()

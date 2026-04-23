@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { IsValidPhone } from '../../shared/validators/is-valid-phone.validator';
 
@@ -16,6 +17,7 @@ export class CreatePersonnelDto {
 
   @IsEmail()
   @IsOptional()
+  @Transform(({ value }) => (typeof value === 'string' && value.trim() === '' ? undefined : value))
   email?: string;
 
   @IsEnum(['call', 'manual', 'registration'])

@@ -205,6 +205,7 @@ export class TransactionsService {
       'timeline.selectedDates', // for calendar
       'metadata.documents', // for documents
       'metadata.cinNumber', // for CIN
+      'metadata.numberOfPersons', // for occupancy details
       'metadata.paymentProof' // for payment proof
     ];
 

@@ -239,10 +239,11 @@ Update `frontend/src/environments/environment.ts` for `apiBaseUrl`.
 UNLICENSED
 
 # deployment
-docker build -t riadh15/rental-agency-frontend:latest .
-docker build -t riadh15/rantal-agency-backend:latest .
+
 # Push the frontend
+docker build -t riadh15/rental-agency-frontend:latest .
 docker push riadh15/rental-agency-frontend:latest
 
 # Push the backend
+docker build -t riadh15/rantal-agency-backend:latest .
 docker push riadh15/rantal-agency-backend:latest

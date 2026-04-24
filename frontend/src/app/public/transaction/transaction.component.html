@@ -196,6 +196,23 @@
                 <span class="material-symbols-outlined text-sm">check_circle</span>
                 {{ 'TRANSACTION.DOCUMENT_UPLOADED' | translate }}
               </div>
+              <div *ngIf="cinDocumentPreview()" class="document-preview-card">
+                <div *ngIf="isImageDocument(cinDocumentPreview(), 'cinDocument')" class="document-preview-image-wrapper">
+                  <img [src]="cinDocumentPreview()!" [alt]="getDocumentFileName(cinDocumentPreview(), 'cinDocument')" class="document-preview-image" />
+                </div>
+                <div *ngIf="!isImageDocument(cinDocumentPreview(), 'cinDocument')" class="document-preview-file">
+                  <span class="material-symbols-outlined text-primary">picture_as_pdf</span>
+                  <div class="space-y-1">
+                    <p class="document-preview-title">{{ getDocumentFileName(cinDocumentPreview(), 'cinDocument') }}</p>
+                    <p class="document-preview-subtitle">
+                      {{ isPdfDocument(cinDocumentPreview(), 'cinDocument') ? 'PDF' : 'Document' }}
+                    </p>
+                  </div>
+                </div>
+                <a [href]="cinDocumentPreview()!" target="_blank" rel="noopener noreferrer" class="document-preview-link">
+                  {{ 'COMMON.VIEW' | translate }}
+                </a>
+              </div>
             </div>
 
             <div class="flex justify-end">
@@ -333,6 +350,23 @@
               <div *ngIf="!paymentUploading() && transaction()?.metadata?.paymentProof" class="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-widest">
                 <span class="material-symbols-outlined text-sm">check_circle</span>
                 {{ 'TRANSACTION.PAYMENT_PROOF_UPLOADED' | translate }}
+              </div>
+              <div *ngIf="paymentProofPreview()" class="document-preview-card">
+                <div *ngIf="isImageDocument(paymentProofPreview(), 'paymentProof')" class="document-preview-image-wrapper">
+                  <img [src]="paymentProofPreview()!" [alt]="getDocumentFileName(paymentProofPreview(), 'paymentProof')" class="document-preview-image" />
+                </div>
+                <div *ngIf="!isImageDocument(paymentProofPreview(), 'paymentProof')" class="document-preview-file">
+                  <span class="material-symbols-outlined text-primary">picture_as_pdf</span>
+                  <div class="space-y-1">
+                    <p class="document-preview-title">{{ getDocumentFileName(paymentProofPreview(), 'paymentProof') }}</p>
+                    <p class="document-preview-subtitle">
+                      {{ isPdfDocument(paymentProofPreview(), 'paymentProof') ? 'PDF' : 'Document' }}
+                    </p>
+                  </div>
+                </div>
+                <a [href]="paymentProofPreview()!" target="_blank" rel="noopener noreferrer" class="document-preview-link">
+                  {{ 'COMMON.VIEW' | translate }}
+                </a>
               </div>
             </div>
 

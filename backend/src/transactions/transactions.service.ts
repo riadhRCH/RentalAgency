@@ -250,15 +250,15 @@ export class TransactionsService {
       'metadata.paymentProof' // for payment proof
     ];
 
-    const filteredUpdateData = {};
+    const filteredUpdateData: Record<string, any> = {};
     for (const field of allowedFields) {
       if (this.getNestedValue(updateData, field) !== undefined) {
-        this.setNestedValue(filteredUpdateData, field, this.getNestedValue(updateData, field));
+        filteredUpdateData[field] = this.getNestedValue(updateData, field);
       }
     }
 
     const updatedTransaction = await this.transactionModel
-      .findByIdAndUpdate(id, filteredUpdateData, { new: true })
+      .findByIdAndUpdate(id, { $set: filteredUpdateData }, { new: true })
       .exec();
     
     if (!updatedTransaction) {
@@ -269,15 +269,5 @@ export class TransactionsService {
 
   private getNestedValue(obj: any, path: string): any {
     return path.split('.').reduce((current, key) => current?.[key], obj);
-  }
-
-  private setNestedValue(obj: any, path: string, value: any): void {
-    const keys = path.split('.');
-    const lastKey = keys.pop()!;
-    const target = keys.reduce((current, key) => {
-      if (!current[key]) current[key] = {};
-      return current[key];
-    }, obj);
-    target[lastKey] = value;
   }
 }

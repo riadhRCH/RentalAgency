@@ -1,3 +1,0 @@
-show transaction completion progress in dashboard for each transaction, in the api that returnes list of transactions precompute a variable representing steps done of a transaction and display it in each entry in `http://localhost:4200/dashboard/overview/transactions` page
-
-add filters in `http://localhost:4200/dashboard/overview/transactions` to filter transactions based on status paid/unpaid ...etc

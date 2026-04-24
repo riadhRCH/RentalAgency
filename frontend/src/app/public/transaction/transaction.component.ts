@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, effect } from '@angular/core';
+import { Component, OnDestroy, OnInit, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -58,7 +58,7 @@ interface Transaction {
   templateUrl: './transaction.component.html',
   styleUrl: './transaction.component.scss'
 })
-export class TransactionComponent implements OnInit {
+export class TransactionComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private fb = inject(FormBuilder);
@@ -73,6 +73,8 @@ export class TransactionComponent implements OnInit {
   saving = signal(false);
   documentUploading = signal(false);
   paymentUploading = signal(false);
+  cinDocumentPreview = signal<string | null>(null);
+  paymentProofPreview = signal<string | null>(null);
 
   // Forms
   customerForm: FormGroup;
@@ -98,6 +100,7 @@ export class TransactionComponent implements OnInit {
   // Calendar data
   propertyCalendarData: any[] = [];
   selectedDatesControl = this.fb.control<Date[]>([]);
+  private readonly objectPreviewUrls = new Set<string>();
 
   constructor() {
     this.customerForm = this.fb.group({
@@ -127,6 +130,10 @@ export class TransactionComponent implements OnInit {
   ngOnInit() {
     this.transactionId = this.route.snapshot.params['id'];
     this.loadTransaction();
+  }
+
+  ngOnDestroy() {
+    this.revokeObjectPreviewUrls();
   }
 
   loadTransaction() {
@@ -178,11 +185,15 @@ export class TransactionComponent implements OnInit {
     }
 
     if (transaction?.metadata?.documents?.length) {
-      this.documentsForm.patchValue({ cinDocument: transaction.metadata.documents[0] });
+      const cinDocument = transaction.metadata.documents[0];
+      this.documentsForm.patchValue({ cinDocument });
+      this.cinDocumentPreview.set(cinDocument);
     }
 
     if (transaction?.metadata?.paymentProof) {
-      this.paymentForm.patchValue({ paymentProof: transaction.metadata.paymentProof });
+      const paymentProof = transaction.metadata.paymentProof;
+      this.paymentForm.patchValue({ paymentProof });
+      this.paymentProofPreview.set(paymentProof);
     }
 
     this.checkCustomerInfoDone();
@@ -404,9 +415,11 @@ export class TransactionComponent implements OnInit {
       this.selectedFiles[fieldName] = file;
       if (fieldName === 'cinDocument') {
         this.documentsForm.patchValue({ cinDocument: file });
+        this.setPreviewFromFile(fieldName, file);
         this.uploadTransactionFile(file, 'document');
       } else if (fieldName === 'paymentProof') {
         this.paymentForm.patchValue({ paymentProof: file });
+        this.setPreviewFromFile(fieldName, file);
         this.uploadTransactionFile(file, 'payment-proof');
       }
     }
@@ -421,32 +434,43 @@ export class TransactionComponent implements OnInit {
 
     this.transactionsService.uploadFile(file).subscribe({
       next: (uploadResult) => {
-        const transactionPatch =
-          kind === 'document'
-            ? { metadata: { documents: [uploadResult.url] } }
-            : { metadata: { paymentProof: uploadResult.url } };
+        const transactionPatch = {
+          metadata: {
+            cinNumber: this.customerForm.get('cinNumber')?.value || this.transaction()?.metadata?.cinNumber,
+            numberOfPersons: Number(this.customerForm.get('numberOfPersons')?.value ?? this.transaction()?.metadata?.numberOfPersons ?? 1),
+            documents:
+              kind === 'document'
+                ? [uploadResult.url]
+                : (this.transaction()?.metadata?.documents ?? []),
+            paymentProof:
+              kind === 'payment-proof'
+                ? uploadResult.url
+                : this.transaction()?.metadata?.paymentProof,
+          }
+        };
 
         this.transactionsService.updatePublicTransaction(this.transactionId, transactionPatch).subscribe({
           next: () => {
             const currentTransaction = this.transaction();
             if (currentTransaction) {
+              const nextMetadata = {
+                ...currentTransaction.metadata,
+                ...transactionPatch.metadata,
+              };
               this.transaction.set({
                 ...currentTransaction,
-                metadata: {
-                  ...currentTransaction.metadata,
-                  ...(kind === 'document'
-                    ? { documents: [uploadResult.url] }
-                    : { paymentProof: uploadResult.url }),
-                },
+                metadata: nextMetadata,
               });
             }
 
             if (kind === 'document') {
               this.documentsForm.patchValue({ cinDocument: uploadResult.url });
+              this.cinDocumentPreview.set(uploadResult.url);
               this.documentUploading.set(false);
               this.checkDocumentsDone();
             } else {
               this.paymentForm.patchValue({ paymentProof: uploadResult.url });
+              this.paymentProofPreview.set(uploadResult.url);
               this.paymentUploading.set(false);
             }
           },
@@ -473,5 +497,78 @@ export class TransactionComponent implements OnInit {
         }
       }
     });
+  }
+
+  private setPreviewFromFile(fieldName: string, file: File) {
+    const currentPreview =
+      fieldName === 'cinDocument' ? this.cinDocumentPreview() : this.paymentProofPreview();
+
+    if (currentPreview?.startsWith('blob:')) {
+      URL.revokeObjectURL(currentPreview);
+      this.objectPreviewUrls.delete(currentPreview);
+    }
+
+    const previewUrl = URL.createObjectURL(file);
+    this.objectPreviewUrls.add(previewUrl);
+
+    if (fieldName === 'cinDocument') {
+      this.cinDocumentPreview.set(previewUrl);
+      return;
+    }
+
+    this.paymentProofPreview.set(previewUrl);
+  }
+
+  private revokeObjectPreviewUrls() {
+    for (const previewUrl of this.objectPreviewUrls) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    this.objectPreviewUrls.clear();
+  }
+
+  isImageDocument(source: string | null, fieldName?: string): boolean {
+    if (!source) {
+      return false;
+    }
+
+    const selectedFile = fieldName ? this.selectedFiles[fieldName] : undefined;
+
+    if (source.startsWith('blob:') && selectedFile) {
+      return selectedFile.type.startsWith('image/');
+    }
+
+    return /\.(png|jpe?g|gif|webp|bmp|svg)(\?|$)/i.test(source);
+  }
+
+  isPdfDocument(source: string | null, fieldName?: string): boolean {
+    if (!source) {
+      return false;
+    }
+
+    const selectedFile = fieldName ? this.selectedFiles[fieldName] : undefined;
+    if (source.startsWith('blob:') && selectedFile) {
+      return selectedFile.type === 'application/pdf';
+    }
+
+    return /\.pdf(\?|$)/i.test(source);
+  }
+
+  getDocumentFileName(source: string | null, fieldName: string): string {
+    const selectedFile = this.selectedFiles[fieldName];
+    if (selectedFile) {
+      return selectedFile.name;
+    }
+
+    if (!source) {
+      return '';
+    }
+
+    try {
+      const parsed = new URL(source, window.location.origin);
+      const path = parsed.pathname.split('/').filter(Boolean).pop();
+      return path || 'document';
+    } catch {
+      return source.split('/').filter(Boolean).pop() || 'document';
+    }
   }
 }

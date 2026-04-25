@@ -1,0 +1,286 @@
+:host {
+  display: block;
+}
+
+.agency-page {
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 28%),
+    radial-gradient(circle at top left, rgba(244, 114, 182, 0.14), transparent 24%),
+    #020617;
+  color: white;
+}
+
+.hero-section,
+.gallery-section,
+.list-section {
+  width: 100%;
+}
+
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  padding: 8rem 1.5rem 4rem;
+  overflow: hidden;
+}
+
+.hero-backdrop {
+  position: absolute;
+  inset: 0;
+  opacity: 0.96;
+}
+
+.hero-backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.68));
+}
+
+.hero-backdrop video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-content,
+.gallery-section,
+.list-section {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-content {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 2rem;
+  align-items: end;
+}
+
+.hero-copy h1,
+.section-copy h2 {
+  margin: 0;
+  line-height: 1;
+}
+
+.hero-copy h1 {
+  font-size: clamp(3rem, 6vw, 5.8rem);
+  max-width: 11ch;
+}
+
+.hero-copy p,
+.section-copy p,
+.card-description {
+  color: rgba(226, 232, 240, 0.78);
+  line-height: 1.7;
+}
+
+.agency-logo {
+  width: 5rem;
+  height: 5rem;
+  object-fit: contain;
+  margin-bottom: 1.2rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.6rem;
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #7dd3fc;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.hero-panel {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  background: rgba(15, 23, 42, 0.58);
+  backdrop-filter: blur(18px);
+  padding: 1.5rem;
+}
+
+.search-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.search-grid label {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.search-grid span,
+.card-stats span {
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.86);
+}
+
+.search-grid input,
+.search-grid select {
+  width: 100%;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.72);
+  color: white;
+  padding: 0.95rem 1rem;
+}
+
+.search-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.search-actions button,
+.card-link {
+  border-radius: 0.9rem;
+  padding: 0.95rem 1.15rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.search-actions .primary {
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: white;
+}
+
+.search-actions .secondary {
+  background: rgba(255, 255, 255, 0.04);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gallery-section,
+.list-section {
+  padding: 0 1.5rem 5rem;
+}
+
+.announcement-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.announcement-card {
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.52);
+  backdrop-filter: blur(16px);
+}
+
+.card-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.card-media img,
+.media-fallback {
+  width: 100%;
+  height: 100%;
+}
+
+.card-media img {
+  object-fit: cover;
+}
+
+.media-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(148, 163, 184, 0.6);
+}
+
+.card-chip {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 9999px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.card-body {
+  padding: 1.3rem;
+}
+
+.card-meta {
+  color: #7dd3fc;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-weight: 700;
+}
+
+.card-body h3 {
+  margin: 0.6rem 0;
+  font-size: 1.4rem;
+}
+
+.card-location {
+  display: flex;
+  gap: 0.4rem;
+  align-items: flex-start;
+  color: rgba(226, 232, 240, 0.84);
+  margin: 0 0 0.8rem;
+}
+
+.card-description {
+  min-height: 4.8rem;
+}
+
+.card-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-stats strong {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 1rem;
+}
+
+.card-link {
+  margin-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: white;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-decoration: none;
+}
+
+.loading-state,
+.empty-state {
+  min-height: 14rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.75rem;
+  color: rgba(226, 232, 240, 0.76);
+}
+
+@media (max-width: 1024px) {
+  .hero-content,
+  .announcement-grid {
+    grid-template-columns: 1fr;
+  }
+}

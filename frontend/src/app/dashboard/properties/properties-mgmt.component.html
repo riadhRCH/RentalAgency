@@ -78,13 +78,29 @@
         </div>
 
         <div class="pt-4 mt-auto flex items-center justify-between">
-          <button (click)="navigateToEditProperty(prop._id)" class="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-primary transition-colors flex items-center gap-1">
-            {{ 'PROPERTIES.EDIT_DETAILS' | translate }}
-            <span class="material-symbols-outlined text-sm">edit</span>
-          </button>
+          <div class="flex items-center gap-2 flex-wrap">
+            <button (click)="navigateToEditProperty(prop._id)" class="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-primary transition-colors flex items-center gap-1">
+              {{ 'PROPERTIES.EDIT_DETAILS' | translate }}
+              <span class="material-symbols-outlined text-sm">edit</span>
+            </button>
+            <button
+              (click)="generateAnnouncement(prop._id)"
+              [disabled]="generatingAnnouncementId() === prop._id"
+              class="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-primary transition-colors flex items-center gap-1 disabled:opacity-50">
+              {{ getAnnouncement(prop._id) ? ('PROPERTIES.REFRESH_ANNOUNCEMENT' | translate) : ('PROPERTIES.GENERATE_ANNOUNCEMENT' | translate) }}
+              <span class="material-symbols-outlined text-sm">campaign</span>
+            </button>
+          </div>
           <button (click)="deleteProperty(prop._id)" class="p-2 rounded hover:bg-red-500/10 text-slate-500 hover:text-red-500 transition-all">
             <span class="material-symbols-outlined text-sm">delete</span>
           </button>
+        </div>
+
+        <div *ngIf="getAnnouncement(prop._id) as announcement" class="pt-3 border-t border-white/5 text-[10px] uppercase tracking-[0.24em] font-bold flex items-center justify-between gap-3">
+          <span [class.text-emerald-400]="announcement.isVisible" [class.text-slate-500]="!announcement.isVisible">
+            {{ announcement.isVisible ? ('ANNOUNCEMENTS.VISIBLE' | translate) : ('ANNOUNCEMENTS.HIDDEN' | translate) }}
+          </span>
+          <span class="text-slate-500">{{ announcement.publishedAt | date: 'mediumDate' }}</span>
         </div>
       </div>
     </div>

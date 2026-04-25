@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AgenciesModule } from './agencies/agencies.module';
+import { AnnouncementsModule } from './announcements/announcements.module';
 import { AuthModule } from './auth/auth.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { LeadsModule } from './leads/leads.module';
@@ -24,6 +25,7 @@ import { AppController } from './app.controller';
     AuthModule,
     CloudinaryModule,
     AgenciesModule,
+    AnnouncementsModule,
     LeadsModule,
     PersonnelModule,
     PropertiesModule,

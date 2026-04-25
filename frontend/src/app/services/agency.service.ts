@@ -58,6 +58,10 @@ export class AgencyService {
     return this.http.get<AgencyProfile>(`${this.apiUrl}/profile`);
   }
 
+  getPublicProfile(agencyId: string): Observable<AgencyProfile> {
+    return this.http.get<AgencyProfile>(`${this.apiUrl}/public/${agencyId}`);
+  }
+
   getActiveNumbers(): Observable<VirtualNumber[]> {
     return this.http.get<VirtualNumber[]>(`${this.apiUrl}/numbers/active`);
   }

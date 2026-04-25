@@ -1,0 +1,22 @@
+<div class="gallery-shell" [style.perspective]="'2000px'">
+  <div
+    class="gallery-rotation"
+    [style.transform]="'rotateY(' + rotation + 'deg)'">
+    <article
+      *ngFor="let item of items; let index = index"
+      class="gallery-item"
+      [style.transform]="'rotateY(' + angleFor(index) + 'deg) translateZ(' + radius + 'px)'"
+      [style.opacity]="opacityFor(index)">
+      <div class="gallery-card">
+        <img
+          [src]="item.imageUrl"
+          [alt]="item.imageAlt"
+          [style.object-position]="item.imagePosition || 'center'">
+        <div class="gallery-overlay">
+          <h3>{{ item.title }}</h3>
+          <p>{{ item.subtitle }}</p>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>

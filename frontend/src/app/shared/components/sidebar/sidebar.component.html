@@ -62,6 +62,13 @@
                 <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.PROPERTIES' | translate }}</span>
             </a>
 
+            <a routerLink="/dashboard/announcements" routerLinkActive="bg-primary/10 text-primary border-primary"
+                (click)="onNavigate()"
+                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
+                <span class="material-symbols-outlined">campaign</span>
+                <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.ANNOUNCEMENTS' | translate }}</span>
+            </a>
+
             <!-- Personnel Group -->
             <div class="space-y-1">
                 <div class="flex items-center gap-3 px-4 py-3 text-silver-400 border-l-2 border-transparent">

@@ -7,6 +7,7 @@ import { UpdateAgencyProfileDto } from './dto/update-agency-profile.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AgencyGuard } from '../auth/agency.guard';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { Public } from '../auth/public.decorator';
 
 @Controller('agencies')
 export class AgenciesController {
@@ -14,6 +15,12 @@ export class AgenciesController {
     private readonly agenciesService: AgenciesService,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
+
+  @Public()
+  @Get('public/:agencyId')
+  async getPublicAgencyProfile(@Param('agencyId') agencyId: string) {
+    return this.agenciesService.getPublicProfile(agencyId);
+  }
 
   @UseGuards(JwtAuthGuard, AgencyGuard)
   @Get('stats')

@@ -1,0 +1,113 @@
+<div class="p-8 max-w-7xl mx-auto space-y-12">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+        {{ 'ANNOUNCEMENTS.TITLE' | translate }}
+      </h1>
+      <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+        {{ 'ANNOUNCEMENTS.SUBTITLE' | translate }}
+      </p>
+    </div>
+
+    <button
+      type="button"
+      (click)="goToProperties()"
+      class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20">
+      {{ 'ANNOUNCEMENTS.GENERATE_FROM_PROPERTIES' | translate }}
+    </button>
+  </header>
+
+  <div *ngIf="loading()" class="p-12 text-center text-slate-500">
+    <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
+  </div>
+
+  <div *ngIf="!loading() && announcements.length === 0" class="p-12 text-center text-slate-500">
+    <app-empty-state
+      icon="campaign"
+      [title]="'ANNOUNCEMENTS.EMPTY_TITLE' | translate"
+      [description]="'ANNOUNCEMENTS.EMPTY_DESC' | translate"
+      [actionLabel]="i18n.translate('ANNOUNCEMENTS.GENERATE_FROM_PROPERTIES')"
+      (action)="goToProperties()">
+    </app-empty-state>
+  </div>
+
+  <div *ngIf="!loading() && announcements.length" class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+    <article *ngFor="let announcement of announcements" class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+      <div class="grid md:grid-cols-[280px_1fr]">
+        <div class="relative h-72 md:h-full bg-slate-900">
+          <img
+            *ngIf="announcement.photos.length"
+            [src]="announcement.photos[0]"
+            [alt]="announcement.title"
+            class="w-full h-full object-cover opacity-90">
+          <div *ngIf="!announcement.photos.length" class="w-full h-full flex items-center justify-center text-slate-600">
+            <span class="material-symbols-outlined text-5xl">image</span>
+          </div>
+          <div class="absolute top-4 left-4 status-pill" [class.is-hidden]="!announcement.isVisible">
+            {{ announcement.isVisible ? ('ANNOUNCEMENTS.VISIBLE' | translate) : ('ANNOUNCEMENTS.HIDDEN' | translate) }}
+          </div>
+        </div>
+
+        <div class="p-6 space-y-5">
+          <div class="space-y-2">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="text-[10px] uppercase tracking-[0.3em] text-primary font-bold">{{ announcement.reference }}</span>
+              <span class="text-[10px] uppercase tracking-[0.3em] text-slate-500 font-bold">{{ announcement.type }}</span>
+            </div>
+            <h2 class="text-2xl font-bold text-white">{{ announcement.title }}</h2>
+            <p class="text-sm text-slate-400 flex items-start gap-2">
+              <span class="material-symbols-outlined text-base mt-0.5">location_on</span>
+              <span>{{ announcement.address }}</span>
+            </p>
+          </div>
+
+          <p class="text-sm text-slate-300 leading-6 line-clamp-4">{{ announcement.description }}</p>
+
+          <div class="grid grid-cols-2 gap-4 py-4 border-y border-white/5">
+            <div>
+              <div class="text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold">{{ 'ANNOUNCEMENTS.PRICE' | translate }}</div>
+              <div class="text-lg font-bold text-white">{{ announcement.price | number }} TND</div>
+            </div>
+            <div>
+              <div class="text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold">{{ 'ANNOUNCEMENTS.SURFACE' | translate }}</div>
+              <div class="text-lg font-bold text-white">{{ announcement.surface }} m2</div>
+            </div>
+          </div>
+
+          <div class="text-[11px] uppercase tracking-[0.2em] text-slate-500 font-bold">
+            {{ 'ANNOUNCEMENTS.PUBLISHED_AT' | translate }} {{ announcement.publishedAt | date: 'mediumDate' }}
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <button
+              type="button"
+              (click)="toggleVisibility(announcement)"
+              [disabled]="processingId() === announcement._id"
+              class="action-button">
+              <span class="material-symbols-outlined text-sm">{{ announcement.isVisible ? 'visibility_off' : 'visibility' }}</span>
+              {{ announcement.isVisible ? ('ANNOUNCEMENTS.HIDE' | translate) : ('ANNOUNCEMENTS.SHOW' | translate) }}
+            </button>
+
+            <button
+              type="button"
+              (click)="refreshAnnouncement(announcement)"
+              [disabled]="processingId() === announcement._id"
+              class="action-button">
+              <span class="material-symbols-outlined text-sm">refresh</span>
+              {{ 'ANNOUNCEMENTS.REFRESH' | translate }}
+            </button>
+
+            <button
+              type="button"
+              (click)="deleteAnnouncement(announcement)"
+              [disabled]="processingId() === announcement._id"
+              class="action-button danger">
+              <span class="material-symbols-outlined text-sm">delete</span>
+              {{ 'COMMON.DELETE' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>

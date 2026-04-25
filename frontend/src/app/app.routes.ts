@@ -25,6 +25,8 @@ import { TransactionComponent } from './public/transaction/transaction.component
 import { BankDetailsComponent } from './dashboard/bank-details/bank-details.component';
 import { OwnersPageComponent } from './dashboard/personnel/owners-page/owners-page.component';
 import { OwnerDashboardComponent } from './public/owner-dashboard/owner-dashboard.component';
+import { AnnouncementsComponent } from './dashboard/announcements/announcements.component';
+import { AgencyLandingPageComponent } from './public/agency-landing-page/agency-landing-page.component';
 
 export const routes: Routes = [
     { path: '', component: LandingPage },
@@ -57,6 +59,7 @@ export const routes: Routes = [
             { path: 'transactions', redirectTo: 'overview/transactions' },
             { path: 'leads/add', component: AddLeadComponent },
             { path: 'properties', component: PropertiesMgmtComponent },
+            { path: 'announcements', component: AnnouncementsComponent },
             { path: 'properties/add', component: AddPropertyComponent },
             { path: 'properties/edit/:id', component: AddPropertyComponent },
             { path: 'transactions/provision', component: TransactionProvisioningComponent },
@@ -68,5 +71,6 @@ export const routes: Routes = [
             { path: 'config', component: ConfigComponent },
             { path: 'bank-details', component: BankDetailsComponent }
         ]
-    }
+    },
+    { path: ':agencyId', component: AgencyLandingPageComponent }
 ];

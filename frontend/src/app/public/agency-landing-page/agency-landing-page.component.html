@@ -1,0 +1,118 @@
+<app-public-navbar></app-public-navbar>
+
+<main class="agency-page">
+  <section class="hero-section">
+    <div class="hero-backdrop">
+      <video autoplay muted playsinline loop>
+        <source src="/assets/cinematic-real-estate.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="hero-content">
+      <div class="hero-copy">
+        <img
+          *ngIf="agency?.logo"
+          [src]="agency?.logo"
+          [alt]="agency?.name || 'Agency logo'"
+          class="agency-logo">
+        <div class="eyebrow">Agence</div>
+        <h1>{{ agency?.name || 'Agency Announcements' }}</h1>
+        <p>
+          Explore the latest published announcements, narrow them by location and type,
+          and move directly into the properties this agency is actively presenting.
+        </p>
+      </div>
+
+      <div class="hero-panel">
+        <div class="search-grid">
+          <label>
+            <span>Search</span>
+            <input [(ngModel)]="query" type="text" placeholder="Reference, address, description">
+          </label>
+          <label>
+            <span>Location</span>
+            <input [(ngModel)]="location" type="text" placeholder="City, district, area">
+          </label>
+          <label>
+            <span>Property type</span>
+            <select [(ngModel)]="type">
+              <option *ngFor="let option of propertyTypes" [value]="option.value">{{ option.label }}</option>
+            </select>
+          </label>
+          <div class="search-actions">
+            <button type="button" class="primary" (click)="onSearch()">Search announcements</button>
+            <button type="button" class="secondary" (click)="clearFilters()">Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery-section" *ngIf="galleryItems.length">
+    <div class="section-copy">
+      <div class="eyebrow">Featured loop</div>
+      <h2>Agency spotlight</h2>
+      <p>Announcements rotate in a circular gallery inspired by the provided visual direction.</p>
+    </div>
+    <app-circular-gallery [items]="galleryItems"></app-circular-gallery>
+  </section>
+
+  <section class="list-section">
+    <div class="section-copy">
+      <div class="eyebrow">Published annonces</div>
+      <h2>Available now</h2>
+      <p *ngIf="!loading()">{{ announcements.length }} announcement(s) matched your filters.</p>
+    </div>
+
+    <div *ngIf="loading()" class="loading-state">
+      <span class="material-symbols-outlined animate-spin">progress_activity</span>
+    </div>
+
+    <div *ngIf="!loading() && announcements.length === 0" class="empty-state">
+      <h3>No announcements found</h3>
+      <p>Try a different location, property type, or broader search terms.</p>
+    </div>
+
+    <div *ngIf="!loading() && announcements.length" class="announcement-grid">
+      <article *ngFor="let announcement of announcements" class="announcement-card">
+        <div class="card-media">
+          <img
+            *ngIf="announcement.photos.length"
+            [src]="announcement.photos[0]"
+            [alt]="announcement.title">
+          <div *ngIf="!announcement.photos.length" class="media-fallback">
+            <span class="material-symbols-outlined">image</span>
+          </div>
+          <div class="card-chip">{{ announcement.type }}</div>
+        </div>
+
+        <div class="card-body">
+          <div class="card-meta">{{ announcement.reference }}</div>
+          <h3>{{ announcement.title }}</h3>
+          <p class="card-location">
+            <span class="material-symbols-outlined">location_on</span>
+            {{ announcement.address }}
+          </p>
+          <p class="card-description">{{ announcement.description }}</p>
+
+          <div class="card-stats">
+            <div>
+              <span>Price</span>
+              <strong>{{ announcement.price | number }} TND</strong>
+            </div>
+            <div>
+              <span>Surface</span>
+              <strong>{{ announcement.surface }} m2</strong>
+            </div>
+          </div>
+
+          <a [routerLink]="['/property', announcement.propertyId]" class="card-link">
+            View property
+            <span class="material-symbols-outlined">north_east</span>
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<app-public-footer></app-public-footer>

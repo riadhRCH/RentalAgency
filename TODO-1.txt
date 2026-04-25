@@ -1,0 +1,26 @@
+improve frontend\src\app\public\agency-landing-page\agency-landing-page.component.html page, 
+
+this page have a curcular gallery feature working and described in announces_list_design
+
+i want you to add some imporvements, like make it auto rotate slowly
+
+allow user to rotate it with scroll or with mobile swipe left/right
+
+usefull code from a react comp use if needed : 
+const CircularGalleryDemo = () => {
+  return (
+    // This outer container provides the scrollable height
+    <div className="w-full bg-background text-foreground" style={{ height: '500vh' }}>
+      {/* This inner container sticks to the top while scrolling */}
+      <div className="w-full h-screen sticky top-0 flex flex-col items-center justify-center overflow-hidden">
+        <div className="text-center mb-8 absolute top-16 z-10">
+          <h1 className="text-4xl font-bold">Animal Gallery</h1>
+          <p className="text-muted-foreground">Scroll to rotate the gallery</p>
+        </div>
+        <div className="w-full h-full">
+          <CircularGallery items={galleryData} />
+        </div>
+      </div>
+    </div>
+  );
+};

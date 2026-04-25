@@ -1,86 +1,147 @@
+// ─────────────────────────────────────────────────────────────
+// Circular Gallery
+// Shell height is driven by JS (cardHeight + 80px) so no hardcoded
+// px values are needed here — the component stays responsive.
+// ─────────────────────────────────────────────────────────────
+
 :host {
   display: block;
 }
 
+// ── Shell ────────────────────────────────────────────────────
+// Height is set inline from TypeScript (ngAfterViewInit / resize)
 .gallery-shell {
   position: relative;
   width: 100%;
-  min-height: 36rem;
+  // min-height prevents a flash of zero-height before JS runs
+  min-height: 280px;
+
+  &:active {
+    cursor: grabbing !important;
+  }
+}
+
+// ── Drag hint ────────────────────────────────────────────────
+.gallery-hint {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  pointer-events: none;
+  margin: 0;
+  white-space: nowrap;
+
   display: flex;
   align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  gap: 6px;
+
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.4);
+
+  // 4 s delay then 2 s fade
+  animation: hint-fade 2s ease-out 4s forwards;
+
+  .material-symbols-outlined {
+    font-size: 15px;
+    animation: nudge 1.5s ease-in-out infinite;
+  }
 }
 
+@keyframes hint-fade {
+  to { opacity: 0; }
+}
+
+@keyframes nudge {
+  0%, 100% { transform: translateX(0); }
+  40%       { transform: translateX(4px); }
+  70%       { transform: translateX(-4px); }
+}
+
+// ── Rotation stage ───────────────────────────────────────────
 .gallery-rotation {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 36rem;
+  position: absolute;
+  inset: 0;
   transform-style: preserve-3d;
+  // ⚠️  NO transition — rAF loop is the only driver of this transform
 }
 
+// ── Cards ────────────────────────────────────────────────────
+// width / height / margin-left / margin-top are all set inline
+// by the template from the TS getters — no px values here.
 .gallery-item {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: min(18rem, 72vw);
-  aspect-ratio: 3 / 4;
-  margin-left: calc(min(18rem, 72vw) / -2);
-  margin-top: calc(min(24rem, 96vw) / -2);
-  transition: opacity 0.3s linear;
+
+  // Only opacity gets a CSS transition; transform is JS-driven
+  transition: opacity 0.25s ease;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .gallery-card {
   position: relative;
   width: 100%;
   height: 100%;
+  border-radius: 14px;
   overflow: hidden;
-  border-radius: 0.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(15, 23, 42, 0.5);
-  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(16px);
-}
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.5),
+    0 4px 14px rgba(0, 0, 0, 0.3);
 
-.gallery-card img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    // Disable native drag on images so pointer capture works correctly
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
 }
 
 .gallery-overlay {
   position: absolute;
-  inset-inline: 0;
   bottom: 0;
-  padding: 1.2rem;
-  color: white;
-  background: linear-gradient(to top, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0));
-}
+  left: 0;
+  right: 0;
+  padding: 16px 14px 14px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.35) 55%,
+    transparent 100%
+  );
 
-.gallery-overlay h3 {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 700;
-}
-
-.gallery-overlay p {
-  margin: 0.35rem 0 0;
-  font-size: 0.8rem;
-  color: rgba(226, 232, 240, 0.85);
-}
-
-@media (max-width: 768px) {
-  .gallery-shell,
-  .gallery-rotation {
-    min-height: 28rem;
+  h3 {
+    margin: 0 0 3px;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .gallery-item {
-    width: min(14rem, 72vw);
-    margin-left: calc(min(14rem, 72vw) / -2);
-    margin-top: -9rem;
+  p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.7rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// ── Reduced motion ───────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .gallery-hint .material-symbols-outlined {
+    animation: none;
   }
 }

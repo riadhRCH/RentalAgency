@@ -1,12 +1,31 @@
-<div class="gallery-shell" [style.perspective]="'2000px'">
+<!-- Shell: height is set in JS (ngAfterViewInit + resize handler) -->
+<div
+  #shellRef
+  class="gallery-shell"
+  [style.perspective]="'2000px'"
+  style="touch-action: pan-y; cursor: grab; user-select: none;">
+
+  <!-- Drag / swipe hint — CSS fades it out after 4 s -->
+  <p class="gallery-hint" aria-hidden="true">
+    <span class="material-symbols-outlined">drag_pan</span>
+    Drag or swipe to explore
+  </p>
+
+  <!-- ⚠️ No CSS transition here — the rAF loop writes every frame -->
   <div
-    class="gallery-rotation"
-    [style.transform]="'rotateY(' + rotation + 'deg)'">
+    #rotationRef
+    class="gallery-rotation">
+
     <article
       *ngFor="let item of items; let index = index"
       class="gallery-item"
-      [style.transform]="'rotateY(' + angleFor(index) + 'deg) translateZ(' + radius + 'px)'"
+      [style.width.px]="cardWidth"
+      [style.height.px]="cardHeight"
+      [style.margin-left.px]="-cardWidth / 2"
+      [style.margin-top.px]="-cardHeight / 2"
+      [style.transform]="'rotateY(' + angleFor(index) + 'deg) translateZ(' + effectiveRadius + 'px)'"
       [style.opacity]="opacityFor(index)">
+
       <div class="gallery-card">
         <img
           [src]="item.imageUrl"
@@ -17,6 +36,7 @@
           <p>{{ item.subtitle }}</p>
         </div>
       </div>
+
     </article>
   </div>
 </div>

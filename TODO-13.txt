@@ -1,0 +1,4 @@
+GESTION DES ALErtes
+- alert agency when client pays
+- alert owner when a transaction is clotured
+...etc

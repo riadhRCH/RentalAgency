@@ -1,0 +1,13 @@
+Announcement feature (Annonces), 
+
+agency user can select any property from properties page, and generate an Announcement, 
+
+Announcement schema should include property id and agency id and any other useful thing from your creation
+
+add a new link in sidebar Announcements and add a component that loads agency announcements, allow user to interact with them like hide/delete/refresh actions for each announcement (make refresh thing just a design for now, no functionnality)
+
+duplicate LandingPage componnet and put it in this route in FR path: '/:agencyId', the componnet should load agency data and display agency announces
+
+the annonces will appear in agency landing page where users will be able to search announces by location, type, ...etc
+
+the announces list design should be similar to the CircularGallery react component in ./announces_list_design. make an angular component CircularGallery

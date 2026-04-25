@@ -1,0 +1,5 @@
+conception for the clotured transaction, we should be able to extract a link for clotured transactions that have*
+
+- contract
+- input for user to submit a `selpfie de bien venu`
+- user shoud be able to sumbit reclamations

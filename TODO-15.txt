@@ -1,0 +1,3 @@
+dashboard owner improvements
+- should include only short term properties
+- should be able to see statistics (number of views per property), view is when properety details page is opened

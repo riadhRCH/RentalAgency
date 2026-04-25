@@ -1,1 +1,1 @@
-i see a bug, in http://localhost:4200/transaction/69ea872914dd5425a2404342 page when i upload first a cin document and after that i upload a proof of payment docuemt, the cin document gets lost, and vice-versa. also please display a small preview of the uplaoded documents
+fix login, should be longer to get unauthorized

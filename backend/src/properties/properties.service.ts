@@ -15,6 +15,26 @@ export class PropertiesService {
     private readonly personnelModel: Model<PersonnelDocument>,
   ) {}
 
+  private async generateNextReference(agencyId: string) {
+    const properties = await this.propertyModel
+      .find(
+        { agencyId: new Types.ObjectId(agencyId) },
+        { reference: 1, _id: 0 },
+      )
+      .lean();
+
+    const highestReferenceNumber = properties.reduce((max, property) => {
+      const match = /^L-(\d+)$/.exec(property.reference);
+      if (!match) {
+        return max;
+      }
+
+      return Math.max(max, Number(match[1]));
+    }, 0);
+
+    return `L-${highestReferenceNumber + 1}`;
+  }
+
   async findAll(
     agencyId: string,
     page = 1,
@@ -159,7 +179,7 @@ export class PropertiesService {
       ownerId = personnel._id.toString();
     }
 
-    const reference = `PROP-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+    const reference = await this.generateNextReference(agencyId);
     const property = await this.propertyModel.create({
       ...dto,
       agencyId: new Types.ObjectId(agencyId),

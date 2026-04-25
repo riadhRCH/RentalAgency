@@ -27,7 +27,7 @@ export class Property {
   @Prop({ type: Types.ObjectId, ref: 'RentalAgency', required: true })
   agencyId: Types.ObjectId;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   reference: string;
 
   @Prop({
@@ -93,3 +93,4 @@ export class Property {
 }
 
 export const PropertySchema = SchemaFactory.createForClass(Property);
+PropertySchema.index({ agencyId: 1, reference: 1 }, { unique: true });

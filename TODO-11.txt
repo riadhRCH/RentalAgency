@@ -1,0 +1,7 @@
+fixes in contract page
+- logo and name should be of the plateform not the agency account
+- fox payment frequency and duree
+- the base document for short term is difderent from long term
+- fix download should be in pdf format not html format
+- ajouter un signature (add a photo)
+- share contract as a link

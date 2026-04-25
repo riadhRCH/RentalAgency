@@ -1,0 +1,1 @@
+fix public proerty details page sections to be similar to https://superhost.com.tn/fr

@@ -1,0 +1,85 @@
+LEXIQUE & FONCTIONS
+IMMOBILIER
+Guide Complet de Terminologie Métier - CRM & Portails
+1. Actions de Création
+• Créer une annonce
+• Ajouter un bien au portfolio
+• Nouvelle inscription
+• Déposer un bien
+• Enregistrer un mandat
+• Publier une offre
+2. Espaces et Vitrines
+• Catalogue Agence
+• Portfolio Immobilier
+• Boutique de l'Agence
+• Nos Exclusivités
+• Inventaire Actif
+• Galerie des Biens
+3. Gestion et Modification
+• Modifier la fiche
+• Gérer le portfolio
+• Mettre en avant
+• Archiver l'annonce
+• Aperçu public
+• Éditer les médias (Photos/Vidéos)
+4. Statuts du Bien
+• En Stock / Disponible
+• Sous compromis
+• Vendu / Loué
+• Off-Market
+5. Navigation Technique
+• Tableau de bord
+• Mes Annonces
+• Statistiques de diffusion
+• Paramètres Boutique
+• Base de données / CRM
+6. Interaction & Leads
+• Demander une visite
+• Soumettre une offre
+• Contacter l'agent
+• Partager la fiche (WhatsApp / Email)
+• Télécharger la brochure PDF
+• Ajouter aux favoris
+7. Recherche & Filtrage
+• Recherche par carte (Map view)
+• Filtrer par secteur
+• Trier par prix / surface
+• Afficher les nouveautés
+• Sauvegarder la recherche
+8. Suivi Propriétaire
+• Rapport de performance
+• Nombre de vues
+• Nombre de contacts générés
+• Planning des visites
+• Feedback acquéreur
+9. Juridique & Documents
+• Diagnostics (DPE, etc.)
+• Éditer le bon de visite
+• Signer électroniquement
+• Dossier de location
+• Pièces justificatives
+10. Gestion des Mandats
+• Type (Exclusif, Simple, Semi)
+• Numéro de registre
+• Date d'échéance
+• Renouveler le mandat
+• Mandat de recherche / vente
+• Dénoncer un mandat
+11. Gestion des Demandes
+• Nouvelle recherche client
+• Critères (Budget, Zones)
+• Alerte email / Push
+• Qualifier la demande
+• Faire une proposition
+12. Rapprochement & CRM
+• Lancer le rapprochement
+• Score de compatibilité
+• Envoyer la sélection
+• Relancer les prospects
+• Historique des envois
+13. Suivi des Étapes (Workflow)
+• Offre reçue / acceptée
+• Compromis signé
+• Acte authentique
+• Rendez-vous Notaire
+• Remise des clés

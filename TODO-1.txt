@@ -1,26 +1,122 @@
-improve frontend\src\app\public\agency-landing-page\agency-landing-page.component.html page, 
+**PROJECT ANALYSIS, PROGRESS EVALUATION & STRATEGIC ROADMAP**
 
-this page have a curcular gallery feature working and described in announces_list_design
+**SYSTEM ROLE**
+You are a senior project manager with 20+ years of experience in digital product delivery, SaaS platforms, and innovation strategy. You think in structured outputs, prioritize clarity, and produce actionable insights.
 
-i want you to add some imporvements, like make it auto rotate slowly
+---
 
-allow user to rotate it with scroll or with mobile swipe left/right
+## OBJECTIVES
 
-usefull code from a react comp use if needed : 
-const CircularGalleryDemo = () => {
-  return (
-    // This outer container provides the scrollable height
-    <div className="w-full bg-background text-foreground" style={{ height: '500vh' }}>
-      {/* This inner container sticks to the top while scrolling */}
-      <div className="w-full h-screen sticky top-0 flex flex-col items-center justify-center overflow-hidden">
-        <div className="text-center mb-8 absolute top-16 z-10">
-          <h1 className="text-4xl font-bold">Animal Gallery</h1>
-          <p className="text-muted-foreground">Scroll to rotate the gallery</p>
-        </div>
-        <div className="w-full h-full">
-          <CircularGallery items={galleryData} />
-        </div>
-      </div>
-    </div>
-  );
-};
+### 1. Project Understanding & Vision Synthesis
+
+Analyze the following documents:
+
+* `cahier_des_charges_crm_immobilier.txt`
+* `glossaire_complet_immobilier.txt`
+
+**Goals:**
+
+* Extract the core idea, business objectives, and product philosophy
+* Identify the target users and key value propositions
+* Highlight opportunities for innovation (e.g., AI, 3D/virtual experiences, automation, gamification)
+
+**Output:**
+Create a `README.md` containing:
+
+* Project Overview
+* Vision & Philosophy
+* Target Users / Personas
+* Core Features (conceptual, not technical)
+* Innovation Opportunities (clearly separated section)
+
+⚠️ Do NOT include low-level technical implementation details.
+
+---
+
+### 2. Current Implementation Analysis (Progress Audit)
+
+Analyze the backend and frontend codebases.
+
+**Goals:**
+
+* Identify all implemented features
+* Group them into logical categories (e.g., Auth, Listings, CRM, Analytics, etc.)
+* Assess maturity level (e.g., MVP, Partial, Complete)
+
+**Output:**
+Create a file `project_progress.txt` with:
+
+* Feature list grouped by domain
+* Completion status for each feature
+* Observations on gaps or inconsistencies
+
+---
+
+### 3. Strategic Roadmap (Future Work)
+
+Based on:
+
+* Project vision (Step 1)
+* Current implementation (Step 2)
+
+**Goals:**
+
+* Identify missing features
+* Define next steps toward a complete and competitive product
+* Prioritize based on impact vs effort
+
+**Output:**
+Create `roadmap.txt` including:
+
+* Prioritized task list
+* Clear categorization (Short-term / Mid-term / Long-term)
+* Justification for priorities
+
+---
+
+### 4. TODO Alignment & Refinement
+
+Analyze existing TODO files:
+
+* `TODO-1` → `TODO-15`
+
+**Goals:**
+
+* Understand current planning intent
+* Identify redundancies, gaps, or misalignments
+* Improve clarity, structure, and prioritization
+
+**Output:**
+Create a new folder `refined_todos/` containing:
+
+* Improved TODO files
+* Each TODO should be:
+
+  * Clearly scoped
+  * Actionable
+  * Non-overlapping
+  * Properly prioritized
+  * Aligned with the roadmap
+
+---
+
+## EXECUTION RULES
+
+* Be concise but precise
+* Avoid generic statements
+* Think like a product strategist, not just an analyst
+* Prefer structured outputs over paragraphs when possible
+* Always justify decisions when prioritizing or suggesting improvements
+
+---
+
+## FINAL DELIVERABLES
+
+You must generate:
+
+* `README.md`
+* `project_progress.txt`
+* `roadmap.txt`
+* `refined_todos/` (folder with improved TODO files)
+
+All outputs must be clean, structured, and ready to use.

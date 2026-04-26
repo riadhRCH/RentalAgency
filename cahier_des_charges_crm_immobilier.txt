@@ -1,0 +1,80 @@
+Cahier des Charges – CRM pour Agence Immobilière
+1. Présentation du projet
+Développer un CRM immobilier permettant à une agence de gérer les biens, les propriétaires, les clients,
+les visites, les transactions et les documents dans un seul système. Objectif : centraliser les informations
+et améliorer le suivi client.
+2. Objectifs du CRM
+• Gérer les biens immobiliers
+• Gérer les clients et prospects
+• Gérer les propriétaires
+• Organiser les visites
+• Suivre les ventes et locations
+• Stocker les documents
+• Suivre les commissions
+• Améliorer le suivi client
+3. Utilisateurs du système
+• Administrateur : accès complet, gestion des utilisateurs et statistiques
+• Agent immobilier : gestion des biens, clients, visites et transactions
+4. Modules du CRM
+• Tableau de bord (statistiques générales)
+• Gestion des biens immobiliers
+• Gestion des propriétaires
+• Gestion des clients
+• Gestion des visites
+• Gestion des transactions
+• Gestion des documents
+• Agenda et rappels
+• Communication (appels, messages, emails)
+• Statistiques et performances
+5. Informations d’un bien immobilier
+• Référence du bien
+• Type (appartement, villa, terrain…)
+• Adresse et localisation GPS
+•
+Superficie
+•
+•
+Prix
+Description
+• Photos et vidéos
+• Statut : disponible, réservé, vendu, loué
+• Propriétaire lié au bien
+6. Fiche client
+• Nom et prénom
+• Téléphone
+• Email
+• Budget
+• Type de bien recherché
+• Zone souhaitée
+• Historique des visites
+• Statut du client (nouveau, intéressé, visite, négociation, acheté/loué)
+7. Gestion des visites
+• Date et heure
+•
+Bien visité
+•
+Client
+• Agent responsable
+• Notes après visite
+8. Gestion des transactions
+• Type : vente ou location
+•
+Client
+• Bien
+•
+Prix final
+• Commission agence
+• Statut : en cours, signé, terminé
+9. Gestion des documents
+• Mandat de vente
+• Contrat de location
+•
+Titre foncier
+• Documents administratifs
+• Contrats signés
+10. Fonctionnalités techniques
+• Accessible sur ordinateur et téléphone
+• Système sécurisé avec login et mot de passe
+• Gestion des utilisateurs
+• Sauvegarde automatique des données
+• Export des données (Excel / PDF)

@@ -5,7 +5,7 @@ Overview:
 
 Possible Uses:
   - Reporting and analytics dashboard
-  - Document and contract management
+  - Document and contract management (add import base contract model feature for each property type)
   - Email and notification center
   - Webhook management dashboard
   - API key and custom integration management

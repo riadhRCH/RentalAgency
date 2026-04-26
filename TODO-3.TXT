@@ -1,1 +1,19 @@
-fix login, should be longer to get unauthorized
+**TODO — Fix Login & Improve Token System**
+
+* Fix issue where user becomes temporarily **unauthorized right after login**
+
+* Ensure authentication state is set **before making API calls**
+
+* Replace current single token with:
+
+  * `access_token` (short-lived)
+  * `refresh_token` (long-lived)
+
+* Add refresh logic:
+
+  * When `access_token` expires → use `refresh_token` to get a new one
+  * Retry failed requests automatically
+
+* Ensure user stays logged in without interruptions
+
+* If refresh fails → logout user properly

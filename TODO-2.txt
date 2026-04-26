@@ -1,0 +1,124 @@
+**TODO — Landing Pages UI Refactor & Feature Alignment**
+
+## 🎯 Objective
+
+Unify and improve the design and behavior of `LandingPage` and `AgencyLandingPageComponent` while increasing component reusability and maintaining existing working logic.
+
+---
+
+## 1. Shared Search Bar Component
+
+### Task
+
+* Extract the search bar UI from `LandingPage` into a reusable component:
+
+  * `SharedSearchBarComponent`
+
+### Requirements
+
+* Replace the `<div class="hero-panel">` in `AgencyLandingPageComponent` with this new shared component
+* Preserve **exact existing functionality** in `AgencyLandingPageComponent` (no regression)
+
+### Behavior Rules
+
+* `AgencyLandingPageComponent`:
+
+  * MUST continue fetching **only agency-specific announces**
+* `LandingPage`:
+
+  * MUST fetch **announces across all agencies**
+
+### Acceptance Criteria
+
+* UI is visually consistent across both pages
+* No duplication of search bar code
+* No breaking changes in existing search behavior
+
+---
+
+## 2. Search Logic Separation
+
+### Task
+
+* Decouple search UI from search logic
+
+### Requirements
+
+* Shared component handles:
+
+  * Inputs
+  * UI interactions
+* Parent components handle:
+
+  * Data fetching
+  * Filtering logic
+
+### Acceptance Criteria
+
+* Search behavior differs per page without modifying shared component
+* Clean input/output contract (e.g., events or signals)
+
+---
+
+## 3. CircularGallery Integration
+
+### Task
+
+* Integrate `CircularGalleryComponent` into `LandingPage`
+
+### Requirements
+
+* Reuse it **exactly as implemented** in `AgencyLandingPageComponent`
+* Do NOT duplicate logic or styling
+* Ensure responsiveness and proper positioning within layout
+
+### Acceptance Criteria
+
+* Visual and behavioral parity with AgencyLandingPage usage
+
+---
+
+## 4. “The Doghmani Signature Partners” Section
+
+### Task
+
+Add a new section to `LandingPage` showcasing partner agencies
+
+### UI Requirements
+
+* Horizontal scroll (carousel-like experience)
+* Each item includes:
+
+  * Rounded logo (avatar style)
+  * Agency name
+* Clean, premium, and modern design (aligned with real estate branding)
+
+### Functional Requirements
+
+* Data source: list of available agencies
+* Smooth scrolling (mouse + touch support)
+
+### Acceptance Criteria
+
+* Responsive across devices
+* No layout breaking on overflow
+* Professional, production-ready UI (not prototype-level)
+
+---
+
+## ⚠️ Constraints
+
+* Do NOT modify working business logic unless necessary
+* Prioritize reusability and separation of concerns
+* Avoid quick hacks — aim for scalable structure
+
+---
+
+## ✅ Deliverable
+
+* Refactored components:
+
+  * `LandingPage`
+  * `AgencyLandingPageComponent`
+  * `SharedSearchBarComponent`
+* New UI section implemented and integrated cleanly

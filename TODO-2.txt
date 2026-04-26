@@ -1,5 +1,0 @@
-in the created SharedSearchBarComponent i want you to update its design to be similar to the old one in LandingPage component
-
-in LandingPage component, when users search for smth from SharedSearchBarComponent i want you to laod all announces from all agencies, not properties, use apis from AnnouncementsController
-
-remove http://localhost:3000/properties/public?page=1&limit=6 api usage from LandingPage, replace it with announcements 

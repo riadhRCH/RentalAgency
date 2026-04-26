@@ -1,0 +1,6 @@
+customize AgencyLandingPageComponent component
+add a page in dashboard so each agency user can customier the appearince of AgencyLandingPageComponent with a live preview
+for example
+change sections ordering
+change carrousel type
+...etc

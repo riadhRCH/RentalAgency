@@ -22,6 +22,12 @@ export class AgenciesController {
     return this.agenciesService.getPublicProfile(agencyId);
   }
 
+  @Public()
+  @Get('public')
+  async getPublicAgencies() {
+    return this.agenciesService.getPublicAgencies();
+  }
+
   @UseGuards(JwtAuthGuard, AgencyGuard)
   @Get('stats')
   async getStats(@Request() req) {

@@ -13,6 +13,7 @@ import {
   CircularGalleryComponent,
   CircularGalleryItem,
 } from '../circular-gallery/circular-gallery.component';
+import { SharedSearchBarComponent, SearchFilters } from '../../shared/components/search-bar/search-bar.component';
 
 @Component({
   selector: 'app-agency-landing-page',
@@ -24,6 +25,7 @@ import {
     PublicNavbarComponent,
     PublicFooterComponent,
     CircularGalleryComponent,
+    SharedSearchBarComponent,
   ],
   templateUrl: './agency-landing-page.component.html',
   styleUrl: './agency-landing-page.component.scss',
@@ -37,9 +39,10 @@ export class AgencyLandingPageComponent implements OnInit {
   agency: AgencyProfile | null = null;
   announcements: Announcement[] = [];
   loading = signal(false);
-  query = '';
-  location = '';
-  type = '';
+
+  searchQuery = '';
+  searchLocation = '';
+  searchType = '';
 
   readonly propertyTypes = [
     { value: '', label: 'All types' },
@@ -77,13 +80,17 @@ export class AgencyLandingPageComponent implements OnInit {
     });
   }
 
-  loadAnnouncements() {
+  loadAnnouncements(filters?: SearchFilters) {
     this.loading.set(true)
+    const query = filters?.query ?? this.searchQuery;
+    const location = filters?.location ?? this.searchLocation;
+    const type = filters?.type ?? this.searchType;
+    
     this.announcementsService
       .getPublicAgencyAnnouncements(this.agencyId, 1, 18, {
-        query: this.query || undefined,
-        location: this.location || undefined,
-        type: this.type || undefined,
+        query: query || undefined,
+        location: location || undefined,
+        type: type || undefined,
       })
       .subscribe({
         next: response => {
@@ -96,14 +103,21 @@ export class AgencyLandingPageComponent implements OnInit {
       });
   }
 
-  onSearch() {
-    this.loadAnnouncements();
+  onSearch(filters: SearchFilters) {
+    this.searchQuery = filters.query;
+    this.searchLocation = filters.location;
+    this.searchType = filters.type;
+    this.loadAnnouncements(filters);
   }
 
   clearFilters() {
-    this.query = '';
-    this.location = '';
-    this.type = '';
-    this.loadAnnouncements();
+    this.searchQuery = '';
+    this.searchLocation = '';
+    this.searchType = '';
+    this.loadAnnouncements({
+      query: '',
+      location: '',
+      type: '',
+    });
   }
 }

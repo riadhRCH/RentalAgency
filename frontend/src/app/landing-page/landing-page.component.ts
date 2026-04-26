@@ -6,11 +6,14 @@ import { AuthService } from '../auth/auth.service';
 import { PublicFooterComponent } from '../shared/components/public-footer/public-footer.component';
 import { PublicNavbarComponent } from '../shared/components/public-navbar/public-navbar.component';
 import { PropertiesService, Property, PaginatedProperties } from '../services/properties.service';
+import { CircularGalleryComponent, CircularGalleryItem } from '../public/circular-gallery/circular-gallery.component';
+import { SharedSearchBarComponent, SearchFilters } from '../shared/components/search-bar/search-bar.component';
+import { AgencyService, AgencyProfile } from '../services/agency.service';
 
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, PublicNavbarComponent, PublicFooterComponent],
+  imports: [CommonModule, FormsModule, RouterModule, PublicNavbarComponent, PublicFooterComponent, CircularGalleryComponent, SharedSearchBarComponent],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.scss',
 })
@@ -18,12 +21,15 @@ export class LandingPage implements OnInit {
   authService = inject(AuthService);
   router = inject(Router);
   propertiesService = inject(PropertiesService);
+  private agencyService = inject(AgencyService);
   mobileMenuOpen = false;
 
   properties: Property[] = [];
   loading = false;
-  selectedCountry = '';
-  selectedRegion = '';
+  agencies: AgencyProfile[] = [];
+  searchQuery = '';
+  searchLocation = '';
+  searchType = '';
 
   categories = [
     { name: 'Immobilier', type: 'all', image: '/assets/categories/real-estate.jpg' },
@@ -35,6 +41,28 @@ export class LandingPage implements OnInit {
 
   ngOnInit() {
     this.loadProperties();
+    this.loadAgencies();
+  }
+
+  get galleryItems(): CircularGalleryItem[] {
+    return this.properties.slice(0, 8).map(property => ({
+      id: property._id,
+      title: property.reference,
+      subtitle: `${property.address} · ${property.price.toLocaleString()} TND`,
+      imageUrl: property.photos[0] || '/assets/Doghmani_logo-removebg-preview.png',
+      imageAlt: property.description,
+    }));
+  }
+
+  loadAgencies() {
+    this.agencyService.getPublicAgencies().subscribe({
+      next: (agencies) => {
+        this.agencies = agencies;
+      },
+      error: () => {
+        console.error('Failed to load agencies');
+      }
+    });
   }
 
   loadProperties(filters?: any) {
@@ -50,38 +78,33 @@ export class LandingPage implements OnInit {
     });
   }
 
+  onSearch(filters: SearchFilters) {
+    this.searchQuery = filters.query;
+    this.searchLocation = filters.location;
+    this.searchType = filters.type;
+    const filterParams: any = {};
+    if (filters.query) filterParams.query = filters.query;
+    if (filters.location) filterParams.location = filters.location;
+    if (filters.type) filterParams.type = filters.type;
+    this.loadProperties(filterParams);
+  }
+
   onCategoryClick(category: any) {
-    // Filter properties based on category
     const filters: any = {};
     if (category.type !== 'all') {
-      // Map category types to property types
       switch (category.type) {
         case 'new':
-          filters.type = 'apartment'; // Assuming new construction are apartments
+          filters.type = 'apartment';
           break;
         case 'sale':
-          // Properties for sale
           break;
         case 'rent':
-          // Properties for rent
           break;
         case 'vacation':
-          // Vacation rentals
           break;
       }
     }
     this.loadProperties(filters);
-  }
-
-  onCountryChange() {
-    const filters: any = {};
-    if (this.selectedCountry) filters.country = this.selectedCountry;
-    if (this.selectedRegion) filters.region = this.selectedRegion;
-    this.loadProperties(filters);
-  }
-
-  onRegionChange() {
-    this.onCountryChange();
   }
 
   navigateToDashboard() {

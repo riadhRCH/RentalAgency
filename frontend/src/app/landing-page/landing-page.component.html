@@ -37,46 +37,46 @@
         </div>
     </section>
     <section class="relative -mt-16 z-20 px-4 max-w-6xl mx-auto">
-        <div class="glass-card p-6 md:p-8 rounded-xl shadow-2xl border-t border-white/10">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="space-y-2">
-                    <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Location</label>
-                    <div class="flex items-center gap-2 border-b border-slate-700 pb-2">
-                        <span class="material-symbols-outlined text-primary text-sm">location_on</span>
-                        <input
-                            class="bg-transparent border-none text-white focus:ring-0 p-0 text-sm placeholder:text-slate-500 w-full"
-                            placeholder="Dubai, UAE" type="text" />
+        <app-shared-search-bar
+            [searchQuery]="searchQuery"
+            [searchLocation]="searchLocation"
+            [searchType]="searchType"
+            (search)="onSearch($event)">
+        </app-shared-search-bar>
+    </section>
+    <section class="gallery-section" *ngIf="galleryItems.length">
+        <div class="max-w-7xl mx-auto px-4 mb-8">
+            <div class="section-copy">
+                <div class="eyebrow">Featured</div>
+                <h2>Property Spotlight</h2>
+                <p>Explore our featured properties in a stunning circular showcase.</p>
+            </div>
+        </div>
+        <app-circular-gallery [items]="galleryItems"></app-circular-gallery>
+    </section>
+    <section class="py-24 bg-gradient-to-b from-background-dark to-background-dark/50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <div class="eyebrow">Our Network</div>
+                <h2 class="text-3xl md:text-4xl font-light text-white mb-4">The Doghmani Signature Partners</h2>
+                <p class="text-silver-500 max-w-2xl mx-auto">Discover our curated network of premium partner agencies delivering exceptional real estate services worldwide.</p>
+            </div>
+            <div class="partners-carousel" *ngIf="agencies.length">
+                <div class="partners-track">
+                    <div class="partner-card" *ngFor="let agency of agencies">
+                        <div class="partner-logo" *ngIf="agency.logo">
+                            <img [src]="agency.logo" [alt]="agency.name">
+                        </div>
+                        <div class="partner-logo placeholder" *ngIf="!agency.logo">
+                            <span class="material-symbols-outlined">apartment</span>
+                        </div>
+                        <span class="partner-name">{{ agency.name }}</span>
                     </div>
                 </div>
-                <div class="space-y-2">
-                    <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Property Type</label>
-                    <div class="flex items-center gap-2 border-b border-slate-700 pb-2">
-                        <span class="material-symbols-outlined text-primary text-sm">home_work</span>
-                        <select
-                            class="bg-transparent border-none text-white focus:ring-0 p-0 text-sm w-full appearance-none">
-                            <option class="bg-background-dark">Penthouses</option>
-                            <option class="bg-background-dark">Waterfront Villas</option>
-                            <option class="bg-background-dark">Modernist Mansions</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Price Range</label>
-                    <div class="flex items-center gap-2 border-b border-slate-700 pb-2">
-                        <span class="material-symbols-outlined text-primary text-sm">payments</span>
-                        <select class="bg-transparent border-none text-white focus:ring-0 p-0 text-sm w-full">
-                            <option class="bg-background-dark">$5M - $10M</option>
-                            <option class="bg-background-dark">$10M - $50M</option>
-                            <option class="bg-background-dark">$50M+</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="flex items-end">
-                    <button
-                        class="w-full bg-primary py-3 rounded font-bold uppercase tracking-widest text-xs hover:shadow-[0_0_20px_rgba(19,91,236,0.4)] transition-all">
-                        Search Portfolio
-                    </button>
-                </div>
+            </div>
+            <div *ngIf="!agencies.length" class="text-center text-silver-500 py-12">
+                <span class="material-symbols-outlined text-4xl mb-4">group</span>
+                <p>Partner agencies coming soon</p>
             </div>
         </div>
     </section>
@@ -93,24 +93,6 @@
                         <span class="text-white font-bold text-sm md:text-lg">{{ category.name }}</span>
                     </div>
                 </button>
-            </div>
-            <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
-                <select [(ngModel)]="selectedCountry"
-                        (change)="onCountryChange()"
-                        class="bg-white dark:bg-background-dark border border-slate-300 dark:border-slate-700 px-4 py-2 rounded text-sm">
-                    <option value="">All Countries</option>
-                    <option value="France">France</option>
-                    <option value="UAE">UAE</option>
-                    <option value="USA">USA</option>
-                </select>
-                <select [(ngModel)]="selectedRegion"
-                        (change)="onRegionChange()"
-                        class="bg-white dark:bg-background-dark border border-slate-300 dark:border-slate-700 px-4 py-2 rounded text-sm">
-                    <option value="">All Regions</option>
-                    <option value="Paris">Paris</option>
-                    <option value="Dubai">Dubai</option>
-                    <option value="California">California</option>
-                </select>
             </div>
         </div>
     </section>

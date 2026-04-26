@@ -89,6 +89,15 @@ export class AgenciesService {
     };
   }
 
+  async getPublicAgencies() {
+    const agencies = await this.agencyModel.find({}).select('name logo');
+    return agencies.map(agency => ({
+      id: agency._id.toString(),
+      name: agency.name,
+      logo: agency.logo,
+    }));
+  }
+
   async create(dto: CreateAgencyDto) {
     let personnel = await this.personnelModel.findOne({ phone: dto.ownerPhone });
     

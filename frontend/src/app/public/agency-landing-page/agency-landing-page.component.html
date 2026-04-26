@@ -22,28 +22,12 @@
         </p>
       </div>
 
-      <div class="hero-panel">
-        <div class="search-grid">
-          <label>
-            <span>Search</span>
-            <input [(ngModel)]="query" type="text" placeholder="Reference, address, description">
-          </label>
-          <label>
-            <span>Location</span>
-            <input [(ngModel)]="location" type="text" placeholder="City, district, area">
-          </label>
-          <label>
-            <span>Property type</span>
-            <select [(ngModel)]="type">
-              <option *ngFor="let option of propertyTypes" [value]="option.value">{{ option.label }}</option>
-            </select>
-          </label>
-          <div class="search-actions">
-            <button type="button" class="primary" (click)="onSearch()">Search announcements</button>
-            <button type="button" class="secondary" (click)="clearFilters()">Reset</button>
-          </div>
-        </div>
-      </div>
+      <app-shared-search-bar
+        [searchQuery]="searchQuery"
+        [searchLocation]="searchLocation"
+        [searchType]="searchType"
+        (search)="onSearch($event)">
+      </app-shared-search-bar>
     </div>
   </section>
 

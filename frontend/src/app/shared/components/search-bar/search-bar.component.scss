@@ -1,0 +1,97 @@
+.search-panel {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  background: rgba(15, 23, 42, 0.58);
+  backdrop-filter: blur(18px);
+  padding: 1.5rem;
+}
+
+.search-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.search-grid label {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.search-grid span {
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.86);
+}
+
+.search-grid input,
+.search-grid select {
+  width: 100%;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.72);
+  color: white;
+  padding: 0.95rem 1rem;
+}
+
+.search-grid input::placeholder {
+  color: rgba(148, 163, 184, 0.5);
+}
+
+.search-grid select option {
+  background: rgba(15, 23, 42, 0.95);
+  color: white;
+}
+
+.search-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.search-actions button {
+  border-radius: 0.9rem;
+  padding: 0.95rem 1.15rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.search-actions .primary {
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: white;
+  border: none;
+}
+
+.search-actions .primary:hover {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+}
+
+.search-actions .secondary {
+  background: rgba(255, 255, 255, 0.04);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.search-actions .secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 640px) {
+  .search-panel {
+    padding: 1rem;
+    border-radius: 1rem;
+  }
+
+  .search-grid input,
+  .search-grid select {
+    padding: 0.75rem;
+  }
+
+  .search-actions button {
+    flex: 1;
+    padding: 0.75rem;
+  }
+}

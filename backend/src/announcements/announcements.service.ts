@@ -244,4 +244,57 @@ export class AnnouncementsService {
       totalPages: Math.ceil(total / limit),
     };
   }
+
+  async findAllPublic(
+    page = 1,
+    limit = 12,
+    filters?: PublicAnnouncementFilters,
+  ) {
+    const query: Record<string, any> = {
+      isVisible: true,
+      deletedAt: { $exists: false },
+      propertyStatus: { $ne: 'sold' },
+    };
+
+    if (filters?.type) {
+      query.type = filters.type;
+    }
+
+    if (filters?.location) {
+      query['searchIndex.location'] = { $regex: filters.location, $options: 'i' };
+    }
+
+    if (filters?.query) {
+      query['searchIndex.query'] = { $regex: filters.query, $options: 'i' };
+    }
+
+    if (filters?.minPrice || filters?.maxPrice) {
+      query.price = {};
+      if (filters.minPrice) {
+        query.price.$gte = filters.minPrice;
+      }
+      if (filters.maxPrice) {
+        query.price.$lte = filters.maxPrice;
+      }
+    }
+
+    const skip = (page - 1) * limit;
+    const [announcements, total] = await Promise.all([
+      this.announcementModel
+        .find(query)
+        .sort({ refreshedAt: -1, createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      this.announcementModel.countDocuments(query),
+    ]);
+
+    return {
+      data: announcements,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
 }

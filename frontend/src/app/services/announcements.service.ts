@@ -85,4 +85,25 @@ export class AnnouncementsService {
       { params },
     );
   }
+
+  getAllPublicAnnouncements(
+    page = 1,
+    limit = 12,
+    filters?: Record<string, string | number | undefined>,
+  ): Observable<PaginatedAnnouncements> {
+    let params = new HttpParams()
+      .set('page', page)
+      .set('limit', limit);
+
+    Object.entries(filters ?? {}).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        params = params.set(key, value);
+      }
+    });
+
+    return this.http.get<PaginatedAnnouncements>(
+      `${this.apiUrl}/public`,
+      { params },
+    );
+  }
 }

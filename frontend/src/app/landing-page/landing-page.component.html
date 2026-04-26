@@ -113,15 +113,15 @@
                 </button>
             </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8" *ngIf="!loading">
-            <div *ngFor="let property of properties" class="group cursor-pointer">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8" *ngIf="!loading()">
+            <div *ngFor="let announcement of announcements" class="group cursor-pointer">
                 <div class="relative aspect-[4/5] overflow-hidden rounded-xl mb-6">
                     <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        [src]="property.photos[0] || '/assets/placeholder-property.jpg'"
-                        [alt]="property.description" />
+                        [src]="announcement.photos[0] || '/assets/placeholder-property.jpg'"
+                        [alt]="announcement.description" />
                     <div
                         class="absolute top-4 left-4 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-[10px] text-white uppercase tracking-widest"
-                        *ngIf="property.status === 'available'">
+                        *ngIf="announcement.propertyStatus === 'available'">
                         Available
                     </div>
                     <div
@@ -129,21 +129,21 @@
                     </div>
                 </div>
                 <div class="space-y-1">
-                    <h4 class="text-xl font-bold dark:text-white group-hover:text-primary transition-colors">{{ property.reference }}</h4>
-                    <p class="text-slate-500 dark:text-silver-500 text-sm font-medium tracking-wide">{{ property.address }}</p>
+                    <h4 class="text-xl font-bold dark:text-white group-hover:text-primary transition-colors">{{ announcement.reference }}</h4>
+                    <p class="text-slate-500 dark:text-silver-500 text-sm font-medium tracking-wide">{{ announcement.address }}</p>
                     <div class="pt-4 flex items-center justify-between border-t border-slate-800 mt-4">
-                        <span class="text-primary font-bold tracking-tighter text-lg">${{ property.price.toLocaleString() }}</span>
+                        <span class="text-primary font-bold tracking-tighter text-lg">{{ announcement.price.toLocaleString() }} TND</span>
                         <div class="flex gap-4 text-xs text-silver-400">
-                            <span class="flex items-center gap-1" *ngIf="property.amenities['bedrooms']"><span
-                                    class="material-symbols-outlined text-sm">bed</span> {{ property.amenities['bedrooms'] }}</span>
-                            <span class="flex items-center gap-1" *ngIf="property.amenities['bathrooms']"><span
-                                    class="material-symbols-outlined text-sm">bathtub</span> {{ property.amenities['bathrooms'] }}</span>
+                            <span class="flex items-center gap-1" *ngIf="announcement.amenities['bedrooms']"><span
+                                    class="material-symbols-outlined text-sm">bed</span> {{ announcement.amenities['bedrooms'] }}</span>
+                            <span class="flex items-center gap-1" *ngIf="announcement.amenities['bathrooms']"><span
+                                    class="material-symbols-outlined text-sm">bathtub</span> {{ announcement.amenities['bathrooms'] }}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div *ngIf="loading" class="flex justify-center py-12">
+        <div *ngIf="loading()" class="flex justify-center py-12">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
     </section>

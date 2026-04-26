@@ -1,14 +1,13 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
 import { PublicFooterComponent } from '../shared/components/public-footer/public-footer.component';
 import { PublicNavbarComponent } from '../shared/components/public-navbar/public-navbar.component';
-import { PropertiesService, Property, PaginatedProperties } from '../services/properties.service';
 import { CircularGalleryComponent, CircularGalleryItem } from '../public/circular-gallery/circular-gallery.component';
 import { SharedSearchBarComponent, SearchFilters } from '../shared/components/search-bar/search-bar.component';
 import { AgencyService, AgencyProfile } from '../services/agency.service';
+import { AnnouncementsService, Announcement, PaginatedAnnouncements } from '../services/announcements.service';
 
 @Component({
   selector: 'app-landing-page',
@@ -18,14 +17,13 @@ import { AgencyService, AgencyProfile } from '../services/agency.service';
   styleUrl: './landing-page.scss',
 })
 export class LandingPage implements OnInit {
-  authService = inject(AuthService);
   router = inject(Router);
-  propertiesService = inject(PropertiesService);
   private agencyService = inject(AgencyService);
+  private announcementsService = inject(AnnouncementsService);
   mobileMenuOpen = false;
 
-  properties: Property[] = [];
-  loading = false;
+  announcements: Announcement[] = [];
+  loading = signal(false);
   agencies: AgencyProfile[] = [];
   searchQuery = '';
   searchLocation = '';
@@ -40,17 +38,17 @@ export class LandingPage implements OnInit {
   ];
 
   ngOnInit() {
-    this.loadProperties();
+    this.loadAnnouncements();
     this.loadAgencies();
   }
 
   get galleryItems(): CircularGalleryItem[] {
-    return this.properties.slice(0, 8).map(property => ({
-      id: property._id,
-      title: property.reference,
-      subtitle: `${property.address} · ${property.price.toLocaleString()} TND`,
-      imageUrl: property.photos[0] || '/assets/Doghmani_logo-removebg-preview.png',
-      imageAlt: property.description,
+    return this.announcements.slice(0, 8).map(announcement => ({
+      id: announcement._id,
+      title: announcement.reference,
+      subtitle: `${announcement.address} · ${announcement.price.toLocaleString()} TND`,
+      imageUrl: announcement.photos[0] || '/assets/Doghmani_logo-removebg-preview.png',
+      imageAlt: announcement.title,
     }));
   }
 
@@ -65,15 +63,15 @@ export class LandingPage implements OnInit {
     });
   }
 
-  loadProperties(filters?: any) {
-    this.loading = true;
-    this.propertiesService.getPublicProperties(1, 6, filters).subscribe({
-      next: (response: PaginatedProperties) => {
-        this.properties = response.data;
-        this.loading = false;
+  loadAnnouncements(filters?: any) {
+    this.loading.set(true);
+    this.announcementsService.getAllPublicAnnouncements(1, 6, filters).subscribe({
+      next: (response: PaginatedAnnouncements) => {
+        this.announcements = response.data;
+          this.loading.set(false);
       },
       error: () => {
-        this.loading = false;
+          this.loading.set(false);
       }
     });
   }
@@ -86,7 +84,7 @@ export class LandingPage implements OnInit {
     if (filters.query) filterParams.query = filters.query;
     if (filters.location) filterParams.location = filters.location;
     if (filters.type) filterParams.type = filters.type;
-    this.loadProperties(filterParams);
+    this.loadAnnouncements(filterParams);
   }
 
   onCategoryClick(category: any) {
@@ -104,7 +102,7 @@ export class LandingPage implements OnInit {
           break;
       }
     }
-    this.loadProperties(filters);
+    this.loadAnnouncements(filters);
   }
 
   navigateToDashboard() {

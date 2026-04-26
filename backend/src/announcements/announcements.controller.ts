@@ -48,6 +48,30 @@ export class AnnouncementsController {
     );
   }
 
+  @Public()
+  @Get('public')
+  findAllPublic(
+    @Query('page') page = '1',
+    @Query('limit') limit = '12',
+    @Query('query') query?: string,
+    @Query('type') type?: string,
+    @Query('location') location?: string,
+    @Query('minPrice') minPrice?: string,
+    @Query('maxPrice') maxPrice?: string,
+  ) {
+    return this.announcementsService.findAllPublic(
+      parseInt(page, 10),
+      parseInt(limit, 10),
+      {
+        query,
+        type,
+        location,
+        minPrice: minPrice ? parseFloat(minPrice) : undefined,
+        maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+      },
+    );
+  }
+
   @UseGuards(AgencyGuard)
   @Get()
   findAllByAgency(@Request() req) {

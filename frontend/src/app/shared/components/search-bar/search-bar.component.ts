@@ -23,35 +23,11 @@ export class SharedSearchBarComponent {
   @Output() search = new EventEmitter<SearchFilters>();
   @Output() filtersChange = new EventEmitter<SearchFilters>();
 
-  readonly propertyTypes = [
-    { value: '', label: 'All types' },
-    { value: 'apartment', label: 'Apartment' },
-    { value: 'villa', label: 'Villa' },
-    { value: 'house', label: 'House' },
-    { value: 'land', label: 'Land' },
-  ];
-
   onSearch() {
     this.search.emit({
       query: this.searchQuery,
       location: this.searchLocation,
       type: this.searchType,
-    });
-  }
-
-  onClear() {
-    this.searchQuery = '';
-    this.searchLocation = '';
-    this.searchType = '';
-    this.filtersChange.emit({
-      query: '',
-      location: '',
-      type: '',
-    });
-    this.search.emit({
-      query: '',
-      location: '',
-      type: '',
     });
   }
 

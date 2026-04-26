@@ -1,30 +1,48 @@
-<div class="search-panel">
-  <div class="search-grid">
-    <label>
-      <span>Search</span>
-      <input
-        [(ngModel)]="searchQuery"
-        (ngModelChange)="onInputChange()"
-        type="text"
-        placeholder="Reference, address, description">
-    </label>
-    <label>
-      <span>Location</span>
-      <input
-        [(ngModel)]="searchLocation"
-        (ngModelChange)="onInputChange()"
-        type="text"
-        placeholder="City, district, area">
-    </label>
-    <label>
-      <span>Property type</span>
-      <select [(ngModel)]="searchType" (ngModelChange)="onInputChange()">
-        <option *ngFor="let option of propertyTypes" [value]="option.value">{{ option.label }}</option>
-      </select>
-    </label>
-    <div class="search-actions">
-      <button type="button" class="primary" (click)="onSearch()">Search</button>
-      <button type="button" class="secondary" (click)="onClear()">Reset</button>
+<div class="search-panel glass-card p-6 md:p-8 rounded-xl shadow-2xl border-t border-white/10">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="space-y-2">
+      <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Location</label>
+      <div class="flex items-center gap-2 border-b border-slate-700 pb-2">
+        <span class="material-symbols-outlined text-primary text-sm">location_on</span>
+        <input
+          [(ngModel)]="searchLocation"
+          (ngModelChange)="onInputChange()"
+          type="text"
+          class="bg-transparent border-none text-white focus:ring-0 p-0 text-sm placeholder:text-slate-500 w-full"
+          placeholder="City, district, area">
+      </div>
+    </div>
+    <div class="space-y-2">
+      <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Property Type</label>
+      <div class="flex items-center gap-2 border-b border-slate-700 pb-2">
+        <span class="material-symbols-outlined text-primary text-sm">home_work</span>
+        <select [(ngModel)]="searchType" (ngModelChange)="onInputChange()" class="bg-transparent border-none text-white focus:ring-0 p-0 text-sm w-full appearance-none">
+          <option class="bg-background-dark" value="">All types</option>
+          <option class="bg-background-dark" value="apartment">Apartment</option>
+          <option class="bg-background-dark" value="villa">Villa</option>
+          <option class="bg-background-dark" value="house">House</option>
+          <option class="bg-background-dark" value="land">Land</option>
+        </select>
+      </div>
+    </div>
+    <div class="space-y-2">
+      <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Price Range</label>
+      <div class="flex items-center gap-2 border-b border-slate-700 pb-2">
+        <span class="material-symbols-outlined text-primary text-sm">payments</span>
+        <input
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="onInputChange()"
+          type="text"
+          class="bg-transparent border-none text-white focus:ring-0 p-0 text-sm placeholder:text-slate-500 w-full"
+          placeholder="Search...">
+      </div>
+    </div>
+    <div class="flex items-end">
+      <button
+        (click)="onSearch()"
+        class="w-full bg-primary py-3 rounded font-bold uppercase tracking-widest text-xs hover:shadow-[0_0_20px_rgba(19,91,236,0.4)] transition-all">
+        Search
+      </button>
     </div>
   </div>
 </div>

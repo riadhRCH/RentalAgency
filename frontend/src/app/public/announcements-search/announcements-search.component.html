@@ -2,43 +2,40 @@
 
 <main class="relative h-screen overflow-hidden bg-background-dark text-white">
   <div class="absolute inset-0">
-    @if (googleMapsApiKey) {
-      @if (hasMapResults()) {
-        <google-map
-          #map
-          [center]="mapCenter()"
-          [zoom]="mapZoom()"
-          [options]="{ ...mapOptions, center: mapCenter(), zoom: mapZoom() }"
-          height="100%"
-          [width]="null"
-          class="w-full h-full">
-          @for (announcement of mappableAnnouncements(); track announcement._id) {
-            <map-marker
-              [position]="announcement.gpsLocation"
-              [options]="getMarkerOptions(announcement)"
-              (mapClick)="focusAnnouncement(announcement)">
-            </map-marker>
-          }
-        </google-map>
-      } @else {
-        <div class="w-full h-full flex items-center justify-center bg-white/5">
-          <div class="text-center px-6">
-            <span class="material-symbols-outlined text-slate-500 text-5xl">location_off</span>
-            <p class="mt-4 text-slate-300 font-semibold">No map-ready results</p>
-            <p class="mt-2 text-slate-500 text-sm">
-              Matching announcements exist only without valid GPS coordinates.
-            </p>
-          </div>
-        </div>
+  @if (googleMapsApiKey) {
+    <!-- Always render the map -->
+    <google-map
+      #map
+      [center]="mapCenter()"
+      [zoom]="mapZoom()"
+      [options]="{ ...mapOptions, center: mapCenter(), zoom: mapZoom() }"
+      height="100%"
+      [width]="null"
+      class="w-full h-full">
+      @for (announcement of mappableAnnouncements(); track announcement._id) {
+        <map-marker
+          [position]="announcement.gpsLocation"
+          [options]="getMarkerOptions(announcement)"
+          (mapClick)="focusAnnouncement(announcement)">
+        </map-marker>
       }
-    } @else {
-      <div class="p-6 w-full h-full flex items-center justify-center bg-red-500/10">
-        <p class="text-red-300 text-xs uppercase tracking-widest font-bold text-center max-w-md">
-          Google Maps API key is not configured. Add it to the environment to display the map.
-        </p>
+    </google-map>
+
+    <!-- Subtle overlay notice when results exist but none have GPS -->
+    @if (announcements().length > 0 && !hasMapResults()) {
+      <div class="absolute top-24 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 rounded-full border border-white/10 bg-black/60 px-4 py-2 backdrop-blur text-xs text-slate-400 whitespace-nowrap">
+        <span class="material-symbols-outlined text-sm text-slate-500">location_off</span>
+        No GPS coordinates for these results
       </div>
     }
-  </div>
+  } @else {
+    <div class="p-6 w-full h-full flex items-center justify-center bg-red-500/10">
+      <p class="text-red-300 text-xs uppercase tracking-widest font-bold text-center max-w-md">
+        Google Maps API key is not configured. Add it to the environment to display the map.
+      </p>
+    </div>
+  }
+</div>
 
   <div class="pointer-events-none absolute left-0 right-0 top-24 z-10 px-4 md:top-28 md:px-6">
     <div class="mx-auto w-full max-w-7xl">

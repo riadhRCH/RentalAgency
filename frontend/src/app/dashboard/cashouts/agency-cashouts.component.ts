@@ -1,12 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CashoutsService, Cashout, CashoutStatus } from '../../services/cashouts.service';
-import { TranslatePipe } from '../../i18n/translate.pipe';
 
 @Component({
   selector: 'app-agency-cashouts',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule],
   templateUrl: './agency-cashouts.component.html',
   styleUrl: './agency-cashouts.component.scss'
 })

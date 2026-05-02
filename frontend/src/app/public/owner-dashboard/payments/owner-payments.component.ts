@@ -2,12 +2,11 @@ import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CashoutsService, Cashout, CashoutStatus } from '../../../services/cashouts.service';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '../../../i18n/translate.pipe';
 
 @Component({
   selector: 'app-owner-payments',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule],
   templateUrl: './owner-payments.component.html',
   styleUrl: './owner-payments.component.scss'
 })

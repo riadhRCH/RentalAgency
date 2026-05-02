@@ -131,3 +131,156 @@
     width: 100%;
   }
 }
+
+// Collapsed pill
+.search-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(15, 25, 35, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 40px;
+  padding: 10px 12px 10px 16px;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: transform 0.15s;
+
+  &:active { transform: scale(0.98); }
+}
+
+.pill-tab-indicator {
+  background: #0d9488;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pill-summary {
+  flex: 1;
+  overflow: hidden;
+  .pill-hint { font-size: 11px; color: rgba(255,255,255,0.4); }
+  .pill-active-summary { font-size: 12px; color: #fff; font-weight: 600; }
+}
+
+.pill-search-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: #0d9488;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; border: none; cursor: pointer;
+  color: #fff;
+}
+
+// Dim overlay
+.search-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 24;
+  &.show { display: block; }
+}
+
+// Bottom sheet
+.search-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 25;
+  background: #0f1923;
+  border-radius: 20px 20px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: env(safe-area-inset-bottom, 8px);
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+
+  &.open { transform: translateY(0); }
+}
+
+.drag-handle {
+  width: 36px; height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 10px auto;
+  cursor: pointer;
+}
+
+.sheet-tabs {
+  display: flex;
+  margin: 0 14px 2px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.sheet-tab {
+  flex: 1;
+  padding: 7px 4px;
+  font-size: 9px; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  background: transparent; border: none; cursor: pointer;
+  transition: all 0.15s;
+
+  &.active {
+    background: #0d9488;
+    color: #fff;
+  }
+}
+
+.fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin: 10px 14px 0;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.field-cell {
+  background: rgba(15, 25, 35, 0.95);
+  padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 5px;
+
+  &:last-child:nth-child(odd) { grid-column: span 2; }
+}
+
+.field-label {
+  font-size: 8px; font-weight: 800;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  display: flex; align-items: center; gap: 5px;
+
+  .material-symbols-outlined { font-size: 11px; }
+}
+
+.field-input {
+  background: transparent;
+  border: none; outline: none;
+  color: #fff; font-size: 13px;
+  width: 100%;
+  appearance: none;
+
+  &::placeholder { color: rgba(255, 255, 255, 0.25); }
+  option { background: #0f1923; }
+}
+
+.sheet-search-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin: 10px 14px 8px;
+  width: calc(100% - 28px);
+  background: #0d9488;
+  color: #fff;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 13px;
+  border-radius: 12px;
+  border: none; cursor: pointer;
+}

@@ -329,4 +329,9 @@ export class AnnouncementsSearchComponent implements OnInit {
 
     return null;
   }
+
+  isSearchMobileVisible = signal(false);
+  onToggleSearch(isSearchMobileVisible: boolean) {
+    this.isSearchMobileVisible.set(isSearchMobileVisible);
+  }
 }

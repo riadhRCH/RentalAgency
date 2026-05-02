@@ -28,11 +28,14 @@ import { OwnerDashboardComponent } from './public/owner-dashboard/owner-dashboar
 import { AnnouncementsComponent } from './dashboard/announcements/announcements.component';
 import { AgencyLandingPageComponent } from './public/agency-landing-page/agency-landing-page.component';
 
+import { AgencyCashoutsComponent } from './dashboard/cashouts/agency-cashouts.component';
+
 export const routes: Routes = [
     { path: '', component: LandingPage },
     { path: 'announce/:id', component: PropertyDetailsComponent },
     { path: 'transaction/:id', component: TransactionComponent },
     { path: 'owner-dashboard/:token', component: OwnerDashboardComponent },
+    { path: 'owner-dashboard/:token/payments', component: OwnerDashboardComponent }, // Will handle multiple views in component
     { path: 'thank-you', component: ThankYouComponent },
     { path: 'carousel', component: CarouselComponent },
     { path: 'auth/login', component: LoginComponent },
@@ -59,6 +62,7 @@ export const routes: Routes = [
             { path: 'transactions', redirectTo: 'overview/transactions' },
             { path: 'leads/add', component: AddLeadComponent },
             { path: 'properties', component: PropertiesMgmtComponent },
+            { path: 'cashouts', component: AgencyCashoutsComponent },
             { path: 'announcements', component: AnnouncementsComponent },
             { path: 'properties/add', component: AddPropertyComponent },
             { path: 'properties/edit/:id', component: AddPropertyComponent },

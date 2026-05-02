@@ -23,95 +23,39 @@
     <!-- Navigation Links -->
     <nav class="flex-1 overflow-y-auto py-6">
         <div class="px-4 space-y-1">
-            <!-- Overview Group -->
-            <div class="space-y-1">
-                <a routerLink="/dashboard/overview" routerLinkActive="bg-primary/5 text-primary border-primary" [routerLinkActiveOptions]="{exact: false}"
-                    (click)="onNavigate()"
-                    class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
-                    <span class="material-symbols-outlined">dashboard</span>
-                    <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.OVERVIEW' | translate }}</span>
-                </a>
-                
-                <!-- Sub-items -->
-                <div class="pl-4 ml-6 space-y-1 border-l border-white/5">
-                    <a routerLink="/dashboard/overview/leads" routerLinkActive="bg-primary/5 text-primary border-primary active-sub-item"
-                        (click)="onNavigate()"
-                        class="flex items-center gap-3 px-4 py-2 text-silver-500 hover:text-white transition-all group rounded-r-lg border-l-2 border-transparent">
-                        <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">group</span>
-                        <span class="sidebar-label text-[10px] font-bold uppercase tracking-widest">{{ 'SIDEBAR.LEADS' | translate }}</span>
-                    </a>
-                    <a routerLink="/dashboard/overview/visits" routerLinkActive="bg-primary/5 text-primary border-primary active-sub-item"
-                        (click)="onNavigate()"
-                        class="flex items-center gap-3 px-4 py-2 text-silver-500 hover:text-white transition-all group rounded-r-lg border-l-2 border-transparent">
-                        <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">event</span>
-                        <span class="sidebar-label text-[10px] font-bold uppercase tracking-widest">{{ 'SIDEBAR.VISITS' | translate }}</span>
-                    </a>
-                    <a routerLink="/dashboard/overview/transactions" routerLinkActive="bg-primary/5 text-primary border-primary active-sub-item"
-                        (click)="onNavigate()"
-                        class="flex items-center gap-3 px-4 py-2 text-silver-500 hover:text-white transition-all group rounded-r-lg border-l-2 border-transparent">
-                        <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">contract</span>
-                        <span class="sidebar-label text-[10px] font-bold uppercase tracking-widest">{{ 'SIDEBAR.ACTIVE_TRANSACTIONS' | translate }}</span>
-                    </a>
+            <ng-container *ngFor="let item of navItems">
+                <!-- Header/Label -->
+                <div *ngIf="item.isHeader" class="mt-8 px-4 first:mt-0">
+                    <div class="sidebar-section-label px-4 mb-2">
+                        <span class="sidebar-label text-[10px] uppercase tracking-[0.2em] text-silver-500 font-bold">{{ item.label | translate }}</span>
+                    </div>
                 </div>
-            </div>
 
-            <a routerLink="/dashboard/properties" routerLinkActive="bg-primary/10 text-primary border-primary"
-                (click)="onNavigate()"
-                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
-                <span class="material-symbols-outlined">real_estate_agent</span>
-                <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.PROPERTIES' | translate }}</span>
-            </a>
-
-            <a routerLink="/dashboard/announcements" routerLinkActive="bg-primary/10 text-primary border-primary"
-                (click)="onNavigate()"
-                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
-                <span class="material-symbols-outlined">campaign</span>
-                <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.ANNOUNCEMENTS' | translate }}</span>
-            </a>
-
-            <!-- Personnel Group -->
-            <div class="space-y-1">
-                <div class="flex items-center gap-3 px-4 py-3 text-silver-400 border-l-2 border-transparent">
-                    <span class="material-symbols-outlined">people</span>
-                    <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.PERSONNEL' | translate }}</span>
-                </div>
-                
-                <!-- Sub-items -->
-                <div class="pl-4 ml-6 space-y-1 border-l border-white/5">
-                    <a routerLink="/dashboard/personnel/team" routerLinkActive="bg-primary/5 text-primary border-primary active-sub-item"
+                <!-- Regular Link with optional sub-items -->
+                <div *ngIf="!item.isHeader" class="space-y-1">
+                    <a *ngIf="item.route" [routerLink]="item.route" routerLinkActive="bg-primary/5 text-primary border-primary" [routerLinkActiveOptions]="{exact: item.exact ?? false}"
                         (click)="onNavigate()"
-                        class="flex items-center gap-3 px-4 py-2 text-silver-500 hover:text-white transition-all group rounded-r-lg border-l-2 border-transparent">
-                        <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">badge</span>
-                        <span class="sidebar-label text-[10px] font-bold uppercase tracking-widest">{{ 'SIDEBAR.TEAM_MANAGEMENT' | translate }}</span>
+                        class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
+                        <span class="material-symbols-outlined">{{ item.icon }}</span>
+                        <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ item.label | translate }}</span>
                     </a>
-                    <a routerLink="/dashboard/personnel/owners" routerLinkActive="bg-primary/5 text-primary border-primary active-sub-item"
-                        (click)="onNavigate()"
-                        class="flex items-center gap-3 px-4 py-2 text-silver-500 hover:text-white transition-all group rounded-r-lg border-l-2 border-transparent">
-                        <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">person</span>
-                        <span class="sidebar-label text-[10px] font-bold uppercase tracking-widest">{{ 'SIDEBAR.OWNERS_PAGE' | translate }}</span>
-                    </a>
+
+                    <div *ngIf="!item.route" class="flex items-center gap-3 px-4 py-3 text-silver-400 border-l-2 border-transparent">
+                        <span class="material-symbols-outlined">{{ item.icon }}</span>
+                        <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ item.label | translate }}</span>
+                    </div>
+                    
+                    <!-- Sub-items -->
+                    <div *ngIf="item.subItems && item.subItems.length" class="pl-4 ml-6 space-y-1 border-l border-white/5">
+                        <a *ngFor="let sub of item.subItems" [routerLink]="sub.route" routerLinkActive="bg-primary/5 text-primary border-primary active-sub-item"
+                            (click)="onNavigate()"
+                            class="flex items-center gap-3 px-4 py-2 text-silver-500 hover:text-white transition-all group rounded-r-lg border-l-2 border-transparent">
+                            <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">{{ sub.icon }}</span>
+                            <span class="sidebar-label text-[10px] font-bold uppercase tracking-widest">{{ sub.label | translate }}</span>
+                        </a>
+                    </div>
                 </div>
-            </div>
-
-
-              <a routerLink="/dashboard/bank-details" routerLinkActive="bg-primary/10 text-primary border-primary"
-                (click)="onNavigate()"
-                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
-                <span class="material-symbols-outlined">account_balance</span>
-                <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.PAYMENTS' | translate }}</span>
-            </a>
-        </div>
-
-        <div class="mt-8 px-4">
-            <div class="sidebar-section-label px-4 mb-2">
-                <span class="sidebar-label text-[10px] uppercase tracking-[0.2em] text-silver-500 font-bold">{{ 'SIDEBAR.SYSTEM' | translate }}</span>
-            </div>
-            <a routerLink="/dashboard/config" routerLinkActive="bg-primary/10 text-primary border-primary"
-                (click)="onNavigate()"
-                class="flex items-center gap-3 px-4 py-3 text-silver-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent rounded-r-lg">
-                <span class="material-symbols-outlined">settings</span>
-                <span class="sidebar-label text-xs font-bold uppercase tracking-widest">{{ 'SIDEBAR.SETTINGS' | translate }}</span>
-            </a>
+            </ng-container>
         </div>
     </nav>
 

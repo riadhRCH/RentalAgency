@@ -1,132 +1,167 @@
-<div class="owner-dashboard">
-  <!-- Header -->
-  <div class="dashboard-header">
-    <h1 class="text-3xl font-bold text-white">Property Owner Dashboard</h1>
-    <!-- TODO: SMS verification will be added in future -->
-    <p class="text-silver-400 text-sm mt-2">Manage your properties and availability</p>
-  </div>
+<div class="dashboard-shell" [class.sidebar-collapsed]="sidebarCollapsed">
+  <app-sidebar 
+    [collapsed]="sidebarCollapsed" 
+    [mobileOpen]="mobileSidebarOpen" 
+    [navItems]="navItems"
+    (closeMobile)="closeMobileSidebar()"></app-sidebar>
 
-  <!-- Loading State -->
-  <div *ngIf="loading()" class="flex justify-center py-12">
-    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-  </div>
-
-  <!-- Error State -->
-  <div *ngIf="error && !loading()" class="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
-    <p class="text-red-400">{{ error }}</p>
-  </div>
-
-  <!-- Dashboard Content -->
-  <div *ngIf="dashboardData && !loading()" class="dashboard-content">
-    <!-- Owner Info Card -->
-    <div class="owner-info-card glass-card p-6 rounded-lg border border-white/5 mb-8">
-      <div class="flex items-center gap-4">
-        <div
-          class="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center text-primary border border-primary/20">
-          <span class="material-symbols-outlined text-3xl">person</span>
-        </div>
-        <div>
-          <h2 class="text-2xl font-bold text-white">{{ dashboardData.owner.firstName }} {{ dashboardData.owner.lastName
-            }}</h2>
-          <p class="text-silver-400">{{ dashboardData.owner.phone }}</p>
-          <p class="text-silver-400" *ngIf="dashboardData.owner.email">{{ dashboardData.owner.email }}</p>
-        </div>
-      </div>
+  <div class="dashboard-content">
+    <!-- Navbar for Mobile Toggle -->
+    <div class="lg:hidden sticky top-0 z-40 bg-background-dark/80 backdrop-blur-xl border-b border-white/5 p-4 flex items-center justify-between">
+      <button (click)="mobileSidebarOpen = true" class="text-silver-400">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <h1 class="text-xs font-black tracking-widest silver-glow uppercase">Owner Dashboard</h1>
+      <div class="w-6"></div>
     </div>
 
-    <!-- Properties Section -->
-    <div class="properties-section">
-      <h3 class="text-xl font-bold text-white mb-6">Your Properties ({{ dashboardData.properties.length }})</h3>
+    <main class="dashboard-main p-6 sm:p-8">
+      <!-- Loading State -->
+      <div *ngIf="loading()" class="flex justify-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
 
-      <div class="properties-grid">
-        <div *ngFor="let property of dashboardData.properties"
-          class="property-card glass-card p-6 rounded-lg border border-white/5">
-          <!-- Property Header -->
-          <div class="mb-4">
-            <h4 class="text-lg font-bold text-white">{{ property.reference }}</h4>
-            <p class="text-silver-400 text-sm">{{ property.address }}</p>
-          </div>
+      <!-- Error State -->
+      <div *ngIf="error && !loading()" class="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
+        <p class="text-red-400">{{ error }}</p>
+      </div>
 
-          <!-- Property Image -->
-          <div *ngIf="property.photos && property.photos.length" class="mb-4">
-            <img [src]="property.photos[0]" alt="Property" class="w-full h-48 object-cover rounded-lg">
-          </div>
+      <div *ngIf="dashboardData && !loading()">
+        <!-- OVERVIEW VIEW -->
+        <div *ngIf="currentView === 'overview'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <header class="mb-10">
+            <h1 class="text-3xl font-black text-white uppercase tracking-tight silver-glow">{{ 'SIDEBAR.OVERVIEW' | translate }}</h1>
+            <p class="text-silver-500 text-sm tracking-widest uppercase mt-1">{{ 'OWNER_DASHBOARD.OVERVIEW_SUBTITLE' | translate }}</p>
+          </header>
 
-          <!-- View Mode -->
-          <div *ngIf="propertyEditMode[property._id] === 'view'" class="space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <p class="text-silver-500 text-xs uppercase font-bold mb-1">Price</p>
-                <p class="text-lg font-bold text-primary">${{ property.price.toLocaleString() }}</p>
+          <!-- Owner Info Card -->
+          <div class="owner-info-card glass-card p-6 rounded-2xl border border-white/10 mb-8">
+            <div class="flex items-center gap-4">
+              <div class="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center text-primary border border-primary/20">
+                <span class="material-symbols-outlined text-3xl">person</span>
               </div>
               <div>
-                <p class="text-silver-500 text-xs uppercase font-bold mb-1">Type</p>
-                <p class="text-sm text-silver-300 capitalize">{{ property.type }}</p>
+                <h2 class="text-2xl font-bold text-white">{{ dashboardData.owner.firstName }} {{ dashboardData.owner.lastName }}</h2>
+                <p class="text-silver-400">{{ dashboardData.owner.phone }}</p>
+                <p class="text-silver-400 text-sm" *ngIf="dashboardData.owner.email">{{ dashboardData.owner.email }}</p>
               </div>
-            </div>
-
-            <div class="flex gap-2">
-              <button (click)="toggleAvailabilityEdit(property._id)"
-                class="flex-1 px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 transition-colors text-sm font-semibold">
-                <span class="material-symbols-outlined text-sm align-middle">calendar_today</span>
-                Update Availability
-              </button>
-              <button (click)="togglePriceEdit(property._id)"
-                class="flex-1 px-4 py-2 bg-secondary/10 text-secondary border border-secondary/20 rounded-lg hover:bg-secondary/20 transition-colors text-sm font-semibold">
-                <span class="material-symbols-outlined text-sm align-middle">attach_money</span>
-                Edit Price
-              </button>
             </div>
           </div>
 
-          <!-- Availability Edit Mode -->
-          <div *ngIf="propertyEditMode[property._id] === 'edit-availability'" class="space-y-4">
-            <p class="text-silver-400 text-sm">Select available dates for this property:</p>
-            <app-calendar-selector [propertyAvailability]="getPropertyCalendarData(property._id)"
-              [selectedDates]="getSelectedDatesForProperty(property._id)"
-              (datesSelected)="onPropertyDatesSelected(property._id, $event)">
-            </app-calendar-selector>
-            <div class="flex gap-2">
-              <button (click)="saveAvailability(property._id)"
-                class="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-semibold">
-                Save Availability
-              </button>
-              <button (click)="cancelEdit(property._id)"
-                class="flex-1 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors font-semibold">
-                Cancel
-              </button>
-            </div>
-          </div>
+          <!-- Properties Grid -->
+          <div class="properties-section">
+            <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-6 border-b border-white/5 pb-4">
+              {{ 'OWNER_DASHBOARD.YOUR_PROPERTIES' | translate:{ count: dashboardData.properties.length } }}
+            </h3>
 
-          <!-- Price Edit Mode -->
-          <div *ngIf="propertyEditMode[property._id] === 'edit-price'" class="space-y-4">
-            <div>
-              <label class="block text-silver-400 text-sm font-semibold mb-2">New Price</label>
-              <div class="flex items-center gap-2">
-                <span class="text-lg text-silver-400">$</span>
-                <input type="number" [(ngModel)]="editingPrices[property._id]"
-                  class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary"
-                  placeholder="Enter new price">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div *ngFor="let property of dashboardData.properties" class="property-card glass-card p-6 rounded-2xl border border-white/10 hover:border-primary/30 transition-all group">
+                <!-- Property Header -->
+                <div class="flex justify-between items-start mb-4">
+                  <div>
+                    <h4 class="text-lg font-bold text-white group-hover:text-primary transition-colors">{{ property.reference }}</h4>
+                    <p class="text-silver-500 text-[10px] uppercase font-bold tracking-widest">{{ property.address }}</p>
+                  </div>
+                  <div class="flex flex-col items-end">
+                    <span class="text-primary font-black text-lg">{{ property.price | number }} TND</span>
+                    <!--div class="flex items-center gap-1 text-[10px] text-silver-500 font-bold uppercase tracking-widest mt-1">
+                      <span class="material-symbols-outlined text-xs">visibility</span>
+                      {{ property.views || 0 }} {{ 'COMMON.VIEWS' | translate }}
+                    </div-->
+                  </div>
+                </div>
+
+                <!-- Property Image -->
+                <div *ngIf="property.photos && property.photos.length" class="mb-6 aspect-video overflow-hidden rounded-xl border border-white/5">
+                  <img [src]="property.photos[0]" alt="Property" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+
+                <!-- View Mode -->
+                <div *ngIf="propertyEditMode[property._id] === 'view'" class="space-y-6">
+                  <div class="grid grid-cols-2 gap-4 py-4 border-y border-white/5">
+                    <div>
+                      <p class="text-[9px] text-silver-600 font-black uppercase tracking-[0.2em] mb-1">{{ 'COMMON.STATUS' | translate }}</p>
+                      <span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest bg-emerald-500/10 text-emerald-500">{{ 'COMMON.ACTIVE' | translate }}</span>
+                    </div>
+                    <div>
+                      <p class="text-[9px] text-silver-600 font-black uppercase tracking-[0.2em] mb-1">{{ 'COMMON.TYPE' | translate }}</p>
+                      <p class="text-xs text-silver-300 font-bold uppercase tracking-wider">{{ property.type }}</p>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col gap-2">
+                    <button (click)="toggleAvailabilityEdit(property._id)"
+                      class="w-full px-4 py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl hover:bg-primary/20 transition-all text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
+                      <span class="material-symbols-outlined text-sm">calendar_today</span>
+                      {{ 'OWNER_DASHBOARD.UPDATE_AVAILABILITY' | translate }}
+                    </button>
+                    <button (click)="togglePriceEdit(property._id)"
+                      class="w-full px-4 py-3 bg-white/5 text-silver-400 border border-white/10 rounded-xl hover:text-white hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
+                      <span class="material-symbols-outlined text-sm">edit</span>
+                      {{ 'OWNER_DASHBOARD.EDIT_PRICE' | translate }}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Availability Edit Mode -->
+                <div *ngIf="propertyEditMode[property._id] === 'edit-availability'" class="space-y-4 animate-in fade-in duration-300">
+                  <p class="text-silver-500 text-[10px] uppercase font-black tracking-widest text-center">Select available dates</p>
+                  <app-calendar-selector [propertyAvailability]="getPropertyCalendarData(property._id)"
+                    [selectedDates]="getSelectedDatesForProperty(property._id)"
+                    (datesSelected)="onPropertyDatesSelected(property._id, $event)">
+                  </app-calendar-selector>
+                  <div class="flex gap-2">
+                    <button (click)="saveAvailability(property._id)"
+                      class="flex-1 px-4 py-3 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-all text-[10px] font-black uppercase tracking-widest">
+                      Save
+                    </button>
+                    <button (click)="cancelEdit(property._id)"
+                      class="flex-1 px-4 py-3 bg-white/5 text-silver-400 rounded-xl hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-widest">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Price Edit Mode -->
+                <div *ngIf="propertyEditMode[property._id] === 'edit-price'" class="space-y-4 animate-in fade-in duration-300">
+                  <div class="space-y-2">
+                    <label class="text-[10px] text-silver-600 font-black uppercase tracking-widest ml-1">New Price (TND)</label>
+                    <input type="number" [(ngModel)]="editingPrices[property._id]" 
+                      class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-primary transition-all">
+                  </div>
+                  <div class="flex gap-2">
+                    <button (click)="savePrice(property._id)"
+                      class="flex-1 px-4 py-3 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-all text-[10px] font-black uppercase tracking-widest">
+                      Save Price
+                    </button>
+                    <button (click)="cancelEdit(property._id)"
+                      class="flex-1 px-4 py-3 bg-white/5 text-silver-400 rounded-xl hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-widest">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="flex gap-2">
-              <button (click)="savePrice(property._id)"
-                class="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-semibold">
-                Save Price
-              </button>
-              <button (click)="cancelEdit(property._id)"
-                class="flex-1 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors font-semibold">
-                Cancel
-              </button>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Empty State -->
-  <div *ngIf="dashboardData && dashboardData.properties.length === 0 && !loading" class="text-center py-12">
-    <div class="text-silver-400">No properties found</div>
+        <!-- PAYMENTS VIEW -->
+        <div *ngIf="currentView === 'payments'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <header class="mb-10">
+            <h1 class="text-3xl font-black text-white uppercase tracking-tight silver-glow">{{ 'SIDEBAR.PAYMENTS' | translate }}</h1>
+            <p class="text-silver-500 text-sm tracking-widest uppercase mt-1">{{ 'OWNER_DASHBOARD.PAYMENTS_SUBTITLE' | translate }}</p>
+          </header>
+
+          <app-owner-payments 
+            [token]="token" 
+            [ownerId]="dashboardData.owner._id" 
+            [agencyId]="dashboardData.agencyId"
+            [properties]="dashboardData.properties"
+            [transactions]="dashboardData.transactions"
+            [initialCashouts]="dashboardData.cashouts"
+            [balance]="dashboardData.balance"></app-owner-payments>
+        </div>
+      </div>
+    </main>
   </div>
 </div>

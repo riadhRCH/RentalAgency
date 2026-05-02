@@ -1,7 +1,8 @@
 <div class="dashboard-shell" [class.sidebar-collapsed]="sidebarCollapsed">
-    <app-sidebar
+    <app-sidebar 
         [collapsed]="sidebarCollapsed"
         [mobileOpen]="mobileSidebarOpen"
+        [navItems]="navItems"
         (closeMobile)="closeMobileSidebar()"></app-sidebar>
 
     <div class="dashboard-content">

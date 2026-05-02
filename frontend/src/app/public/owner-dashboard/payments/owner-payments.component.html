@@ -1,0 +1,107 @@
+<div class="owner-payments space-y-8">
+  <!-- Balance Overview -->
+  <div class="glass-card p-8 rounded-2xl border border-white/10 shadow-2xl shadow-black/50">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div>
+        <p class="text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold mb-2">Total Balance</p>
+        <div class="text-5xl font-black silver-glow tracking-tighter">{{ totalBalance() | number }} TND</div>
+      </div>
+      
+      <div class="w-full md:w-auto flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
+          <label class="text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold ml-1">Cashout Amount</label>
+          <div class="flex gap-2">
+            <input 
+              type="number" 
+              [(ngModel)]="cashoutAmount"
+              placeholder="0.00"
+              class="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-primary transition-all w-full md:w-48">
+            <button 
+              (click)="requestCashout()"
+              [disabled]="loading() || cashoutAmount <= 0 || cashoutAmount > totalBalance()"
+              class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl uppercase text-[10px] font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center gap-2 whitespace-nowrap">
+              <span *ngIf="loading()" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+              Request Cashout
+            </button>
+          </div>
+        </div>
+        <input 
+          type="text" 
+          [(ngModel)]="cashoutNotes"
+          placeholder="Notes (optional)"
+          class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-primary transition-all">
+      </div>
+    </div>
+  </div>
+
+  <!-- Earnings from Transactions -->
+  <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+    <div class="p-6 border-b border-white/5 flex justify-between items-center">
+      <h3 class="text-sm font-bold text-white uppercase tracking-widest">Earnings (Closed Transactions)</h3>
+    </div>
+    
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead class="bg-white/5">
+          <tr>
+            <th class="p-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Property</th>
+            <th class="p-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Dates</th>
+            <th class="p-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">Amount</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          <tr *ngFor="let t of transactions" class="hover:bg-white/5 transition-colors">
+            <td class="p-4">
+              <div class="text-xs font-bold text-white">{{ t.propertyId?.reference }}</div>
+              <div class="text-[9px] text-slate-500 uppercase tracking-widest">{{ t.propertyId?.address }}</div>
+            </td>
+            <td class="p-4 text-[10px] text-slate-400">
+              {{ t.timeline?.startDate | date:'MMM d' }} - {{ t.timeline?.endDate | date:'MMM d, yyyy' }}
+            </td>
+            <td class="p-4 text-sm font-black text-emerald-500 text-right">
+              +{{ t.financialDetails?.rentAmount | number }} TND
+            </td>
+          </tr>
+          <tr *ngIf="transactions.length === 0">
+            <td colspan="3" class="p-12 text-center text-slate-500 uppercase text-[10px] tracking-widest font-bold">No earnings history found</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Cashout History -->
+  <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+    <div class="p-6 border-b border-white/5 flex justify-between items-center">
+      <h3 class="text-sm font-bold text-white uppercase tracking-widest">Cashout History</h3>
+    </div>
+    
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead class="bg-white/5">
+          <tr>
+            <th class="p-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Date</th>
+            <th class="p-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Amount</th>
+            <th class="p-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Status</th>
+            <th class="p-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Notes</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          <tr *ngFor="let cashout of cashouts()" class="hover:bg-white/5 transition-colors">
+            <td class="p-4 text-xs text-slate-400">{{ cashout.createdAt | date:'MMM d, yyyy HH:mm' }}</td>
+            <td class="p-4 text-sm font-bold text-white">{{ cashout.amount | number }} TND</td>
+            <td class="p-4">
+              <span [class]="'px-2 py-1 rounded-md text-[9px] font-bold uppercase tracking-widest ' + getStatusClass(cashout.status)">
+                {{ cashout.status }}
+              </span>
+            </td>
+            <td class="p-4 text-xs text-slate-500">{{ cashout.notes || '-' }}</td>
+          </tr>
+          <tr *ngIf="cashouts().length === 0">
+            <td colspan="4" class="p-12 text-center text-slate-500 uppercase text-[10px] tracking-widest font-bold">No cashout history found</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

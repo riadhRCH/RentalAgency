@@ -1,0 +1,67 @@
+<div class="p-8 max-w-7xl mx-auto space-y-12">
+  <header>
+    <h1 class="text-3xl font-black text-white uppercase tracking-tight silver-glow">Cashout Requests</h1>
+    <p class="text-silver-500 text-sm tracking-widest uppercase mt-1">Review and process owner payout requests</p>
+  </header>
+
+  <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead class="bg-white/5 border-b border-white/10">
+          <tr>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Owner</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Date</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Amount</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Status</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Notes</th>
+            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          <tr *ngIf="loading()">
+            <td colspan="6" class="p-12 text-center">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            </td>
+          </tr>
+          <tr *ngFor="let cashout of cashouts()" class="hover:bg-white/5 transition-colors">
+            <td class="p-6">
+              <div class="flex items-center gap-3">
+                <div class="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
+                  {{ cashout.ownerId?.name?.charAt(0) || 'O' }}
+                </div>
+                <div>
+                  <div class="text-sm font-bold text-white">{{ cashout.ownerId?.name }}</div>
+                  <div class="text-[10px] text-slate-500">{{ cashout.ownerId?.phone }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="p-6 text-xs text-slate-400">{{ cashout.createdAt | date:'MMM d, yyyy HH:mm' }}</td>
+            <td class="p-6 text-sm font-bold text-white">{{ cashout.amount | number }} TND</td>
+            <td class="p-6">
+              <span [class]="'px-2 py-1 rounded-md text-[9px] font-bold uppercase tracking-widest ' + getStatusClass(cashout.status)">
+                {{ cashout.status }}
+              </span>
+            </td>
+            <td class="p-6 text-xs text-slate-500 max-w-xs truncate">{{ cashout.notes || '-' }}</td>
+            <td class="p-6 text-right">
+              <div *ngIf="cashout.status === 'pending'" class="flex justify-end gap-2">
+                <button (click)="confirmCashout(cashout._id)" class="p-2 rounded hover:bg-emerald-500/10 text-emerald-500 transition-all" title="Confirm Payout">
+                  <span class="material-symbols-outlined text-sm">check_circle</span>
+                </button>
+                <button (click)="rejectCashout(cashout._id)" class="p-2 rounded hover:bg-red-500/10 text-red-500 transition-all" title="Reject Payout">
+                  <span class="material-symbols-outlined text-sm">cancel</span>
+                </button>
+              </div>
+              <div *ngIf="cashout.status !== 'pending'" class="text-[10px] text-slate-600 font-bold uppercase tracking-widest">
+                Processed
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="!loading() && cashouts().length === 0">
+            <td colspan="6" class="p-12 text-center text-slate-500 uppercase text-[10px] tracking-widest font-bold">No cashout requests found</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

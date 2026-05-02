@@ -11,6 +11,7 @@ import { PropertiesModule } from './properties/properties.module';
 import { VisitRequestsModule } from './visits/visits.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { CashoutsModule } from './cashouts/cashouts.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -32,6 +33,7 @@ import { AppController } from './app.controller';
     VisitRequestsModule,
     WebhooksModule,
     TransactionsModule,
+    CashoutsModule,
   ],
   controllers: [AppController],
 })

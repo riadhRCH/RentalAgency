@@ -1,11 +1,14 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PersonnelService } from '../../services/personnel.service';
 import { PropertiesService, Property } from '../../services/properties.service';
 import { CalendarSelectorComponent } from '../../shared/components/calendar/calendar-selector.component';
 import { FormControl } from '@angular/forms';
+import { SidebarComponent, NavItem } from '../../shared/components/sidebar/sidebar.component';
+import { OwnerPaymentsComponent } from './payments/owner-payments.component';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 
 interface OwnerDashboardData {
   owner: {
@@ -16,6 +19,10 @@ interface OwnerDashboardData {
     email?: string;
   };
   properties: Property[];
+  agencyId: string;
+  balance: number;
+  cashouts: any;
+  transactions: any;
 }
 
 interface PropertyEditMode {
@@ -25,12 +32,13 @@ interface PropertyEditMode {
 @Component({
   selector: 'app-owner-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, CalendarSelectorComponent],
+  imports: [CommonModule, FormsModule, CalendarSelectorComponent, SidebarComponent, OwnerPaymentsComponent, TranslatePipe],
   templateUrl: './owner-dashboard.component.html',
   styleUrl: './owner-dashboard.component.scss',
 })
 export class OwnerDashboardComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private personnelService = inject(PersonnelService);
   private propertiesService = inject(PropertiesService);
 
@@ -38,6 +46,12 @@ export class OwnerDashboardComponent implements OnInit {
   loading = signal(false);
   error: string | null = null;
   token: string = '';
+  currentView: 'overview' | 'payments' = 'overview';
+
+  sidebarCollapsed = false;
+  mobileSidebarOpen = false;
+
+  navItems: NavItem[] = [];
 
   propertyEditMode: PropertyEditMode = {};
   editingPrices: { [key: string]: number } = {};
@@ -51,6 +65,27 @@ export class OwnerDashboardComponent implements OnInit {
         this.loadDashboardData();
       }
     });
+
+    this.route.url.subscribe(url => {
+      this.currentView = url.some(segment => segment.path === 'payments') ? 'payments' : 'overview';
+      this.updateNavItems();
+    });
+  }
+
+  updateNavItems() {
+    this.navItems = [
+      { 
+        label: 'SIDEBAR.OVERVIEW', 
+        icon: 'dashboard', 
+        route: `/owner-dashboard/${this.token}`,
+        exact: true
+      },
+      { 
+        label: 'SIDEBAR.PAYMENTS', 
+        icon: 'account_balance', 
+        route: `/owner-dashboard/${this.token}/payments` 
+      },
+    ];
   }
 
   loadDashboardData() {
@@ -60,6 +95,7 @@ export class OwnerDashboardComponent implements OnInit {
     this.personnelService.getOwnerDashboard(this.token).subscribe({
       next: (data) => {
         this.dashboardData = data;
+        this.updateNavItems();
 
         // Initialize edit modes and controls for each property
         data.properties.forEach((prop: Property) => {
@@ -75,6 +111,14 @@ export class OwnerDashboardComponent implements OnInit {
         this.loading.set(false);
       }
     });
+  }
+
+  closeMobileSidebar() {
+    this.mobileSidebarOpen = false;
+  }
+
+  toggleSidebar() {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
   }
 
   toggleAvailabilityEdit(propertyId: string) {

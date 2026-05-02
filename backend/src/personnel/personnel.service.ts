@@ -5,6 +5,8 @@ import { Personnel, PersonnelDocument } from '../schemas/personnel.schema';
 import { Lead, LeadDocument } from '../schemas/lead.schema';
 import { Property, PropertyDocument } from '../schemas/property.schema';
 import { RentalAgency, RentalAgencyDocument } from '../schemas/rental-agency.schema';
+import { Transaction, TransactionDocument } from '../schemas/transaction.schema';
+import { Cashout, CashoutDocument, CashoutStatus } from '../schemas/cashout.schema';
 import { CreatePersonnelDto } from './dto/create-personnel.dto';
 import { UpdatePersonnelDto } from './dto/update-personnel.dto';
 
@@ -19,6 +21,10 @@ export class PersonnelService {
     private readonly propertyModel: Model<PropertyDocument>,
     @InjectModel(RentalAgency.name)
     private readonly agencyModel: Model<RentalAgencyDocument>,
+    @InjectModel(Transaction.name)
+    private readonly transactionModel: Model<TransactionDocument>,
+    @InjectModel(Cashout.name)
+    private readonly cashoutModel: Model<CashoutDocument>,
   ) {}
 
   async findAll(page = 1, limit = 20, source?: string, status?: string) {
@@ -176,8 +182,31 @@ export class PersonnelService {
     const personId = new Types.ObjectId(person._id);
     const properties = await this.propertyModel.find(
       { ownerId: personId, deletedAt: { $exists: false } },
-      { reference: 1, address: 1, type: 1, price: 1, photos: 1, amenities: 1, calendarData: 1 }
+      { reference: 1, address: 1, type: 1, price: 1, photos: 1, amenities: 1, calendarData: 1, views: 1, agencyId: 1 }
     ).populate('agencyId', 'name');
+
+    const agencyId = properties.length > 0 ? properties[0].agencyId['_id'] || properties[0].agencyId : null;
+
+    // Fetch closed transactions for these properties
+    const propertyIds = properties.map(p => p._id);
+    const closedTransactions = await this.transactionModel.find({
+      propertyId: { $in: propertyIds },
+      status: 'CLOSED',
+      deletedAt: { $exists: false }
+    }).populate('propertyId', 'reference address');
+
+    // Fetch cashouts
+    const cashouts = await this.cashoutModel.find({
+      ownerId: personId,
+    }).sort({ createdAt: -1 });
+
+    // Calculate balance
+    const totalEarnings = closedTransactions.reduce((sum, t) => sum + (t.financialDetails?.rentAmount || 0), 0);
+    const totalCashouts = cashouts
+      .filter(c => c.status === CashoutStatus.CONFIRMED)
+      .reduce((sum, c) => sum + c.amount, 0);
+    
+    const balance = totalEarnings - totalCashouts;
 
     return {
       owner: {
@@ -188,6 +217,10 @@ export class PersonnelService {
         email: person.email,
       },
       properties,
+      agencyId,
+      transactions: closedTransactions,
+      cashouts,
+      balance,
     };
   }
 

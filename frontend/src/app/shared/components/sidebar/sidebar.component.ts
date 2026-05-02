@@ -5,6 +5,15 @@ import { AuthService } from '../../../auth/auth.service';
 import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { I18nService } from '../../../i18n/i18n.service';
 
+export interface NavItem {
+  label: string;
+  icon: string;
+  route?: string;
+  subItems?: NavItem[];
+  exact?: boolean;
+  isHeader?: boolean;
+}
+
 @Component({
   selector: 'app-sidebar',
   standalone: true,
@@ -15,6 +24,7 @@ import { I18nService } from '../../../i18n/i18n.service';
 export class SidebarComponent {
   @Input() collapsed = false;
   @Input() mobileOpen = false;
+  @Input() navItems: NavItem[] = [];
   @Output() closeMobile = new EventEmitter<void>();
   @Output() toggleCollapse = new EventEmitter<void>();
 

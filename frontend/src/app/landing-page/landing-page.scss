@@ -205,3 +205,31 @@
     transform: translateY(0);
   }
 }
+
+.horizontal-scroll-container {
+  @media (max-width: 767px) {
+    display: flex !important;
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    gap: 1.5rem !important;
+    padding: 0.5rem 0.5rem 2rem !important;
+    margin: 0 -1rem !important; /* Negative margin to bleed to edges */
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    & > * {
+      flex: 0 0 82% !important;
+      max-width: none !important;
+      scroll-snap-align: center;
+    }
+  }
+}
+

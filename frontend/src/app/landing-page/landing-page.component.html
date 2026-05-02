@@ -96,7 +96,7 @@
         <!-- Rental Collection Section -->
         <div class="mb-24">
             <h2 class="section-title">Rental Collection</h2>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8" *ngIf="!loading() && rentalAnnouncements.length">
+            <div class="horizontal-scroll-container" *ngIf="!loading() && rentalAnnouncements.length">
                 <app-property-card 
                     *ngFor="let announcement of rentalAnnouncements" 
                     [announcement]="announcement"
@@ -113,7 +113,7 @@
         <!-- Sales Selection Section -->
         <div class="mb-24">
               <h2 class="section-title">Sales Selection</h2>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8" *ngIf="!loading() && saleAnnouncements.length">
+            <div class="horizontal-scroll-container" *ngIf="!loading() && saleAnnouncements.length">
                 <app-property-card 
                     *ngFor="let announcement of saleAnnouncements" 
                     [announcement]="announcement"
@@ -130,7 +130,7 @@
         <!-- Short-Term Edition Section -->
         <div>
              <h2 class="section-title">Family Escape</h2>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8" *ngIf="!loading() && shortTermAnnouncements.length">
+            <div class="horizontal-scroll-container" *ngIf="!loading() && shortTermAnnouncements.length">
                 <app-property-card 
                     *ngFor="let announcement of shortTermAnnouncements" 
                     [announcement]="announcement"

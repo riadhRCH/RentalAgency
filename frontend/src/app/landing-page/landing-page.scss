@@ -207,27 +207,59 @@
 }
 
 .horizontal-scroll-container {
-  @media (max-width: 767px) {
-    display: flex !important;
-    overflow-x: auto !important;
-    flex-wrap: nowrap !important;
-    gap: 1.5rem !important;
-    padding: 0.5rem 0.5rem 2rem !important;
-    margin: 0 -1rem !important; /* Negative margin to bleed to edges */
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
+  display: flex;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  gap: 1.5rem;
+  padding: 0.5rem 0 1rem;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.35);
+    border-radius: 999px;
+  }
+
+  & > app-property-card {
+    flex: 0 0 min(24rem, calc(33.333% - 1rem));
+    min-width: 18rem;
+    scroll-snap-align: start;
+  }
+}
+
+@media (max-width: 1024px) {
+  .horizontal-scroll-container > app-property-card {
+    flex-basis: min(22rem, calc(50% - 0.75rem));
+  }
+}
+
+@media (max-width: 767px) {
+  .horizontal-scroll-container {
+    gap: 1rem;
+    padding: 0.5rem 1rem 1.25rem;
+    margin: 0 -1rem;
     scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
     &::-webkit-scrollbar {
       display: none;
     }
-    -ms-overflow-style: none;
-    scrollbar-width: none;
 
-    & > * {
-      flex: 0 0 82% !important;
-      max-width: none !important;
+    & > app-property-card {
+      flex-basis: 82%;
+      min-width: 82%;
+      max-width: 82%;
       scroll-snap-align: center;
     }
   }

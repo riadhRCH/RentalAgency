@@ -1,7 +1,33 @@
-<div class="search-panel glass-card p-6 md:p-8 rounded-xl shadow-2xl border-t border-white/10">
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+  <!-- Payment Type Segmented Control -->
+  <div class="payment-type-tabs glass-card">
+    <div class="tabs-container">
+      <button
+        (click)="onPaymentTabChange('LOCATION')"
+        [class.active]="selectedPaymentTab === 'LOCATION'"
+        class="tab-button">
+        <span>LOCATION</span>
+      </button>
+      <button
+        (click)="onPaymentTabChange('VENTE')"
+        [class.active]="selectedPaymentTab === 'VENTE'"
+        class="tab-button">
+        <span>VENTE</span>
+      </button>
+      <button
+        (click)="onPaymentTabChange('COURT-SEJOUR')"
+        [class.active]="selectedPaymentTab === 'COURT-SEJOUR'"
+        class="tab-button">
+        <span>Family Escape</span>
+      </button>
+    </div>
+  </div>
+
+<div class="search-panel glass-card p-6 md:p-8 rounded-xl shadow-2xl border-t border-white/10" style="border-top-left-radius: 0px;
+    border-top-right-radius: 0px;">
+
+  <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
     <div class="space-y-2">
-      <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Location</label>
+      <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Localisation</label>
       <div class="flex items-center gap-2 border-b border-slate-700 pb-2">
         <span class="material-symbols-outlined text-primary text-sm">location_on</span>
         <input
@@ -9,24 +35,24 @@
           (ngModelChange)="onInputChange()"
           type="text"
           class="bg-transparent border-none text-white focus:ring-0 p-0 text-sm placeholder:text-slate-500 w-full"
-          placeholder="City, district, area">
+          placeholder="Ville, quartier, région">
       </div>
     </div>
     <div class="space-y-2">
-      <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Property Type</label>
+      <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Type de bien</label>
       <div class="flex items-center gap-2 border-b border-slate-700 pb-2">
         <span class="material-symbols-outlined text-primary text-sm">home_work</span>
         <select [(ngModel)]="searchType" (ngModelChange)="onInputChange()" class="bg-transparent border-none text-white focus:ring-0 p-0 text-sm w-full appearance-none">
-          <option class="bg-background-dark" value="">All types</option>
-          <option class="bg-background-dark" value="apartment">Apartment</option>
+          <option class="bg-background-dark" value="">Tous types</option>
+          <option class="bg-background-dark" value="apartment">Appartement</option>
           <option class="bg-background-dark" value="villa">Villa</option>
-          <option class="bg-background-dark" value="house">House</option>
-          <option class="bg-background-dark" value="land">Land</option>
+          <option class="bg-background-dark" value="house">Maison</option>
+          <option class="bg-background-dark" value="land">Terrain</option>
         </select>
       </div>
     </div>
     <div class="space-y-2">
-      <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Price Range</label>
+      <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Budget</label>
       <div class="flex items-center gap-2 border-b border-slate-700 pb-2">
         <span class="material-symbols-outlined text-primary text-sm">payments</span>
         <input
@@ -34,7 +60,19 @@
           (ngModelChange)="onInputChange()"
           type="text"
           class="bg-transparent border-none text-white focus:ring-0 p-0 text-sm placeholder:text-slate-500 w-full"
-          placeholder="Search...">
+          placeholder="Prix...">
+      </div>
+    </div>
+    <div class="space-y-2">
+      <label class="text-[10px] uppercase tracking-widest text-silver-500 font-bold">Chambres</label>
+      <div class="flex items-center gap-2 border-b border-slate-700 pb-2">
+        <span class="material-symbols-outlined text-primary text-sm">bed</span>
+        <input
+          [(ngModel)]="searchRooms"
+          (ngModelChange)="onInputChange()"
+          type="text"
+          class="bg-transparent border-none text-white focus:ring-0 p-0 text-sm placeholder:text-slate-500 w-full"
+          placeholder="Nombre de chambres...">
       </div>
     </div>
     <div class="flex items-end">

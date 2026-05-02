@@ -16,6 +16,7 @@ export class SidebarComponent {
   @Input() collapsed = false;
   @Input() mobileOpen = false;
   @Output() closeMobile = new EventEmitter<void>();
+  @Output() toggleCollapse = new EventEmitter<void>();
 
   authService = inject(AuthService);
   i18n = inject(I18nService);

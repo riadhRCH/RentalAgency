@@ -61,20 +61,6 @@ export class PropertiesService {
     return this.http.get<Property>(`${this.apiUrl}/${id}`);
   }
 
-  getPublicProperty(id: string): Observable<Property> {
-    return this.http.get<Property>(`${this.apiUrl}/public/${id}`);
-  }
-
-  getPublicProperties(page = 1, limit = 20, filters?: any): Observable<PaginatedProperties> {
-    let url = `${this.apiUrl}/public?page=${page}&limit=${limit}`;
-    if (filters) {
-      Object.keys(filters).forEach(key => {
-        if (filters[key]) url += `&${key}=${filters[key]}`;
-      });
-    }
-    return this.http.get<PaginatedProperties>(url);
-  }
-
   createProperty(data: any): Observable<Property> {
     return this.http.post<Property>(this.apiUrl, data);
   }

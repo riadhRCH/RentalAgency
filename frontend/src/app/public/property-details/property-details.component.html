@@ -83,6 +83,12 @@
               <span class="material-symbols-outlined">home</span>
               <span>{{ property()?.type }}</span>
             </div>
+            @if (announcement()?.views) {
+              <div class="flex items-center gap-2 text-slate-300 border-l border-white/10 pl-4">
+                <span class="material-symbols-outlined text-base">visibility</span>
+                <span class="text-xs font-bold uppercase tracking-widest">{{ announcement()?.views }} Views</span>
+              </div>
+            }
           </div>
         </div>
       </section>

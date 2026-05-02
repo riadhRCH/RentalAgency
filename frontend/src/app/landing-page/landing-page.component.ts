@@ -126,6 +126,10 @@ export class LandingPage implements OnInit {
     this.router.navigate(['/dashboard/overview']);
   }
 
+  openAnnouncement(announcement: Announcement) {
+    this.router.navigate(['/announce/' + announcement._id]);
+  }
+
   toggleMobileMenu() {
     this.mobileMenuOpen = !this.mobileMenuOpen;
   }

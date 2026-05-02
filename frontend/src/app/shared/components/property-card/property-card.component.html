@@ -1,4 +1,4 @@
-<div class="property-card-wrapper">
+<div class="property-card-wrapper" [routerLink]="['/announce', announcement._id]">
   <div class="property-card">
     <div class="card-image-container">
       <img 
@@ -7,8 +7,9 @@
         [alt]="announcement.title"
       />
       <button 
+        type="button"
         class="favorite-button" 
-        (click)="toggleFavorite($event)"
+        (click)="toggleFavorite($event); $event.stopPropagation()"
         [class.active]="isFavorite"
       >
         <span class="material-symbols-outlined">favorite</span>
@@ -18,7 +19,13 @@
     <div class="card-content">
       <div class="card-header">
         <h4 class="card-label">{{ getCardLabel() }}</h4>
-        <span class="card-price">{{ announcement.price.toLocaleString() }} TND</span>
+        <div class="flex flex-col items-end">
+          <span class="card-price">{{ announcement.price.toLocaleString() }} TND</span>
+          <span class="text-[9px] uppercase tracking-widest text-slate-500 font-bold flex items-center gap-1">
+            <span class="material-symbols-outlined text-[10px]">visibility</span>
+            {{ announcement.views || 0 }}
+          </span>
+        </div>
       </div>
 
       <p class="card-duration">{{ getDuration() }}</p>
@@ -34,7 +41,7 @@
         </span>
       </div>
 
-      <button class="action-button">{{ getButtonText() }}</button>
+      <button class="action-button" [routerLink]="['/announce', announcement._id]">{{ getButtonText() }}</button>
     </div>
   </div>
 </div>

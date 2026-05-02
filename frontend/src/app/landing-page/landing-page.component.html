@@ -100,6 +100,7 @@
                 <app-property-card 
                     *ngFor="let announcement of rentalAnnouncements" 
                     [announcement]="announcement"
+                    (click)="openAnnouncement(announcement)"
                     cardType="rental"
                 >
                 </app-property-card>
@@ -116,6 +117,7 @@
                 <app-property-card 
                     *ngFor="let announcement of saleAnnouncements" 
                     [announcement]="announcement"
+                     (click)="openAnnouncement(announcement)"
                     cardType="sale"
                 >
                 </app-property-card>
@@ -132,6 +134,7 @@
                 <app-property-card 
                     *ngFor="let announcement of shortTermAnnouncements" 
                     [announcement]="announcement"
+                     (click)="openAnnouncement(announcement)"
                     cardType="short-term"
                 >
                 </app-property-card>

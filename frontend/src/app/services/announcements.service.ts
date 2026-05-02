@@ -12,6 +12,7 @@ export interface Announcement {
   type: PropertyType;
   title: string;
   address: string;
+  gpsLocation: { lat: number; lng: number };
   surface: number;
   price: number;
   paymentFrequency: PaymentType;
@@ -20,6 +21,7 @@ export interface Announcement {
   previewVideo?: string;
   propertyStatus: PropertyStatus;
   amenities: Record<string, any>;
+  views: number;
   isVisible: boolean;
   publishedAt: string;
   refreshedAt?: string;
@@ -105,5 +107,9 @@ export class AnnouncementsService {
       `${this.apiUrl}/public`,
       { params },
     );
+  }
+
+  getPublicAnnouncement(id: string): Observable<Announcement> {
+    return this.http.get<Announcement>(`${this.apiUrl}/public/${id}`);
   }
 }

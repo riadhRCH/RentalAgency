@@ -13,6 +13,15 @@ class AnnouncementSearchIndex {
   location: string;
 }
 
+@Schema({ _id: false })
+class GpsLocation {
+  @Prop({ required: true })
+  lat: number;
+
+  @Prop({ required: true })
+  lng: number;
+}
+
 @Schema({ timestamps: true })
 export class Announcement {
   @Prop({ type: Types.ObjectId, ref: 'RentalAgency', required: true, index: true })
@@ -32,6 +41,9 @@ export class Announcement {
 
   @Prop({ required: true })
   address: string;
+
+  @Prop({ type: GpsLocation, required: true })
+  gpsLocation: GpsLocation;
 
   @Prop({ required: true })
   surface: number;
@@ -81,6 +93,9 @@ export class Announcement {
 
   @Prop()
   hiddenAt?: Date;
+
+  @Prop({ default: 0 })
+  views: number;
 
   @Prop()
   deletedAt?: Date;

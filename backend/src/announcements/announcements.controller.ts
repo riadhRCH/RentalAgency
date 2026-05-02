@@ -72,6 +72,12 @@ export class AnnouncementsController {
     );
   }
 
+  @Public()
+  @Get('public/:id')
+  findOnePublic(@Param('id') id: string) {
+    return this.announcementsService.findOnePublic(id);
+  }
+
   @UseGuards(AgencyGuard)
   @Get()
   findAllByAgency(@Request() req) {

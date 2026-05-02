@@ -69,6 +69,7 @@ export class AnnouncementsService {
       type: property.type,
       title: this.buildTitle(property),
       address: property.address,
+      gpsLocation: property.gpsLocation,
       surface: property.surface,
       price: property.price,
       paymentFrequency: property.paymentFrequency,
@@ -289,12 +290,25 @@ export class AnnouncementsService {
       this.announcementModel.countDocuments(query),
     ]);
 
-    return {
-      data: announcements,
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
-    };
+    return { data: announcements, total, page, limit, totalPages: Math.ceil(total / limit) };
+  }
+
+  async findOnePublic(id: string) {
+    const announcement = await this.announcementModel.findOneAndUpdate(
+      {
+        _id: new Types.ObjectId(id),
+        isVisible: true,
+        deletedAt: { $exists: false },
+        propertyStatus: { $ne: 'sold' },
+      },
+      { $inc: { views: 1 } },
+      { new: true },
+    ).lean();
+
+    if (!announcement) {
+      throw new NotFoundException('Announcement not found');
+    }
+
+    return announcement;
   }
 }

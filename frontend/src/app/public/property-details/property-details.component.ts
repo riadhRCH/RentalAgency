@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { PropertiesService, Property } from '../../services/properties.service';
+import { AnnouncementsService, Announcement } from '../../services/announcements.service';
 import { TransactionsService } from '../../services/transactions.service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
@@ -25,6 +26,7 @@ export class PropertyDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private propertiesService = inject(PropertiesService);
+  private announcementsService = inject(AnnouncementsService);
   private transactionsService = inject(TransactionsService);
   private fb = inject(FormBuilder);
 
@@ -50,6 +52,7 @@ export class PropertyDetailsComponent implements OnInit {
   googleMapsApiKey = environment.googleMapsApiKey;
 
   property = signal<Property | undefined>(undefined);
+  announcement = signal<Announcement | undefined>(undefined);
   isLoading = signal(true);
   videoLoaded = signal(false);
   currentImageIndex = signal(0);
@@ -72,17 +75,21 @@ export class PropertyDetailsComponent implements OnInit {
   }
 
   loadProperty(): void {
-    const propertyId = this.route.snapshot.paramMap.get('id');
-    if (!propertyId) return;
+    const announcementId = this.route.snapshot.paramMap.get('id');
+    if (!announcementId) return;
 
     this.videoLoaded.set(false);
-    this.propertiesService.getPublicProperty(propertyId).subscribe({
+    
+    this.announcementsService.getPublicAnnouncement(announcementId).subscribe({
       next: (data) => {
-        this.property.set(data);
+        this.announcement.set(data);
+        // Map announcement data to a property-like object
+        this.property.set(data as any); 
         this.isLoading.set(false);
       },
       error: () => {
         this.isLoading.set(false);
+        // Optionally redirect to home or show 404
       }
     });
   }

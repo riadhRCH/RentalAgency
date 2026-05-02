@@ -30,7 +30,7 @@ import { AgencyLandingPageComponent } from './public/agency-landing-page/agency-
 
 export const routes: Routes = [
     { path: '', component: LandingPage },
-    { path: 'property/:id', component: PropertyDetailsComponent },
+    { path: 'announce/:id', component: PropertyDetailsComponent },
     { path: 'transaction/:id', component: TransactionComponent },
     { path: 'owner-dashboard/:token', component: OwnerDashboardComponent },
     { path: 'thank-you', component: ThankYouComponent },

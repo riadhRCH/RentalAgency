@@ -1,5 +1,5 @@
 seach announcements
 add a announcement search public page, 
-- this page should  have big maps card and app-shared-search-bar and list of results displayed in both the map card as pins and in a list,
+- this page should  have big maps card (example implementation in frontend\src\app\public\property-details\property-details.component.html) and app-shared-search-bar and list of results displayed in both the map card as pins and in a list,
 - each searched item should have a focus on map that centers map view in searched item position and it should have a preview announce page that opens a new page with announcement details
 - when user prepares a search query in landing page and hit search button it should redirect to this new search page

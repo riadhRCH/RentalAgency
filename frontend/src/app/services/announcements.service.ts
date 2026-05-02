@@ -38,6 +38,11 @@ export interface PaginatedAnnouncements {
   totalPages: number;
 }
 
+export type AnnouncementFilters = Record<
+  string,
+  string | number | Array<string | number> | undefined
+>;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -70,13 +75,22 @@ export class AnnouncementsService {
     agencyId: string,
     page = 1,
     limit = 12,
-    filters?: Record<string, string | number | undefined>,
+    filters?: AnnouncementFilters,
   ): Observable<PaginatedAnnouncements> {
     let params = new HttpParams()
       .set('page', page)
       .set('limit', limit);
 
     Object.entries(filters ?? {}).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value
+          .filter((item) => item !== undefined && item !== null && item !== '')
+          .forEach((item) => {
+            params = params.append(key, item);
+          });
+        return;
+      }
+
       if (value !== undefined && value !== null && value !== '') {
         params = params.set(key, value);
       }
@@ -91,13 +105,22 @@ export class AnnouncementsService {
   getAllPublicAnnouncements(
     page = 1,
     limit = 12,
-    filters?: Record<string, string | number | undefined>,
+    filters?: AnnouncementFilters,
   ): Observable<PaginatedAnnouncements> {
     let params = new HttpParams()
       .set('page', page)
       .set('limit', limit);
 
     Object.entries(filters ?? {}).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value
+          .filter((item) => item !== undefined && item !== null && item !== '')
+          .forEach((item) => {
+            params = params.append(key, item);
+          });
+        return;
+      }
+
       if (value !== undefined && value !== null && value !== '') {
         params = params.set(key, value);
       }

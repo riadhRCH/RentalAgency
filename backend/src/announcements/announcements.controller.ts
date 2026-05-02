@@ -33,6 +33,8 @@ export class AnnouncementsController {
     @Query('location') location?: string,
     @Query('minPrice') minPrice?: string,
     @Query('maxPrice') maxPrice?: string,
+    @Query('rooms') rooms?: string,
+    @Query('paymentFrequency') paymentFrequency?: string | string[],
   ) {
     return this.announcementsService.findPublicByAgency(
       agencyId,
@@ -44,6 +46,12 @@ export class AnnouncementsController {
         location,
         minPrice: minPrice ? parseFloat(minPrice) : undefined,
         maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+        rooms: rooms ? parseInt(rooms, 10) : undefined,
+        paymentFrequency: Array.isArray(paymentFrequency)
+          ? paymentFrequency
+          : paymentFrequency
+            ? [paymentFrequency]
+            : undefined,
       },
     );
   }
@@ -58,6 +66,8 @@ export class AnnouncementsController {
     @Query('location') location?: string,
     @Query('minPrice') minPrice?: string,
     @Query('maxPrice') maxPrice?: string,
+    @Query('rooms') rooms?: string,
+    @Query('paymentFrequency') paymentFrequency?: string | string[],
   ) {
     return this.announcementsService.findAllPublic(
       parseInt(page, 10),
@@ -68,6 +78,12 @@ export class AnnouncementsController {
         location,
         minPrice: minPrice ? parseFloat(minPrice) : undefined,
         maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+        rooms: rooms ? parseInt(rooms, 10) : undefined,
+        paymentFrequency: Array.isArray(paymentFrequency)
+          ? paymentFrequency
+          : paymentFrequency
+            ? [paymentFrequency]
+            : undefined,
       },
     );
   }

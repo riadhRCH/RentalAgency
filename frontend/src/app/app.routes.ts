@@ -27,11 +27,13 @@ import { OwnersPageComponent } from './dashboard/personnel/owners-page/owners-pa
 import { OwnerDashboardComponent } from './public/owner-dashboard/owner-dashboard.component';
 import { AnnouncementsComponent } from './dashboard/announcements/announcements.component';
 import { AgencyLandingPageComponent } from './public/agency-landing-page/agency-landing-page.component';
+import { AnnouncementsSearchComponent } from './public/announcements-search/announcements-search.component';
 
 import { AgencyCashoutsComponent } from './dashboard/cashouts/agency-cashouts.component';
 
 export const routes: Routes = [
     { path: '', component: LandingPage },
+    { path: 'search', component: AnnouncementsSearchComponent },
     { path: 'announce/:id', component: PropertyDetailsComponent },
     { path: 'transaction/:id', component: TransactionComponent },
     { path: 'owner-dashboard/:token', component: OwnerDashboardComponent },

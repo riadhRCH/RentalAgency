@@ -14,6 +14,8 @@ type PublicAnnouncementFilters = {
   location?: string;
   minPrice?: number;
   maxPrice?: number;
+  rooms?: number;
+  paymentFrequency?: string[];
 };
 
 @Injectable()
@@ -226,6 +228,14 @@ export class AnnouncementsService {
       }
     }
 
+    if (filters?.rooms) {
+      query['amenities.bedrooms'] = { $gte: filters.rooms };
+    }
+
+    if (filters?.paymentFrequency?.length) {
+      query.paymentFrequency = { $in: filters.paymentFrequency };
+    }
+
     const skip = (page - 1) * limit;
     const [announcements, total] = await Promise.all([
       this.announcementModel
@@ -277,6 +287,14 @@ export class AnnouncementsService {
       if (filters.maxPrice) {
         query.price.$lte = filters.maxPrice;
       }
+    }
+
+    if (filters?.rooms) {
+      query['amenities.bedrooms'] = { $gte: filters.rooms };
+    }
+
+    if (filters?.paymentFrequency?.length) {
+      query.paymentFrequency = { $in: filters.paymentFrequency };
     }
 
     const skip = (page - 1) * limit;

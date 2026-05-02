@@ -93,14 +93,31 @@ export class LandingPage implements OnInit {
   }
 
   onSearch(filters: SearchFilters) {
-    this.searchQuery = filters.query;
-    this.searchLocation = filters.location;
-    this.searchType = filters.type;
-    const filterParams: any = {};
-    if (filters.query) filterParams.query = filters.query;
-    if (filters.location) filterParams.location = filters.location;
-    if (filters.type) filterParams.type = filters.type;
-    this.loadAnnouncements(filterParams);
+    const queryParams: Record<string, string> = {
+      tab: filters.paymentType?.includes(PaymentType.DIRECT_SALE)
+        ? 'VENTE'
+        : filters.paymentType?.includes(PaymentType.DAILY)
+          ? 'COURT-SEJOUR'
+          : 'LOCATION',
+    };
+
+    if (filters.query.trim()) {
+      queryParams['query'] = filters.query.trim();
+    }
+
+    if (filters.location.trim()) {
+      queryParams['location'] = filters.location.trim();
+    }
+
+    if (filters.type.trim()) {
+      queryParams['type'] = filters.type.trim();
+    }
+
+    if (filters.rooms?.trim()) {
+      queryParams['rooms'] = filters.rooms.trim();
+    }
+
+    this.router.navigate(['/search'], { queryParams });
   }
 
   onCategoryClick(category: any) {

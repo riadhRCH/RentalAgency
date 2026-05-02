@@ -1,6 +1,2 @@
-customize AgencyLandingPageComponent component
-add a page in dashboard so each agency user can customier the appearince of AgencyLandingPageComponent with a live preview
-for example
-change sections ordering
-change carrousel type
-...etc
+add number of views functionnality, when opening a page like : `http://localhost:4200/property/69f5d850d64cc63d7d601053` a `http://localhost:3000/properties/public/69f5d850d64cc63d7d601053
+` will happen that means someone wants to view the property, i want you to add a views property that autoincrements when that get api happens

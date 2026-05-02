@@ -331,15 +331,15 @@
     </section>
 
     <!-- FORM ACTIONS -->
-    <div class="flex items-center justify-end gap-4 pt-4">
-      <button type="button" (click)="onCancel()" class="px-8 py-3 rounded uppercase text-[10px] font-bold tracking-widest text-slate-400 hover:text-white transition-all">
+    <div class="flex flex-col sm:flex-row items-center justify-end gap-4 pt-4">
+      <button type="button" (click)="onCancel()" class="w-full sm:w-auto px-8 py-3 rounded uppercase text-[10px] font-bold tracking-widest text-slate-400 hover:text-white transition-all order-3 sm:order-1">
         {{ 'COMMON.CANCEL' | translate }}
       </button>
-      <button type="button" (click)="prevewLink()" class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-10 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+      <button type="button" (click)="prevewLink()" class="w-full sm:w-auto bg-primary/10 hover:bg-primary/20 text-primary px-8 py-3 rounded uppercase text-[10px] font-bold tracking-widest transition-all border border-primary/20 flex items-center justify-center gap-2 order-2 sm:order-2">
           <span class="material-symbols-outlined text-sm">visibility</span>
         {{ 'COMMON.PREVIEW' | translate }}
       </button>
-      <button type="submit" [disabled]="loading() || propertyForm.invalid" class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-10 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+      <button type="submit" [disabled]="loading() || propertyForm.invalid" class="w-full sm:w-auto bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-10 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 order-1 sm:order-3">
         <span *ngIf="loading()" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
         <span *ngIf="!loading()" class="material-symbols-outlined text-sm">save</span>
         {{ loading() ? ('COMMON.SAVING' | translate) : (isEditMode() ? ('PROPERTY_FORM.UPDATE_LISTING' | translate) : ('PROPERTY_FORM.CREATE_LISTING' | translate)) }}

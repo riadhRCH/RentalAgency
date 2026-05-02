@@ -1,3 +1,15 @@
 dashboard owner improvements
-- should include only short term properties
-- should be able to see statistics (number of views per property), view is when properety details page is opened
+- make the frontend\src\app\shared\components\sidebar\sidebar.component.ts shard because we ill use it in owner dashboard as well, make the navigation items in that component customizable from ts instead of html and keep same beehaviour of the component
+- use the side bar component in the owner dashboard page, add two main links, the overview link (links to current owner dashboard page that gets displayed) and a payments link that redirects to a new payment page
+- in the overview page display number of views in each properety
+- prepare a payment page for the owner that should display these things
+    - clotured transactions related to his properties
+    - total balance (main display), price from all transactions
+    - cashouts maangement
+        - should be able to submit a cashout request that will create a cashout document with agency id involved, each cachout should have a status (pending, confirmed)
+        - owner should see his cachout history 
+        - totla balance should not include confirmed cachouts
+        - cashout requests should appear in agency account (add new link in sidebar)
+        - agency owners should be able to confirm cashouts
+
+critisize featur and do it 

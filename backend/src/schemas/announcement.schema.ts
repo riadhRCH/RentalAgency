@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { PaymentFrequency, PropertyStatus, PropertyType } from '../shared/enums';
+import { PaymentType, PropertyStatus, PropertyType } from '../shared/enums';
 
 export type AnnouncementDocument = Announcement & Document;
 
@@ -41,11 +41,11 @@ export class Announcement {
 
   @Prop({
     type: String,
-    enum: Object.values(PaymentFrequency),
-    default: PaymentFrequency.MONTHLY,
+    enum: Object.values(PaymentType),
+    default: PaymentType.MONTHLY,
     required: true,
   })
-  paymentFrequency: PaymentFrequency;
+  paymentFrequency: PaymentType;
 
   @Prop({ required: true })
   description: string;

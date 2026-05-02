@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { PublicFooterComponent } from '../shared/components/public-footer/public-footer.component';
 import { PublicNavbarComponent } from '../shared/components/public-navbar/public-navbar.component';
-import { CircularGalleryComponent, CircularGalleryItem } from '../public/circular-gallery/circular-gallery.component';
+import { CircularGalleryItem } from '../public/circular-gallery/circular-gallery.component';
 import { SharedSearchBarComponent, SearchFilters } from '../shared/components/search-bar/search-bar.component';
 import { AgencyService, AgencyProfile } from '../services/agency.service';
 import { AnnouncementsService, Announcement, PaginatedAnnouncements } from '../services/announcements.service';
@@ -12,7 +12,7 @@ import { AnnouncementsService, Announcement, PaginatedAnnouncements } from '../s
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, PublicNavbarComponent, PublicFooterComponent, CircularGalleryComponent, SharedSearchBarComponent],
+  imports: [CommonModule, FormsModule, RouterModule, PublicNavbarComponent, PublicFooterComponent, SharedSearchBarComponent],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.scss',
 })

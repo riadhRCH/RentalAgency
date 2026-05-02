@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { PaymentFrequency, PropertyStatus, PropertyType } from '../shared/enums';
+import { PaymentType, PropertyStatus, PropertyType } from '../shared/enums';
 
 export interface DayAvailability {
   date: Date | string;
@@ -26,7 +26,7 @@ export interface Property {
   ownerId: any;
   amenities: Record<string, any>;
   createdAt: Date;
-  paymentFrequency: PaymentFrequency;
+  paymentFrequency: PaymentType;
   calendarData?: DayAvailability[];
   googleMapsLink?: string;
 }

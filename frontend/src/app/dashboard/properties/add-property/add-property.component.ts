@@ -7,7 +7,7 @@ import { PropertiesService } from '../../../services/properties.service';
 import { PersonnelService } from '../../../services/personnel.service';
 import { PhoneInputComponent } from '../../../shared/components/phone-input/phone-input.component';
 import { TranslatePipe } from '../../../i18n/translate.pipe';
-import { PropertyType, PropertyStatus, PaymentFrequency, getEnumValues } from '../../../shared/enums';
+import { PropertyType, PropertyStatus, PaymentType, getEnumValues } from '../../../shared/enums';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -29,10 +29,10 @@ export class AddPropertyComponent implements OnInit {
   // Expose enums to template
   PropertyType = PropertyType;
   PropertyStatus = PropertyStatus;
-  paymentFrequency = PaymentFrequency;
+  paymentFrequency = PaymentType;
   propertyTypes = getEnumValues(PropertyType);
   propertyStatuses = getEnumValues(PropertyStatus);
-  paymentFrequencys = getEnumValues(PaymentFrequency);
+  paymentFrequencys = getEnumValues(PaymentType);
 
   propertyForm: FormGroup;
   loading = signal(false);
@@ -75,7 +75,7 @@ export class AddPropertyComponent implements OnInit {
       address: ['', Validators.required],
       surface: [null, [Validators.required, Validators.min(1)]],
       price: [null, [Validators.required, Validators.min(0)]],
-      paymentFrequency: [PaymentFrequency.MONTHLY, Validators.required],
+      paymentFrequency: [PaymentType.MONTHLY, Validators.required],
       googleMapsLink: [''],
       description: ['', Validators.required],
       status: [PropertyStatus.AVAILABLE, Validators.required],

@@ -11,6 +11,7 @@ import { PublicNavbarComponent } from '../../shared/components/public-navbar/pub
 import { PublicFooterComponent } from '../../shared/components/public-footer/public-footer.component';
 import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
 import { environment } from '../../../environments/environment';
+import { PaymentType } from '../../shared/enums';
 
 @Component({
   selector: 'app-property-details',
@@ -147,9 +148,8 @@ export class PropertyDetailsComponent implements OnInit {
     } else if (prop.paymentFrequency === 'WEEKLY') {
       const weeks = Math.ceil(duration / 7);
       return prop.price * weeks;
-    } else if (prop.paymentFrequency === 'YEARLY') {
-      const years = Math.ceil(duration / 365);
-      return prop.price * years;
+    } else if (prop.paymentFrequency === PaymentType.DIRECT_SALE) {
+      return prop.price;
     }
 
     return prop.price * duration;

@@ -123,7 +123,7 @@ export class ContractEditorComponent implements OnInit {
       propertyReference: transaction.propertyId?.reference ?? '',
       propertyAddress: transaction.propertyId?.address ?? '',
       propertyDescription: this.i18n.translate('CONTRACT_EDITOR.DEFAULT_PROPERTY_DESCRIPTION'),
-      paymentFrequency: this.getPaymentFrequencyLabel(transaction.financialDetails?.paymentFrequency),
+      paymentFrequency: this.getPaymentTypeLabel(transaction.financialDetails?.paymentFrequency),
       rentAmount: transaction.financialDetails?.rentAmount ?? 0,
       depositAmount: transaction.financialDetails?.depositAmount ?? 0,
       startDate: this.formatDate(transaction.timeline?.startDate),
@@ -176,7 +176,7 @@ export class ContractEditorComponent implements OnInit {
       {
         id: this.generateClauseId(4),
         title: 'ARTICLE 4 : Loyer et charges',
-        body: `Le loyer est fixe a ${rentAmount} TND, payable ${this.getPaymentFrequencyLabel(transaction.financialDetails?.paymentFrequency).toLowerCase()}. Les charges usuelles liees a l occupation sont a la charge du preneur, sauf dispositions contraires.`
+        body: `Le loyer est fixe a ${rentAmount} TND, payable ${this.getPaymentTypeLabel(transaction.financialDetails?.paymentFrequency).toLowerCase()}. Les charges usuelles liees a l occupation sont a la charge du preneur, sauf dispositions contraires.`
       },
       {
         id: this.generateClauseId(5),
@@ -240,7 +240,7 @@ export class ContractEditorComponent implements OnInit {
     return this.datePipe.transform(value, 'yyyy-MM-dd') ?? '';
   }
 
-  private getPaymentFrequencyLabel(paymentFrequency?: string): string {
+  private getPaymentTypeLabel(paymentFrequency?: string): string {
     switch (paymentFrequency) {
       case 'DAILY':
         return 'Quotidien';

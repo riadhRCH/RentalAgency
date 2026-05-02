@@ -67,12 +67,12 @@ export enum RentalSourceType {
   DIRECT = 'DIRECT'
 }
 
-// Payment Frequency Enum
-export enum PaymentFrequency {
+// Payment Type Enum
+export enum PaymentType {
   DAILY = 'DAILY',
   WEEKLY = 'WEEKLY',
   MONTHLY = 'MONTHLY',
-  YEARLY = 'YEARLY'
+  DIRECT_SALE = 'DIRECT_SALE'
 }
 
 // Helper function to get enum values

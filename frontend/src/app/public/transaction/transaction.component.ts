@@ -11,7 +11,7 @@ import { CalendarSelectorComponent } from '../../shared/components/calendar/cale
 import { PublicNavbarComponent } from '../../shared/components/public-navbar/public-navbar.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer/public-footer.component';
 import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
-import { PaymentFrequency } from '../../shared/enums';
+import { PaymentType } from '../../shared/enums';
 
 interface Transaction {
   _id: string;
@@ -162,7 +162,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   initializeForms() {
     const transaction = this.transaction();
-    if (transaction?.financialDetails?.paymentFrequency === PaymentFrequency.DAILY) {
+    if (transaction?.financialDetails?.paymentFrequency === PaymentType.DAILY) {
       const selectedDates = transaction.timeline?.selectedDates ?? [];
       this.selectedDatesControl.setValue(selectedDates);
       this.checkCalendarDone();
@@ -235,7 +235,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   checkCalendarDone() {
     const transaction = this.transaction();
-    if (transaction?.financialDetails.paymentFrequency === PaymentFrequency.DAILY) {
+    if (transaction?.financialDetails.paymentFrequency === PaymentType.DAILY) {
       this.calendarDone.set((this.selectedDatesControl.value?.length ?? 0) > 0);
     } else {
       this.calendarDone.set(true); // For non-daily, consider done
@@ -338,7 +338,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   isDailyPayment(): boolean {
-    return this.transaction()?.financialDetails?.paymentFrequency === PaymentFrequency.DAILY;
+    return this.transaction()?.financialDetails?.paymentFrequency === PaymentType.DAILY;
   }
 
   getSelectedDaysCount(): number {

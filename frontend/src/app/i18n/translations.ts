@@ -80,7 +80,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'COMMON.USER': 'User',
     'COMMON.VERIFIED': 'Verified',
     'COMMON.VIEW': 'View',
-    'COMMON.YEARLY': 'Yearly',
+    'COMMON.DIRECT_SALE': 'Direct Sale',
     'COMMON.AT_TIME': 'at {{time}}',
     'COMMON.NEXT': 'Next',
 
@@ -640,7 +640,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'DAILY': 'Day',
     'WEEKLY': 'Week',
     'MONTHLY': 'Month',
-    'YEARLY': 'Year',
+    'DIRECT_SALE': 'Direct Sale',
 
   },
   fr: {
@@ -720,7 +720,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'COMMON.USER': 'Utilisateur',
     'COMMON.VERIFIED': 'Verifie',
     'COMMON.VIEW': 'Voir',
-    'COMMON.YEARLY': 'Annuel',
+    'COMMON.DIRECT_SALE': 'Vente Directe',
     'COMMON.AT_TIME': 'a {{time}}',
     'COMMON.LOADING_MAP': 'Chargement de la carte...',
     'COMMON.NEXT': 'Suivant',
@@ -1281,6 +1281,6 @@ export const translations: Record<Language, Record<string, string>> = {
     'DAILY': 'Jour',
     'WEEKLY': 'Semaine',
     'MONTHLY': 'Mois',
-    'YEARLY': 'An',
+    'DIRECT_SALE': 'Vente Directe',
   }
 };

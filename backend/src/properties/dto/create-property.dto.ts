@@ -11,7 +11,7 @@ import {
   IsBoolean,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { PaymentFrequency } from 'src/shared/enums';
+import { PaymentType } from 'src/shared/enums';
 
 class GpsLocationDto {
   @IsNumber()
@@ -55,9 +55,9 @@ export class CreatePropertyDto {
   @IsNotEmpty()
   price: number;
 
-  @IsEnum(PaymentFrequency)
+  @IsEnum(PaymentType)
   @IsNotEmpty()
-  paymentFrequency: PaymentFrequency;
+  paymentFrequency: PaymentType;
 
   @IsString()
   @IsOptional()

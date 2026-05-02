@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { PaymentFrequency, PropertyStatus, PropertyType } from '../shared/enums';
+import { PaymentType, PropertyStatus, PropertyType } from '../shared/enums';
 
 export interface Announcement {
   _id: string;
@@ -14,7 +14,7 @@ export interface Announcement {
   address: string;
   surface: number;
   price: number;
-  paymentFrequency: PaymentFrequency;
+  paymentFrequency: PaymentType;
   description: string;
   photos: string[];
   previewVideo?: string;

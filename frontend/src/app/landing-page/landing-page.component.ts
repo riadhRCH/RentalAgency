@@ -6,13 +6,15 @@ import { PublicFooterComponent } from '../shared/components/public-footer/public
 import { PublicNavbarComponent } from '../shared/components/public-navbar/public-navbar.component';
 import { CircularGalleryItem } from '../public/circular-gallery/circular-gallery.component';
 import { SharedSearchBarComponent, SearchFilters } from '../shared/components/search-bar/search-bar.component';
+import { PropertyCardComponent } from '../shared/components/property-card/property-card.component';
 import { AgencyService, AgencyProfile } from '../services/agency.service';
 import { AnnouncementsService, Announcement, PaginatedAnnouncements } from '../services/announcements.service';
+import { PaymentType } from '../shared/enums';
 
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, PublicNavbarComponent, PublicFooterComponent, SharedSearchBarComponent],
+  imports: [CommonModule, FormsModule, RouterModule, PublicNavbarComponent, PublicFooterComponent, SharedSearchBarComponent, PropertyCardComponent],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.scss',
 })
@@ -50,6 +52,20 @@ export class LandingPage implements OnInit {
       imageUrl: announcement.photos[0] || '/assets/Doghmani_logo-removebg-preview.png',
       imageAlt: announcement.title,
     }));
+  }
+
+  get rentalAnnouncements(): Announcement[] {
+    return this.announcements.filter(a => 
+      a.paymentFrequency === PaymentType.MONTHLY || a.paymentFrequency === PaymentType.WEEKLY
+    );
+  }
+
+  get saleAnnouncements(): Announcement[] {
+    return this.announcements.filter(a => a.paymentFrequency === PaymentType.DIRECT_SALE);
+  }
+
+  get shortTermAnnouncements(): Announcement[] {
+    return this.announcements.filter(a => a.paymentFrequency === PaymentType.DAILY);
   }
 
   loadAgencies() {

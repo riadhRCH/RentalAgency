@@ -1,0 +1,40 @@
+<div class="property-card-wrapper">
+  <div class="property-card">
+    <div class="card-image-container">
+      <img 
+        class="card-image" 
+        [src]="announcement.photos[0] || '/assets/placeholder-property.jpg'" 
+        [alt]="announcement.title"
+      />
+      <button 
+        class="favorite-button" 
+        (click)="toggleFavorite($event)"
+        [class.active]="isFavorite"
+      >
+        <span class="material-symbols-outlined">favorite</span>
+      </button>
+    </div>
+
+    <div class="card-content">
+      <div class="card-header">
+        <h4 class="card-label">{{ getCardLabel() }}</h4>
+        <span class="card-price">{{ announcement.price.toLocaleString() }} TND</span>
+      </div>
+
+      <p class="card-duration">{{ getDuration() }}</p>
+
+      <div class="card-amenities">
+        <span class="amenity" *ngIf="announcement.amenities['bedrooms']">
+          <span class="material-symbols-outlined">bed</span>
+          {{ announcement.amenities['bedrooms'] }}
+        </span>
+        <span class="amenity" *ngIf="announcement.amenities['bathrooms']">
+          <span class="material-symbols-outlined">bathtub</span>
+          {{ announcement.amenities['bathrooms'] }}
+        </span>
+      </div>
+
+      <button class="action-button">{{ getButtonText() }}</button>
+    </div>
+  </div>
+</div>

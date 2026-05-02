@@ -12,51 +12,51 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
   template: `
     <div class="min-h-screen bg-background-dark text-slate-300">
       <!-- Stats Navigation Header -->
-      <div class="sticky top-0 z-30 bg-background-dark/80 backdrop-blur-xl border-b border-white/5 py-8">
-        <div class="max-w-7xl mx-auto px-8">
+      <div class="sticky top-0 z-30 bg-background-dark/80 backdrop-blur-xl border-b border-white/5 py-4 sm:py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-8">
           <div class="flex justify-center">
-            <div class="glass-card flex p-1.5 rounded-2xl border border-white/10 shadow-2xl shadow-black/50">
+            <div class="glass-card flex p-1 sm:p-1.5 rounded-xl sm:rounded-2xl border border-white/10 shadow-2xl shadow-black/50 w-full sm:w-auto">
               <button 
                 [routerLink]="['leads']" 
                 routerLinkActive="bg-primary/10 text-primary border-primary/20 shadow-inner shadow-primary/5"
-                class="group relative flex flex-col items-center justify-center py-4 px-10 rounded-xl transition-all duration-300 hover:bg-white/5 min-w-[160px]">
-                <span class="text-3xl font-black silver-glow mb-1 tracking-tighter group-hover:scale-110 transition-transform duration-300">
+                class="group relative flex-1 sm:flex-none flex flex-col items-center justify-center py-3 sm:py-4 px-4 sm:px-10 rounded-lg sm:rounded-xl transition-all duration-300 hover:bg-white/5 min-w-0 sm:min-w-[160px]">
+                <span class="text-2xl sm:text-3xl font-black silver-glow mb-0.5 sm:mb-1 tracking-tighter group-hover:scale-110 transition-transform duration-300">
                   {{ stats.totalLeads }}
                 </span>
-                <span class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity">
+                <span class="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity truncate w-full text-center">
                   {{ 'SIDEBAR.LEADS' | translate }}
                 </span>
-                <div routerLinkActive="opacity-100 scale-100" class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-primary rounded-full blur-[2px] opacity-0 scale-50 transition-all duration-300"></div>
+                <div routerLinkActive="opacity-100 scale-100" class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 sm:w-12 h-1 bg-primary rounded-full blur-[2px] opacity-0 scale-50 transition-all duration-300"></div>
               </button>
               
-              <div class="w-px h-12 my-auto bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
+              <div class="w-px h-8 sm:h-12 my-auto bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
 
               <button 
                 [routerLink]="['visits']" 
                 routerLinkActive="bg-primary/10 text-primary border-primary/20 shadow-inner shadow-primary/5"
-                class="group relative flex flex-col items-center justify-center py-4 px-10 rounded-xl transition-all duration-300 hover:bg-white/5 min-w-[160px]">
-                <span class="text-3xl font-black silver-glow mb-1 tracking-tighter group-hover:scale-110 transition-transform duration-300">
+                class="group relative flex-1 sm:flex-none flex flex-col items-center justify-center py-3 sm:py-4 px-4 sm:px-10 rounded-lg sm:rounded-xl transition-all duration-300 hover:bg-white/5 min-w-0 sm:min-w-[160px]">
+                <span class="text-2xl sm:text-3xl font-black silver-glow mb-0.5 sm:mb-1 tracking-tighter group-hover:scale-110 transition-transform duration-300">
                   {{ stats.totalVisits }}
                 </span>
-                <span class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity">
+                <span class="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity truncate w-full text-center">
                   {{ 'SIDEBAR.VISITS' | translate }}
                 </span>
-                <div routerLinkActive="opacity-100 scale-100" class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-primary rounded-full blur-[2px] opacity-0 scale-50 transition-all duration-300"></div>
+                <div routerLinkActive="opacity-100 scale-100" class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 sm:w-12 h-1 bg-primary rounded-full blur-[2px] opacity-0 scale-50 transition-all duration-300"></div>
               </button>
               
-              <div class="w-px h-12 my-auto bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
+              <div class="w-px h-8 sm:h-12 my-auto bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
 
               <button 
                 [routerLink]="['transactions']" 
                 routerLinkActive="bg-primary/10 text-primary border-primary/20 shadow-inner shadow-primary/5"
-                class="group relative flex flex-col items-center justify-center py-4 px-10 rounded-xl transition-all duration-300 hover:bg-white/5 min-w-[160px]">
-                <span class="text-3xl font-black silver-glow mb-1 tracking-tighter group-hover:scale-110 transition-transform duration-300">
+                class="group relative flex-1 sm:flex-none flex flex-col items-center justify-center py-3 sm:py-4 px-4 sm:px-10 rounded-lg sm:rounded-xl transition-all duration-300 hover:bg-white/5 min-w-0 sm:min-w-[160px]">
+                <span class="text-2xl sm:text-3xl font-black silver-glow mb-0.5 sm:mb-1 tracking-tighter group-hover:scale-110 transition-transform duration-300">
                   {{ stats.totalTransactions }}
                 </span>
-                <span class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity">
+                <span class="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity truncate w-full text-center">
                   {{ 'TRANSACTIONS.TITLE' | translate }}
                 </span>
-                <div routerLinkActive="opacity-100 scale-100" class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-primary rounded-full blur-[2px] opacity-0 scale-50 transition-all duration-300"></div>
+                <div routerLinkActive="opacity-100 scale-100" class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 sm:w-12 h-1 bg-primary rounded-full blur-[2px] opacity-0 scale-50 transition-all duration-300"></div>
               </button>
             </div>
           </div>

@@ -5,15 +5,20 @@
 .property-card {
   display: flex;
   flex-direction: column;
-  background: white;
-  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 16px;
   overflow: hidden;
   transition: all 0.3s ease;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px);
 
   &:hover {
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-    transform: translateY(-4px);
+    background: rgba(15, 23, 42, 0.95);
+    border-color: rgba(59, 130, 248, 0.4);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(59, 130, 246, 0.1);
+    transform: translateY(-6px);
   }
 }
 
@@ -87,23 +92,24 @@
 
 .card-label {
   margin: 0;
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(226, 232, 240, 0.9);
   text-transform: capitalize;
+  letter-spacing: 0.3px;
 }
 
 .card-price {
   font-size: 16px;
-  font-weight: 700;
-  color: #333;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 1);
   white-space: nowrap;
 }
 
 .card-duration {
   margin: 0;
   font-size: 12px;
-  color: #888;
+  color: rgba(148, 163, 184, 0.8);
   font-weight: 500;
 }
 
@@ -111,7 +117,7 @@
   display: flex;
   gap: 16px;
   font-size: 12px;
-  color: #666;
+  color: rgba(148, 163, 184, 0.7);
 
   .amenity {
     display: flex;
@@ -120,33 +126,34 @@
 
     .material-symbols-outlined {
       font-size: 16px;
-      color: #999;
+      color: rgba(148, 163, 184, 0.6);
     }
   }
 }
 
 .action-button {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  padding: 12px 16px;
+  background: #1ab394;
   color: white;
   border: none;
   border-radius: 6px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
   transition: all 0.3s ease;
 
   &:hover {
-    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-    opacity: 0.9;
+    background: #169178;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+    box-shadow: 0 6px 16px rgba(26, 179, 148, 0.35);
   }
 
   &:active {
     transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(26, 179, 148, 0.25);
   }
 }
 

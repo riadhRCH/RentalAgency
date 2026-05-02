@@ -1,0 +1,41 @@
+# Progress Audit - Real Estate CRM
+
+## 1. Authentication & Agency Setup
+*   **Registration & Login:** Implemented (JWT/Auth module).
+*   **Agency Selection:** Implemented (User can select/join agencies).
+*   **Maturity:** Complete MVP.
+
+## 2. Property Management (Biens Immobiliers)
+*   **Features Implemented:** List properties, Add new property, Edit property, View property details.
+*   **Media Handling:** Cloudinary integration for photos/videos.
+*   **Maturity:** Complete MVP.
+
+## 3. CRM & Lead Management (Clients/Prospects)
+*   **Features Implemented:** Lead listing, Add new lead manually, View leads on Dashboard Overview. Webhook integration (Call-to-lead via Twilio).
+*   **Maturity:** Partial/Advanced (Needs UI for deep lead details & interaction tracking).
+
+## 4. Owner Management (Propriétaires)
+*   **Features Implemented:** Personnel/Owners list, Owner Dashboard (Public link with token).
+*   **Maturity:** Partial (Dashboard logic exists, needs potential refinement in data access and real-time updates).
+
+## 5. Visit Management (Visites)
+*   **Features Implemented:** Visits listing in dashboard, Visit requests tracking.
+*   **Maturity:** Partial (Needs calendar/agenda view, automated reminders).
+
+## 6. Transactions & Contracts (Ventes/Locations)
+*   **Features Implemented:** Transaction list, Transaction provisioning, Transaction Details, Contract Editor. Public transaction status page. Bank Details configuration.
+*   **Maturity:** Advanced MVP (Includes provisioning and contract generation).
+
+## 7. Public Portals & Marketing
+*   **Features Implemented:** Agency Landing Page, Property details page, Announcements module, Carousel.
+*   **Maturity:** Complete MVP.
+
+## Observations & Gaps
+*   **Missing Features based on Vision:** 
+    *   No robust analytics/statistics view (Dashboard overview exists but might be basic).
+    *   AI matchmaking (Rapprochement) is absent.
+    *   No digital signature integration (only contract editor).
+    *   Missing gamification elements for agents.
+*   **Inconsistencies:** 
+    *   "Announcements" and "Properties" might have overlapping concepts (internal vs published listings).
+    *   Communication tools (in-app messaging/emails) are not fully realized yet beyond Twilio webhooks.

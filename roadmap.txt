@@ -1,0 +1,29 @@
+# Strategic Roadmap - Real Estate CRM
+
+## Short-Term Priority (High Impact, Medium Effort - Core CRM Completion)
+1. **Calendar & Agenda View for Visits**
+   * *Justification:* Essential for agent daily operations. A visual calendar improves UX significantly over a simple list.
+2. **Deep Lead Details & Interaction History**
+   * *Justification:* CRM relies on knowing the history with a prospect. Needs a dedicated view with notes, calls, emails logged.
+3. **Analytics Dashboard (MVP)**
+   * *Justification:* Agency admins need to see KPIs (number of leads, converted deals, active mandates) immediately.
+4. **Refine Owner Dashboard**
+   * *Justification:* Polishing the owner portal is an easy win to impress clients and secure exclusive mandates.
+
+## Mid-Term Priority (High Impact, High Effort - Differentiators & Workflow)
+1. **Digital Signature Integration**
+   * *Justification:* Greatly accelerates the transaction process and modernizes the agency. Can integrate with DocuSign or similar APIs.
+2. **In-App Communication Module (Email/SMS via Twilio/SendGrid)**
+   * *Justification:* Keeps all client communication within the CRM, eliminating the need to switch to external email clients.
+3. **Smart Matchmaking Algorithm (V1)**
+   * *Justification:* Automating the mapping between new properties and existing buyer criteria increases sales velocity.
+
+## Long-Term Priority (Medium/High Impact, High Effort - Innovation & Scaling)
+1. **AI-Powered Matchmaking & Lead Scoring**
+   * *Justification:* Advanced AI to predict the likelihood of a lead closing based on interaction patterns.
+2. **Immersive 3D/Virtual Tours Engine**
+   * *Justification:* Remote viewing capability, requires a robust 3D viewer integration (WebGL/Three.js).
+3. **Agent Gamification System**
+   * *Justification:* Leaderboards and achievement badges to incentivize agents to maintain clean data and close more deals.
+4. **Automated Marketing (Newsletters/Property Alerts)**
+   * *Justification:* Automated drip campaigns for cold leads.

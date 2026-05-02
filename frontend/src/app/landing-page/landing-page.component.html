@@ -44,7 +44,7 @@
             (search)="onSearch($event)">
         </app-shared-search-bar>
     </section>
-    <section class="gallery-section" *ngIf="galleryItems.length">
+    <!--section class="gallery-section" *ngIf="galleryItems.length">
         <div class="max-w-7xl mx-auto px-4 mb-8">
             <div class="section-copy">
                 <div class="eyebrow">Featured</div>
@@ -53,7 +53,7 @@
             </div>
         </div>
         <app-circular-gallery [items]="galleryItems"></app-circular-gallery>
-    </section>
+    </section-->
     <section class="py-24 bg-gradient-to-b from-background-dark to-background-dark/50">
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center mb-12">
@@ -61,17 +61,17 @@
                 <h2 class="text-3xl md:text-4xl font-light text-white mb-4">The Doghmani Signature Partners</h2>
                 <p class="text-silver-500 max-w-2xl mx-auto">Discover our curated network of premium partner agencies delivering exceptional real estate services worldwide.</p>
             </div>
-            <div class="partners-carousel" *ngIf="agencies.length">
-                <div class="partners-track">
-                    <div class="partner-card" *ngFor="let agency of agencies">
+            <div class="partners-grid" *ngIf="agencies.length">
+                <div class="partner-card" *ngFor="let agency of agencies; let i = index" [ngClass]="'partner-' + (i + 1)">
+                    <div class="partner-logo-container">
                         <div class="partner-logo" *ngIf="agency.logo">
                             <img [src]="agency.logo" [alt]="agency.name">
                         </div>
                         <div class="partner-logo placeholder" *ngIf="!agency.logo">
                             <span class="material-symbols-outlined">apartment</span>
                         </div>
-                        <span class="partner-name">{{ agency.name }}</span>
                     </div>
+                    <span class="partner-name">{{ agency.name }}</span>
                 </div>
             </div>
             <div *ngIf="!agencies.length" class="text-center text-silver-500 py-12">

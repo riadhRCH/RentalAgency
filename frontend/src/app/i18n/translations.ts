@@ -641,6 +641,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'WEEKLY': 'Week',
     'MONTHLY': 'Month',
     'DIRECT_SALE': 'Direct Sale',
+    'PROPERTY_FORM.PRICING_DIRECT_SALE': 'Direct Sale',
 
   },
   fr: {
@@ -1282,5 +1283,6 @@ export const translations: Record<Language, Record<string, string>> = {
     'WEEKLY': 'Semaine',
     'MONTHLY': 'Mois',
     'DIRECT_SALE': 'Vente Directe',
+    'PROPERTY_FORM.PRICING_DIRECT_SALE': 'Vente Directe',
   }
 };

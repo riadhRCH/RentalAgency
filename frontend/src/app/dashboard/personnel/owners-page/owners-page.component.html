@@ -37,23 +37,23 @@
                 <div class="flex gap-2">
                     <button *ngIf="!owner.dashboardToken"
                         (click)="generateDashboardLink(owner._id, owner.firstName + ' ' + owner.lastName)"
-                        [disabled]="generatingToken[owner._id]"
+                        [disabled]="generatingToken()[owner._id]"
                         class="flex-1 px-3 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 transition-colors text-sm font-semibold disabled:opacity-50">
-                        <span *ngIf="!generatingToken[owner._id]" class="material-symbols-outlined text-sm">link</span>
-                        <span *ngIf="generatingToken[owner._id]"
+                        <span *ngIf="!generatingToken()[owner._id]" class="material-symbols-outlined text-sm">link</span>
+                        <span *ngIf="generatingToken()[owner._id]"
                             class="material-symbols-outlined text-sm animate-spin">hourglass_empty</span>
-                        {{ generatingToken[owner._id] ? ('OWNERS.GENERATING' | translate) : ('OWNERS.GENERATE_LINK' | translate) }}
+                        {{ generatingToken()[owner._id] ? ('OWNERS.GENERATING' | translate) : ('OWNERS.GENERATE_LINK' | translate) }}
                     </button>
 
                     <button *ngIf="owner.dashboardToken"
                         (click)="copyDashboardLink(owner._id, owner.firstName + ' ' + owner.lastName)"
-                        [class.bg-green-500/20]="copiedOwnerId === owner._id"
-                        [class.text-green-400]="copiedOwnerId === owner._id"
-                        [class.border-green-500/20]="copiedOwnerId === owner._id"
+                        [class.bg-green-500/20]="copiedOwnerId() === owner._id"
+                        [class.text-green-400]="copiedOwnerId() === owner._id"
+                        [class.border-green-500/20]="copiedOwnerId() === owner._id"
                         class="flex-1 px-3 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg hover:bg-primary/20 transition-colors text-sm font-semibold">
-                        <span class="material-symbols-outlined text-sm">{{ copiedOwnerId === owner._id ? 'check' :
+                        <span class="material-symbols-outlined text-sm">{{ copiedOwnerId() === owner._id ? 'check' :
                             'content_copy' }}</span>
-                        {{ copiedOwnerId === owner._id ? ('OWNERS.COPIED' | translate) : ('OWNERS.COPY_LINK' | translate) }}
+                        {{ copiedOwnerId() === owner._id ? ('OWNERS.COPIED' | translate) : ('OWNERS.COPY_LINK' | translate) }}
                     </button>
 
                     <button *ngIf="owner.dashboardToken" [routerLink]="getDashboardLink(owner._id)"

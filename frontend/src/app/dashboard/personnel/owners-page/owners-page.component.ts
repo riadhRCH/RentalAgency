@@ -28,8 +28,8 @@ export class OwnersPageComponent implements OnInit {
   readonly i18n = inject(I18nService);
   owners: Owner[] = [];
   loading = signal(false);
-  generatingToken: { [key: string]: boolean } = {};
-  copiedOwnerId: string | null = null;
+  generatingToken = signal<{ [key: string]: boolean }>({});
+  copiedOwnerId = signal<string | null>(null);
 
   ngOnInit() {
     this.loadOwners();
@@ -52,26 +52,26 @@ export class OwnersPageComponent implements OnInit {
   }
 
   generateDashboardLink(ownerId: string, ownerName: string) {
-    this.generatingToken = { ...this.generatingToken, [ownerId]: true }; //make this as a signal<booelan>
+    this.generatingToken.update(tokens => ({ ...tokens, [ownerId]: true }));
 
     this.personnelService.generateDashboardToken(ownerId).subscribe({
       next: (response) => {
         this.owners = this.owners.map(o =>
           o._id === ownerId ? { ...o, dashboardToken: response.token } : o
         );
-        this.generatingToken = { ...this.generatingToken, [ownerId]: false }; //make this as a signal<booelan>
+        this.generatingToken.update(tokens => ({ ...tokens, [ownerId]: false }));
 
         // Auto-copy the generated link to clipboard
         const link = `${environment.appUrl}/owner-dashboard/${response.token}`;
         navigator.clipboard.writeText(link).then(() => {
-          this.copiedOwnerId = ownerId;
+          this.copiedOwnerId.set(ownerId);
           setTimeout(() => {
-            this.copiedOwnerId = null;
+            this.copiedOwnerId.set(null);
           }, 2000);
         });
       },
       error: () => {
-        this.generatingToken = { ...this.generatingToken, [ownerId]: false }; //make this as a signal<booelan>
+        this.generatingToken.update(tokens => ({ ...tokens, [ownerId]: false }));
         alert(this.i18n.translate('OWNERS.GENERATE_FAILED'));
       }
     });
@@ -87,9 +87,9 @@ export class OwnersPageComponent implements OnInit {
     const link = `${environment.appUrl}/owner-dashboard/${owner.dashboardToken}`;
 
     navigator.clipboard.writeText(link).then(() => {
-      this.copiedOwnerId = ownerId;
+      this.copiedOwnerId.set(ownerId);
       setTimeout(() => {
-        this.copiedOwnerId = null;
+        this.copiedOwnerId.set(null);
       }, 2000);
     }).catch(() => {
       alert(this.i18n.translate('OWNERS.COPY_FAILED'));

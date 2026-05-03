@@ -601,7 +601,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'TRANSACTIONS.NO_TRANSACTIONS_TITLE': 'Aucune transaction active',
     'TRANSACTIONS.NO_TRANSACTIONS_DESC': "Vous n'avez aucune transaction active pour le moment. Commencez par en creer une depuis un lead ou un bien.",
     'TRANSACTIONS.PROPERTY': 'Bien',
-    'TRANSACTIONS.TENANT': 'Locataire',
+    'TRANSACTIONS.TENANT': 'Client',
     'TRANSACTIONS.RENT': 'Loyer',
     'TRANSACTIONS.DATES': 'Dates',
     'TRANSACTIONS.VIEW_DETAILS': 'Voir les details',

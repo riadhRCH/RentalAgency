@@ -3,10 +3,20 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
+export interface VisitVisitorProfile {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  profilePicture?: string;
+  preferredContact?: string;
+  email?: string;
+}
+
 export interface VisitRequest {
   _id: string;
   propertyId: any;
-  visitorId: any;
+  visitorId: VisitVisitorProfile;
   agencyId: string;
   visitDate: Date;
   status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';

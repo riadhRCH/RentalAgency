@@ -3,6 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
+export interface LeadCustomerProfile {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  profilePicture?: string;
+  preferredContact?: string;
+  email?: string;
+}
+
 export interface Lead {
   _id: string;
   agencyId: string;
@@ -16,6 +26,7 @@ export interface Lead {
   firstSeen: Date;
   lastInteraction: Date;
   createdAt: Date;
+  customerProfile?: LeadCustomerProfile;
 }
 
 export interface PaginatedLeads {

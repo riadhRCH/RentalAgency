@@ -5,6 +5,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Lead, LeadDocument } from '../schemas/lead.schema';
+import { Personnel, PersonnelDocument } from '../schemas/personnel.schema';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 
@@ -13,6 +14,8 @@ export class LeadsService {
   constructor(
     @InjectModel(Lead.name)
     private readonly leadModel: Model<LeadDocument>,
+    @InjectModel(Personnel.name)
+    private readonly personnelModel: Model<PersonnelDocument>,
   ) {}
 
   async findAll(
@@ -34,8 +37,19 @@ export class LeadsService {
       this.leadModel.countDocuments(query),
     ]);
 
+    const leadsWithProfiles = await Promise.all(
+      leads.map(async (lead) => {
+        const leadObj = lead.toObject();
+        const person = await this.personnelModel.findOne(
+          { phone: lead.customerPhone, deletedAt: { $exists: false } },
+          { firstName: 1, lastName: 1, phone: 1, profilePicture: 1, preferredContact: 1, email: 1 },
+        );
+        return { ...leadObj, customerProfile: person };
+      }),
+    );
+
     return {
-      data: leads,
+      data: leadsWithProfiles,
       total,
       page,
       limit,

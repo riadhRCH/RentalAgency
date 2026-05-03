@@ -47,6 +47,22 @@
     </div>
 
     <ng-container *ngIf="!loading() && leads.length > 0">
+      <!-- Personnel Card Template -->
+      <ng-template #personnelCard let-phone="phone" let-name="name" let-personnel="personnel">
+        <div class="flex items-center gap-4">
+          <div class="h-10 w-10 rounded-full overflow-hidden flex-shrink-0" [ngClass]="personnel?.profilePicture ? '' : 'bg-primary/10 flex items-center justify-center text-primary'">
+            <img *ngIf="personnel?.profilePicture" [src]="personnel.profilePicture" alt="" class="w-full h-full object-cover" />
+            <span *ngIf="!personnel?.profilePicture" class="material-symbols-outlined">person</span>
+          </div>
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white">{{ phone }}</h4>
+            <p class="text-[10px] text-slate-500 uppercase tracking-widest">
+              {{ name || ('COMMON.ANONYMOUS_CALLER' | translate) }}
+            </p>
+          </div>
+        </div>
+      </ng-template>
+
       <!-- Desktop Table -->
       <div class="hidden md:block glass-card rounded-2xl border border-white/10 overflow-hidden">
         <div class="overflow-x-auto">
@@ -63,17 +79,7 @@
             <tbody class="divide-y divide-white/5">
               <tr *ngFor="let lead of leads" class="group hover:bg-white/5 transition-colors">
                 <td class="p-6">
-                  <div class="flex items-center gap-4">
-                    <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                      <span class="material-symbols-outlined">person</span>
-                    </div>
-                    <div>
-                      <h4 class="font-bold text-slate-900 dark:text-white">{{ lead.customerPhone }}</h4>
-                      <p class="text-[10px] text-slate-500 uppercase tracking-widest">
-                        {{ lead.customerName || ('COMMON.ANONYMOUS_CALLER' | translate) }}
-                      </p>
-                    </div>
-                  </div>
+                  <ng-container *ngTemplateOutlet="personnelCard; context: { phone: lead.customerPhone, name: lead.customerName, personnel: lead.customerProfile }"></ng-container>
                 </td>
                 <td class="p-6">
                   <select 
@@ -136,21 +142,27 @@
         </div>
       </div>
 
+      <!-- Personnel Card Template (Mobile) -->
+      <ng-template #personnelCardMobile let-phone="phone" let-name="name" let-personnel="personnel">
+        <div class="flex items-center gap-4">
+          <div class="h-12 w-12 rounded-full overflow-hidden flex-shrink-0" [ngClass]="personnel?.profilePicture ? '' : 'bg-primary/10 flex items-center justify-center text-primary border border-primary/20'">
+            <img *ngIf="personnel?.profilePicture" [src]="personnel.profilePicture" alt="" class="w-full h-full object-cover" />
+            <span *ngIf="!personnel?.profilePicture" class="material-symbols-outlined text-xl">person</span>
+          </div>
+          <div class="min-w-0">
+            <h4 class="font-bold text-white truncate text-base">{{ phone }}</h4>
+            <p class="text-[10px] text-slate-500 uppercase tracking-widest truncate">
+              {{ name || ('COMMON.ANONYMOUS_CALLER' | translate) }}
+            </p>
+          </div>
+        </div>
+      </ng-template>
+
       <!-- Mobile Cards -->
       <div class="md:hidden space-y-4">
-        <div *ngFor="let lead of leads" class="glass-card p-5 rounded-2xl border border-white/10 space-y-5 group active:scale-[0.98] transition-all">
+          <div *ngFor="let lead of leads" class="glass-card p-5 rounded-2xl border border-white/10 space-y-5 group active:scale-[0.98] transition-all">
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div class="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                <span class="material-symbols-outlined text-xl">person</span>
-              </div>
-              <div class="min-w-0">
-                <h4 class="font-bold text-white truncate text-base">{{ lead.customerPhone }}</h4>
-                <p class="text-[10px] text-slate-500 uppercase tracking-widest truncate">
-                  {{ lead.customerName || ('COMMON.ANONYMOUS_CALLER' | translate) }}
-                </p>
-              </div>
-            </div>
+            <ng-container *ngTemplateOutlet="personnelCardMobile; context: { phone: lead.customerPhone, name: lead.customerName, personnel: lead.customerProfile }"></ng-container>
             
             <select 
               [ngModel]="lead.status"

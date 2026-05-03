@@ -24,6 +24,20 @@
   </header>
 
   <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+    <!-- Personnel Card Template -->
+    <ng-template #visitorCard let-visitor="visitor">
+      <div class="flex items-center gap-4">
+        <div class="h-10 w-10 rounded-full overflow-hidden flex-shrink-0" [ngClass]="visitor?.profilePicture ? '' : 'bg-primary/10 flex items-center justify-center text-primary'">
+          <img *ngIf="visitor?.profilePicture" [src]="visitor.profilePicture" alt="" class="w-full h-full object-cover" />
+          <span *ngIf="!visitor?.profilePicture" class="material-symbols-outlined">person</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-bold text-slate-300">{{ visitor?.phone }}</span>
+          <span class="text-[10px] text-slate-500 uppercase tracking-widest">{{ visitor?.firstName }} {{ visitor?.lastName }}</span>
+        </div>
+      </div>
+    </ng-template>
+
     <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse">
         <thead class="bg-white/5 border-b border-white/10">
@@ -65,10 +79,7 @@
               </div>
             </td>
             <td class="p-6">
-              <div class="flex flex-col">
-                <span class="font-bold text-slate-300">{{ visit.visitorId?.phone }}</span>
-                <span class="text-[10px] text-slate-500 uppercase tracking-widest">{{ visit.visitorId?.firstName }} {{ visit.visitorId?.lastName }}</span>
-              </div>
+              <ng-container *ngTemplateOutlet="visitorCard; context: { visitor: visit.visitorId }"></ng-container>
             </td>
             <td class="p-6">
               <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">

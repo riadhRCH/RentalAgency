@@ -63,6 +63,20 @@
   </div>
 
   <div *ngIf="!isLoading() && filteredTransactions.length > 0">
+    <!-- Personnel Card Template -->
+    <ng-template #personnelCard let-personnel>
+      <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5">
+        <div class="h-10 w-10 rounded-full overflow-hidden flex-shrink-0" [ngClass]="personnel?.profilePicture ? '' : 'bg-primary/10 flex items-center justify-center text-primary'">
+          <img *ngIf="personnel?.profilePicture" [src]="personnel.profilePicture" alt="" class="w-full h-full object-cover" />
+          <span *ngIf="!personnel?.profilePicture" class="material-symbols-outlined">person</span>
+        </div>
+        <div class="min-w-0">
+          <div class="text-xs font-bold text-slate-200 truncate">{{ personnel?.firstName }} {{ personnel?.lastName }}</div>
+          <div class="text-[10px] text-slate-500">{{ personnel?.phone }}</div>
+        </div>
+      </div>
+    </ng-template>
+
     <!-- Desktop Table -->
     <div class="hidden xl:block glass-card rounded-2xl border border-white/10 overflow-hidden">
       <div class="overflow-x-auto">
@@ -85,8 +99,7 @@
                 <div class="text-[11px] text-slate-500">{{ transaction.propertyId?.address }}</div>
               </td>
               <td class="p-6">
-                <div class="text-sm text-slate-900 dark:text-white">{{ transaction.personnelId?.firstName }} {{ transaction.personnelId?.lastName }}</div>
-                <div class="text-[11px] text-slate-500">{{ transaction.personnelId?.phone }}</div>
+                <ng-container *ngTemplateOutlet="personnelCard; context: { $implicit: transaction.personnelId }"></ng-container>
               </td>
               <td class="p-6 text-sm text-slate-900 dark:text-white">
                 {{ transaction.financialDetails.rentAmount | currency:'TND' }}
@@ -149,15 +162,7 @@
           </span>
         </div>
 
-        <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5">
-          <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-            <span class="material-symbols-outlined">person</span>
-          </div>
-          <div class="min-w-0">
-            <div class="text-xs font-bold text-slate-200 truncate">{{ transaction.personnelId?.firstName }} {{ transaction.personnelId?.lastName }}</div>
-            <div class="text-[10px] text-slate-500">{{ transaction.personnelId?.phone }}</div>
-          </div>
-        </div>
+        <ng-container *ngTemplateOutlet="personnelCard; context: { $implicit: transaction.personnelId }"></ng-container>
 
         <div class="grid grid-cols-2 gap-4 py-3 border-y border-white/5">
           <div class="space-y-1">

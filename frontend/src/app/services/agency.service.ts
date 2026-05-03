@@ -40,6 +40,7 @@ export interface AgencyProfile {
   logo?: string;
   settings?: AgencySettings;
   paymentMethods?: PaymentMethod[];
+  ownerId?: string;
 }
 
 @Injectable({

@@ -32,6 +32,7 @@ export class ConfigComponent implements OnInit {
   settings: AgencySettings = { forwardingNumber: '', areaCode: '' };
   agencyName = '';
   agencyLogo = '';
+  ownerId?: string;
   virtualNumbers: VirtualNumber[] = [];
   
   newNumber = {
@@ -61,8 +62,9 @@ export class ConfigComponent implements OnInit {
           forwardingNumber: settings?.forwardingNumber || '',
           areaCode: this.normalizeAreaCode(settings?.areaCode || '')
         };
-        this.agencyName = profile?.name || '';
-        this.agencyLogo = profile?.logo || '';
+      this.agencyName = profile?.name || '';
+      this.agencyLogo = profile?.logo || '';
+      this.ownerId = profile?.ownerId;
         this.ensureAreaCodeOptionExists(this.settings.areaCode);
         this.newNumber.areaCode = this.settings.areaCode;
         this.loading.set(false);

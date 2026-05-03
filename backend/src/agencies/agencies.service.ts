@@ -60,7 +60,7 @@ export class AgenciesService {
   async getProfile(agencyId: string) {
     const agency = await this.agencyModel
       .findById(agencyId)
-      .select('name logo settings paymentMethods');
+      .select('name logo settings paymentMethods ownerId');
 
     if (!agency) {
       throw new BadRequestException('Agency not found');
@@ -72,6 +72,7 @@ export class AgenciesService {
       logo: agency.logo,
       settings: agency.settings,
       paymentMethods: agency.paymentMethods,
+      ownerId: agency.ownerId?.toString(),
     };
   }
 

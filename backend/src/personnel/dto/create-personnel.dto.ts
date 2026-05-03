@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsEmail, IsEnum, IsIn, IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
 import { IsValidPhone } from '../../shared/validators/is-valid-phone.validator';
 import { PreferredContact } from '../../schemas/personnel.schema';
 
@@ -27,6 +27,7 @@ export class CreatePersonnelDto {
 
   @IsUrl()
   @IsOptional()
+  @Transform(({ value }) => (typeof value === 'string' && value.trim() === '' ? undefined : value))
   profilePicture?: string;
 
   @IsString()
@@ -41,11 +42,11 @@ export class CreatePersonnelDto {
   @IsOptional()
   telegram?: string;
 
-  @IsEnum(['call', 'manual', 'registration'])
+  @IsIn(['call', 'manual', 'registration'])
   @IsOptional()
   source?: string;
 
-  @IsEnum(['active', 'inactive'])
+  @IsIn(['active', 'inactive'])
   @IsOptional()
   status?: string;
 }

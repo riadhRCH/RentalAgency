@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { PersonnelService } from '../../services/personnel.service';
+import { PersonnelService, Personnel } from '../../services/personnel.service';
 import { PropertiesService, Property } from '../../services/properties.service';
 import { CalendarSelectorComponent } from '../../shared/components/calendar/calendar-selector.component';
 import { FormControl } from '@angular/forms';
@@ -46,7 +46,7 @@ export class OwnerDashboardComponent implements OnInit {
   loading = signal(false);
   error: string | null = null;
   token: string = '';
-  currentView: 'overview' | 'payments' = 'overview';
+  currentView: 'overview' | 'payments' | 'profile' = 'overview';
 
   sidebarCollapsed = false;
   mobileSidebarOpen = false;
@@ -55,8 +55,34 @@ export class OwnerDashboardComponent implements OnInit {
 
   propertyEditMode: PropertyEditMode = {};
   editingPrices: { [key: string]: number } = {};
-  selectedPropertyCalendar: { [key: string]: any } = {};
   selectedDatesControls: { [key: string]: FormControl } = {};
+
+  ownerProfile = signal<Personnel | null>(null);
+  profileLoading = signal(false);
+  profileSaving = signal(false);
+  profileSaveSuccess = signal(false);
+
+  profileForm = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    preferredContact: 'PHONE',
+    instagram: '',
+    facebook: '',
+    telegram: '',
+    profilePicture: '',
+  };
+
+  preferredContactOptions = [
+    { value: 'PHONE', label: 'Phone' },
+    { value: 'EMAIL', label: 'Email' },
+    { value: 'WHATSAPP', label: 'WhatsApp' },
+    { value: 'INSTAGRAM', label: 'Instagram' },
+    { value: 'FACEBOOK', label: 'Facebook' },
+    { value: 'TELEGRAM', label: 'Telegram' },
+    { value: 'SMS', label: 'SMS' },
+  ];
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -67,23 +93,36 @@ export class OwnerDashboardComponent implements OnInit {
     });
 
     this.route.url.subscribe(url => {
-      this.currentView = url.some(segment => segment.path === 'payments') ? 'payments' : 'overview';
+      const urlString = url.map(segment => segment.path).join('/');
+      if (urlString.includes('payments')) {
+        this.currentView = 'payments';
+      } else if (urlString.includes('profile')) {
+        this.currentView = 'profile';
+        this.loadOwnerProfile();
+      } else {
+        this.currentView = 'overview';
+      }
       this.updateNavItems();
     });
   }
 
   updateNavItems() {
     this.navItems = [
-      { 
-        label: 'SIDEBAR.OVERVIEW', 
-        icon: 'dashboard', 
+      {
+        label: 'SIDEBAR.OVERVIEW',
+        icon: 'dashboard',
         route: `/owner-dashboard/${this.token}`,
         exact: true
       },
-      { 
-        label: 'SIDEBAR.PAYMENTS', 
-        icon: 'account_balance', 
-        route: `/owner-dashboard/${this.token}/payments` 
+      {
+        label: 'SIDEBAR.PAYMENTS',
+        icon: 'account_balance',
+        route: `/owner-dashboard/${this.token}/payments`
+      },
+      {
+        label: 'SIDEBAR.PROFILE',
+        icon: 'person',
+        route: `/owner-dashboard/${this.token}/profile`
       },
     ];
   }
@@ -97,7 +136,6 @@ export class OwnerDashboardComponent implements OnInit {
         this.dashboardData = data;
         this.updateNavItems();
 
-        // Initialize edit modes and controls for each property
         data.properties.forEach((prop: Property) => {
           this.propertyEditMode[prop._id] = 'view';
           this.editingPrices[prop._id] = prop.price;
@@ -106,11 +144,86 @@ export class OwnerDashboardComponent implements OnInit {
 
         this.loading.set(false);
       },
-      error: (err) => {
+      error: () => {
         this.error = 'Failed to load dashboard. The token may be invalid or expired.';
         this.loading.set(false);
       }
     });
+  }
+
+  loadOwnerProfile() {
+    this.profileLoading.set(true);
+    this.personnelService.getOwnerDashboard(this.token).subscribe({
+      next: (data) => {
+        this.ownerProfile.set(data.owner);
+        this.profileForm = {
+          firstName: data.owner.firstName || '',
+          lastName: data.owner.lastName || '',
+          email: data.owner.email || '',
+          phone: data.owner.phone || '',
+          preferredContact: 'PHONE',
+          instagram: '',
+          facebook: '',
+          telegram: '',
+          profilePicture: '',
+        };
+        this.profileLoading.set(false);
+      },
+      error: () => {
+        this.profileLoading.set(false);
+      }
+    });
+  }
+
+  saveProfile() {
+    this.profileSaving.set(true);
+    this.profileSaveSuccess.set(false);
+
+    this.personnelService.updateOwnerProfile(this.token, this.profileForm).subscribe({
+      next: (data) => {
+        this.ownerProfile.set(data);
+        this.profileSaving.set(false);
+        this.profileSaveSuccess.set(true);
+        setTimeout(() => this.profileSaveSuccess.set(false), 3000);
+      },
+      error: () => {
+        this.profileSaving.set(false);
+      }
+    });
+  }
+
+  onProfileFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      this.profileSaving.set(true);
+
+      this.personnelService.uploadOwnerProfilePicture(this.token, file).subscribe({
+        next: (response) => {
+          this.profileForm.profilePicture = response.profilePicture;
+          this.profileSaving.set(false);
+        },
+        error: () => {
+          this.profileSaving.set(false);
+        }
+      });
+    }
+  }
+
+  isFieldRequired(): boolean {
+    const pc = this.profileForm.preferredContact;
+    return pc === 'EMAIL' || pc === 'PHONE' || pc === 'WHATSAPP' || pc === 'SMS';
+  }
+
+  getRequiredFieldName(): string | null {
+    const pc = this.profileForm.preferredContact;
+    switch (pc) {
+      case 'EMAIL': return 'email';
+      case 'PHONE':
+      case 'WHATSAPP':
+      case 'SMS': return 'phone';
+      default: return null;
+    }
   }
 
   closeMobileSidebar() {
@@ -144,7 +257,6 @@ export class OwnerDashboardComponent implements OnInit {
     this.personnelService.updatePropertyAvailability(this.token, propertyId, calendarData).subscribe({
       next: () => {
         this.propertyEditMode[propertyId] = 'view';
-        // Update local data
         const property = this.dashboardData?.properties.find(p => p._id === propertyId);
         if (property) {
           property.calendarData = calendarData;
@@ -162,7 +274,6 @@ export class OwnerDashboardComponent implements OnInit {
     this.personnelService.updatePropertyPrice(this.token, propertyId, newPrice).subscribe({
       next: () => {
         this.propertyEditMode[propertyId] = 'view';
-        // Update local data
         const property = this.dashboardData?.properties.find(p => p._id === propertyId);
         if (property) {
           property.price = newPrice;

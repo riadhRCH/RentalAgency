@@ -161,6 +161,134 @@
             [initialCashouts]="dashboardData.cashouts"
             [balance]="dashboardData.balance"></app-owner-payments>
         </div>
+
+        <!-- PROFILE VIEW -->
+        <div *ngIf="currentView === 'profile'" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <header class="mb-10">
+            <h1 class="text-3xl font-black text-white uppercase tracking-tight silver-glow">{{ 'SIDEBAR.PROFILE' | translate }}</h1>
+            <p class="text-silver-500 text-sm tracking-widest uppercase mt-1">{{ 'OWNER_DASHBOARD.PROFILE_SUBTITLE' | translate }}</p>
+          </header>
+
+          <div *ngIf="profileLoading()" class="flex justify-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+
+          <div *ngIf="!profileLoading() && ownerProfile()" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Profile Form -->
+            <div class="lg:col-span-2">
+              <div class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+                <!-- Success Message -->
+                <div *ngIf="profileSaveSuccess()" class="bg-green-500/20 border border-green-500/50 text-green-400 px-4 py-2 rounded-lg flex items-center gap-2">
+                  <span class="material-symbols-outlined">check_circle</span>
+                  Profile saved successfully
+                </div>
+
+                <form (ngSubmit)="saveProfile()" class="space-y-6">
+                  <!-- Name Fields -->
+                  <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                      <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">First Name</label>
+                      <input type="text" [(ngModel)]="profileForm.firstName" name="firstName"
+                        class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs font-bold uppercase tracking-widest text-white outline-none focus:border-primary transition-all" />
+                    </div>
+                    <div class="space-y-2">
+                      <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Last Name</label>
+                      <input type="text" [(ngModel)]="profileForm.lastName" name="lastName"
+                        class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs font-bold uppercase tracking-widest text-white outline-none focus:border-primary transition-all" />
+                    </div>
+                  </div>
+
+                  <!-- Contact Info -->
+                  <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                      <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Phone</label>
+                      <input type="tel" [(ngModel)]="profileForm.phone" name="phone"
+                        class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs font-bold uppercase tracking-widest text-white outline-none focus:border-primary transition-all" />
+                    </div>
+                    <div class="space-y-2">
+                      <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Email</label>
+                      <input type="email" [(ngModel)]="profileForm.email" name="email"
+                        class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs font-bold uppercase tracking-widest text-white outline-none focus:border-primary transition-all" />
+                    </div>
+                  </div>
+
+                  <!-- Preferred Contact -->
+                  <div class="space-y-2">
+                    <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Preferred Contact</label>
+                    <select [(ngModel)]="profileForm.preferredContact" name="preferredContact"
+                      class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs font-bold uppercase tracking-widest text-white outline-none focus:border-primary transition-all appearance-none cursor-pointer">
+                      <option *ngFor="let option of preferredContactOptions" [value]="option.value" class="bg-background-dark">{{ option.label }}</option>
+                    </select>
+                  </div>
+
+                  <!-- Social Links -->
+                  <div class="space-y-4">
+                    <h3 class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Social Media</h3>
+                    <div class="grid grid-cols-3 gap-4">
+                      <div class="space-y-2">
+                        <label class="flex items-center gap-2 text-[10px] uppercase tracking-widest text-slate-400 font-bold">
+                          <img src="/assets/icons/social/instagram.svg" alt="Instagram" class="w-5 h-5" />
+                          Instagram
+                        </label>
+                        <input type="text" [(ngModel)]="profileForm.instagram" name="instagram" placeholder="@username"
+                          class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs text-white outline-none focus:border-primary transition-all placeholder:text-slate-600" />
+                      </div>
+                      <div class="space-y-2">
+                        <label class="flex items-center gap-2 text-[10px] uppercase tracking-widest text-slate-400 font-bold">
+                          <img src="/assets/icons/social/facebook.svg" alt="Facebook" class="w-5 h-5" />
+                          Facebook
+                        </label>
+                        <input type="text" [(ngModel)]="profileForm.facebook" name="facebook" placeholder="username"
+                          class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs text-white outline-none focus:border-primary transition-all placeholder:text-slate-600" />
+                      </div>
+                      <div class="space-y-2">
+                        <label class="flex items-center gap-2 text-[10px] uppercase tracking-widest text-slate-400 font-bold">
+                          <img src="/assets/icons/social/telegram.svg" alt="Telegram" class="w-5 h-5" />
+                          Telegram
+                        </label>
+                        <input type="text" [(ngModel)]="profileForm.telegram" name="telegram" placeholder="@username"
+                          class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs text-white outline-none focus:border-primary transition-all placeholder:text-slate-600" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Save Button -->
+                  <button type="submit" [disabled]="profileSaving()"
+                    class="w-full py-4 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-bold uppercase tracking-widest rounded transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+                    <span *ngIf="profileSaving()" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                    <span *ngIf="!profileSaving()">Save Profile</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Profile Picture Sidebar -->
+            <div class="space-y-6">
+              <div class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+                <h3 class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Profile Picture</h3>
+                <div class="flex flex-col items-center gap-4">
+                  <div *ngIf="profileForm.profilePicture; else noProfilePic" class="relative">
+                    <img [src]="profileForm.profilePicture" alt="Profile"
+                      class="w-32 h-32 rounded-full object-cover border-2 border-primary shadow-lg shadow-primary/20" />
+                  </div>
+                  <ng-template #noProfilePic>
+                    <div class="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20">
+                      <span class="material-symbols-outlined text-6xl text-primary">person</span>
+                    </div>
+                  </ng-template>
+
+                  <label class="w-full cursor-pointer">
+                    <input type="file" accept="image/*" (change)="onProfileFileSelected($event)" [disabled]="profileSaving()"
+                      class="hidden" />
+                    <span class="block w-full py-3 bg-primary/10 hover:bg-primary/20 text-primary font-bold uppercase tracking-widest text-xs rounded border border-primary/20 text-center transition-all">
+                      Upload Photo
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   </div>

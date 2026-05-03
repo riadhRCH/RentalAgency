@@ -299,6 +299,24 @@ export class PersonnelService {
     return property;
   }
 
+  async updateOwnerProfile(token: string, dto: UpdatePersonnelDto) {
+    const person = await this.personnelModel.findOne({
+      dashboardToken: token,
+      dashboardTokenExpiresAt: { $gt: new Date() },
+      deletedAt: { $exists: false }
+    });
+
+    if (!person) throw new NotFoundException('Invalid or expired dashboard token');
+
+    const updated = await this.personnelModel.findOneAndUpdate(
+      { _id: person._id },
+      { $set: dto },
+      { new: true },
+    );
+
+    return updated;
+  }
+
   async findOwnersByAgency(agencyId: string, page = 1, limit = 20) {
     const agencyObjectId = new Types.ObjectId(agencyId);
 

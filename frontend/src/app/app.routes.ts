@@ -39,6 +39,7 @@ export const routes: Routes = [
     { path: 'transaction/:id', component: TransactionComponent },
     { path: 'owner-dashboard/:token', component: OwnerDashboardComponent },
     { path: 'owner-dashboard/:token/payments', component: OwnerDashboardComponent }, // Will handle multiple views in component
+    { path: 'owner-dashboard/:token/profile', component: OwnerDashboardComponent }, // Profile view
     { path: 'thank-you', component: ThankYouComponent },
     { path: 'carousel', component: CarouselComponent },
     { path: 'auth/login', component: LoginComponent },

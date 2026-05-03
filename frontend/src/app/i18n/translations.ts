@@ -143,6 +143,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'OWNER_DASHBOARD.UPDATE_AVAILABILITY': 'Update Availability',
     'OWNER_DASHBOARD.EDIT_PRICE': 'Edit Price',
     'OWNER_DASHBOARD.PAYMENTS_SUBTITLE': 'Manage your earnings and cashouts',
+    'OWNER_DASHBOARD.PROFILE_SUBTITLE': 'View and edit your profile',
     'COMMON.VIEWS': 'Views',
     'COMMON.TYPE': 'Type',
 

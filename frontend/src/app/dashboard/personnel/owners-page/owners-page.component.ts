@@ -52,14 +52,14 @@ export class OwnersPageComponent implements OnInit {
   }
 
   generateDashboardLink(ownerId: string, ownerName: string) {
-    this.generatingToken = { ...this.generatingToken, [ownerId]: true };
+    this.generatingToken = { ...this.generatingToken, [ownerId]: true }; //make this as a signal<booelan>
 
     this.personnelService.generateDashboardToken(ownerId).subscribe({
       next: (response) => {
         this.owners = this.owners.map(o =>
           o._id === ownerId ? { ...o, dashboardToken: response.token } : o
         );
-        this.generatingToken = { ...this.generatingToken, [ownerId]: false };
+        this.generatingToken = { ...this.generatingToken, [ownerId]: false }; //make this as a signal<booelan>
 
         // Auto-copy the generated link to clipboard
         const link = `${environment.appUrl}/owner-dashboard/${response.token}`;
@@ -71,7 +71,7 @@ export class OwnersPageComponent implements OnInit {
         });
       },
       error: () => {
-        this.generatingToken = { ...this.generatingToken, [ownerId]: false };
+        this.generatingToken = { ...this.generatingToken, [ownerId]: false }; //make this as a signal<booelan>
         alert(this.i18n.translate('OWNERS.GENERATE_FAILED'));
       }
     });

@@ -126,6 +126,41 @@ export class PersonnelController {
     return this.personnelService.updatePropertyPrice(token, propertyId, price);
   }
 
+  @Public()
+  @Patch('dashboard/:token/profile')
+  updateOwnerProfile(
+    @Param('token') token: string,
+    @Body() dto: UpdatePersonnelDto,
+  ) {
+    return this.personnelService.updateOwnerProfile(token, dto);
+  }
+
+  @Public()
+  @Post('dashboard/:token/profile-picture')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadOwnerProfilePicture(
+    @Param('token') token: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException('File is required');
+    }
+
+    if (!file.mimetype.startsWith('image/')) {
+      throw new BadRequestException('Only image files are allowed');
+    }
+
+    const result = await this.cloudinaryService.uploadImage(file);
+    const profilePictureUrl = (result as any).secure_url;
+
+    await this.personnelService.updateOwnerProfile(token, { profilePicture: profilePictureUrl });
+
+    return {
+      message: 'Profile picture uploaded successfully',
+      profilePicture: profilePictureUrl,
+    };
+  }
+
   @Post(':id/profile-picture')
   @UseInterceptors(FileInterceptor('file'))
   async uploadProfilePicture(

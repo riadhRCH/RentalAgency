@@ -77,4 +77,15 @@ export class PersonnelService {
 
     return this.http.post(`${this.apiUrl}/${personnelId}/profile-picture`, formData);
   }
+
+  updateOwnerProfile(token: string, data: any): Observable<Personnel> {
+    return this.http.patch<Personnel>(`${this.apiUrl}/dashboard/${token}/profile`, data);
+  }
+
+  uploadOwnerProfilePicture(token: string, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post(`${this.apiUrl}/dashboard/${token}/profile-picture`, formData);
+  }
 }

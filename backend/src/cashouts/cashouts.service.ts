@@ -59,6 +59,23 @@ export class CashoutsService {
       .exec();
   }
 
+  async findAllByAgencyForOwner(ownerId: string) {
+    // First find the agency where this owner is the owner
+    const agency = await this.agencyModel.findOne({
+      ownerId: new Types.ObjectId(ownerId)
+    });
+    
+    if (!agency) {
+      return [];
+    }
+
+    return this.cashoutModel
+      .find({ agencyId: agency._id })
+      .populate('ownerId', 'name phone email')
+      .sort({ createdAt: -1 })
+      .exec();
+  }
+
   async confirm(id: string) {
     const cashout = await this.cashoutModel.findById(id);
     if (!cashout) throw new BadRequestException('Cashout not found');

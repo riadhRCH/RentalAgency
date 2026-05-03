@@ -26,8 +26,17 @@ export class CashoutsService {
   private http = inject(HttpClient);
   private readonly apiUrl = 'http://localhost:3000/cashouts';
 
-  create(data: { amount: number; notes?: string; agencyId: string }): Observable<Cashout> {
-    return this.http.post<Cashout>(this.apiUrl, data);
+  create(data: { amount: number; notes?: string; agencyId: string }, token?: string): Observable<Cashout> {
+    const headers: Record<string, string> = {};
+    let url = this.apiUrl;
+    
+    if (token) {
+      // Owner dashboard request - use the dashboard endpoint
+      headers['x-dashboard-token'] = token;
+      url = `${this.apiUrl}/dashboard`;
+    }
+    
+    return this.http.post<Cashout>(url, data, { headers });
   }
 
   getOwnerCashouts(): Observable<Cashout[]> {
@@ -36,6 +45,14 @@ export class CashoutsService {
 
   getAgencyCashouts(): Observable<Cashout[]> {
     return this.http.get<Cashout[]>(`${this.apiUrl}/agency`);
+  }
+
+  getAgencyCashoutsForOwner(token: string): Observable<Cashout[]> {
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers['x-dashboard-token'] = token;
+    }
+    return this.http.get<Cashout[]>(`${this.apiUrl}/dashboard/agency`, { headers });
   }
 
   confirm(id: string): Observable<Cashout> {

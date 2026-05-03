@@ -33,7 +33,7 @@ export class OwnerPaymentsComponent implements OnInit {
   }
 
   loadCashouts() {
-    this.cashoutsService.getOwnerCashouts().subscribe({
+    this.cashoutsService.getAgencyCashoutsForOwner(this.token).subscribe({
       next: (res) => this.cashouts.set(res),
       error: (err) => console.error('Error loading cashouts', err)
     });
@@ -55,7 +55,7 @@ export class OwnerPaymentsComponent implements OnInit {
       amount: this.cashoutAmount,
       notes: this.cashoutNotes,
       agencyId: this.agencyId
-    }).subscribe({
+    }, this.token).subscribe({
       next: (res) => {
         this.cashouts.update(c => [res, ...c]);
         this.cashoutAmount = 0;

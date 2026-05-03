@@ -9,6 +9,8 @@ import { Transaction, TransactionDocument } from '../schemas/transaction.schema'
 import { Cashout, CashoutDocument, CashoutStatus } from '../schemas/cashout.schema';
 import { CreatePersonnelDto } from './dto/create-personnel.dto';
 import { UpdatePersonnelDto } from './dto/update-personnel.dto';
+import { NotificationService } from '../notifications/notifications.service';
+import { NotificationType } from '../schemas/notification.schema';
 
 @Injectable()
 export class PersonnelService {
@@ -25,6 +27,7 @@ export class PersonnelService {
     private readonly transactionModel: Model<TransactionDocument>,
     @InjectModel(Cashout.name)
     private readonly cashoutModel: Model<CashoutDocument>,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async findAll(page = 1, limit = 20, source?: string, status?: string) {
@@ -236,10 +239,27 @@ export class PersonnelService {
     const property = await this.propertyModel.findOneAndUpdate(
       { _id: new Types.ObjectId(propertyId), ownerId: person._id, deletedAt: { $exists: false } },
       { $set: { calendarData } },
-      { new: true }
+      { new: true },
     );
 
     if (!property) throw new NotFoundException('Property not found or access denied');
+
+    // Notify agency staff about availability change
+    const agency = await this.agencyModel.findById(property.agencyId);
+    if (agency && agency.staff && agency.staff.length > 0) {
+      const propertyLink = `${process.env.FRONTEND_URL || 'http://localhost:4200'}/dashboard/properties/edit/${propertyId}`;
+      for (const staffMember of agency.staff) {
+        await this.notificationService.sendNotification(
+          staffMember.personnelId.toString(),
+          NotificationType.PROPERTY_AVAILABILITY_CHANGED,
+          'Disponibilite Modifiee',
+          `Le proprietaire a modifie la disponibilite du bien ${property.reference}.`,
+          propertyLink,
+          { propertyId, ownerId: person._id },
+        );
+      }
+    }
+
     return property;
   }
 
@@ -255,10 +275,27 @@ export class PersonnelService {
     const property = await this.propertyModel.findOneAndUpdate(
       { _id: new Types.ObjectId(propertyId), ownerId: person._id, deletedAt: { $exists: false } },
       { $set: { price } },
-      { new: true }
+      { new: true },
     );
 
     if (!property) throw new NotFoundException('Property not found or access denied');
+
+    // Notify agency staff about price change
+    const agency = await this.agencyModel.findById(property.agencyId);
+    if (agency && agency.staff && agency.staff.length > 0) {
+      const propertyLink = `${process.env.FRONTEND_URL || 'http://localhost:4200'}/dashboard/properties/edit/${propertyId}`;
+      for (const staffMember of agency.staff) {
+        await this.notificationService.sendNotification(
+          staffMember.personnelId.toString(),
+          NotificationType.PROPERTY_PRICE_CHANGED,
+          'Prix Modifie',
+          `Le proprietaire a modifie le prix du bien ${property.reference} a ${price} TND.`,
+          propertyLink,
+          { propertyId, ownerId: person._id, newPrice: price },
+        );
+      }
+    }
+
     return property;
   }
 

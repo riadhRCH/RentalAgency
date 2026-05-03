@@ -9,6 +9,7 @@ import { VisitRequest, VisitRequestSchema } from '../schemas/visit-request.schem
 import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schema';
 import { Personnel, PersonnelSchema } from '../schemas/personnel.schema';
 import { AuthModule } from '../auth/auth.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AuthModule } from '../auth/auth.module';
       { name: Personnel.name, schema: PersonnelSchema },
     ]),
     AuthModule,
+    NotificationsModule,
   ],
   controllers: [TransactionsController],
   providers: [TransactionsService],

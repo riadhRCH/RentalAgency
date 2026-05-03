@@ -163,6 +163,17 @@ export const translations: Record<Language, Record<string, string>> = {
     'PERSONNEL.SEARCH_PROMPT': 'Search for a personnel by ID to view and edit their profile',
     'PERSONNEL.PROFILE': 'Personnel Profile',
 
+    'NOTIFICATIONS.TITLE': 'Notifications',
+    'NOTIFICATIONS.MARK_ALL_READ': 'Mark all as read',
+    'NOTIFICATIONS.NO_NOTIFICATIONS': 'No notifications',
+    'NOTIFICATIONS.VIEW_ALL': 'View all notifications',
+    'NOTIFICATIONS.TRANSACTION_CREATED': 'New Transaction',
+    'NOTIFICATIONS.TRANSACTION_PAID': 'Payment Received',
+    'NOTIFICATIONS.TRANSACTION_CLOSED': 'Transaction Closed',
+    'NOTIFICATIONS.PROPERTY_PRICE_CHANGED': 'Price Changed',
+    'NOTIFICATIONS.PROPERTY_AVAILABILITY_CHANGED': 'Availability Changed',
+    'NOTIFICATIONS.CASHOUT_REQUESTED': 'Cashout Requested',
+
     'COMMON.LOADING_MAP': 'Chargement de la carte...',
 'COMMON.REQUIRED': 'Ce champ est obligatoire',
 'COMMON.LOADING': 'Chargement...',
@@ -836,5 +847,16 @@ export const translations: Record<Language, Record<string, string>> = {
     'PERSONNEL.SAVED': 'Modifications enregistrees avec succes',
     'PERSONNEL.SEARCH_PROMPT': 'Recherchez un personnel par ID pour voir et modifier son profil',
     'PERSONNEL.PROFILE': 'Profil du personnel',
+
+    'NOTIFICATIONS.TITLE': 'Notifications',
+    'NOTIFICATIONS.MARK_ALL_READ': 'Tout marquer comme lu',
+    'NOTIFICATIONS.NO_NOTIFICATIONS': 'Aucune notification',
+    'NOTIFICATIONS.VIEW_ALL': 'Voir toutes les notifications',
+    'NOTIFICATIONS.TRANSACTION_CREATED': 'Nouvelle Transaction',
+    'NOTIFICATIONS.TRANSACTION_PAID': 'Paiement Recu',
+    'NOTIFICATIONS.TRANSACTION_CLOSED': 'Transaction Cloturee',
+    'NOTIFICATIONS.PROPERTY_PRICE_CHANGED': 'Prix Modifie',
+    'NOTIFICATIONS.PROPERTY_AVAILABILITY_CHANGED': 'Disponibilite Modifiee',
+    'NOTIFICATIONS.CASHOUT_REQUESTED': 'Demande de Retrait',
   }
 };

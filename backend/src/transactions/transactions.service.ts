@@ -8,6 +8,8 @@ import { VisitRequest, VisitRequestDocument } from '../schemas/visit-request.sch
 import { Property, PropertyDocument } from '../schemas/property.schema';
 import { Personnel, PersonnelDocument } from '../schemas/personnel.schema';
 import { RentalAgency, RentalAgencyDocument } from '../schemas/rental-agency.schema';
+import { NotificationService } from '../notifications/notifications.service';
+import { NotificationType } from '../schemas/notification.schema';
 
 @Injectable()
 export class TransactionsService {
@@ -18,6 +20,7 @@ export class TransactionsService {
     @InjectModel(VisitRequest.name) private visitRequestModel: Model<VisitRequestDocument>,
     @InjectModel(Personnel.name) private personnelModel: Model<PersonnelDocument>,
     @InjectModel(RentalAgency.name) private agencyModel: Model<RentalAgencyDocument>,
+    private notificationService: NotificationService,
   ) {}
 
   private async identifyPersonnel(phone: string, name?: string): Promise<PersonnelDocument> {
@@ -97,6 +100,24 @@ export class TransactionsService {
 
     // Update property status to 'rented'
     await this.propertyModel.findByIdAndUpdate(propertyId, { status: 'rented' });
+
+    // Notify agency staff about new transaction
+    const agency = await this.agencyModel.findById(agencyId);
+    if (agency && agency.staff && agency.staff.length > 0) {
+      const property = await this.propertyModel.findById(propertyId);
+      const transactionLink = `${process.env.FRONTEND_URL || 'http://localhost:4200'}/dashboard/transactions/${savedTransaction._id}`;
+
+      for (const staffMember of agency.staff) {
+        await this.notificationService.sendNotification(
+          staffMember.personnelId.toString(),
+          NotificationType.TRANSACTION_CREATED,
+          'Nouvelle Transaction',
+          `Une nouvelle transaction a ete creee pour le bien ${property?.reference || propertyId}.`,
+          transactionLink,
+          { transactionId: savedTransaction._id, propertyId },
+        );
+      }
+    }
 
     // Handle source cleanup
     if (source && source.sourceId) {
@@ -204,6 +225,23 @@ export class TransactionsService {
     // Reset property status to 'available'
     await this.propertyModel.findByIdAndUpdate(transaction.propertyId, { status: 'available' });
 
+    // Notify property owner about closed transaction with dashboard link
+    const property = await this.propertyModel.findById(transaction.propertyId);
+    if (property && property.ownerId) {
+      const owner = await this.personnelModel.findById(property.ownerId);
+      if (owner) {
+        const dashboardLink = `${process.env.FRONTEND_URL || 'http://localhost:4200'}/owner-dashboard/${owner.dashboardToken || ''}`;
+        await this.notificationService.sendNotification(
+          owner._id.toString(),
+          NotificationType.TRANSACTION_CLOSED,
+          'Transaction Cloturee',
+          `Une transaction concernant votre bien ${property.reference} a ete cloturee. Consultez votre tableau de bord pour les details.`,
+          dashboardLink,
+          { transactionId: savedTransaction._id, propertyId: transaction.propertyId },
+        );
+      }
+    }
+
     return savedTransaction;
   }
 
@@ -259,11 +297,35 @@ export class TransactionsService {
 
     const updatedTransaction = await this.transactionModel
       .findByIdAndUpdate(id, { $set: filteredUpdateData }, { new: true })
+      .populate('personnelId propertyId')
       .exec();
     
     if (!updatedTransaction) {
       throw new NotFoundException('Transaction not found');
     }
+
+    // Notify agency when client pays
+    if (filteredUpdateData['metadata.paymentProof']) {
+      const refProperty = updatedTransaction.propertyId //reference
+      const transaction = await this.transactionModel.findById(id).populate('agencyId');
+      if (transaction) {
+        const agency = await this.agencyModel.findById(transaction.agencyId);
+        if (agency && agency.staff && agency.staff.length > 0) {
+          const transactionLink = `${process.env.FRONTEND_URL || 'http://localhost:4200'}/dashboard/transactions/${id}`;
+          for (const staffMember of agency.staff) {
+            await this.notificationService.sendNotification(
+              staffMember.personnelId.toString(),
+              NotificationType.TRANSACTION_PAID,
+              'Paiement Recu',
+              `Un client a effectue un paiement pour la transaction de ${refProperty || 'un bien'}.`,
+              transactionLink,
+              { transactionId: id },
+            );
+          }
+        }
+      }
+    }
+
     return updatedTransaction;
   }
 

@@ -12,6 +12,7 @@ import { VisitRequestsModule } from './visits/visits.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { CashoutsModule } from './cashouts/cashouts.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -34,6 +35,7 @@ import { AppController } from './app.controller';
     WebhooksModule,
     TransactionsModule,
     CashoutsModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
 })

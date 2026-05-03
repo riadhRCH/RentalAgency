@@ -10,6 +10,7 @@ import { PersonnelController } from './personnel.controller';
 import { PersonnelService } from './personnel.service';
 import { AuthModule } from '../auth/auth.module';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { CloudinaryModule } from '../cloudinary/cloudinary.module';
     ]),
     AuthModule,
     CloudinaryModule,
+    NotificationsModule,
   ],
   controllers: [PersonnelController],
   providers: [PersonnelService],

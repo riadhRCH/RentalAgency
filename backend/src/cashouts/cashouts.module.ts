@@ -6,6 +6,7 @@ import { Cashout, CashoutSchema } from '../schemas/cashout.schema';
 import { AuthModule } from '../auth/auth.module';
 import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schema';
 import { Personnel, PersonnelSchema } from '../schemas/personnel.schema';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { Personnel, PersonnelSchema } from '../schemas/personnel.schema';
       { name: Personnel.name, schema: PersonnelSchema },
     ]),
     AuthModule,
+    NotificationsModule,
   ],
   controllers: [CashoutsController],
   providers: [CashoutsService],

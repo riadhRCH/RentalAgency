@@ -24,6 +24,7 @@ import { CarouselComponent } from './public/carousel/carousel.component';
 import { TransactionComponent } from './public/transaction/transaction.component';
 import { BankDetailsComponent } from './dashboard/bank-details/bank-details.component';
 import { OwnersPageComponent } from './dashboard/personnel/owners-page/owners-page.component';
+import { ProfilePageComponent } from './dashboard/personnel/profile-page/profile-page.component';
 import { OwnerDashboardComponent } from './public/owner-dashboard/owner-dashboard.component';
 import { AnnouncementsComponent } from './dashboard/announcements/announcements.component';
 import { AgencyLandingPageComponent } from './public/agency-landing-page/agency-landing-page.component';
@@ -73,6 +74,7 @@ export const routes: Routes = [
             { path: 'transactions/:id', component: TransactionDetailComponent },
             { path: 'personnel/team', component: TeamsComponent },
             { path: 'personnel/owners', component: OwnersPageComponent },
+            { path: 'personnel/profile/:id', component: ProfilePageComponent },
             { path: 'teams', component: TeamsComponent },
             { path: 'config', component: ConfigComponent },
             { path: 'bank-details', component: BankDetailsComponent }

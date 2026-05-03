@@ -1,8 +1,14 @@
 <div class="relative flex items-center gap-3 border-b border-white/10 pb-2 focus-within:border-primary transition-colors">
   <!-- Call Icon -->
-  <span class="material-symbols-outlined text-primary text-xl">call</span>
+  <span
+    class="material-symbols-outlined text-primary text-xl cursor-pointer hover:text-primary/80 transition-colors"
+    (click)="launchContactIntent()"
+    [title]="getContactTooltip()"
+  >
+    phone
+  </span>
 
-  <!-- Country Display (Non-clickable since only Tunisia) -->
+  <!-- Country Display -->
   <div class="border-r border-white/10 pr-2">
     <div class="flex items-center gap-2 p-1">
       <span class="text-xl leading-none">{{ selectedCountry().flag }}</span>
@@ -12,20 +18,45 @@
 
   <!-- Phone Number Input -->
   <div class="flex-1">
-    <input 
-      type="tel" 
-      [(ngModel)]="phoneNumber" 
+    <input
+      type="tel"
+      [(ngModel)]="phoneNumber"
       (ngModelChange)="onPhoneChange()"
       [placeholder]="placeholder"
       [required]="required"
       class="bg-transparent border-none text-white focus:ring-0 p-0 text-sm placeholder:text-silver-500/50 w-full"
     />
   </div>
+
+  <!-- Preferred Contact Icon (Image) -->
+  <button
+    class="cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center w-5 h-5"
+    (click)="launchContactIntent()"
+    [title]="getContactTooltip()"
+  >
+    <img
+      [src]="getContactIconImage()"
+      [alt]="getContactTooltip()"
+      class="w-4 h-4 object-contain"
+      onerror="this.parentElement.innerHTML='&#x1F4DE;'"
+    />
+  </button>
+
+  <!-- Personnel Profile Icon -->
+  @if (personnelId) {
+    <span
+      class="material-symbols-outlined text-silver-400 text-lg cursor-pointer hover:text-primary transition-colors"
+      (click)="navigateToPersonnel()"
+      title="View Personnel Profile"
+    >
+      person
+    </span>
+  }
 </div>
 
 <!-- Backdrop for closing dropdown -->
-<div 
-  *ngIf="showDropdown()" 
-  (click)="toggleDropdown()" 
+<div
+  *ngIf="showDropdown()"
+  (click)="toggleDropdown()"
   class="fixed inset-0 z-[90] bg-transparent"
 ></div>

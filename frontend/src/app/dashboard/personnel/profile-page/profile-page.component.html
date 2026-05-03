@@ -1,0 +1,257 @@
+<div class="p-8 max-w-4xl mx-auto space-y-12">
+  <header>
+    <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+      FICHE CLIENT
+    </h1>
+    <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+      {{ 'PERSONNEL.PROFILE' | translate }}
+    </p>
+  </header>
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="flex justify-center py-12">
+      <span class="material-symbols-outlined text-4xl text-primary animate-spin">progress_activity</span>
+    </div>
+  } @else if (personnel()) {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <!-- Profile Info -->
+      <div class="lg:col-span-2 space-y-6">
+        <div class="glass-card p-8 rounded-2xl border border-white/10 space-y-8">
+          <!-- Success Message -->
+          @if (saveSuccess()) {
+            <div class="bg-green-500/20 border border-green-500/50 text-green-400 px-4 py-2 rounded-lg flex items-center gap-2">
+              <span class="material-symbols-outlined">check_circle</span>
+              {{ 'PERSONNEL.SAVED' | translate }}
+            </div>
+          }
+
+          <form (ngSubmit)="save()" class="space-y-6">
+            <!-- Name Fields -->
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{{ 'PERSONNEL.FIRST_NAME' | translate }}</label>
+                <input
+                  type="text"
+                  [(ngModel)]="editForm.firstName"
+                  name="firstName"
+                  class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs font-bold uppercase tracking-widest text-white outline-none focus:border-primary transition-all"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{{ 'PERSONNEL.LAST_NAME' | translate }}</label>
+                <input
+                  type="text"
+                  [(ngModel)]="editForm.lastName"
+                  name="lastName"
+                  class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs font-bold uppercase tracking-widest text-white outline-none focus:border-primary transition-all"
+                />
+              </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{{ 'PERSONNEL.PHONE' | translate }}</label>
+                <input
+                  type="tel"
+                  [(ngModel)]="editForm.phone"
+                  name="phone"
+                  [required]="getRequiredFieldName() === 'phone'"
+                  class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs font-bold uppercase tracking-widest text-white outline-none focus:border-primary transition-all"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">
+                  {{ 'PERSONNEL.EMAIL' | translate }}
+                  @if (getRequiredFieldName() === 'email') {
+                    <span class="text-red-500">*</span>
+                  }
+                </label>
+                <input
+                  type="email"
+                  [(ngModel)]="editForm.email"
+                  name="email"
+                  [required]="getRequiredFieldName() === 'email'"
+                  class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs font-bold uppercase tracking-widest text-white outline-none focus:border-primary transition-all"
+                />
+              </div>
+            </div>
+
+            <!-- Preferred Contact -->
+            <div class="space-y-2">
+              <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{{ 'PERSONNEL.PREFERRED_CONTACT' | translate }}</label>
+              <select
+                [(ngModel)]="editForm.preferredContact"
+                name="preferredContact"
+                class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs font-bold uppercase tracking-widest text-white outline-none focus:border-primary transition-all appearance-none cursor-pointer"
+              >
+                @for (option of preferredContactOptions; track option.value) {
+                  <option [value]="option.value" class="bg-background-dark">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+
+            <!-- Social Links -->
+            <div class="space-y-4">
+              <h3 class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Reseaux Sociaux</h3>
+              <div class="grid grid-cols-3 gap-4">
+                <div class="space-y-2">
+                  <label class="flex items-center justify-center p-3 bg-white/5 border border-white/10 rounded cursor-pointer hover:border-primary/50 transition-all">
+                    <img
+                      src="/assets/icons/social/instagram.svg"
+                      alt="Instagram"
+                      class="w-6 h-6 object-contain"
+                      onerror="this.style.display='none'"
+                    />
+                    <span class="ml-2 text-[10px] uppercase tracking-widest text-slate-400 font-bold">Instagram</span>
+                  </label>
+                  <input
+                    type="text"
+                    [(ngModel)]="editForm.instagram"
+                    name="instagram"
+                    placeholder="@username"
+                    class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs text-white outline-none focus:border-primary transition-all placeholder:text-slate-600"
+                  />
+                </div>
+                <div class="space-y-2">
+                  <label class="flex items-center justify-center p-3 bg-white/5 border border-white/10 rounded cursor-pointer hover:border-primary/50 transition-all">
+                    <img
+                      src="/assets/icons/social/facebook.svg"
+                      alt="Facebook"
+                      class="w-6 h-6 object-contain"
+                      onerror="this.style.display='none'"
+                    />
+                    <span class="ml-2 text-[10px] uppercase tracking-widest text-slate-400 font-bold">Facebook</span>
+                  </label>
+                  <input
+                    type="text"
+                    [(ngModel)]="editForm.facebook"
+                    name="facebook"
+                    placeholder="username"
+                    class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs text-white outline-none focus:border-primary transition-all placeholder:text-slate-600"
+                  />
+                </div>
+                <div class="space-y-2">
+                  <label class="flex items-center justify-center p-3 bg-white/5 border border-white/10 rounded cursor-pointer hover:border-primary/50 transition-all">
+                    <img
+                      src="/assets/icons/social/telegram.svg"
+                      alt="Telegram"
+                      class="w-6 h-6 object-contain"
+                      onerror="this.style.display='none'"
+                    />
+                    <span class="ml-2 text-[10px] uppercase tracking-widest text-slate-400 font-bold">Telegram</span>
+                  </label>
+                  <input
+                    type="text"
+                    [(ngModel)]="editForm.telegram"
+                    name="telegram"
+                    placeholder="@username"
+                    class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs text-white outline-none focus:border-primary transition-all placeholder:text-slate-600"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Status -->
+            <div class="space-y-2">
+              <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{{ 'PERSONNEL.STATUS' | translate }}</label>
+              <select
+                [(ngModel)]="editForm.status"
+                name="status"
+                class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs font-bold uppercase tracking-widest text-white outline-none focus:border-primary transition-all appearance-none cursor-pointer"
+              >
+                <option value="active" class="bg-background-dark">{{ 'PERSONNEL.ACTIVE' | translate }}</option>
+                <option value="inactive" class="bg-background-dark">{{ 'PERSONNEL.INACTIVE' | translate }}</option>
+              </select>
+            </div>
+
+            <!-- Save Button -->
+            <button
+              type="submit"
+              [disabled]="saving()"
+              class="w-full py-4 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-bold uppercase tracking-widest rounded transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+            >
+              @if (saving()) {
+                <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                {{ 'PERSONNEL.SAVING' | translate }}
+              } @else {
+                <span class="material-symbols-outlined text-sm">save</span>
+                {{ 'PERSONNEL.SAVE' | translate }}
+              }
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Sidebar: Profile Picture & Quick Info -->
+      <div class="space-y-6">
+        <!-- Profile Picture Card -->
+        <div class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+          <h3 class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Photo de Profil</h3>
+          <div class="flex flex-col items-center gap-4">
+            <div class="relative">
+              @if (editForm.profilePicture) {
+                <img
+                  [src]="editForm.profilePicture"
+                  alt="Profile"
+                  class="w-32 h-32 rounded-full object-cover border-2 border-primary shadow-lg shadow-primary/20"
+                />
+              } @else {
+                <div class="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20">
+                  <span class="material-symbols-outlined text-6xl text-primary">person</span>
+                </div>
+              }
+            </div>
+            <label class="w-full cursor-pointer">
+              <input
+                type="file"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+                [disabled]="saving()"
+                class="hidden"
+              />
+              <span class="block w-full py-3 bg-primary/10 hover:bg-primary/20 text-primary font-bold uppercase tracking-widest text-xs rounded border border-primary/20 text-center transition-all">
+                {{ 'PERSONNEL.PROFILE_PICTURE' | translate }}
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Quick Info Card -->
+        <div class="glass-card p-8 rounded-2xl border border-white/10 space-y-4">
+          <h3 class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Informations</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-[10px] uppercase tracking-widest text-slate-500">ID</span>
+              <span class="text-xs text-slate-400 font-mono">{{ personnel()?._id }}</span>
+            </div>
+            <!--div class="flex justify-between items-center">
+              <span class="text-[10px] uppercase tracking-widest text-slate-500">Source</span>
+              <span class="px-2 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border border-white/10 text-slate-400 bg-white/5">
+                {{ personnel()?.source }}
+              </span>
+            </div-->
+            <div class="flex justify-between items-center">
+              <span class="text-[10px] uppercase tracking-widest text-slate-500">Statut</span>
+              <span class="px-2 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border"
+                    [ngClass]="{
+                      'border-primary/50 text-primary bg-primary/5': personnel()?.status === 'active',
+                      'border-white/10 text-slate-400 bg-white/5': personnel()?.status === 'inactive'
+                    }">
+                {{ personnel()?.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="glass-card p-8 rounded-2xl border border-white/10">
+      <div class="text-center py-12 text-slate-500">
+        <span class="material-symbols-outlined text-6xl mb-4">person_search</span>
+        <p class="text-sm">{{ 'PERSONNEL.SEARCH_PROMPT' | translate }}</p>
+      </div>
+    </div>
+  }
+</div>

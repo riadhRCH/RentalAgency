@@ -142,7 +142,7 @@
           </div>
           <div class="space-y-2">
             <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.PHONE_NUMBER' | translate }}</label>
-            <app-phone-input formControlName="customerPhone" class="w-full"></app-phone-input>
+            <app-phone-input formControlName="customerPhone" class="w-full" [personnelId]="transaction.personnelId._id"></app-phone-input>
           </div>
           <div class="space-y-2">
             <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'TRANSACTION_FORM.EMAIL_ADDRESS' | translate }}</label>

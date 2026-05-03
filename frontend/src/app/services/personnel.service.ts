@@ -10,7 +10,13 @@ export interface Personnel {
   phone: string;
   role: string;
   status: string;
-  // Add other fields as needed
+  firstName?: string;
+  lastName?: string;
+  preferredContact?: string;
+  profilePicture?: string;
+  instagram?: string;
+  facebook?: string;
+  telegram?: string;
 }
 
 @Injectable({
@@ -63,5 +69,12 @@ export class PersonnelService {
 
   updatePropertyPrice(token: string, propertyId: string, price: number): Observable<any> {
     return this.http.patch<any>(`${this.apiUrl}/dashboard/${token}/property/${propertyId}/price`, { price });
+  }
+
+  uploadProfilePicture(personnelId: string, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post(`${this.apiUrl}/${personnelId}/profile-picture`, formData);
   }
 }

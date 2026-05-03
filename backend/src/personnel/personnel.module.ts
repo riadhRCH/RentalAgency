@@ -9,6 +9,7 @@ import { Cashout, CashoutSchema } from '../schemas/cashout.schema';
 import { PersonnelController } from './personnel.controller';
 import { PersonnelService } from './personnel.service';
 import { AuthModule } from '../auth/auth.module';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AuthModule } from '../auth/auth.module';
       { name: Cashout.name, schema: CashoutSchema },
     ]),
     AuthModule,
+    CloudinaryModule,
   ],
   controllers: [PersonnelController],
   providers: [PersonnelService],

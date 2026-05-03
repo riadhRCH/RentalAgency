@@ -1,4 +1,7 @@
-GESTION DES ALErtes
-- alert agency when client pays
-- alert owner when a transaction is clotured
-...etc
+ALERTES CENTER
+alets users based on their preffered contact method 
+- alert agency agent when a transaction is created 
+- alert agency when client pays for a transaction
+- alert oproperty owner when a transaction is clotured with a link to his dashboard
+- alert agency agent when an owner changes property price or availability
+- alert agency agent when an owner requests a cachout

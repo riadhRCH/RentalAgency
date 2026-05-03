@@ -1,5 +1,11 @@
-seach announcements
-add a announcement search public page, 
-- this page should  have big maps card (example implementation in frontend\src\app\public\property-details\property-details.component.html) and app-shared-search-bar and list of results displayed in both the map card as pins and in a list,
-- each searched item should have a focus on map that centers map view in searched item position and it should have a preview announce page that opens a new page with announcement details
-- when user prepares a search query in landing page and hit search button it should redirect to this new search page
+create a personnel page that gets a perosnnel id and load a personnel, display all of his details and allow edit them
+add preferedContaact field that can be either : 'EMAIL', 'WHATSAPP', 'PHONE', 'INSTAGRAM', 'FACEBOOK', ...etc (deffault is phone) .
+this should represent how the personel wants to be contacted,
+when for example the user wants to get contacted via mail, make the mail input mandatory
+add an upload profile picture
+
+make this page accessable only via a logged in member of an agency
+
+integration with rest of the plateform
+we have this frontend\src\app\shared\components\phone-input\phone-input.component.ts component injected everywhere that we need a personnel phone, add in that component two icons, one to navigate to personnel details page , and one icon that shows perosnnel preferred contact
+for the icon that represents preferedContaact, try o launch an intent if it is a mobile plateform or open a new tab if it is a web plateform so it looks premium

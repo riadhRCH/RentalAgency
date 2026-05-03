@@ -28,6 +28,7 @@ export class AuthService {
   currentUser = signal<User | null>(null);
   userAgencies = signal<Agency[]>([]);
   activeAgencyId = signal<string | null>(localStorage.getItem(this.AGENCY_KEY));
+  activeAgencyName = signal<string>('');
   
   isAuthenticated = computed(() => !!this.currentUser());
 
@@ -55,6 +56,14 @@ export class AuthService {
         this.currentUser.set(res.user);
         this.userAgencies.set(res.agencies);
         
+        // Update active agency name if agencies loaded
+        if (this.activeAgencyId()) {
+          const agency = res.agencies.find((a: Agency) => a.id === this.activeAgencyId());
+          if (agency) {
+            this.activeAgencyName.set(agency.name);
+          }
+        }
+
         // If only one agency, set it as active automatically
         if (res.agencies.length === 1 && !this.activeAgencyId()) {
           this.setActiveAgency(res.agencies[0].id);
@@ -66,6 +75,20 @@ export class AuthService {
   setActiveAgency(agencyId: string) {
     localStorage.setItem(this.AGENCY_KEY, agencyId);
     this.activeAgencyId.set(agencyId);
+    const agency = this.userAgencies().find(a => a.id === agencyId);
+    if (agency) {
+      this.activeAgencyName.set(agency.name);
+    }
+  }
+
+  updateAgencyName(name: string) {
+    this.activeAgencyName.set(name);
+    const agencies = this.userAgencies();
+    const agencyId = this.activeAgencyId();
+    if (agencyId) {
+      const updated = agencies.map(a => a.id === agencyId ? { ...a, name } : a);
+      this.userAgencies.set(updated);
+    }
   }
 
   logout() {

@@ -5,7 +5,7 @@ import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { I18nService } from '../../../i18n/i18n.service';
 import { Language } from '../../../i18n/translations';
 import { NotificationService, Notification } from '../../../services/notification.service';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -22,6 +22,7 @@ export class NavbarComponent implements OnInit {
   authService = inject(AuthService);
   i18n = inject(I18nService);
   private notificationService = inject(NotificationService);
+  private router = inject(Router);
 
   showNotifications = signal(false);
   unreadCount = signal(0);
@@ -65,6 +66,16 @@ export class NavbarComponent implements OnInit {
       });
     }
     this.showNotifications.set(false);
+
+    if (notification.link) {
+      const url = notification.link;
+      const baseUrl = `${window.location.origin}/`;
+      if (url.startsWith(baseUrl)) {
+        this.router.navigate([url.replace(baseUrl, '').split('?')[0].split('#')[0]]);
+      } else {
+        window.open(url, '_blank');
+      }
+    }
   }
 
   markAllAsRead() {

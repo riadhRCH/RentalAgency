@@ -14,7 +14,7 @@
         <div class="min-w-0 flex flex-col">
             <span class="text-[8px] sm:text-[10px] uppercase tracking-widest text-silver-500 font-bold leading-none mb-1">{{ 'NAVBAR.ACTIVE_AGENCY' | translate }}</span>
             <span class="truncate text-xs sm:text-sm font-bold text-white uppercase tracking-wider max-w-[120px] sm:max-w-none">
-                {{ authService.activeAgencyId() ? ('NAVBAR.DEFAULT_AGENCY_NAME' | translate) : ('COMMON.NO_AGENCY_SELECTED' | translate) }}
+                {{ authService.activeAgencyName() || ('COMMON.NO_AGENCY_SELECTED' | translate) }}
             </span>
         </div>
         

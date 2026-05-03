@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
+import { AuthService } from '../../auth/auth.service';
 import { forkJoin } from 'rxjs';
 
 interface AreaCodeOption {
@@ -22,6 +23,7 @@ interface AreaCodeOption {
 export class ConfigComponent implements OnInit {
   private agencyService = inject(AgencyService);
   private i18n = inject(I18nService);
+  private authService = inject(AuthService);
 
   areaCodeOptions: AreaCodeOption[] = [
     { code: '212', label: 'Tunisia' },
@@ -98,6 +100,7 @@ export class ConfigComponent implements OnInit {
         this.agencyLogo = this.agencyLogo.trim();
         this.newNumber.areaCode = this.settings.areaCode;
         this.message = this.i18n.translate('CONFIG.SETTINGS_UPDATED');
+        this.authService.updateAgencyName(profile.name.trim());
         this.saving = false;
       },
       error: () => {

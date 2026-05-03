@@ -17,7 +17,7 @@ import { LeadStatus, getEnumValues } from '../../shared/enums';
 })
 export class LeadsComponent implements OnInit {
   private leadsService = inject(LeadsService);
-  private router = inject(Router);
+  readonly router = inject(Router);
   readonly i18n = inject(I18nService);
 
   // Expose enums

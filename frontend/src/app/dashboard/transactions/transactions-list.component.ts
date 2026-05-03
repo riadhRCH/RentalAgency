@@ -23,7 +23,7 @@ export class TransactionsListComponent implements OnInit {
   completionFilter = 'ALL';
   lifecycleFilter = 'ALL';
 
-  constructor(private transactionsService: TransactionsService, private router: Router) {}
+  constructor(public router: Router, private transactionsService: TransactionsService) {}
 
   ngOnInit(): void {
     this.loadTransactions();

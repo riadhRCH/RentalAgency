@@ -1,7 +1,20 @@
-ALERTES CENTER
+NOTIFICATION CENTER
 alets users based on their preffered contact method 
 - alert agency agent when a transaction is created 
 - alert agency when client pays for a transaction
 - alert oproperty owner when a transaction is clotured with a link to his dashboard
 - alert agency agent when an owner changes property price or availability
 - alert agency agent when an owner requests a cachout
+
+IMPLEMENTATION:
+- add notification service in backend, that have a method sendNotification thta gets a personel id and a notification type that needs to get send, this method should create a notification document and send notification with a 3d party based on personnel prefered contact
+- created notifications documents should appean in the dashboard in frontend (add a notifications idon in navbar with red dot if it does have an unread notification)
+- for each 3rd party for notifications ( EMAIL = 'EMAIL',
+  WHATSAPP = 'WHATSAPP',
+  PHONE = 'PHONE',
+  INSTAGRAM = 'INSTAGRAM',
+  FACEBOOK = 'FACEBOOK',
+  TELEGRAM = 'TELEGRAM',
+  SMS = 'SMS',) add a service in backend with convignant errors thrown so the notification service can do fallbacks
+
+  sertup provider services for some of the notifications there, for example if user wants to get contacted via sms, you need a telephony provider for the operation, make a twilio service 

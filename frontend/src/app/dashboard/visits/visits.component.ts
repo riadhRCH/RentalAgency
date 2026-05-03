@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { VisitsService, VisitRequest } from '../../services/visits.service';
 import { FormsModule } from '@angular/forms';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
@@ -16,6 +16,7 @@ import { I18nService } from '../../i18n/i18n.service';
 })
 export class VisitsComponent implements OnInit {
   private visitsService = inject(VisitsService);
+  readonly router = inject(Router);
   readonly i18n = inject(I18nService);
 
   visits: VisitRequest[] = [];

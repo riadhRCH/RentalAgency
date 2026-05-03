@@ -26,7 +26,8 @@
   <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
     <!-- Personnel Card Template -->
     <ng-template #visitorCard let-visitor="visitor">
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity"
+           (click)="$event.stopPropagation(); router.navigate(['/dashboard/personnel/profile', visitor?._id])">
         <div class="h-10 w-10 rounded-full overflow-hidden flex-shrink-0" [ngClass]="visitor?.profilePicture ? '' : 'bg-primary/10 flex items-center justify-center text-primary'">
           <img *ngIf="visitor?.profilePicture" [src]="visitor.profilePicture" alt="" class="w-full h-full object-cover" />
           <span *ngIf="!visitor?.profilePicture" class="material-symbols-outlined">person</span>

@@ -1,1 +1,0 @@
-display /dashboard/personnel/profile page in owner dashboard allow the owner to access his personnel page and edit it

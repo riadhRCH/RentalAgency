@@ -95,16 +95,39 @@ export class AuthService {
       phone: personnel.phone,
     };
     
-    const access_token = this.jwtService.sign(payload);
+    const access_token = this.jwtService.sign(payload, { expiresIn: '15m' });
+    const refresh_token = this.jwtService.sign(payload, { 
+      secret: process.env.JWT_REFRESH_SECRET || 'refresh_fallback_secret',
+      expiresIn: '7d' 
+    });
 
     return {
       access_token,
+      refresh_token,
       user: {
         id: personnel._id,
         phone: personnel.phone,
         firstName: personnel.firstName,
         lastName: personnel.lastName,
       },
+    };
+  }
+
+  async refreshToken(user: any) {
+    const payload = { 
+      sub: user._id.toString(), 
+      phone: user.phone,
+    };
+    
+    const access_token = this.jwtService.sign(payload, { expiresIn: '15m' });
+    const refresh_token = this.jwtService.sign(payload, { 
+      secret: process.env.JWT_REFRESH_SECRET || 'refresh_fallback_secret',
+      expiresIn: '7d' 
+    });
+
+    return {
+      access_token,
+      refresh_token,
     };
   }
 

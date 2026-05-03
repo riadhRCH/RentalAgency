@@ -1,7 +1,14 @@
-TRANSACTION FOLLOW UP LINK
+FEAT / TRANSACTION FOLLOW UP LINK
 welcome message automatically send a greeting with the wifi code 
 welcom selfie propt the guest to take a pic in the home
 check in alerte to entre the statue occupied
 review auto request 2 hours apres too bost our servise
 check out alert : instant notification when the guest leave 
 code promo to use it the next time desepiried in 2 month discount 20 
+
+
+conception for the clotured transaction, we should be able to extract a link for clotured transactions that have*
+
+- contract
+- input for user to submit a `selpfie de bien venu`
+- user shoud be able to sumbit reclamations

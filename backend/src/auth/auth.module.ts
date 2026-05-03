@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { JwtStrategy } from './jwt.strategy';
+import { JwtStrategy, JwtRefreshStrategy } from './jwt.strategy';
 import { AgencyGuard } from './agency.guard';
 import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schema';
 import { Personnel, PersonnelSchema } from '../schemas/personnel.schema';
@@ -18,11 +18,11 @@ import { Personnel, PersonnelSchema } from '../schemas/personnel.schema';
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'fallback_secret',
-      signOptions: { expiresIn: '7d' },
+      signOptions: { expiresIn: '15m' }, // Short-lived access token
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, AgencyGuard],
+  providers: [AuthService, JwtStrategy, JwtRefreshStrategy, AgencyGuard],
   exports: [JwtModule, AgencyGuard],
 })
 export class AuthModule {}

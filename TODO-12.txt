@@ -1,5 +1,9 @@
-conception for the clotured transaction, we should be able to extract a link for clotured transactions that have*
-
-- contract
-- input for user to submit a `selpfie de bien venu`
-- user shoud be able to sumbit reclamations
+FIX sned sms
+[Nest] 7216  - 05/03/2026, 4:31:23 PM   ERROR [NotificationService] Failed to send notification 69f75c3aa86156ee0593187c: Twilio phone number not configured
+[Nest] 7216  - 05/03/2026, 4:31:23 PM    WARN [NotificationService] Fallback SMS also failed: Twilio phone number not configured
+[Nest] 7216  - 05/03/2026, 4:31:23 PM   ERROR [EmailService] Failed to send email to rchercheri@gmail.com: Missing credentials for "PLAIN"
+[Nest] 7216  - 05/03/2026, 4:31:23 PM    WARN [NotificationService] Fallback EMAIL also failed: Missing credentials for "PLAIN"
+[Nest] 7216  - 05/03/2026, 4:32:27 PM   ERROR [NotificationService] Failed to send notification 69f75c7ba86156ee059318bf: Twilio phone number not configured
+[Nest] 7216  - 05/03/2026, 4:32:28 PM    WARN [NotificationService] Fallback SMS also failed: Twilio phone number not configured
+[Nest] 7216  - 05/03/2026, 4:32:28 PM   ERROR [EmailService] Failed to send email to rchercheri@gmail.com: Missing credentials for "PLAIN"
+[Nest] 7216  - 05/03/2026, 4:32:28 PM    WARN [NotificationService] Fallback EMAIL also failed: Missing credentials for "PLAIN"

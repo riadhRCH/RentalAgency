@@ -1,0 +1,12 @@
+in page http://localhost:4200/dashboard/config, hide virtual numbers section and add select agency services section
+
+services can be :
+- rental 
+- sales
+- short term
+- ..suggest
+
+save data in agency schema
+after that show/hide things in dashboard base on that select
+- only show pages : http://localhost:4200/dashboard/bank-details and http://localhost:4200/dashboard/cashouts for agency accounts with short term service active
+- show visits only for agency accounts that have rental or sales

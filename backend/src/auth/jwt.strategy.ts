@@ -31,3 +31,25 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return personnel;
   }
 }
+
+@Injectable()
+export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
+  constructor(
+    @InjectModel(Personnel.name)
+    private readonly personnelModel: Model<PersonnelDocument>,
+  ) {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKey: process.env.JWT_REFRESH_SECRET || 'refresh_fallback_secret',
+    });
+  }
+
+  async validate(payload: { sub: string }) {
+    const personnel = await this.personnelModel.findById(payload.sub).select('-passwordHash');
+    if (!personnel) {
+      throw new UnauthorizedException('User not found');
+    }
+    return personnel;
+  }
+}

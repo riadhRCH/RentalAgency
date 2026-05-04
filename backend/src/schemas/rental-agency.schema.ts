@@ -65,6 +65,9 @@ export class RentalAgency {
   @Prop({ type: [PaymentMethod], default: [] })
   paymentMethods: PaymentMethod[];
 
+  @Prop({ type: [String], enum: ['rental', 'sales', 'short_term'], default: ['rental'] })
+  services?: string[];
+
   @Prop()
   logo?: string;
 }

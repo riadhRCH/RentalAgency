@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsArray, IsEnum } from 'class-validator';
 
 export class UpdateAgencyProfileDto {
   @IsString()
@@ -8,4 +8,9 @@ export class UpdateAgencyProfileDto {
   @IsString()
   @IsOptional()
   logo?: string;
+
+  @IsArray()
+  @IsOptional()
+  @IsEnum(['rental', 'sales', 'short_term'], { each: true })
+  services?: string[];
 }

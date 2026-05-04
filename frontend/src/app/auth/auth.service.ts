@@ -36,10 +36,13 @@ export class AuthService {
   userAgencies = signal<Agency[]>([]);
   activeAgencyId = signal<string | null>(localStorage.getItem(this.AGENCY_KEY));
   activeAgencyName = signal<string>('');
+  agencyServices = signal<string[]>([]);
   
   isAuthenticated = computed(() => !!this.currentUser());
 
   private refreshInProgress = new BehaviorSubject<boolean>(false);
+  private servicesRefresh = new BehaviorSubject<void>(undefined);
+  servicesRefresh$ = this.servicesRefresh.asObservable();
   
   constructor(private http: HttpClient) {
     this.restoreSession();
@@ -149,7 +152,16 @@ export class AuthService {
     return localStorage.getItem(this.ACCESS_TOKEN_KEY);
   }
 
+  getToken(): string | null {
+    return this.getAccessToken();
+  }
+
   getRefreshToken(): string | null {
     return localStorage.getItem(this.REFRESH_TOKEN_KEY);
+  }
+
+  updateAgencyServices(services: string[]) {
+    this.agencyServices.set(services);
+    this.servicesRefresh.next();
   }
 }

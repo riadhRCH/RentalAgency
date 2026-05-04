@@ -17,6 +17,7 @@ export interface AgencySettings {
 export interface UpdateAgencyProfilePayload {
   name?: string;
   logo?: string;
+  services?: string[];
 }
 
 export interface PaymentMethod {
@@ -40,6 +41,7 @@ export interface AgencyProfile {
   logo?: string;
   settings?: AgencySettings;
   paymentMethods?: PaymentMethod[];
+  services?: string[];
   ownerId?: string;
 }
 

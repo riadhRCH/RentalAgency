@@ -60,7 +60,7 @@ export class AgenciesService {
   async getProfile(agencyId: string) {
     const agency = await this.agencyModel
       .findById(agencyId)
-      .select('name logo settings paymentMethods ownerId');
+      .select('name logo settings paymentMethods ownerId services');
 
     if (!agency) {
       throw new BadRequestException('Agency not found');
@@ -72,6 +72,7 @@ export class AgenciesService {
       logo: agency.logo,
       settings: agency.settings,
       paymentMethods: agency.paymentMethods,
+      services: agency.services || ['rental'],
       ownerId: agency.ownerId?.toString(),
     };
   }
@@ -131,11 +132,15 @@ export class AgenciesService {
       updatePayload.logo = profile.logo;
     }
 
+    if (profile.services !== undefined) {
+      updatePayload.services = profile.services;
+    }
+
     const agency = await this.agencyModel.findByIdAndUpdate(
       agencyId,
       { $set: updatePayload },
       { new: true },
-    ).select('name logo settings paymentMethods');
+    ).select('name logo settings paymentMethods services');
 
     if (!agency) {
       throw new BadRequestException('Agency not found');
@@ -147,6 +152,7 @@ export class AgenciesService {
       logo: agency.logo,
       settings: agency.settings,
       paymentMethods: agency.paymentMethods,
+      services: agency.services || ['rental'],
     };
   }
 

@@ -388,6 +388,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'CONFIG.NUMBER_PROVISIONED': 'Numero provisionne avec succes',
     'CONFIG.NUMBER_PROVISION_FAILED': 'Echec du provisionnement du numero',
     'CONFIG.SAVED_AREA_CODE': 'Indicatif enregistre',
+    'CONFIG.SAVE_SERVICES': 'Save services',
+    'CONFIG.UPDATING_SERVICES': 'Updating services...',
+    'CONFIG.SERVICES_UPDATED': 'Services updated successfully',
+    'CONFIG.SERVICES_UPDATE_FAILED': 'Failed to update services',
 
     'BANK_DETAILS.TITLE': 'Details bancaires',
     'BANK_DETAILS.SUBTITLE': 'Configurer les methodes de paiement de votre agence',
@@ -859,5 +863,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'NOTIFICATIONS.PROPERTY_PRICE_CHANGED': 'Prix Modifie',
     'NOTIFICATIONS.PROPERTY_AVAILABILITY_CHANGED': 'Disponibilite Modifiee',
     'NOTIFICATIONS.CASHOUT_REQUESTED': 'Demande de Retrait',
+    'CONFIG.SERVICES': 'Services',
+    'CONFIG.SERVICES_DESC': 'Sélectionnez les services offerts par votre agence',
   }
 };

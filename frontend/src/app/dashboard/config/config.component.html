@@ -115,90 +115,57 @@
 
           <button 
             type="submit" 
-            [disabled]="saving"
+            [disabled]="saving()"
             class="w-full py-4 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-bold uppercase tracking-widest rounded transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
           >
-            <span *ngIf="saving" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
-            {{ saving ? ('CONFIG.UPDATING_SETTINGS' | translate) : ('CONFIG.SAVE_CONFIGURATION' | translate) }}
+            <span *ngIf="saving()" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+            {{ saving() ? ('CONFIG.UPDATING_SETTINGS' | translate) : ('CONFIG.SAVE_CONFIGURATION' | translate) }}
           </button>
         </form>
       </div>
     </div>
+  </div>
 
-    <!-- Virtual Numbers Management -->
-    <div class="space-y-6">
-      <h2 class="font-serif text-2xl font-bold tracking-tight text-slate-900 dark:text-white uppercase">
-        {{ 'CONFIG.VIRTUAL_NUMBERS' | translate }}
-      </h2>
-      <div class="glass-card p-8 rounded-2xl border border-white/10 space-y-8">
-        <div class="space-y-4">
-          <div *ngIf="virtualNumbers.length === 0" class="p-8 text-center text-slate-500 border border-dashed border-white/10 rounded-xl">
-            {{ 'CONFIG.NO_VIRTUAL_NUMBERS' | translate }}
-          </div>
-
-          <div *ngFor="let num of virtualNumbers" class="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between group hover:border-primary/50 transition-all">
-            <div class="flex items-center gap-4">
-              <div class="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                <span class="material-symbols-outlined">settings_phone</span>
-              </div>
-              <div>
-                <h4 class="font-bold text-white tracking-widest">{{ num.phoneNumber }}</h4>
-                <p class="text-[9px] text-slate-500 uppercase tracking-widest">{{ num.label || ('CONFIG.UNLABELED_NUMBER' | translate) }}</p>
-              </div>
-            </div>
-            <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest px-2 py-1 bg-emerald-500/5 border border-emerald-500/20 rounded">
-              {{ 'COMMON.ACTIVE' | translate }}
-            </span>
-          </div>
+  <!-- Services Selection -->
+  <div class="space-y-6">
+    <h2 class="font-serif text-2xl font-bold tracking-tight text-slate-900 dark:text-white uppercase">
+      {{ 'CONFIG.SERVICES' | translate }}
+    </h2>
+    <div class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+      <p class="text-xs text-slate-400 leading-relaxed">
+        {{ 'CONFIG.SERVICES_DESC' | translate }}
+      </p>
+      <div class="grid grid-cols-3 gap-4">
+        <div 
+          *ngFor="let service of serviceOptions"
+          (click)="toggleService(service.value)"
+          [class.bg-primary/20]="services.includes(service.value)"
+          [class.border-primary/50]="services.includes(service.value)"
+          [class.text-primary]="services.includes(service.value)"
+          class="p-4 rounded-xl border border-white/10 bg-white/5 cursor-pointer hover:border-primary/30 transition-all text-center"
+        >
+          <p class="text-sm font-bold uppercase tracking-widest">{{ service.label }}</p>
         </div>
-
-        <!-- Provision New Number -->
-        <div class="pt-8 border-t border-white/10 space-y-6">
-          <h3 class="text-xs font-bold uppercase tracking-widest text-white">{{ 'CONFIG.PROVISION_NEW_NUMBER' | translate }}</h3>
-          <div class="grid grid-cols-2 gap-4">
-            <div class="space-y-2">
-              <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{{ 'CONFIG.AREA_CODE' | translate }}</label>
-              <div class="relative">
-                <select
-                name="newAreaCode"
-                [ngModel]="newNumber.areaCode"
-                (ngModelChange)="onAreaCodeInput($event, 'newNumber')"
-                class="w-full appearance-none bg-white/5 border border-white/10 rounded p-3 pr-10 text-xs font-bold text-white outline-none focus:border-primary transition-all"
-              >
-                <option value="" class="bg-background-dark">{{ 'CONFIG.SELECT_AREA_CODE' | translate }}</option>
-                <option *ngFor="let option of areaCodeOptions" [value]="option.code" class="bg-background-dark">
-                  {{ option.code }} - {{ option.label }}
-                </option>
-                </select>
-                <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-sm">
-                  expand_more
-                </span>
-              </div>
-              <p class="text-[10px] text-slate-500 uppercase tracking-widest">
-                {{ 'CONFIG.AREA_CODE_DESC' | translate }}
-              </p>
-            </div>
-            <div class="space-y-2">
-              <label class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{{ 'CONFIG.LABEL' | translate }}</label>
-              <input 
-                type="text" 
-                [(ngModel)]="newNumber.label"
-                placeholder="Listing A"
-                class="w-full bg-white/5 border border-white/10 rounded p-3 text-xs font-bold text-white outline-none focus:border-primary transition-all"
-              />
-            </div>
-          </div>
-          <button 
-            (click)="provisionNumber()"
-            [disabled]="!hasValidAreaCode(newNumber.areaCode || settings.areaCode) || provisioning"
-            class="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold uppercase tracking-widest rounded transition-all flex items-center justify-center gap-2"
-          >
-            <span *ngIf="provisioning" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
-            {{ provisioning ? ('CONFIG.SEARCHING_NUMBERS' | translate) : ('CONFIG.SEARCH_AND_PURCHASE' | translate) }}
-          </button>
+      </div>
+      <div *ngIf="servicesChanged || savingServices() || servicesMessage || servicesError" class="space-y-3 pt-4 border-t border-white/10">
+        <div *ngIf="servicesMessage" class="text-emerald-500 text-[10px] font-bold uppercase tracking-widest animate-pulse">
+          {{ servicesMessage }}
         </div>
+        <div *ngIf="servicesError" class="text-red-500 text-[10px] font-bold uppercase tracking-widest">
+          {{ servicesError }}
+        </div>
+        <button 
+          *ngIf="servicesChanged || savingServices()"
+          type="button"
+          (click)="saveServices()"
+          [disabled]="savingServices()"
+          class="w-full py-4 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-bold uppercase tracking-widest rounded transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+        >
+          <span *ngIf="savingServices()" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+          {{ savingServices() ? ('CONFIG.UPDATING_SERVICES' | translate) : ('CONFIG.SAVE_SERVICES' | translate) }}
+        </button>
       </div>
     </div>
   </div>
-  </ng-container>
+</ng-container>
 </div>

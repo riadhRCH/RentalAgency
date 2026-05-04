@@ -2,7 +2,7 @@
     <app-sidebar 
         [collapsed]="sidebarCollapsed"
         [mobileOpen]="mobileSidebarOpen"
-        [navItems]="navItems"
+        [navItems]="navItems()"
         (closeMobile)="closeMobileSidebar()"></app-sidebar>
 
     <div class="dashboard-content">

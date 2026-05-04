@@ -1,4 +1,4 @@
-import { HttpInterceptorFn, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
@@ -44,7 +44,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
 function handle401Error(
   req: HttpRequest<any>,
-  next: HttpHandler,
+  next: HttpHandlerFn,
   authService: AuthService,
   router: Router
 ): Observable<HttpEvent<any>> {

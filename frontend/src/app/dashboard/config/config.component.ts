@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AgencyService, VirtualNumber, AgencySettings } from '../../services/agency.service';
+import { AgencyService, VirtualNumber, AgencySettings, AgencyProfile } from '../../services/agency.service';
 import { FormsModule } from '@angular/forms';
 import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
 import { TranslatePipe } from '../../i18n/translate.pipe';
@@ -10,6 +10,11 @@ import { forkJoin } from 'rxjs';
 
 interface AreaCodeOption {
   code: string;
+  label: string;
+}
+
+interface ServiceOption {
+  value: string;
   label: string;
 }
 
@@ -33,8 +38,19 @@ export class ConfigComponent implements OnInit {
   agencyName = '';
   agencyLogo = '';
   ownerId?: string;
+  services: string[] = ['rental'];
+  private initialServices: string[] = [];
   virtualNumbers: VirtualNumber[] = [];
+  savingServices = signal(false);
+  servicesMessage = '';
+  servicesError = '';
   
+  serviceOptions: ServiceOption[] = [
+    { value: 'rental', label: 'Rental' },
+    { value: 'sales', label: 'Sales' },
+    { value: 'short_term', label: 'Short Term' },
+  ];
+
   newNumber = {
     areaCode: '',
     label: ''
@@ -42,8 +58,8 @@ export class ConfigComponent implements OnInit {
 
   loading = signal(true);
   logoUploading = signal(false);
-  saving = false;
-  provisioning = false;
+  saving = signal(false);
+  provisioning = signal(false);
   message = '';
   error = '';
 
@@ -62,9 +78,11 @@ export class ConfigComponent implements OnInit {
           forwardingNumber: settings?.forwardingNumber || '',
           areaCode: this.normalizeAreaCode(settings?.areaCode || '')
         };
-      this.agencyName = profile?.name || '';
-      this.agencyLogo = profile?.logo || '';
-      this.ownerId = profile?.ownerId;
+        this.agencyName = profile?.name || '';
+        this.agencyLogo = profile?.logo || '';
+        this.ownerId = profile?.ownerId;
+        this.services = profile?.services || ['rental'];
+        this.initialServices = [...this.services];
         this.ensureAreaCodeOptionExists(this.settings.areaCode);
         this.newNumber.areaCode = this.settings.areaCode;
         this.loading.set(false);
@@ -79,14 +97,14 @@ export class ConfigComponent implements OnInit {
   }
 
   saveSettings() {
-    this.saving = true;
+    this.saving.set(true);
     this.message = '';
     this.error = '';
     this.settings.areaCode = this.normalizeAreaCode(this.settings.areaCode);
 
     if (this.settings.areaCode && !this.hasValidAreaCode(this.settings.areaCode)) {
       this.error = this.i18n.translate('CONFIG.AREA_CODE_INVALID');
-      this.saving = false;
+      this.saving.set(false);
       return;
     }
 
@@ -94,7 +112,7 @@ export class ConfigComponent implements OnInit {
       settings: this.agencyService.updateSettings(this.settings),
       profile: this.agencyService.updateProfile({
         name: this.agencyName.trim(),
-        logo: this.agencyLogo.trim()
+        logo: this.agencyLogo.trim(),
       }),
     }).subscribe({
       next: ({ profile }) => {
@@ -103,15 +121,48 @@ export class ConfigComponent implements OnInit {
         this.newNumber.areaCode = this.settings.areaCode;
         this.message = this.i18n.translate('CONFIG.SETTINGS_UPDATED');
         this.authService.updateAgencyName(profile.name.trim());
-        this.saving = false;
+        this.saving.set(false);
       },
       error: () => {
         this.error = this.i18n.translate('CONFIG.SETTINGS_UPDATE_FAILED');
-        this.saving = false;
+        this.saving.set(false);
       }
     });
   }
 
+  toggleService(value: string) {
+    if (this.services.includes(value)) {
+      this.services = this.services.filter(s => s !== value);
+    } else {
+      this.services = [...this.services, value];
+    }
+  }
+
+  get servicesChanged(): boolean {
+    if (this.services.length !== this.initialServices.length) return true;
+    return this.services.some((s, i) => s !== this.initialServices[i]);
+  }
+
+  saveServices() {
+    this.savingServices.set(true);
+    this.servicesMessage = '';
+    this.servicesError = '';
+
+    this.agencyService.updateProfile({ services: this.services }).subscribe({
+      next: (profile) => {
+        this.initialServices = [...this.services];
+        this.servicesMessage = this.i18n.translate('CONFIG.SERVICES_UPDATED') || 'Services updated';
+        this.authService.updateAgencyServices(this.services);
+      },
+      error: () => {
+        this.servicesError = this.i18n.translate('CONFIG.SERVICES_UPDATE_FAILED') || 'Failed to update services';
+      },
+      complete: () => {
+        this.savingServices.set(false);
+      }
+    });
+  }
+  
   onAreaCodeInput(value: string, target: 'settings' | 'newNumber') {
     const normalizedValue = this.normalizeAreaCode(value);
     this.ensureAreaCodeOptionExists(normalizedValue);
@@ -152,20 +203,20 @@ export class ConfigComponent implements OnInit {
       return;
     }
 
-    this.provisioning = true;
+    this.provisioning.set(true);
     this.message = '';
     this.error = '';
     
     this.agencyService.provisionNumber(this.newNumber.areaCode, this.newNumber.label).subscribe({
       next: () => {
         this.message = this.i18n.translate('CONFIG.NUMBER_PROVISIONED');
-        this.provisioning = false;
+        this.provisioning.set(false);
         this.newNumber = { areaCode: this.settings.areaCode, label: '' };
         this.loadData();
       },
       error: (err) => {
         this.error = err.error?.message || this.i18n.translate('CONFIG.NUMBER_PROVISION_FAILED');
-        this.provisioning = false;
+        this.provisioning.set(false);
       }
     });
   }

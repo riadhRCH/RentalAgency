@@ -99,6 +99,9 @@ export class Transaction {
   @Prop({ type: Types.ObjectId, ref: 'Property', required: true })
   propertyId: Types.ObjectId;
 
+  @Prop({ type: Types.ObjectId, ref: 'Announcement' })
+  announcementId: Types.ObjectId;
+
   @Prop({ type: Types.ObjectId, ref: 'Personnel', required: true })
   personnelId: Types.ObjectId;
 

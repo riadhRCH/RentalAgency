@@ -68,8 +68,9 @@ class TransactionSourceDto {
 }
 
 export class CreateTransactionDto {
+  @IsOptional()
   @IsString()
-  propertyId: string;
+  announcementId?: string;
 
   @IsOptional()
   @IsString()

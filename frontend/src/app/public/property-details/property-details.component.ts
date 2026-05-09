@@ -275,7 +275,7 @@ export class PropertyDetailsComponent implements OnInit {
     }
 
     const reservationData = {
-      propertyId: prop._id,
+      announcementId: prop._id,
       customerPhone: formValue.customerPhone,
       agencyId: prop.agencyId,
       financialDetails: {

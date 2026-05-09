@@ -8,6 +8,7 @@ import { VisitRequest, VisitRequestDocument } from '../schemas/visit-request.sch
 import { Property, PropertyDocument } from '../schemas/property.schema';
 import { Personnel, PersonnelDocument } from '../schemas/personnel.schema';
 import { RentalAgency, RentalAgencyDocument } from '../schemas/rental-agency.schema';
+import { Announcement, AnnouncementDocument } from '../schemas/announcement.schema';
 import { NotificationService } from '../notifications/notifications.service';
 import { NotificationType } from '../schemas/notification.schema';
 
@@ -16,6 +17,7 @@ export class TransactionsService {
   constructor(
     @InjectModel(Transaction.name) private transactionModel: Model<TransactionDocument>,
     @InjectModel(Property.name) private propertyModel: Model<PropertyDocument>,
+    @InjectModel(Announcement.name) private announcementModel: Model<AnnouncementDocument>,
     @InjectModel(Lead.name) private leadModel: Model<LeadDocument>,
     @InjectModel(VisitRequest.name) private visitRequestModel: Model<VisitRequestDocument>,
     @InjectModel(Personnel.name) private personnelModel: Model<PersonnelDocument>,
@@ -71,7 +73,7 @@ export class TransactionsService {
   }
 
   async create(agencyId: string, createTransactionDto: CreateTransactionDto): Promise<TransactionDocument> {
-    const { propertyId, personnelId, customerName, customerPhone, source, ...transactionData } = createTransactionDto;
+    const { announcementId, personnelId, customerName, customerPhone, source, ...transactionData } = createTransactionDto;
 
     let finalPersonnelId: Types.ObjectId;
 
@@ -84,11 +86,28 @@ export class TransactionsService {
       throw new Error('Either personnelId or customerPhone/customerName is required');
     }
 
+    
+     let resolvedPropertyId
+    let resolvedAgencyId = agencyId;
+    let resolvedAnnouncementId: string | undefined = announcementId;
+
+    if (announcementId) {
+      const announcement = await this.announcementModel.findById(new Types.ObjectId(announcementId));
+      if (!announcement) throw new NotFoundException('Announcement not found');
+      resolvedPropertyId = announcement.propertyId.toString();
+      resolvedAgencyId = announcement.agencyId.toString();
+    }
+
+    if (!resolvedPropertyId) {
+      throw new Error('Either propertyId or announcementId is required');
+    }
+
     // Create the transaction
     const createdTransaction = new this.transactionModel({
       ...transactionData,
-      agencyId: new Types.ObjectId(agencyId),
-      propertyId: new Types.ObjectId(propertyId),
+      agencyId: new Types.ObjectId(resolvedAgencyId),
+      propertyId: new Types.ObjectId(resolvedPropertyId),
+      announcementId: resolvedAnnouncementId ? new Types.ObjectId(resolvedAnnouncementId) : undefined,
       personnelId: finalPersonnelId,
       source: source ? {
         sourceType: source.sourceType,
@@ -99,12 +118,12 @@ export class TransactionsService {
     const savedTransaction = await createdTransaction.save();
 
     // Update property status to 'rented'
-    await this.propertyModel.findByIdAndUpdate(propertyId, { status: 'rented' });
+    await this.propertyModel.findByIdAndUpdate(resolvedPropertyId, { status: 'rented' });
 
     // Notify agency staff about new transaction
-    const agency = await this.agencyModel.findById(agencyId);
+    const agency = await this.agencyModel.findById(resolvedAgencyId);
     if (agency && agency.staff && agency.staff.length > 0) {
-      const property = await this.propertyModel.findById(propertyId);
+      const property = await this.propertyModel.findById(resolvedPropertyId);
       const transactionLink = `${process.env.FRONTEND_URL || 'http://localhost:4200'}/dashboard/transactions/${savedTransaction._id}`;
 
       for (const staffMember of agency.staff) {
@@ -112,9 +131,9 @@ export class TransactionsService {
           staffMember.personnelId.toString(),
           NotificationType.TRANSACTION_CREATED,
           'Nouvelle Transaction',
-          `Une nouvelle transaction a ete creee pour le bien ${property?.reference || propertyId}.`,
+          `Une nouvelle transaction a ete creee pour le bien ${property?.reference || resolvedPropertyId}.`,
           transactionLink,
-          { transactionId: savedTransaction._id, propertyId },
+          { transactionId: savedTransaction._id, propertyId: resolvedPropertyId },
         );
       }
     }

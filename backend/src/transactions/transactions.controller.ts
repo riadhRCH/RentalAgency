@@ -29,6 +29,24 @@ export class TransactionsController {
     return this.transactionsService.updatePublic(id, updateData);
   }
 
+  @Public()
+  @Post('public/:id/check-in')
+  async checkIn(@Param('id') id: string, @Body() body: { welcomeSelfie: string }) {
+    return this.transactionsService.checkIn(id, body.welcomeSelfie);
+  }
+
+  @Public()
+  @Post('public/:id/check-out')
+  async checkOut(@Param('id') id: string) {
+    return this.transactionsService.checkOut(id);
+  }
+
+  @Public()
+  @Post('public/:id/claims')
+  async submitClaim(@Param('id') id: string, @Body() body: { text: string }) {
+    return this.transactionsService.submitClaim(id, body.text);
+  }
+
   @Post()
   async create(@Request() req, @Body() createTransactionDto: CreateTransactionDto) {
     const agencyId = req.headers['x-agency-id'];

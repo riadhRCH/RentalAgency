@@ -127,6 +127,16 @@ export class PersonnelController {
   }
 
   @Public()
+  @Patch('dashboard/:token/property/:propertyId/wifi-code')
+  updatePropertyWifiCode(
+    @Param('token') token: string,
+    @Param('propertyId') propertyId: string,
+    @Body('wifiCode') wifiCode: string,
+  ) {
+    return this.personnelService.updatePropertyWifiCode(token, propertyId, wifiCode);
+  }
+
+  @Public()
   @Patch('dashboard/:token/profile')
   updateOwnerProfile(
     @Param('token') token: string,

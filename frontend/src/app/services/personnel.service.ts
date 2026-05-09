@@ -71,6 +71,10 @@ export class PersonnelService {
     return this.http.patch<any>(`${this.apiUrl}/dashboard/${token}/property/${propertyId}/price`, { price });
   }
 
+  updatePropertyWifiCode(token: string, propertyId: string, wifiCode: string): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/dashboard/${token}/property/${propertyId}/wifi-code`, { wifiCode });
+  }
+
   uploadProfilePicture(personnelId: string, file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);

@@ -29,6 +29,7 @@ export interface Property {
   paymentFrequency: PaymentType;
   calendarData?: DayAvailability[];
   googleMapsLink?: string;
+  wifiCode?: string;
 }
 
 export interface PaginatedProperties {

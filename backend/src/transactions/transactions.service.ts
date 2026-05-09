@@ -280,12 +280,13 @@ export class TransactionsService {
   async updatePublic(id: string, updateData: any): Promise<TransactionDocument> {
     // Only allow updating specific fields for public access
     const allowedFields = [
-      'personnelId', // for customer info
-      'timeline.selectedDates', // for calendar
-      'metadata.documents', // for documents
-      'metadata.cinNumber', // for CIN
-      'metadata.numberOfPersons', // for occupancy details
-      'metadata.paymentProof' // for payment proof
+      'personnelId',
+      'timeline.selectedDates',
+      'metadata.documents',
+      'metadata.cinNumber',
+      'metadata.numberOfPersons',
+      'metadata.paymentProof',
+      'metadata.welcomeSelfie',
     ];
 
     const filteredUpdateData: Record<string, any> = {};
@@ -331,5 +332,102 @@ export class TransactionsService {
 
   private getNestedValue(obj: any, path: string): any {
     return path.split('.').reduce((current, key) => current?.[key], obj);
+  }
+
+  async checkIn(id: string, welcomeSelfie: string) {
+    const transaction = await this.transactionModel.findById(id).populate('propertyId');
+    if (!transaction) throw new NotFoundException('Transaction not found');
+
+    const updated = await this.transactionModel.findByIdAndUpdate(
+      id,
+      { $set: { 'metadata.welcomeSelfie': welcomeSelfie, 'metadata.checkInAt': new Date() } },
+      { new: true },
+    );
+
+    // Notify agency staff
+    const property = await this.propertyModel.findById(transaction.propertyId);
+    if (property) {
+      const agency = await this.agencyModel.findById(transaction.agencyId);
+      if (agency?.staff) {
+        const link = `${process.env.FRONTEND_URL || 'http://localhost:4200'}/dashboard/transactions/${id}`;
+        for (const staff of agency.staff) {
+          await this.notificationService.sendNotification(
+            staff.personnelId.toString(),
+            NotificationType.CHECK_IN,
+            'Client Check-In',
+            `Le client a valide son arrivee au bien ${property.reference}.`,
+            link,
+            { transactionId: id },
+          );
+        }
+      }
+    }
+
+    return updated;
+  }
+
+  async checkOut(id: string) {
+    const transaction = await this.transactionModel.findById(id).populate('propertyId');
+    if (!transaction) throw new NotFoundException('Transaction not found');
+
+    const updated = await this.transactionModel.findByIdAndUpdate(
+      id,
+      { $set: { 'metadata.checkOutAt': new Date() } },
+      { new: true },
+    );
+
+    // Notify agency staff
+    const property = await this.propertyModel.findById(transaction.propertyId);
+    if (property) {
+      const agency = await this.agencyModel.findById(transaction.agencyId);
+      if (agency?.staff) {
+        const link = `${process.env.FRONTEND_URL || 'http://localhost:4200'}/dashboard/transactions/${id}`;
+        for (const staff of agency.staff) {
+          await this.notificationService.sendNotification(
+            staff.personnelId.toString(),
+            NotificationType.CHECK_OUT,
+            'Client Check-Out',
+            `Le client a quitte le bien ${property.reference}.`,
+            link,
+            { transactionId: id },
+          );
+        }
+      }
+    }
+
+    return updated;
+  }
+
+  async submitClaim(id: string, text: string) {
+    const transaction = await this.transactionModel.findById(id).populate('propertyId');
+    if (!transaction) throw new NotFoundException('Transaction not found');
+
+    const claim = { text, submittedAt: new Date() };
+    const updated = await this.transactionModel.findByIdAndUpdate(
+      id,
+      { $push: { 'metadata.claims': claim } },
+      { new: true },
+    );
+
+    // Notify agency staff
+    const property = await this.propertyModel.findById(transaction.propertyId);
+    if (property) {
+      const agency = await this.agencyModel.findById(transaction.agencyId);
+      if (agency?.staff) {
+        const link = `${process.env.FRONTEND_URL || 'http://localhost:4200'}/dashboard/transactions/${id}`;
+        for (const staff of agency.staff) {
+          await this.notificationService.sendNotification(
+            staff.personnelId.toString(),
+            NotificationType.CLAIM_SUBMITTED,
+            'Reclamation Client',
+            `Le client a soumis une reclamation pour le bien ${property.reference}: "${text.substring(0, 100)}"`,
+            link,
+            { transactionId: id },
+          );
+        }
+      }
+    }
+
+    return updated;
   }
 }

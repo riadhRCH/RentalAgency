@@ -88,6 +88,7 @@ export class AddPropertyComponent implements OnInit {
       photos: [[]],
       videos: [[]],
       previewVideo: [''],
+      wifiCode: [''],
       amenities: this.fb.group({
         bedrooms: [0],
         bathrooms: [0],
@@ -153,6 +154,7 @@ export class AddPropertyComponent implements OnInit {
             ownerId: prop.ownerId?._id || prop.ownerId,
             previewVideo: prop.previewVideo || '',
             gpsLocation: prop.gpsLocation,
+            wifiCode: prop.wifiCode || '',
             amenities: prop.amenities
           });
           // Set map to property location

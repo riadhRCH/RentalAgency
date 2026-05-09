@@ -89,6 +89,9 @@ export class Property {
   calendarData: DayAvailability[];
 
   @Prop()
+  wifiCode: string;
+
+  @Prop()
   deletedAt: Date;
 }
 

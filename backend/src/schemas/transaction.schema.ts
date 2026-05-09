@@ -39,6 +39,17 @@ class Timeline {
 }
 
 @Schema({ _id: false })
+class Claim {
+  @Prop({ required: true })
+  text: string;
+
+  @Prop({ type: Date, default: Date.now })
+  submittedAt: Date;
+}
+
+const ClaimSchema = SchemaFactory.createForClass(Claim);
+
+@Schema({ _id: false })
 class TransactionMetadata {
   @Prop({ type: [String], default: [] })
   documents: string[];
@@ -57,6 +68,27 @@ class TransactionMetadata {
 
   @Prop()
   emergencyContact: string;
+
+  @Prop()
+  welcomeSelfie: string;
+
+  @Prop()
+  checkInAt: Date;
+
+  @Prop()
+  checkOutAt: Date;
+
+  @Prop({ type: [ClaimSchema], default: [] })
+  claims: Claim[];
+
+  @Prop()
+  promoCode: string;
+
+  @Prop()
+  promoCodeExpiry: Date;
+
+  @Prop()
+  reviewRequestedAt: Date;
 }
 
 @Schema({ timestamps: true })

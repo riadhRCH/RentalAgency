@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TransactionsService } from '../../services/transactions.service';
 import { PropertiesService } from '../../services/properties.service';
 import { PersonnelService } from '../../services/personnel.service';
@@ -29,7 +29,16 @@ interface Transaction {
     cinNumber?: string;
     numberOfPersons?: number;
     paymentProof?: string;
+    welcomeSelfie?: string;
+    checkInAt?: string;
+    checkOutAt?: string;
+    claims?: { text: string; submittedAt: string }[];
+    promoCode?: string;
+    promoCodeExpiry?: string;
+    reviewRequestedAt?: string;
+    contracts?: string[];
   };
+  status: string;
   agency: {
     name: string;
     paymentMethods: {
@@ -49,6 +58,7 @@ interface Transaction {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     TranslatePipe,
     CalendarSelectorComponent,
     PublicNavbarComponent,
@@ -102,6 +112,17 @@ export class TransactionComponent implements OnInit, OnDestroy {
   selectedDatesControl = this.fb.control<Date[]>([]);
   private readonly objectPreviewUrls = new Set<string>();
 
+  // Post-closure
+  showPostClosure = signal(false);
+  welcomeSelfieFile: File | null = null;
+  welcomeSelfiePreview = signal<string | null>(null);
+  selfieUploading = signal(false);
+  checkingIn = signal(false);
+  checkingOut = signal(false);
+  claimText = signal('');
+  claimSubmitting = signal(false);
+  claimSubmitted = signal(false);
+
   constructor() {
     this.customerForm = this.fb.group({
       firstName: [''],
@@ -141,6 +162,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.transactionsService.getPublicTransaction(this.transactionId).subscribe({
       next: (transaction: Transaction) => {
         this.transaction.set(transaction);
+        this.showPostClosure.set(transaction.status === 'CLOSED');
         this.loadPropertyCalendar();
         this.initializeForms();
         this.autoOpenFirstUndoneStep();
@@ -148,7 +170,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.loading.set(false);
-        // Handle error
       }
     });
   }
@@ -570,5 +591,107 @@ export class TransactionComponent implements OnInit, OnDestroy {
     } catch {
       return source.split('/').filter(Boolean).pop() || 'document';
     }
+  }
+
+  // Post-closure methods
+
+  isClosed(): boolean {
+    return this.transaction()?.status === 'CLOSED';
+  }
+
+  get wifiCode(): string {
+    return this.transaction()?.propertyId?.wifiCode || '';
+  }
+
+  get checkInAt(): string | null {
+    return this.transaction()?.metadata?.checkInAt || null;
+  }
+
+  get checkOutAt(): string | null {
+    return this.transaction()?.metadata?.checkOutAt || null;
+  }
+
+  get promoCode(): string | null {
+    return this.transaction()?.metadata?.promoCode || null;
+  }
+
+  get promoCodeExpiry(): string | null {
+    return this.transaction()?.metadata?.promoCodeExpiry || null;
+  }
+
+  get promoCodeIsValid(): boolean {
+    if (!this.promoCodeExpiry) return false;
+    return new Date(this.promoCodeExpiry) > new Date();
+  }
+
+  onSelfieSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.welcomeSelfieFile = file;
+      const previewUrl = URL.createObjectURL(file);
+      this.welcomeSelfiePreview.set(previewUrl);
+    }
+  }
+
+  doCheckIn() {
+    if (!this.welcomeSelfieFile) return;
+    this.checkingIn.set(true);
+
+    this.transactionsService.uploadFile(this.welcomeSelfieFile).subscribe({
+      next: (result) => {
+        this.transactionsService.checkIn(this.transactionId, result.url).subscribe({
+          next: (updated) => {
+            this.transaction.set(updated);
+            this.checkingIn.set(false);
+          },
+          error: () => this.checkingIn.set(false),
+        });
+      },
+      error: () => this.checkingIn.set(false),
+    });
+  }
+
+  doCheckOut() {
+    if (!confirm('Are you sure you want to check out?')) return;
+    this.checkingOut.set(true);
+    this.transactionsService.checkOut(this.transactionId).subscribe({
+      next: (updated) => {
+        this.transaction.set(updated);
+        this.checkingOut.set(false);
+      },
+      error: () => this.checkingOut.set(false),
+    });
+  }
+
+  submitClaim() {
+    const text = this.claimText()?.trim();
+    if (!text) return;
+    this.claimSubmitting.set(true);
+    this.transactionsService.submitClaim(this.transactionId, text).subscribe({
+      next: (updated) => {
+        this.transaction.set(updated);
+        this.claimSubmitted.set(true);
+        this.claimText.set('');
+        this.claimSubmitting.set(false);
+        setTimeout(() => this.claimSubmitted.set(false), 3000);
+      },
+      error: () => this.claimSubmitting.set(false),
+    });
+  }
+
+  hasContract(): boolean {
+    return (this.transaction()?.metadata?.contracts?.length ?? 0) > 0;
+  }
+
+  getContractLinks(): string[] {
+    return this.transaction()?.metadata?.contracts || [];
+  }
+
+  canShowCheckIn(): boolean {
+    return this.isClosed() && !this.checkInAt;
+  }
+
+  canShowCheckOut(): boolean {
+    return this.isClosed() && !!this.checkInAt && !this.checkOutAt;
   }
 }

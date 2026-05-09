@@ -26,7 +26,7 @@ interface OwnerDashboardData {
 }
 
 interface PropertyEditMode {
-  [key: string]: 'view' | 'edit-availability' | 'edit-price';
+  [key: string]: 'view' | 'edit-availability' | 'edit-price' | 'edit-wifi';
 }
 
 @Component({
@@ -55,6 +55,7 @@ export class OwnerDashboardComponent implements OnInit {
 
   propertyEditMode: PropertyEditMode = {};
   editingPrices: { [key: string]: number } = {};
+  editingWifiCodes: { [key: string]: string } = {};
   selectedDatesControls: { [key: string]: FormControl } = {};
 
   ownerProfile = signal<Personnel | null>(null);
@@ -139,6 +140,7 @@ export class OwnerDashboardComponent implements OnInit {
         data.properties.forEach((prop: Property) => {
           this.propertyEditMode[prop._id] = 'view';
           this.editingPrices[prop._id] = prop.price;
+          this.editingWifiCodes[prop._id] = prop.wifiCode || '';
           this.selectedDatesControls[prop._id] = new FormControl([]);
         });
 
@@ -251,6 +253,15 @@ export class OwnerDashboardComponent implements OnInit {
     }
   }
 
+  toggleWifiEdit(propertyId: string) {
+    if (this.propertyEditMode[propertyId] === 'edit-wifi') {
+      this.propertyEditMode[propertyId] = 'view';
+    } else {
+      this.propertyEditMode[propertyId] = 'edit-wifi';
+      this.editingWifiCodes[propertyId] = this.getPropertyWifiCode(propertyId);
+    }
+  }
+
   saveAvailability(propertyId: string) {
     const calendarData = this.selectedDatesControls[propertyId].value || [];
 
@@ -285,12 +296,32 @@ export class OwnerDashboardComponent implements OnInit {
     });
   }
 
+  saveWifiCode(propertyId: string) {
+    const wifiCode = this.editingWifiCodes[propertyId];
+    this.personnelService.updatePropertyWifiCode(this.token, propertyId, wifiCode).subscribe({
+      next: () => {
+        this.propertyEditMode[propertyId] = 'view';
+        const property = this.dashboardData?.properties.find(p => p._id === propertyId);
+        if (property) {
+          property.wifiCode = wifiCode;
+        }
+      },
+      error: () => {
+        this.error = 'Failed to update Wi-Fi code';
+      }
+    });
+  }
+
   cancelEdit(propertyId: string) {
     this.propertyEditMode[propertyId] = 'view';
   }
 
   getPropertyPrice(propertyId: string): number {
     return this.dashboardData?.properties.find(p => p._id === propertyId)?.price || 0;
+  }
+
+  getPropertyWifiCode(propertyId: string): string {
+    return this.dashboardData?.properties.find(p => p._id === propertyId)?.wifiCode || '';
   }
 
   getPropertyCalendarData(propertyId: string): any[] {

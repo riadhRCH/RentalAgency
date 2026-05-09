@@ -100,4 +100,8 @@ export class CreatePropertyDto {
   @Type(() => DayAvailabilityDto)
   @IsOptional()
   calendarData?: DayAvailabilityDto[];
+
+  @IsString()
+  @IsOptional()
+  wifiCode?: string;
 }

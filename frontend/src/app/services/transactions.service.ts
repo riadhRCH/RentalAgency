@@ -95,4 +95,16 @@ export class TransactionsService {
     formData.append('file', file);
     return this.http.post<{ url: string; public_id: string }>(`${environment.apiBaseUrl}/cloudinary/upload`, formData);
   }
+
+  checkIn(id: string, welcomeSelfie: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/public/${id}/check-in`, { welcomeSelfie });
+  }
+
+  checkOut(id: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/public/${id}/check-out`, {});
+  }
+
+  submitClaim(id: string, text: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/public/${id}/claims`, { text });
+  }
 }

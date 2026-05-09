@@ -299,6 +299,22 @@ export class PersonnelService {
     return property;
   }
 
+  async updatePropertyWifiCode(token: string, propertyId: string, wifiCode: string) {
+    const person = await this.personnelModel.findOne({
+      dashboardToken: token,
+      dashboardTokenExpiresAt: { $gt: new Date() },
+      deletedAt: { $exists: false }
+    });
+    if (!person) throw new NotFoundException('Invalid or expired dashboard token');
+    const property = await this.propertyModel.findOneAndUpdate(
+      { _id: new Types.ObjectId(propertyId), ownerId: person._id, deletedAt: { $exists: false } },
+      { $set: { wifiCode } },
+      { new: true },
+    );
+    if (!property) throw new NotFoundException('Property not found or access denied');
+    return property;
+  }
+
   async updateOwnerProfile(token: string, dto: UpdatePersonnelDto) {
     const person = await this.personnelModel.findOne({
       dashboardToken: token,

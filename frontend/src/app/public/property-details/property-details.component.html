@@ -65,15 +65,16 @@
           </div>
           <div class="flex flex-wrap gap-4 mt-4">
             <div class="flex items-center gap-2">
-              <span class="text-primary font-bold text-2xl">{{ property()?.price }}</span>
-              <span class="text-slate-400 text-sm">
-                @switch(property()?.paymentFrequency) {
-                  @case ('DAILY') { {{ 'COMMON.DAILY' | translate }} }
-                  @case ('WEEKLY') { {{ 'COMMON.WEEKLY' | translate }} }
-                  @case ('MONTHLY') { {{ 'COMMON.MONTHLY' | translate }} }
-                  @case ('DIRECT_SALE') { {{ 'COMMON.DIRECT_SALE' | translate }} }
-                }
-              </span>
+              <span class="text-primary font-bold text-2xl">{{ property()?.price }} TND</span>
+              @if (property()?.paymentFrequency !== 'DIRECT_SALE') {
+                <span class="text-slate-400 text-sm">
+                  @switch(property()?.paymentFrequency) {
+                    @case ('DAILY') { {{ 'COMMON.PRICE_SUFFIX_DAILY' | translate }} }
+                    @case ('WEEKLY') { {{ 'COMMON.PRICE_SUFFIX_WEEKLY' | translate }} }
+                    @case ('MONTHLY') { {{ 'COMMON.PRICE_SUFFIX_MONTHLY' | translate }} }
+                  }
+                </span>
+              }
             </div>
             <div class="flex items-center gap-2 text-slate-300">
               <span class="material-symbols-outlined">square_foot</span>
@@ -280,8 +281,23 @@
                 <!-- Price Summary -->
                 <div class="bg-black/40 border border-primary/30 rounded-lg p-4 space-y-2 text-sm">
                   <div class="flex justify-between items-center">
-                    <span class="text-slate-400">{{ 'PROPERTY_DETAILS.DAILY_RATE' | translate }}</span>
-                    <span class="text-white font-semibold">{{ property()?.price }} TND</span>
+                    <span class="text-slate-400">
+                      @switch(property()?.paymentFrequency) {
+                        @case ('DAILY') { {{ 'COMMON.DAILY' | translate }} }
+                        @case ('WEEKLY') { {{ 'COMMON.WEEKLY' | translate }} }
+                        @case ('MONTHLY') { {{ 'COMMON.MONTHLY' | translate }} }
+                        @case ('DIRECT_SALE') { {{ 'COMMON.DIRECT_SALE' | translate }} }
+                      }
+                    </span>
+                    <span class="text-white font-semibold">{{ property()?.price }} TND
+                      @if (property()?.paymentFrequency !== 'DIRECT_SALE') {
+                        @switch(property()?.paymentFrequency) {
+                          @case ('DAILY') { {{ 'COMMON.PRICE_SUFFIX_DAILY' | translate }} }
+                          @case ('WEEKLY') { {{ 'COMMON.PRICE_SUFFIX_WEEKLY' | translate }} }
+                          @case ('MONTHLY') { {{ 'COMMON.PRICE_SUFFIX_MONTHLY' | translate }} }
+                        }
+                      }
+                    </span>
                   </div>
                 </div>
 

@@ -18,6 +18,7 @@
     </div>
 
     <div *ngIf="!loading() && transaction()" class="space-y-8">
+      @if (!showPostClosure()) {
       <!-- Property Info -->
       <div class="glass-card rounded-2xl border border-white/10 p-6">
         <h3 class="text-lg font-bold text-white uppercase tracking-wider mb-4">
@@ -383,9 +384,9 @@
           </div>
         </div>
       </section>
-
+} @else {
       <!-- Post-Closure Section (shown when transaction is CLOSED) -->
-      <div *ngIf="showPostClosure()" class="space-y-8 pt-8 border-t border-white/10">
+      <div class="space-y-8 pt-8 border-t border-white/10">
         <header>
           <h2 class="font-serif text-2xl font-bold text-white uppercase silver-glow">Your Stay</h2>
           <p class="text-slate-400 text-sm mt-1">Post-closure services for your reservation</p>
@@ -514,6 +515,7 @@
           </div>
         </div>
       </div>
+     }
     </div>
   </div>
 </div>

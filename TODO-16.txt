@@ -1,0 +1,4 @@
+the page http://localhost:4200/dashboard/transactions/69ea872914dd5425a2404342 should display new sections from page http://localhost:4200/transaction/69ea872914dd5425a2404342
+- add the check in with uploaded selphie document
+- add the ckeckout related info
+- display claims

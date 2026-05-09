@@ -41,7 +41,7 @@
         </div>
       </div>
 
-      <!-- Step 1: Visit Date (Fancy) -->
+      <!-- Step 1: Visit Date -->
       <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
         <div class="p-8">
           <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
@@ -52,17 +52,13 @@
           <div class="flex flex-col items-center gap-6">
             <!-- Large Date Display -->
             <div class="relative w-full max-w-md mx-auto">
-              <!-- Invisible date input covering the whole card -->
-              <input #dateInput type="date" [value]="customerForm.get('visitDate')?.value"
-                     (input)="selectDate(dateInput.value)"
-                     class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                     min="{{ today() }}">
-              <!-- Visible content -->
+              <input #datePickerInput type="text" readonly
+                     class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
               <div class="bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl border border-primary/30 p-8 text-center pointer-events-none">
-                <span class="material-symbols-outlined text-6xl text-primary mb-4">calendar_month</span>
-                @if (customerForm.get('visitDate')?.value) {
+                <span class="material-symbols-outlined text-6xl text-primary mb-4 block">calendar_month</span>
+                @if (selectedDate()) {
                   <div class="text-3xl font-bold text-white mb-2">
-                    {{ formatDate(customerForm.get('visitDate')?.value) }}
+                    {{ formatDate(selectedDate()) }}
                   </div>
                   <div class="text-primary text-xs font-bold uppercase tracking-widest">Change Date</div>
                 } @else {
@@ -75,7 +71,7 @@
               </div>
             </div>
 
-            @if (customerForm.get('visitDate')?.value) {
+            @if (selectedDate()) {
               <div class="flex items-center gap-2 text-emerald-400 text-sm">
                 <span class="material-symbols-outlined text-lg">check_circle</span>
                 Visit date confirmed

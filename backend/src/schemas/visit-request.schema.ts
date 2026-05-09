@@ -15,7 +15,7 @@ export class VisitRequest {
   @Prop({ type: Types.ObjectId, ref: 'RentalAgency', required: true })
   agencyId: Types.ObjectId;
 
-  @Prop()
+  @Prop({ type: Date })
   visitDate: Date;
 
   @Prop()

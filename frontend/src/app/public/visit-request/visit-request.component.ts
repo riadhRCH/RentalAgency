@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, ViewChild, ElementRef, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -8,6 +8,7 @@ import { I18nService } from '../../i18n/i18n.service';
 import { PublicNavbarComponent } from '../../shared/components/public-navbar/public-navbar.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer/public-footer.component';
 import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
+import flatpickr from 'flatpickr';
 
 @Component({
   selector: 'app-visit-request',
@@ -20,9 +21,10 @@ import { PhoneInputComponent } from '../../shared/components/phone-input/phone-i
     PhoneInputComponent
   ],
   templateUrl: './visit-request.component.html',
-  styleUrl: './visit-request.component.scss'
+  styleUrl: './visit-request.component.scss',
+   encapsulation: ViewEncapsulation.None  // add this
 })
-export class VisitRequestComponent implements OnInit {
+export class VisitRequestComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private fb = inject(FormBuilder);
@@ -30,13 +32,17 @@ export class VisitRequestComponent implements OnInit {
   private personnelService = inject(PersonnelService);
   readonly i18n = inject(I18nService);
 
+  @ViewChild('datePickerInput') datePickerInput!: ElementRef;
+
   visitRequestId: string = '';
   visitRequest = signal<any>(null);
   loading = signal(true);
   saving = signal(false);
 
   customerForm: FormGroup;
+  private fp: any;
 
+  selectedDate = signal<string>('');
   customerInfoExpanded = signal(true);
   customerInfoDone = signal(false);
   visitDateDone = signal(false);
@@ -60,6 +66,12 @@ export class VisitRequestComponent implements OnInit {
     this.loadVisitRequest();
   }
 
+  ngOnDestroy() {
+    if (this.fp) {
+      this.fp.destroy();
+    }
+  }
+
   loadVisitRequest() {
     this.loading.set(true);
     this.visitsService.getPublicVisit(this.visitRequestId).subscribe({
@@ -67,11 +79,30 @@ export class VisitRequestComponent implements OnInit {
         this.visitRequest.set(visit);
         this.initializeForm();
         this.loading.set(false);
+        setTimeout(() => this.initFlatpickr());
       },
       error: () => {
         this.loading.set(false);
       }
     });
+  }
+
+  private initFlatpickr() {
+    if (this.fp || !this.datePickerInput?.nativeElement) return;
+
+    this.fp = flatpickr(this.datePickerInput.nativeElement, {
+      disableMobile: true,
+      dateFormat: 'Y-m-d',
+      minDate: this.today(),
+      onChange: (selectedDates: Date[], dateStr: string) => {
+        this.selectDate(dateStr, selectedDates[0]);
+      },
+    });
+
+    const dateVal = this.customerForm.get('visitDate')?.value;
+    if (dateVal) {
+      this.fp.setDate(dateVal);
+    }
   }
 
   initializeForm() {
@@ -91,7 +122,9 @@ export class VisitRequestComponent implements OnInit {
     }
     if (visit?.visitDate) {
       const d = new Date(visit.visitDate);
-      this.customerForm.patchValue({ visitDate: d.toISOString().split('T')[0] });
+      const dateStr = d.toISOString().split('T')[0];
+      this.selectedDate.set(dateStr);
+      this.customerForm.patchValue({ visitDate: dateStr });
       this.visitDateDone.set(true);
     }
     this.checkCustomerInfoDone();
@@ -101,9 +134,20 @@ export class VisitRequestComponent implements OnInit {
     return new Date().toISOString().split('T')[0];
   }
 
-  selectDate(dateStr: string) {
+  selectDate(dateStr: string, dateObj?: Date) {
+    this.selectedDate.set(dateStr);
     this.customerForm.patchValue({ visitDate: dateStr });
     this.visitDateDone.set(!!dateStr);
+    if (dateStr && dateObj) {
+      const isoDate = new Date(Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate())).toISOString();
+      this.visitsService.updatePublicVisit(this.visitRequestId, { visitDate: isoDate }).subscribe({
+        error: (err) => console.error('Failed to update visit date:', err),
+      });
+    }
+  }
+
+  openDatePicker() {
+    this.fp?.open();
   }
 
   formatDate(dateStr: string): string {
@@ -130,12 +174,15 @@ export class VisitRequestComponent implements OnInit {
 
       this.personnelService.createOrUpdatePersonnel(personnelData).subscribe({
         next: () => {
+          const visitDate = formValue.visitDate
+            ? new Date(formValue.visitDate + 'T12:00:00').toISOString()
+            : undefined;
           this.visitsService.updatePublicVisit(this.visitRequestId, {
             customerName: `${formValue.firstName} ${formValue.lastName}`.trim(),
             customerPhone: formValue.phone,
             customerEmail: formValue.email?.trim() || undefined,
             notes: formValue.notes || undefined,
-            visitDate: formValue.visitDate || undefined
+            visitDate
           }).subscribe({
             next: () => {
               this.saving.set(false);

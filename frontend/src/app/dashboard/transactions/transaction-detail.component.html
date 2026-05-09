@@ -317,4 +317,148 @@
       </button>
     </div>
   </form>
+
+  <!-- Post-Closure Section -->
+  <div *ngIf="showPostClosure()" class="space-y-8 pt-8 border-t border-white/10">
+    <header>
+      <h2 class="font-serif text-2xl font-bold text-white uppercase silver-glow">{{ 'POST_CLOSURE.YOUR_STAY' | translate }}</h2>
+      <p class="text-slate-400 text-sm mt-1">{{ 'POST_CLOSURE.SUBTITLE' | translate }}</p>
+    </header>
+
+    <!-- Contracts -->
+    <div *ngIf="hasContract()" class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+      <div class="p-8 space-y-4">
+        <h3 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">description</span>
+          {{ 'POST_CLOSURE.CONTRACTS' | translate }}
+        </h3>
+        <div class="space-y-2">
+          <a *ngFor="let link of getContractLinks()" [href]="link" target="_blank"
+             class="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm">
+            <span class="material-symbols-outlined text-sm">picture_as_pdf</span>
+            {{ 'POST_CLOSURE.VIEW_CONTRACT' | translate }}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Welcome Message -->
+    <div class="glass-card rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-8 space-y-4">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-4xl text-primary">waving_hand</span>
+        <div>
+          <h3 class="text-xl font-bold text-white">{{ 'POST_CLOSURE.WELCOME_TITLE' | translate }}</h3>
+          <p class="text-slate-300 text-sm">{{ 'POST_CLOSURE.WELCOME_DESC' | translate }}</p>
+        </div>
+      </div>
+      <div *ngIf="wifiCode" class="bg-black/40 border border-white/10 rounded-xl p-4 flex items-center gap-4">
+        <span class="material-symbols-outlined text-primary">wifi</span>
+        <div>
+          <p class="text-xs text-slate-400 uppercase tracking-widest font-bold">{{ 'POST_CLOSURE.WIFI_CODE' | translate }}</p>
+          <p class="text-white font-mono text-lg font-bold">{{ wifiCode }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Welcome Selfie (shown after check-in) -->
+    <div *ngIf="checkInAt && welcomeSelfieUrl" class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+      <div class="p-8 space-y-4">
+        <h3 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">photo_camera</span>
+          Welcome Selfie
+        </h3>
+        <div class="rounded-xl overflow-hidden border border-white/10 max-w-sm">
+          <img [src]="welcomeSelfieUrl" alt="Welcome selfie" class="w-full h-auto" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Check-In -->
+    <div *ngIf="canShowCheckIn()" class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+      <div class="p-8 space-y-6">
+        <h3 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">login</span>
+          {{ 'POST_CLOSURE.CHECK_IN' | translate }}
+        </h3>
+        <p class="text-slate-400 text-sm">{{ 'POST_CLOSURE.CHECK_IN_DESC' | translate }}</p>
+        <div class="space-y-4">
+          <input type="file" accept="image/*" (change)="onSelfieSelected($event)"
+                 class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90" />
+          <div *ngIf="welcomeSelfiePreview()" class="rounded-xl overflow-hidden border border-white/10 max-w-xs">
+            <img [src]="welcomeSelfiePreview()!" alt="Welcome selfie preview" class="w-full h-auto" />
+          </div>
+          <button (click)="doCheckIn()" [disabled]="checkingIn() || !welcomeSelfiePreview()"
+                  class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all">
+            {{ checkingIn() ? ('POST_CLOSURE.CHECKING_IN' | translate) : ('POST_CLOSURE.CHECK_IN_CONFIRM' | translate) }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Check-Out -->
+    <div *ngIf="canShowCheckOut()" class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+      <div class="p-8 space-y-6">
+        <h3 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">logout</span>
+          {{ 'POST_CLOSURE.CHECK_OUT' | translate }}
+        </h3>
+        <p class="text-slate-400 text-sm">{{ 'POST_CLOSURE.CHECK_OUT_DESC' | translate }}</p>
+        <button (click)="doCheckOut()" [disabled]="checkingOut()"
+                class="bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all">
+          {{ checkingOut() ? ('POST_CLOSURE.CHECKING_OUT' | translate) : ('POST_CLOSURE.CHECK_OUT_NOW' | translate) }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Claims -->
+    <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+      <div class="p-8 space-y-6">
+        <h3 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">report</span>
+          {{ 'POST_CLOSURE.CLAIMS' | translate }}
+        </h3>
+        <div class="space-y-4">
+          <textarea [ngModelOptions]="{standalone: true}" [(ngModel)]="claimText" rows="3"
+                    class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
+                    [placeholder]="'POST_CLOSURE.CLAIMS_PLACEHOLDER' | translate"></textarea>
+          <button (click)="submitClaim()" [disabled]="claimSubmitting() || !claimText().trim()"
+                  class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all">
+            {{ claimSubmitting() ? ('POST_CLOSURE.CLAIMS_SUBMITTING' | translate) : ('POST_CLOSURE.CLAIMS_SUBMIT' | translate) }}
+          </button>
+          <div *ngIf="claimSubmitted()" class="text-emerald-400 text-xs font-bold uppercase tracking-widest flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">check_circle</span>
+            {{ 'POST_CLOSURE.CLAIMS_SUCCESS' | translate }}
+          </div>
+        </div>
+
+        <!-- Existing claims -->
+        <div *ngIf="transaction?.metadata?.claims?.length" class="space-y-3 pt-4 border-t border-white/5">
+          <h4 class="text-xs font-bold uppercase tracking-widest text-slate-500">{{ 'POST_CLOSURE.CLAIMS_PREVIOUS' | translate }}</h4>
+          <div *ngFor="let claim of transaction?.metadata?.claims" class="bg-white/5 rounded-lg p-3 space-y-1">
+            <p class="text-sm text-slate-300">{{ claim.text }}</p>
+            <p class="text-[10px] text-slate-500">{{ claim.submittedAt | date:'MMM d, yyyy h:mm a' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Promo Code -->
+    <div *ngIf="promoCode && promoCodeIsValid" class="glass-card rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent p-8 space-y-4">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-3xl text-emerald-400">redeem</span>
+        <div>
+          <h3 class="text-lg font-bold text-white">{{ 'POST_CLOSURE.PROMO_TITLE' | translate }}</h3>
+          <p class="text-slate-300 text-sm">{{ 'POST_CLOSURE.PROMO_DESC' | translate }}</p>
+        </div>
+      </div>
+      <div class="bg-black/40 border border-emerald-500/30 rounded-xl p-4 flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-400 uppercase tracking-widest font-bold">{{ 'POST_CLOSURE.PROMO_CODE' | translate }}</p>
+          <p class="text-white font-mono text-xl font-bold tracking-wider">{{ promoCode }}</p>
+          <p class="text-xs text-slate-500 mt-1">{{ 'POST_CLOSURE.PROMO_DISCOUNT' | translate:{ date: (promoCodeExpiry | date:'MMM d, yyyy') } }}</p>
+        </div>
+        <span class="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">{{ 'POST_CLOSURE.PROMO_ACTIVE' | translate }}</span>
+      </div>
+    </div>
+  </div>
 </div>

@@ -28,6 +28,24 @@ export interface Transaction {
     utilityNotes?: string;
     emergencyContact?: string;
     contracts?: string[];
+    checkInAt?: string;
+    checkOutAt?: string;
+    claims?: { text: string; submittedAt: string }[];
+    promoCode?: string;
+    promoCodeExpiry?: string;
+    reviewRequestedAt?: string;
+      welcomeSelfie?: string;
+  };
+  agency?: {
+    name: string;
+    paymentMethods: {
+      type: 'bank' | 'mobile' | 'poste';
+      provider: string;
+      rib?: string;
+      accountNumber?: string;
+      accountHolder: string;
+      bankName?: string;
+    }[];
   };
   status: 'CURRENT' | 'EXPIRING_SOON' | 'OVERDUE' | 'CLOSED';
   identityVerificationStatus?: string;

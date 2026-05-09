@@ -1,1 +1,0 @@
-add /day or /week or /month here `Tarif Quotidien 323 TND` in page http://localhost:4200/announce/69f6052d00be23d10608cbfa based on paymentType, dont show anything if it is a direct sale

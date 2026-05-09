@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TransactionsService, Transaction } from '../../services/transactions.service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
@@ -13,7 +13,7 @@ import { TransactionStepsService, TransactionStepKey } from '../../services/tran
 @Component({
   selector: 'app-transaction-detail',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe, PhoneInputComponent, CalendarSelectorComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, TranslatePipe, PhoneInputComponent, CalendarSelectorComponent],
   templateUrl: './transaction-detail.component.html',
   styleUrls: ['./transaction-detail.component.scss']
 })
@@ -34,6 +34,17 @@ export class TransactionDetailComponent implements OnInit {
   financialExpanded = signal(false);
   documentsExpanded = signal(false);
   statusExpanded = signal(false);
+
+  // Post-closure
+  showPostClosure = signal(false);
+  welcomeSelfieFile: File | null = null;
+  welcomeSelfiePreview = signal<string | null>(null);
+  selfieUploading = signal(false);
+  checkingIn = signal(false);
+  checkingOut = signal(false);
+  claimText = signal('');
+  claimSubmitting = signal(false);
+  claimSubmitted = signal(false);
 
   constructor(
     private fb: FormBuilder,
@@ -94,6 +105,7 @@ export class TransactionDetailComponent implements OnInit {
     this.transactionsService.findOne(id).subscribe({
       next: (data) => {
         this.transaction = data;
+        this.showPostClosure.set(data.status === 'CLOSED');
         const timeline = data.timeline ?? {};
 
         // Load property calendar data if payment is daily
@@ -283,5 +295,112 @@ export class TransactionDetailComponent implements OnInit {
     );
 
      this.router.navigate(['/dashboard/transactions', this.transaction._id, 'contract']);
+  }
+
+  // Post-closure methods
+
+  isClosed(): boolean {
+    return this.transaction?.status === 'CLOSED';
+  }
+
+  get wifiCode(): string {
+    return this.transaction?.propertyId?.wifiCode || '';
+  }
+
+  get welcomeSelfieUrl(): string | null {
+    return this.transaction?.metadata?.welcomeSelfie || null;
+  }
+
+  get checkInAt(): string | null {
+    return this.transaction?.metadata?.checkInAt || null;
+  }
+
+  get checkOutAt(): string | null {
+    return this.transaction?.metadata?.checkOutAt || null;
+  }
+
+  get promoCode(): string | null {
+    return this.transaction?.metadata?.promoCode || null;
+  }
+
+  get promoCodeExpiry(): string | null {
+    return this.transaction?.metadata?.promoCodeExpiry || null;
+  }
+
+  get promoCodeIsValid(): boolean {
+    if (!this.promoCodeExpiry) return false;
+    return new Date(this.promoCodeExpiry) > new Date();
+  }
+
+  hasContract(): boolean {
+    return (this.transaction?.metadata?.contracts?.length ?? 0) > 0;
+  }
+
+  getContractLinks(): string[] {
+    return this.transaction?.metadata?.contracts || [];
+  }
+
+  canShowCheckIn(): boolean {
+    return this.isClosed() && !this.checkInAt;
+  }
+
+  canShowCheckOut(): boolean {
+    return this.isClosed() && !!this.checkInAt && !this.checkOutAt;
+  }
+
+  onSelfieSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) {
+      this.welcomeSelfieFile = file;
+      const previewUrl = URL.createObjectURL(file);
+      this.welcomeSelfiePreview.set(previewUrl);
+    }
+  }
+
+  doCheckIn() {
+    if (!this.welcomeSelfieFile || !this.transaction?._id) return;
+    this.checkingIn.set(true);
+    this.transactionsService.uploadFile(this.welcomeSelfieFile).subscribe({
+      next: (result) => {
+        this.transactionsService.checkIn(this.transaction!._id!, result.url).subscribe({
+          next: (updated) => {
+            this.transaction = updated;
+            this.showPostClosure.set(true);
+            this.checkingIn.set(false);
+          },
+          error: () => this.checkingIn.set(false),
+        });
+      },
+      error: () => this.checkingIn.set(false),
+    });
+  }
+
+  doCheckOut() {
+    if (this.transaction?._id && !confirm('Are you sure you want to check out?')) return;
+    this.checkingOut.set(true);
+    this.transactionsService.checkOut(this.transaction!._id!).subscribe({
+      next: (updated) => {
+        this.transaction = updated;
+        this.checkingOut.set(false);
+      },
+      error: () => this.checkingOut.set(false),
+    });
+  }
+
+  submitClaim() {
+    const text = this.claimText()?.trim();
+    if (!text || !this.transaction?._id) return;
+    this.claimSubmitting.set(true);
+    this.transactionsService.submitClaim(this.transaction._id, text).subscribe({
+      next: (updated) => {
+        this.transaction = updated;
+        this.claimSubmitted.set(true);
+        this.claimText.set('');
+        this.claimSubmitting.set(false);
+        setTimeout(() => this.claimSubmitted.set(false), 3000);
+      },
+      error: () => this.claimSubmitting.set(false),
+    });
   }
 }

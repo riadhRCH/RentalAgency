@@ -1,3 +1,0 @@
-mobile version should be similar to web version,
-lets do smth that tricks the mobile users to see a desktop like version from the frontend appear
-like we do a tiny zoom-out in mobile or smth

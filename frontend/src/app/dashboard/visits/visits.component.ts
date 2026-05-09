@@ -69,6 +69,10 @@ export class VisitsComponent implements OnInit {
     return this.i18n.translate(`PROPERTIES.TYPE_${type.toUpperCase()}`);
   }
 
+  openVisitDetail(id: string): void {
+    this.router.navigate(['/dashboard/overview/visits', id]);
+  }
+
   copyVisitLink(id: string): void {
     const url = `${window.location.origin}/visit-request/${id}`;
     navigator.clipboard.writeText(url).then(() => {

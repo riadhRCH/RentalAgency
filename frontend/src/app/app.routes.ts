@@ -10,6 +10,7 @@ import { LeadsComponent } from './dashboard/leads/leads.component';
 import { AddLeadComponent } from './dashboard/leads/add-lead/add-lead.component';
 import { ConfigComponent } from './dashboard/config/config.component';
 import { VisitsComponent } from './dashboard/visits/visits.component';
+import { VisitDetailComponent } from './dashboard/visits/visit-detail.component';
 import { PropertiesMgmtComponent } from './dashboard/properties/properties-mgmt.component';
 import { AddPropertyComponent } from './dashboard/properties/add-property/add-property.component';
 import { TeamsComponent } from './dashboard/teams/teams.component';
@@ -60,6 +61,7 @@ export const routes: Routes = [
                     { path: '', redirectTo: 'leads', pathMatch: 'full' },
                     { path: 'leads', component: LeadsComponent },
                     { path: 'visits', component: VisitsComponent },
+                    { path: 'visits/:id', component: VisitDetailComponent },
                     { path: 'transactions', component: TransactionsListComponent }
                 ]
             },

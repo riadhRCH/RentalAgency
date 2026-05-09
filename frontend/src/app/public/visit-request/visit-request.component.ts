@@ -39,6 +39,8 @@ export class VisitRequestComponent implements OnInit {
 
   customerInfoExpanded = signal(true);
   customerInfoDone = signal(false);
+  visitDateDone = signal(false);
+  submitted = signal(false);
 
   private phonePattern = /^(\+\d{1,3})?0?[0-9]{8}$/;
 
@@ -48,7 +50,8 @@ export class VisitRequestComponent implements OnInit {
       lastName: [''],
       phone: ['', [Validators.required, Validators.pattern(this.phonePattern)]],
       email: ['', [Validators.email]],
-      notes: ['']
+      notes: [''],
+      visitDate: ['']
     });
   }
 
@@ -86,7 +89,27 @@ export class VisitRequestComponent implements OnInit {
     if (visit?.notes) {
       this.customerForm.patchValue({ notes: visit.notes });
     }
+    if (visit?.visitDate) {
+      const d = new Date(visit.visitDate);
+      this.customerForm.patchValue({ visitDate: d.toISOString().split('T')[0] });
+      this.visitDateDone.set(true);
+    }
     this.checkCustomerInfoDone();
+  }
+
+  today(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  selectDate(dateStr: string) {
+    this.customerForm.patchValue({ visitDate: dateStr });
+    this.visitDateDone.set(!!dateStr);
+  }
+
+  formatDate(dateStr: string): string {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T12:00:00');
+    return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   }
 
   checkCustomerInfoDone() {
@@ -111,11 +134,13 @@ export class VisitRequestComponent implements OnInit {
             customerName: `${formValue.firstName} ${formValue.lastName}`.trim(),
             customerPhone: formValue.phone,
             customerEmail: formValue.email?.trim() || undefined,
-            notes: formValue.notes || undefined
+            notes: formValue.notes || undefined,
+            visitDate: formValue.visitDate || undefined
           }).subscribe({
             next: () => {
               this.saving.set(false);
               this.customerInfoDone.set(true);
+              this.submitted.set(true);
             },
             error: () => {
               this.saving.set(false);

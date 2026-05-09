@@ -1,0 +1,10 @@
+in page http://localhost:4200/announce/69ff3b90dfee0ca6bee091fe
+transactiosn are created with a wrong propertyId in payload, frontend is sending announceId since that page loads an announce
+- make frontend send announceId instead of propertyId in api `Request URL
+http://localhost:3000/transactions/public
+Request Method
+POST
+Status Code
+` 
+- save both correct announceId and propertyId in transaction
+- check of a same issue is hapening when creating a lead or a visit request

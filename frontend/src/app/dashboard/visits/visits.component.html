@@ -24,29 +24,29 @@
   </header>
 
   <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-    <!-- Personnel Card Template -->
+    <!-- Personnel Card Template (matches transactions Client column) -->
     <ng-template #visitorCard let-visitor="visitor">
-      <div class="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity"
-           (click)="visitor?._id && $event.stopPropagation(); visitor?._id && router.navigate(['/dashboard/personnel/profile', visitor._id])">
+      <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 cursor-pointer hover:bg-white/10 transition-all"
+           (click)="$event.stopPropagation(); visitor?._id && router.navigate(['/dashboard/personnel/profile', visitor._id])">
         <div class="h-10 w-10 rounded-full overflow-hidden flex-shrink-0" [ngClass]="visitor?.profilePicture ? '' : 'bg-primary/10 flex items-center justify-center text-primary'">
           <img *ngIf="visitor?.profilePicture" [src]="visitor.profilePicture" alt="" class="w-full h-full object-cover" />
           <span *ngIf="!visitor?.profilePicture" class="material-symbols-outlined">person</span>
         </div>
-        <div class="flex flex-col">
-          <span class="font-bold text-slate-300">{{ visitor?.phone || 'N/A' }}</span>
-          <span class="text-[10px] text-slate-500 uppercase tracking-widest">{{ visitor?.firstName }} {{ visitor?.lastName }}</span>
+        <div class="min-w-0">
+          <div class="text-xs font-bold text-slate-200 truncate">{{ visitor?.firstName }} {{ visitor?.lastName }}</div>
+          <div class="text-[10px] text-slate-500">{{ visitor?.phone || 'N/A' }}</div>
         </div>
       </div>
     </ng-template>
     <!-- Customer info fallback -->
     <ng-template #customerInfo let-visit="visit">
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5">
         <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
           <span class="material-symbols-outlined">person</span>
         </div>
-        <div class="flex flex-col">
-          <span class="font-bold text-slate-300">{{ visit?.customerPhone || 'N/A' }}</span>
-          <span class="text-[10px] text-slate-500 uppercase tracking-widest">{{ visit?.customerName || 'Public Request' }}</span>
+        <div class="min-w-0">
+          <div class="text-xs font-bold text-slate-200 truncate">{{ visit?.customerName || 'Public Request' }}</div>
+          <div class="text-[10px] text-slate-500">{{ visit?.customerPhone || 'N/A' }}</div>
         </div>
       </div>
     </ng-template>
@@ -79,7 +79,7 @@
               </app-empty-state>
             </td>
           </tr>
-          <tr *ngFor="let visit of visits" class="group hover:bg-white/5 transition-colors">
+          <tr *ngFor="let visit of visits" class="group hover:bg-white/5 transition-colors cursor-pointer" (click)="openVisitDetail(visit._id)">
             <td class="p-6">
               <div class="flex items-center gap-4">
                 <div class="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">

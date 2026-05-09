@@ -1,0 +1,18 @@
+this api
+
+quest URL
+http://localhost:3000/visits/public/69ff3954a41ea4fd2b057ebd
+Request Method
+PATCH
+
+{
+    "customerName": "riadh chercheri",
+    "customerPhone": "+2161122334",
+    "customerEmail": "rchercheri@gmail.com",
+    "visitDate": "2026-05-16"
+}
+
+is not saving visitDate in db correctly 
+
+also the `Visit Date` is the most important info in http://localhost:4200/visit-request/69ff3954a41ea4fd2b057ebd page
+make it more visible / more fancy, (make two steps in that page, step one visit date (new), step two your information)

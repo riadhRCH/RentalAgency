@@ -44,7 +44,7 @@ export class VisitRequestsService {
   }
 
   async updatePublic(id: string, dto: any) {
-    const allowedFields = ['customerName', 'customerPhone', 'customerEmail', 'notes'];
+    const allowedFields = ['customerName', 'customerPhone', 'customerEmail', 'notes', 'visitDate'];
     const update: any = {};
     for (const field of allowedFields) {
       if (dto[field] !== undefined) update[field] = dto[field];

@@ -54,7 +54,7 @@
         </div>
         <app-circular-gallery [items]="galleryItems"></app-circular-gallery>
     </section-->
-    <section class="py-24 bg-gradient-to-b from-background-dark to-background-dark/50">
+    <section id="agencies" class="py-24 bg-gradient-to-b from-background-dark to-background-dark/50">
         <div class="max-w-7xl mx-auto px-4">
              <h2 class="section-title">The Doghmani Signature Partners</h2>
             <div class="partners-grid" *ngIf="agencies.length">
@@ -94,7 +94,7 @@
     </section-->
     <section class="py-6 px-4 max-w-7xl mx-auto">
         <!-- Rental Collection Section -->
-        <div class="mb-24">
+        <div id="rental" class="mb-24">
             <h2 class="section-title">Rental Collection</h2>
             <div class="horizontal-scroll-container" *ngIf="!loading() && rentalAnnouncements.length">
                 <app-property-card 
@@ -111,7 +111,7 @@
         </div>
 
         <!-- Sales Selection Section -->
-        <div class="mb-24">
+        <div id="sales" class="mb-24">
               <h2 class="section-title">Sales Selection</h2>
             <div class="horizontal-scroll-container" *ngIf="!loading() && saleAnnouncements.length">
                 <app-property-card 
@@ -128,7 +128,7 @@
         </div>
 
         <!-- Short-Term Edition Section -->
-        <div>
+        <div id="family-escape">
              <h2 class="section-title">Family Escape</h2>
             <div class="horizontal-scroll-container" *ngIf="!loading() && shortTermAnnouncements.length">
                 <app-property-card 

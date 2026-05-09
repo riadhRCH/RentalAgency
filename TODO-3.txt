@@ -1,0 +1,11 @@
+in this page http://localhost:4200/announce/69f6053000be23d10608cbfd
+
+we should show 
+- 'Faire une Reservation' section if PaymentType is DAILY (this is done and working fine, it will create a transaction)
+-  'demandé une visite' section if PaymentType is WEEKLY or MONTHLY (this is TODO), 
+    - a visit-request document should be created in this case with imputted user phone , 
+    - user shoud be redirected to a public visit-request page to track operation progress, create a component similar to http://localhost:4200/transaction/69ff0fa4f067aa0e0f6bfe25 (name it smth like http://localhost:4200/visit-request/:id ) page that have all steps except for documents and payment )
+    - in dashboard the document should appear in visit-requests, with a copy link functionnality
+- 'initié le payment' section if PaymentType is DIRECT_SALE (this is TODO), 
+    - a lead document should be created in this case with imputted user phone , 
+    - user should be redirected to thank-you page and a lead should appear in dashboard

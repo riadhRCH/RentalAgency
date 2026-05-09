@@ -23,6 +23,14 @@ export class PublicNavbarComponent {
     this.mobileMenuOpen = false;
   }
 
+  scrollTo(sectionId: string): void {
+    this.mobileMenuOpen = false;
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
   navigateToDashboard(): void {
     this.mobileMenuOpen = false;
     this.router.navigate(['/dashboard/overview']);

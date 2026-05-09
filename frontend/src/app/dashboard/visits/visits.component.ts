@@ -68,4 +68,11 @@ export class VisitsComponent implements OnInit {
 
     return this.i18n.translate(`PROPERTIES.TYPE_${type.toUpperCase()}`);
   }
+
+  copyVisitLink(id: string): void {
+    const url = `${window.location.origin}/visit-request/${id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      alert(this.i18n.translate('TRANSACTIONS.LINK_COPIED'));
+    });
+  }
 }

@@ -22,6 +22,7 @@ import { PropertyDetailsComponent } from './public/property-details/property-det
 import { ThankYouComponent } from './public/thank-you/thank-you.component';
 import { CarouselComponent } from './public/carousel/carousel.component';
 import { TransactionComponent } from './public/transaction/transaction.component';
+import { VisitRequestComponent } from './public/visit-request/visit-request.component';
 import { BankDetailsComponent } from './dashboard/bank-details/bank-details.component';
 import { OwnersPageComponent } from './dashboard/personnel/owners-page/owners-page.component';
 import { ProfilePageComponent } from './dashboard/personnel/profile-page/profile-page.component';
@@ -37,6 +38,7 @@ export const routes: Routes = [
     { path: 'search', component: AnnouncementsSearchComponent },
     { path: 'announce/:id', component: PropertyDetailsComponent },
     { path: 'transaction/:id', component: TransactionComponent },
+    { path: 'visit-request/:id', component: VisitRequestComponent },
     { path: 'owner-dashboard/:token', component: OwnerDashboardComponent },
     { path: 'owner-dashboard/:token/payments', component: OwnerDashboardComponent }, // Will handle multiple views in component
     { path: 'owner-dashboard/:token/profile', component: OwnerDashboardComponent }, // Profile view

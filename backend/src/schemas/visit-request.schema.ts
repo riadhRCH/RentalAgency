@@ -9,14 +9,23 @@ export class VisitRequest {
   @Prop({ type: Types.ObjectId, ref: 'Property', required: true })
   propertyId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Personnel', required: true })
+  @Prop({ type: Types.ObjectId, ref: 'Personnel' })
   visitorId: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'RentalAgency', required: true })
   agencyId: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop()
   visitDate: Date;
+
+  @Prop()
+  customerName: string;
+
+  @Prop()
+  customerPhone: string;
+
+  @Prop()
+  customerEmail: string;
 
   @Prop({
     type: String,

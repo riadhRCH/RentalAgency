@@ -231,13 +231,25 @@
             </section>
           </div>
 
-          <!-- Right Side - Reservation Card (Smaller on web, same on mobile) -->
+          <!-- Right Side - Reservation / Visit / Lead Card -->
           <div class="lg:col-span-1">
             <section class="sticky top-8 space-y-6 bg-white/5 border border-white/10 rounded-2xl p-6">
-              <h2 class="text-xl font-serif font-bold text-white uppercase tracking-widest flex items-center gap-3 border-b border-white/10 pb-4">
-                <span class="material-symbols-outlined text-primary">calendar_today</span>
-                {{ 'PROPERTY_DETAILS.MAKE_RESERVATION' | translate }}
-              </h2>
+              @if (property()?.paymentFrequency === 'DAILY') {
+                <h2 class="text-xl font-serif font-bold text-white uppercase tracking-widest flex items-center gap-3 border-b border-white/10 pb-4">
+                  <span class="material-symbols-outlined text-primary">calendar_today</span>
+                  {{ 'PROPERTY_DETAILS.MAKE_RESERVATION' | translate }}
+                </h2>
+              } @else if (property()?.paymentFrequency === 'WEEKLY' || property()?.paymentFrequency === 'MONTHLY') {
+                <h2 class="text-xl font-serif font-bold text-white uppercase tracking-widest flex items-center gap-3 border-b border-white/10 pb-4">
+                  <span class="material-symbols-outlined text-primary">visibility</span>
+                  Request a Visit
+                </h2>
+              } @else if (property()?.paymentFrequency === PaymentType.DIRECT_SALE) {
+                <h2 class="text-xl font-serif font-bold text-white uppercase tracking-widest flex items-center gap-3 border-b border-white/10 pb-4">
+                  <span class="material-symbols-outlined text-primary">payments</span>
+                  Initiate Payment
+                </h2>
+              }
 
               <form [formGroup]="reservationForm" (ngSubmit)="makeReservation()" class="space-y-4">
                 <!-- Customer Phone -->
@@ -273,21 +285,53 @@
                   </div>
                 </div>
 
-                <!-- Make Reservation Button - Always Enabled -->
-                <button
-                  type="button"
-                  (click)="initiateReservation()"
-                  [disabled]="isSubmitting()"
-                  class="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold uppercase tracking-widest py-3 rounded-lg transition-all flex items-center justify-center gap-2 text-sm"
-                >
-                  @if (isSubmitting()) {
-                    <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
-                    {{ 'PROPERTY_DETAILS.PROCESSING' | translate }}
-                  } @else {
-                    <span class="material-symbols-outlined text-sm">check_circle</span>
-                    {{ 'PROPERTY_DETAILS.MAKE_RESERVATION' | translate }}
-                  }
-                </button>
+                <!-- Action Button -->
+                @if (property()?.paymentFrequency === 'DAILY') {
+                  <button
+                    type="button"
+                    (click)="initiateReservation()"
+                    [disabled]="isSubmitting()"
+                    class="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold uppercase tracking-widest py-3 rounded-lg transition-all flex items-center justify-center gap-2 text-sm"
+                  >
+                    @if (isSubmitting()) {
+                      <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                      {{ 'PROPERTY_DETAILS.PROCESSING' | translate }}
+                    } @else {
+                      <span class="material-symbols-outlined text-sm">check_circle</span>
+                      {{ 'PROPERTY_DETAILS.MAKE_RESERVATION' | translate }}
+                    }
+                  </button>
+                } @else if (property()?.paymentFrequency === 'WEEKLY' || property()?.paymentFrequency === 'MONTHLY') {
+                  <button
+                    type="button"
+                    (click)="initiateVisitRequest()"
+                    [disabled]="isSubmitting()"
+                    class="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold uppercase tracking-widest py-3 rounded-lg transition-all flex items-center justify-center gap-2 text-sm"
+                  >
+                    @if (isSubmitting()) {
+                      <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                      Processing...
+                    } @else {
+                      <span class="material-symbols-outlined text-sm">visibility</span>
+                      Request a Visit
+                    }
+                  </button>
+                } @else if (property()?.paymentFrequency === PaymentType.DIRECT_SALE) {
+                  <button
+                    type="button"
+                    (click)="initiateLead()"
+                    [disabled]="isSubmitting()"
+                    class="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold uppercase tracking-widest py-3 rounded-lg transition-all flex items-center justify-center gap-2 text-sm"
+                  >
+                    @if (isSubmitting()) {
+                      <span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
+                      Processing...
+                    } @else {
+                      <span class="material-symbols-outlined text-sm">payments</span>
+                      Initiate Payment
+                    }
+                  </button>
+                }
               </form>
             </section>
           </div>

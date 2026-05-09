@@ -27,14 +27,26 @@
     <!-- Personnel Card Template -->
     <ng-template #visitorCard let-visitor="visitor">
       <div class="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity"
-           (click)="$event.stopPropagation(); router.navigate(['/dashboard/personnel/profile', visitor?._id])">
+           (click)="visitor?._id && $event.stopPropagation(); visitor?._id && router.navigate(['/dashboard/personnel/profile', visitor._id])">
         <div class="h-10 w-10 rounded-full overflow-hidden flex-shrink-0" [ngClass]="visitor?.profilePicture ? '' : 'bg-primary/10 flex items-center justify-center text-primary'">
           <img *ngIf="visitor?.profilePicture" [src]="visitor.profilePicture" alt="" class="w-full h-full object-cover" />
           <span *ngIf="!visitor?.profilePicture" class="material-symbols-outlined">person</span>
         </div>
         <div class="flex flex-col">
-          <span class="font-bold text-slate-300">{{ visitor?.phone }}</span>
+          <span class="font-bold text-slate-300">{{ visitor?.phone || 'N/A' }}</span>
           <span class="text-[10px] text-slate-500 uppercase tracking-widest">{{ visitor?.firstName }} {{ visitor?.lastName }}</span>
+        </div>
+      </div>
+    </ng-template>
+    <!-- Customer info fallback -->
+    <ng-template #customerInfo let-visit="visit">
+      <div class="flex items-center gap-4">
+        <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+          <span class="material-symbols-outlined">person</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-bold text-slate-300">{{ visit?.customerPhone || 'N/A' }}</span>
+          <span class="text-[10px] text-slate-500 uppercase tracking-widest">{{ visit?.customerName || 'Public Request' }}</span>
         </div>
       </div>
     </ng-template>
@@ -80,13 +92,16 @@
               </div>
             </td>
             <td class="p-6">
-              <ng-container *ngTemplateOutlet="visitorCard; context: { visitor: visit.visitorId }"></ng-container>
+              <ng-container *ngIf="visit.visitorId; else customerInfoRef" [ngTemplateOutlet]="visitorCard" [ngTemplateOutletContext]="{ visitor: visit.visitorId }"></ng-container>
+              <ng-template #customerInfoRef>
+                <ng-container *ngTemplateOutlet="customerInfo; context: { visit: visit }"></ng-container>
+              </ng-template>
             </td>
             <td class="p-6">
               <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                {{ visit.visitDate | date:'MMM d, yyyy' }}
-                <span class="block text-[9px] text-slate-500 font-normal lowercase mt-1">
-                  {{ 'COMMON.AT_TIME' | translate:{ time: (visit.visitDate | date:'h:mm a') } }}
+                {{ visit.visitDate ? (visit.visitDate | date:'MMM d, yyyy') : 'Not scheduled' }}
+                <span class="block text-[9px] text-slate-500 font-normal lowercase mt-1" *ngIf="visit.visitDate">
+                  at {{ visit.visitDate | date:'h:mm a' }}
                 </span>
               </div>
             </td>
@@ -109,6 +124,10 @@
             </td>
             <td class="p-6 text-right">
               <div class="flex items-center justify-end gap-3">
+                <button (click)="copyVisitLink(visit._id)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-primary transition-all"
+                   [title]="'Copy link'">
+                  <span class="material-symbols-outlined text-sm">link</span>
+                </button>
                 <a [routerLink]="['/dashboard/rentals/provision']" [queryParams]="{ visitId: visit._id }" 
                    class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-emerald-500 transition-all"
                    [title]="'LEADS.PROVISION_RENTAL' | translate">

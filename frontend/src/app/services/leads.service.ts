@@ -59,6 +59,10 @@ export class LeadsService {
     return this.http.post<Lead>(this.apiUrl, data);
   }
 
+  createPublicLead(data: Partial<Lead>): Observable<Lead> {
+    return this.http.post<Lead>(`${this.apiUrl}/public`, data);
+  }
+
   updateLead(id: string, data: Partial<Lead>): Observable<Lead> {
     return this.http.patch<Lead>(`${this.apiUrl}/${id}`, data);
   }

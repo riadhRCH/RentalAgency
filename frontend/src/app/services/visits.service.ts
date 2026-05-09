@@ -16,9 +16,12 @@ export interface VisitVisitorProfile {
 export interface VisitRequest {
   _id: string;
   propertyId: any;
-  visitorId: VisitVisitorProfile;
+  visitorId?: VisitVisitorProfile;
   agencyId: string;
-  visitDate: Date;
+  visitDate?: Date;
+  customerName?: string;
+  customerPhone?: string;
+  customerEmail?: string;
   status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
   notes: string;
   createdAt: Date;
@@ -56,5 +59,17 @@ export class VisitsService {
 
   deleteVisit(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  createPublic(data: any): Observable<VisitRequest> {
+    return this.http.post<VisitRequest>(`${this.apiUrl}/public`, data);
+  }
+
+  getPublicVisit(id: string): Observable<VisitRequest> {
+    return this.http.get<VisitRequest>(`${this.apiUrl}/public/${id}`);
+  }
+
+  updatePublicVisit(id: string, data: any): Observable<VisitRequest> {
+    return this.http.patch<VisitRequest>(`${this.apiUrl}/public/${id}`, data);
   }
 }

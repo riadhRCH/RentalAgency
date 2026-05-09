@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AgencyGuard } from '../auth/agency.guard';
+import { Public } from '../auth/public.decorator';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { LeadsService } from './leads.service';
@@ -20,6 +21,12 @@ import { LeadsService } from './leads.service';
 @Controller('leads')
 export class LeadsController {
   constructor(private readonly leadsService: LeadsService) {}
+
+  @Public()
+  @Post('public')
+  async createPublic(@Body() dto: CreateLeadDto) {
+    return this.leadsService.createPublic(dto);
+  }
 
   @Get()
   findAll(

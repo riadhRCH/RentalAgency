@@ -1,1 +1,3 @@
-in the navbar shown in http://localhost:4200/ page, i want to replace current nav items (HOME, A PROPOS, AGENCE) with these (AGENCIES, FAMILY ESCAPE, SALES, RENTAL) and each nav link should do a smooth scrolling to corresponding section in http://localhost:4200/ page
+mobile version should be similar to web version,
+lets do smth that tricks the mobile users to see a desktop like version from the frontend appear
+like we do a tiny zoom-out in mobile or smth

@@ -8,6 +8,10 @@ import {
 
 export class CreateLeadDto {
   @IsString()
+  @IsOptional()
+  agencyId?: string;
+
+  @IsString()
   @IsNotEmpty()
   customerPhone: string;
 

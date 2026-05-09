@@ -1,0 +1,131 @@
+<app-public-navbar></app-public-navbar>
+
+<div class="min-h-screen bg-background-dark pt-24 pb-12">
+  <div class="p-8 max-w-4xl mx-auto space-y-12">
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+          Visit Request
+        </h1>
+        <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+          Complete your visit request information
+        </p>
+      </div>
+    </header>
+
+    <div *ngIf="loading()" class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+
+    <div *ngIf="!loading() && visitRequest()" class="space-y-8">
+      <!-- Property Info -->
+      <div class="glass-card rounded-2xl border border-white/10 p-6">
+        <h3 class="text-lg font-bold text-white uppercase tracking-wider mb-4">
+          Selected Property
+        </h3>
+        <div class="flex flex-col lg:flex-row gap-6">
+          <div class="flex-1">
+            <div *ngIf="visitRequest()?.propertyId?.photos && visitRequest()?.propertyId?.photos.length > 0" class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+              <img
+                *ngFor="let photo of visitRequest()?.propertyId?.photos.slice(0, 6)"
+                [src]="photo"
+                [alt]="'Property photo'"
+                class="w-full h-32 object-cover rounded-lg border border-white/10"
+              />
+            </div>
+            <div class="space-y-2">
+              <h4 class="text-white font-semibold">{{ visitRequest()?.propertyId?.reference }}</h4>
+              <p class="text-slate-400 text-sm">{{ visitRequest()?.propertyId?.address }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Information Step -->
+      <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+        <button
+          type="button"
+          (click)="customerInfoExpanded.set(!customerInfoExpanded())"
+          class="w-full p-8 flex items-center justify-between hover:bg-white/5 transition-colors"
+        >
+          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
+            <span class="material-symbols-outlined" [class.text-primary]="customerInfoDone()" [class.text-slate-500]="!customerInfoDone()">
+              {{ customerInfoDone() ? 'check_circle' : 'radio_button_unchecked' }}
+            </span>
+            Your Information
+          </h2>
+          <span class="material-symbols-outlined transition-transform" [class.rotate-180]="!customerInfoExpanded()">
+            expand_more
+          </span>
+        </button>
+
+        <div *ngIf="customerInfoExpanded()" class="animate-in fade-in slide-in-from-top-2 duration-200 px-8 pb-8 space-y-6 border-t border-white/5">
+          <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">First Name</label>
+                <input type="text" formControlName="firstName" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+              </div>
+              <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Last Name</label>
+                <input type="text" formControlName="lastName" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+              </div>
+              <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Phone Number</label>
+                <app-phone-input formControlName="phone" [placeholder]="'Phone Number'"></app-phone-input>
+                @if (customerForm.get('phone')?.touched && customerForm.get('phone')?.invalid) {
+                  <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-xs">error</span>
+                    @if (customerForm.get('phone')?.hasError('required')) {
+                      Phone number is required
+                    } @else if (customerForm.get('phone')?.hasError('pattern')) {
+                      Invalid phone format
+                    }
+                  </div>
+                }
+              </div>
+              <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Email</label>
+                <input type="email" formControlName="email" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
+                @if (customerForm.get('email')?.touched && customerForm.get('email')?.hasError('email')) {
+                  <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-xs">error</span>
+                    Invalid email format
+                  </div>
+                }
+              </div>
+              <div class="space-y-2 md:col-span-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Notes</label>
+                <textarea formControlName="notes" rows="3" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" placeholder="Any additional information..."></textarea>
+              </div>
+            </div>
+
+            <div class="flex justify-end">
+              <button
+                type="submit"
+                [disabled]="saving() || !customerForm.valid"
+                class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all"
+              >
+                {{ saving() ? 'Submitting...' : 'Submit Request' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Success message after submission -->
+      <div *ngIf="customerInfoDone() && !customerInfoExpanded()" class="glass-card rounded-2xl border border-emerald-500/30 p-8 text-center space-y-4">
+        <span class="material-symbols-outlined text-5xl text-emerald-400">check_circle</span>
+        <h2 class="text-2xl font-bold text-white">Request Submitted!</h2>
+        <p class="text-slate-400">Your visit request has been submitted. The agency will contact you shortly to schedule a visit.</p>
+      </div>
+    </div>
+
+    <div *ngIf="!loading() && !visitRequest()" class="text-center py-12">
+      <span class="material-symbols-outlined text-5xl text-slate-500">error</span>
+      <p class="mt-4 text-slate-400">Visit request not found</p>
+    </div>
+  </div>
+</div>
+
+<app-public-footer></app-public-footer>

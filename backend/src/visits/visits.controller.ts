@@ -5,18 +5,38 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AgencyGuard } from '../auth/agency.guard';
+import { Public } from '../auth/public.decorator';
 import { VisitRequestsService } from './visits.service';
 
 @UseGuards(JwtAuthGuard, AgencyGuard)
 @Controller('visits')
 export class VisitRequestsController {
   constructor(private readonly visitsService: VisitRequestsService) {}
+
+  @Public()
+  @Post('public')
+  async createPublic(@Body() dto: any) {
+    return this.visitsService.createPublic(dto);
+  }
+
+  @Public()
+  @Get('public/:id')
+  async findOnePublic(@Param('id') id: string) {
+    return this.visitsService.findOnePublic(id);
+  }
+
+  @Public()
+  @Patch('public/:id')
+  async updatePublic(@Param('id') id: string, @Body() dto: any) {
+    return this.visitsService.updatePublic(id, dto);
+  }
 
   @Get()
   findAll(

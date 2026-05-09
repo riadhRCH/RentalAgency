@@ -66,6 +66,18 @@ export class LeadsService {
     return lead;
   }
 
+  async createPublic(dto: CreateLeadDto) {
+    const lead = await this.leadModel.create({
+      agencyId: dto.agencyId ? new Types.ObjectId(dto.agencyId) : undefined,
+      customerPhone: dto.customerPhone,
+      customerName: dto.customerName,
+      tags: dto.tags || [],
+      notes: dto.notes,
+      activities: [{ type: 'MANUAL' }],
+    });
+    return lead;
+  }
+
   async create(agencyId: string, dto: CreateLeadDto) {
     const lead = await this.leadModel.create({
       agencyId: new Types.ObjectId(agencyId),

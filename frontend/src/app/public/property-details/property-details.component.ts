@@ -6,6 +6,8 @@ import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { PropertiesService, Property } from '../../services/properties.service';
 import { AnnouncementsService, Announcement } from '../../services/announcements.service';
 import { TransactionsService } from '../../services/transactions.service';
+import { VisitsService } from '../../services/visits.service';
+import { LeadsService } from '../../services/leads.service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
 import { PublicNavbarComponent } from '../../shared/components/public-navbar/public-navbar.component';
@@ -28,6 +30,8 @@ export class PropertyDetailsComponent implements OnInit {
   private propertiesService = inject(PropertiesService);
   private announcementsService = inject(AnnouncementsService);
   private transactionsService = inject(TransactionsService);
+  private visitsService = inject(VisitsService);
+  private leadsService = inject(LeadsService);
   private fb = inject(FormBuilder);
 
   @ViewChild(GoogleMap) googleMap!: GoogleMap;
@@ -61,6 +65,7 @@ export class PropertyDetailsComponent implements OnInit {
   reservationError = signal<string | null>(null);
   phoneInputInvalid = signal(false);
   transactionId = signal<string | null>(null);
+  PaymentType = PaymentType;
 
   private phonePattern = /^(\+\d{1,3})?0?[0-9]{8}$/;
 
@@ -172,6 +177,71 @@ export class PropertyDetailsComponent implements OnInit {
     }
 
     this.submitReservation([]);
+  }
+
+  initiateVisitRequest(): void {
+    const phoneControl = this.reservationForm.get('customerPhone');
+    
+    if (!phoneControl?.value || phoneControl?.invalid) {
+      this.phoneInputInvalid.set(true);
+      phoneControl?.markAsTouched();
+      return;
+    }
+
+    const prop = this.property();
+    if (!prop) return;
+
+    this.isSubmitting.set(true);
+    this.reservationError.set(null);
+
+    this.visitsService.createPublic({
+      propertyId: prop._id,
+      customerPhone: phoneControl.value,
+      agencyId: prop.agencyId
+    }).subscribe({
+      next: (visit) => {
+        this.isSubmitting.set(false);
+        this.router.navigate(['/visit-request', visit._id]);
+        this.reservationForm.reset();
+        this.phoneInputInvalid.set(false);
+      },
+      error: (err) => {
+        this.isSubmitting.set(false);
+        this.reservationError.set(err.error?.message || 'Failed to create visit request');
+      }
+    });
+  }
+
+  initiateLead(): void {
+    const phoneControl = this.reservationForm.get('customerPhone');
+    
+    if (!phoneControl?.value || phoneControl?.invalid) {
+      this.phoneInputInvalid.set(true);
+      phoneControl?.markAsTouched();
+      return;
+    }
+
+    const prop = this.property();
+    if (!prop) return;
+
+    this.isSubmitting.set(true);
+    this.reservationError.set(null);
+
+    this.leadsService.createPublicLead({
+      agencyId: prop.agencyId,
+      customerPhone: phoneControl.value
+    }).subscribe({
+      next: () => {
+        this.isSubmitting.set(false);
+        this.router.navigate(['/thank-you']);
+        this.reservationForm.reset();
+        this.phoneInputInvalid.set(false);
+      },
+      error: (err) => {
+        this.isSubmitting.set(false);
+        this.reservationError.set(err.error?.message || 'Failed to submit request');
+      }
+    });
   }
 
   getPhoneErrorMessage(): string {

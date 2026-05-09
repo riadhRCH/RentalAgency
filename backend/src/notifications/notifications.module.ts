@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Notification, NotificationSchema } from '../schemas/notification.schema';
 import { Personnel, PersonnelSchema } from '../schemas/personnel.schema';
+import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schema';
 import { NotificationsController } from './notifications.controller';
 import { TwilioService } from './providers/twilio.service';
 import { EmailService } from './providers/email.service';
@@ -12,6 +13,7 @@ import { NotificationService } from './notifications.service';
     MongooseModule.forFeature([
       { name: Notification.name, schema: NotificationSchema },
       { name: Personnel.name, schema: PersonnelSchema },
+      { name: RentalAgency.name, schema: RentalAgencySchema },
     ]),
   ],
   controllers: [NotificationsController],

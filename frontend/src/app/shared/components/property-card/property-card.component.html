@@ -39,6 +39,9 @@
           <span class="material-symbols-outlined">bathtub</span>
           {{ announcement.amenities['bathrooms'] }}
         </span>
+        <span class="amenity" *ngIf="announcement.amenities['airConditionning']">
+          <span class="material-symbols-outlined">ac_unit</span>
+        </span>
       </div>
 
       <button class="action-button" [routerLink]="['/announce', announcement._id]">{{ getButtonText() }}</button>

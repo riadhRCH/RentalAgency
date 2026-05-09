@@ -40,7 +40,11 @@ export class PersonnelService {
   }
 
   createPersonnel(data: any): Observable<Personnel> {
-    return this.http.post<Personnel>(this.apiUrl, data);
+    const sanitized = { ...data };
+    if (sanitized.phone) {
+      sanitized.phone = sanitized.phone.replace(/^\+216/, '');
+    }
+    return this.http.post<Personnel>(this.apiUrl, sanitized);
   }
 
   updatePersonnel(id: string, data: any): Observable<Personnel> {
@@ -52,7 +56,11 @@ export class PersonnelService {
   }
 
   createOrUpdatePersonnel(data: any): Observable<Personnel> {
-    return this.http.post<Personnel>(`${this.apiUrl}/public`, data);
+    const sanitized = { ...data };
+    if (sanitized.phone) {
+      sanitized.phone = sanitized.phone.replace(/^\+216/, '');
+    }
+    return this.http.post<Personnel>(`${this.apiUrl}/public`, sanitized);
   }
 
   generateDashboardToken(id: string): Observable<{ token: string; expiresAt: Date }> {

@@ -5,14 +5,12 @@ import {
   MinLength,
   IsOptional,
 } from 'class-validator';
-import { IsValidPhone } from '../../shared/validators/is-valid-phone.validator';
 
 export class RegisterDto {
   @IsString()
   @IsNotEmpty()
   agencyName: string;
 
-  @IsValidPhone()
   @IsNotEmpty()
   phone: string;
 

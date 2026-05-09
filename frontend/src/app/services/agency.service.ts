@@ -122,4 +122,12 @@ export class AgencyService {
   deletePaymentMethod(index: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/payment-methods/${index}`);
   }
+
+  hasUnreadNotifications(): Observable<{ hasUnread: boolean }> {
+    return this.http.get<{ hasUnread: boolean }>(`${this.apiUrl}/has-unread-notifications`);
+  }
+
+  markNotificationsRead(): Observable<{ success: boolean }> {
+    return this.http.patch<{ success: boolean }>(`${this.apiUrl}/mark-notifications-read`, {});
+  }
 }

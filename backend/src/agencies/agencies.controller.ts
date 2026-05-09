@@ -144,4 +144,20 @@ export class AgenciesController {
   async getStaff(@Request() req) {
     return this.agenciesService.getStaff(req.agencyId.toString());
   }
+
+  // Check if agency has unread notifications
+  @UseGuards(JwtAuthGuard, AgencyGuard)
+  @Get('has-unread-notifications')
+  async hasUnreadNotifications(@Request() req) {
+    const agency = await this.agenciesService.getProfile(req.agencyId.toString());
+    return { hasUnread: agency?.hasUnreadNotification ?? false };
+  }
+
+  // Mark agency notifications as read
+  @UseGuards(JwtAuthGuard, AgencyGuard)
+  @Patch('mark-notifications-read')
+  async markNotificationsRead(@Request() req) {
+    await this.agenciesService.markNotificationsRead(req.agencyId.toString());
+    return { success: true };
+  }
 }

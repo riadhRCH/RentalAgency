@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Notification, NotificationDocument, NotificationType } from '../schemas/notification.schema';
 import { Personnel, PersonnelDocument } from '../schemas/personnel.schema';
+import { RentalAgency, RentalAgencyDocument } from '../schemas/rental-agency.schema';
 import { TwilioService } from './providers/twilio.service';
 import { EmailService } from './providers/email.service';
 
@@ -15,6 +16,8 @@ export class NotificationService {
     private notificationModel: Model<NotificationDocument>,
     @InjectModel(Personnel.name)
     private personnelModel: Model<PersonnelDocument>,
+    @InjectModel(RentalAgency.name)
+    private agencyModel: Model<RentalAgencyDocument>,
     private twilioService: TwilioService,
     private emailService: EmailService,
   ) {}
@@ -45,6 +48,16 @@ export class NotificationService {
       link,
       metadata,
     });
+
+    await this.agencyModel.findOneAndUpdate(
+      {
+        $or: [
+          { ownerId: new Types.ObjectId(personnelId) },
+          { 'staff.personnelId': new Types.ObjectId(personnelId) },
+        ],
+      },
+      { $set: { hasUnreadNotification: true } },
+    );
 
     const preferredContact = personnel.preferredContact || 'PHONE';
 

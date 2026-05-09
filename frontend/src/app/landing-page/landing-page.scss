@@ -128,7 +128,7 @@
   .partners-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
-    padding: 2rem 1rem;
+    padding: 0;
   }
   
   .partner-logo {
@@ -141,7 +141,7 @@
   .partners-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
-    padding: 1.5rem 1rem;
+    padding: 0;
   }
   
   .partner-logo {
@@ -245,11 +245,12 @@
 @media (max-width: 767px) {
   .horizontal-scroll-container {
     gap: 1rem;
-    padding: 0.5rem 1rem 1.25rem;
-    margin: 0 -1rem;
+    padding: 0.5rem 0 1.25rem;
+    margin: 0;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    width: 100%;
 
     &::-webkit-scrollbar {
       display: none;

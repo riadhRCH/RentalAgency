@@ -1,11 +1,13 @@
-import { Component, EventEmitter, Input, Output, inject, OnInit, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../auth/auth.service';
 import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { I18nService } from '../../../i18n/i18n.service';
 import { Language } from '../../../i18n/translations';
 import { NotificationService, Notification } from '../../../services/notification.service';
+import { AgencyService } from '../../../services/agency.service';
 import { Router, RouterModule } from '@angular/router';
+import { interval, Subscription, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -14,7 +16,7 @@ import { Router, RouterModule } from '@angular/router';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   @Input() sidebarCollapsed = false;
   @Input() mobileSidebarOpen = false;
   @Output() menuToggle = new EventEmitter<void>();
@@ -22,14 +24,38 @@ export class NavbarComponent implements OnInit {
   authService = inject(AuthService);
   i18n = inject(I18nService);
   private notificationService = inject(NotificationService);
+  private agencyService = inject(AgencyService);
   private router = inject(Router);
 
   showNotifications = signal(false);
   unreadCount = signal(0);
   notifications = signal<Notification[]>([]);
+  agencyHasUnread = signal(false);
+
+  private pollingSubscription: Subscription | null = null;
 
   ngOnInit() {
     this.loadUnreadCount();
+    this.checkUnreadNotifications();
+    this.startPolling();
+  }
+
+  private checkUnreadNotifications() {
+    this.agencyService.hasUnreadNotifications().subscribe({
+      next: (res) => this.agencyHasUnread.set(res.hasUnread),
+    });
+  }
+
+  ngOnDestroy() {
+    this.pollingSubscription?.unsubscribe();
+  }
+
+  private startPolling() {
+    this.pollingSubscription = interval(60000)
+      .pipe(switchMap(() => this.agencyService.hasUnreadNotifications()))
+      .subscribe({
+        next: (res) => this.agencyHasUnread.set(res.hasUnread),
+      });
   }
 
   setLanguage(language: Language) {
@@ -47,6 +73,9 @@ export class NavbarComponent implements OnInit {
     this.showNotifications.set(!isOpen);
     if (!isOpen) {
       this.loadNotifications();
+      this.agencyService.markNotificationsRead().subscribe({
+        next: () => this.agencyHasUnread.set(false),
+      });
     }
   }
 

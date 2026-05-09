@@ -1,1 +1,0 @@
-implement a red dot in notifications in dashboard navbar, add a field in agency schema (hasUnreadNotification) set it to true when a notification for agency is created, set it to false when notifications are opened from navbar and show a red dot if it is true, do a request/minute check from dashboard to see if agency have new notifications or no

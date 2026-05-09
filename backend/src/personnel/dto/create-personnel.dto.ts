@@ -1,10 +1,8 @@
 import { Transform } from 'class-transformer';
 import { IsEmail, IsEnum, IsIn, IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
-import { IsValidPhone } from '../../shared/validators/is-valid-phone.validator';
 import { PreferredContact } from '../../schemas/personnel.schema';
 
 export class CreatePersonnelDto {
-  @IsValidPhone()
   @IsNotEmpty()
   phone: string;
 

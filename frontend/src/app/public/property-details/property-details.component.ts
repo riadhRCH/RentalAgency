@@ -195,7 +195,7 @@ export class PropertyDetailsComponent implements OnInit {
     this.reservationError.set(null);
 
     this.visitsService.createPublic({
-      propertyId: prop._id,
+      announcementId: prop._id,
       customerPhone: phoneControl.value,
       agencyId: prop.agencyId
     }).subscribe({

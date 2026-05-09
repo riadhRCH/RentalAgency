@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { VisitRequest, VisitRequestDocument } from '../schemas/visit-request.schema';
 import { Property, PropertyDocument } from '../schemas/property.schema';
+import { Announcement, AnnouncementDocument } from '../schemas/announcement.schema';
 
 @Injectable()
 export class VisitRequestsService {
@@ -11,14 +12,21 @@ export class VisitRequestsService {
     private readonly visitModel: Model<VisitRequestDocument>,
     @InjectModel(Property.name)
     private readonly propertyModel: Model<PropertyDocument>,
+    @InjectModel(Announcement.name)
+    private readonly announcementModel: Model<AnnouncementDocument>,
   ) {}
 
   async createPublic(dto: any) {
-    const property = await this.propertyModel.findById(new Types.ObjectId(dto.propertyId));
+    const announcement = await this.announcementModel.findById(
+      new Types.ObjectId(dto.announcementId),
+    );
+    if (!announcement) throw new NotFoundException('Announcement not found');
+
+    const property = await this.propertyModel.findById(announcement.propertyId);
     if (!property) throw new NotFoundException('Property not found');
 
     return this.visitModel.create({
-      propertyId: new Types.ObjectId(dto.propertyId),
+      propertyId: announcement.propertyId,
       agencyId: property.agencyId,
       customerPhone: dto.customerPhone,
       customerName: dto.customerName,

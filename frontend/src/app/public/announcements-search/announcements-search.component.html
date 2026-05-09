@@ -135,6 +135,9 @@
             <span class="material-symbols-outlined text-xs">bathtub</span>
             {{ announcement.amenities['bathrooms'] || 0 }}
           </span>
+          <span class="flex items-center gap-0.5" *ngIf="announcement.amenities['airConditionning']">
+            <span class="material-symbols-outlined text-xs">ac_unit</span>
+          </span>
           <span class="flex items-center gap-0.5">
             <span class="material-symbols-outlined text-xs">visibility</span>
             {{ announcement.views || 0 }}

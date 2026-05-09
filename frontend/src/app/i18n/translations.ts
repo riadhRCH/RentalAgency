@@ -211,6 +211,8 @@ export const translations: Record<Language, Record<string, string>> = {
 'COMMON.REQUIRED': 'Ce champ est obligatoire',
 'COMMON.LOADING': 'Chargement...',
 'COMMON.PREVIEW': 'Aperçu',
+
+    'PROPERTY_FORM.AIR_CONDITIONNING': 'Air Conditioning',
   },
   fr: {
     'LANGUAGE.EN': 'Anglais',
@@ -507,6 +509,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'PROPERTY_FORM.FURNISHED': 'Meuble',
     'PROPERTY_FORM.POOL': 'Piscine',
     'PROPERTY_FORM.GARDEN': 'Jardin',
+    'PROPERTY_FORM.AIR_CONDITIONNING': 'Climatisation',
     'PROPERTY_FORM.IMAGES': 'Images et medias',
     'PROPERTY_FORM.UPLOADING': 'Televersement...',
     'PROPERTY_FORM.ADD_PHOTOS': 'Ajouter des photos',

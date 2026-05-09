@@ -70,6 +70,9 @@ export class RentalAgency {
 
   @Prop()
   logo?: string;
+
+  @Prop({ default: false })
+  hasUnreadNotification: boolean;
 }
 
 export const RentalAgencySchema = SchemaFactory.createForClass(RentalAgency);

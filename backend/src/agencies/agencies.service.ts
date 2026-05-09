@@ -60,7 +60,7 @@ export class AgenciesService {
   async getProfile(agencyId: string) {
     const agency = await this.agencyModel
       .findById(agencyId)
-      .select('name logo settings paymentMethods ownerId services');
+      .select('name logo settings paymentMethods ownerId services hasUnreadNotification');
 
     if (!agency) {
       throw new BadRequestException('Agency not found');
@@ -74,6 +74,7 @@ export class AgenciesService {
       paymentMethods: agency.paymentMethods,
       services: agency.services || ['rental'],
       ownerId: agency.ownerId?.toString(),
+      hasUnreadNotification: agency.hasUnreadNotification ?? false,
     };
   }
 
@@ -304,6 +305,12 @@ export class AgenciesService {
     await agency.save();
 
     return { message: 'Staff member removed successfully' };
+  }
+
+  async markNotificationsRead(agencyId: string) {
+    await this.agencyModel.findByIdAndUpdate(agencyId, {
+      $set: { hasUnreadNotification: false },
+    });
   }
 
   async getStaff(agencyId: string) {

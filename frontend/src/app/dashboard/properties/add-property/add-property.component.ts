@@ -95,7 +95,8 @@ export class AddPropertyComponent implements OnInit {
         parking: [false],
         furnished: [false],
         pool: [false],
-        garden: [false]
+        garden: [false],
+        airConditionning: [false]
       })
     });
 

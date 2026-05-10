@@ -1,7 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../auth/auth.service';
+import { I18nService } from '../../../i18n/i18n.service';
+import type { Language } from '../../../i18n/translations';
 
 @Component({
   selector: 'app-public-navbar',
@@ -12,8 +14,33 @@ import { AuthService } from '../../../auth/auth.service';
 })
 export class PublicNavbarComponent {
   authService = inject(AuthService);
+  readonly i18n = inject(I18nService);
   private router = inject(Router);
   mobileMenuOpen = false;
+  langDropdownOpen = false;
+
+  @ViewChild('langDropdown') langDropdownRef!: ElementRef;
+
+  get currentLang(): Language {
+    return this.i18n.language();
+  }
+
+  setLang(lang: Language): void {
+    this.i18n.setLanguage(lang);
+    this.langDropdownOpen = false;
+  }
+
+  toggleLangDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+    this.langDropdownOpen = !this.langDropdownOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  closeLangDropdown(event: MouseEvent): void {
+    if (this.langDropdownRef && !this.langDropdownRef.nativeElement.contains(event.target)) {
+      this.langDropdownOpen = false;
+    }
+  }
 
   toggleMobileMenu(): void {
     this.mobileMenuOpen = !this.mobileMenuOpen;

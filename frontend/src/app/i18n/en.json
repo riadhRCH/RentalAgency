@@ -285,7 +285,21 @@
       "LOGIN": "Login",
       "OFF_MARKET": "Off-Market",
       "PORTFOLIO": "Portfolio"
-    }
+    },
+    "PARTNERS_TITLE": "The Doghmani Signature Partners",
+    "PARTNERS_EMPTY": "Partner agencies coming soon",
+    "RENTAL_COLLECTION": "Rental Collection",
+    "SALES_SELECTION": "Sales Selection",
+    "FAMILY_ESCAPE": "Family Escape",
+    "NO_RENTAL": "No rental properties available",
+    "NO_SALES": "No properties for sale available",
+    "NO_SHORT_TERM": "No short-term properties available"
+  },
+  "PUBLIC_NAVBAR": {
+    "AGENCIES": "Agencies",
+    "FAMILY_ESCAPE": "Family Escape",
+    "SALES": "Sales",
+    "RENTAL": "Rental"
   },
   "LANGUAGE": {
     "EN": "English",
@@ -738,6 +752,26 @@
     "TITLE": "Transaction Provisioning",
     "UTILITY_NOTES": "Utility Notes",
     "UTILITY_NOTES_PLACEHOLDER": "Meter readings, included charges..."
+  },
+  "VISIT_REQUEST": {
+    "TITLE": "Visit Request",
+    "SUBTITLE": "Complete your visit request information",
+    "SELECTED_PROPERTY": "Selected Property",
+    "PROPERTY_PHOTO_ALT": "Property photo",
+    "STEP1_TITLE": "Step 1: Choose Your Visit Date & Time",
+    "CHANGE_DATE": "Change Date",
+    "NO_DATE_SELECTED": "No date selected",
+    "SELECT_DATE": "Select a Date",
+    "PREFERRED_VISIT_TIME": "Preferred Visit Time",
+    "SELECT_DATE_FIRST": "Select a date first",
+    "VISIT_CONFIRMED": "Visit confirmed for {{date}} at {{time}}",
+    "STEP2_TITLE": "Step 2: Your Information",
+    "NOTES_PLACEHOLDER": "Any additional information...",
+    "SUBMIT_REQUEST": "Submit Request",
+    "SUBMITTING": "Submitting...",
+    "REQUEST_SUBMITTED": "Request Submitted!",
+    "SUCCESS_MESSAGE": "Your visit request has been submitted. The agency will contact you shortly to schedule a visit.",
+    "NOT_FOUND": "Visit request not found"
   },
   "VISITS": {
     "ALL_REQUESTS": "All Requests",

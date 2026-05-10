@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { VisitsService } from '../../services/visits.service';
 import { PersonnelService } from '../../services/personnel.service';
 import { I18nService } from '../../i18n/i18n.service';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 import { PublicNavbarComponent } from '../../shared/components/public-navbar/public-navbar.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer/public-footer.component';
 import { PhoneInputComponent } from '../../shared/components/phone-input/phone-input.component';
@@ -16,6 +17,7 @@ import flatpickr from 'flatpickr';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    TranslatePipe,
     PublicNavbarComponent,
     PublicFooterComponent,
     PhoneInputComponent

@@ -285,7 +285,21 @@
       "LOGIN": "Connexion",
       "OFF_MARKET": "Off-market",
       "PORTFOLIO": "Portfolio"
-    }
+    },
+    "PARTNERS_TITLE": "Les partenaires signatures Doghmani",
+    "PARTNERS_EMPTY": "Agences partenaires a venir",
+    "RENTAL_COLLECTION": "Collection Location",
+    "SALES_SELECTION": "Selection Vente",
+    "FAMILY_ESCAPE": "Family Escape",
+    "NO_RENTAL": "Aucun bien en location disponible",
+    "NO_SALES": "Aucun bien a vendre disponible",
+    "NO_SHORT_TERM": "Aucun bien courte duree disponible"
+  },
+  "PUBLIC_NAVBAR": {
+    "AGENCIES": "Agences",
+    "FAMILY_ESCAPE": "Family Escape",
+    "SALES": "Ventes",
+    "RENTAL": "Location"
   },
   "LANGUAGE": {
     "EN": "Anglais",
@@ -738,6 +752,26 @@
     "TITLE": "Provisionnement de transaction",
     "UTILITY_NOTES": "Notes utilitaires",
     "UTILITY_NOTES_PLACEHOLDER": "Releves de compteurs, charges incluses..."
+  },
+  "VISIT_REQUEST": {
+    "TITLE": "Demande de Visite",
+    "SUBTITLE": "Completez les informations de votre demande de visite",
+    "SELECTED_PROPERTY": "Bien selectionne",
+    "PROPERTY_PHOTO_ALT": "Photo du bien",
+    "STEP1_TITLE": "Etape 1 : Choisissez votre date et heure de visite",
+    "CHANGE_DATE": "Changer la date",
+    "NO_DATE_SELECTED": "Aucune date selectionnee",
+    "SELECT_DATE": "Selectionner une date",
+    "PREFERRED_VISIT_TIME": "Heure de visite preferee",
+    "SELECT_DATE_FIRST": "Selectionnez d'abord une date",
+    "VISIT_CONFIRMED": "Visite confirmee pour le {{date}} a {{time}}",
+    "STEP2_TITLE": "Etape 2 : Vos informations",
+    "NOTES_PLACEHOLDER": "Toute information supplementaire...",
+    "SUBMIT_REQUEST": "Soumettre la demande",
+    "SUBMITTING": "Soumission en cours...",
+    "REQUEST_SUBMITTED": "Demande soumise !",
+    "SUCCESS_MESSAGE": "Votre demande de visite a ete soumise. L'agence vous contactera bientot pour planifier la visite.",
+    "NOT_FOUND": "Demande de visite introuvable"
   },
   "VISITS": {
     "ALL_REQUESTS": "Toutes les demandes",

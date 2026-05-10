@@ -5,10 +5,10 @@
     <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
         <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
-          Visit Request
+          {{ 'VISIT_REQUEST.TITLE' | translate }}
         </h1>
         <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
-          Complete your visit request information
+          {{ 'VISIT_REQUEST.SUBTITLE' | translate }}
         </p>
       </div>
     </header>
@@ -21,7 +21,7 @@
       <!-- Property Info -->
       <div class="glass-card rounded-2xl border border-white/10 p-6">
         <h3 class="text-lg font-bold text-white uppercase tracking-wider mb-4">
-          Selected Property
+          {{ 'VISIT_REQUEST.SELECTED_PROPERTY' | translate }}
         </h3>
         <div class="flex flex-col lg:flex-row gap-6">
           <div class="flex-1">
@@ -29,7 +29,7 @@
               <img
                 *ngFor="let photo of visitRequest()?.propertyId?.photos.slice(0, 6)"
                 [src]="photo"
-                [alt]="'Property photo'"
+                [alt]="'VISIT_REQUEST.PROPERTY_PHOTO_ALT' | translate"
                 class="w-full h-32 object-cover rounded-lg border border-white/10"
               />
             </div>
@@ -46,7 +46,7 @@
         <div class="p-8">
           <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
             <span class="material-symbols-outlined text-primary">calendar_month</span>
-            Step 1: Choose Your Visit Date & Time
+            {{ 'VISIT_REQUEST.STEP1_TITLE' | translate }}
           </h2>
 
           <div class="flex flex-col items-center gap-6">
@@ -61,12 +61,12 @@
                     <div class="text-lg font-bold text-white mb-1">
                       {{ formatDate(selectedDate()) }}
                     </div>
-                    <div class="text-primary text-[10px] font-bold uppercase tracking-widest">Change Date</div>
+                    <div class="text-primary text-[10px] font-bold uppercase tracking-widest">{{ 'VISIT_REQUEST.CHANGE_DATE' | translate }}</div>
                   } @else {
-                    <div class="text-sm font-bold text-white/60 mb-3">No date selected</div>
+                    <div class="text-sm font-bold text-white/60 mb-3">{{ 'VISIT_REQUEST.NO_DATE_SELECTED' | translate }}</div>
                     <div class="bg-primary text-white px-5 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-primary/20 inline-flex items-center gap-1">
                       <span class="material-symbols-outlined text-xs align-middle">event</span>
-                      Select a Date
+                      {{ 'VISIT_REQUEST.SELECT_DATE' | translate }}
                     </div>
                   }
                 </div>
@@ -76,7 +76,7 @@
               @if (selectedDate()) {
                 <div class="bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl border border-primary/30 p-6 text-center flex flex-col items-center justify-center min-h-[200px]">
                   <span class="material-symbols-outlined text-4xl text-primary mb-2 block">schedule</span>
-                  <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3 block">Preferred Visit Time</label>
+                  <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3 block">{{ 'VISIT_REQUEST.PREFERRED_VISIT_TIME' | translate }}</label>
                   <input
                     type="time"
                     [value]="selectedTime()"
@@ -87,7 +87,7 @@
               } @else {
                 <div class="bg-white/5 rounded-2xl border border-white/10 p-6 text-center flex flex-col items-center justify-center min-h-[200px] opacity-50">
                   <span class="material-symbols-outlined text-4xl text-slate-500 mb-2 block">schedule</span>
-                  <p class="text-xs text-slate-500 font-bold uppercase tracking-widest">Select a date first</p>
+                  <p class="text-xs text-slate-500 font-bold uppercase tracking-widest">{{ 'VISIT_REQUEST.SELECT_DATE_FIRST' | translate }}</p>
                 </div>
               }
             </div>
@@ -95,7 +95,7 @@
             @if (selectedDate() && selectedTime()) {
               <div class="flex items-center gap-2 text-emerald-400 text-sm">
                 <span class="material-symbols-outlined text-lg">check_circle</span>
-                Visit confirmed for {{ formatDate(selectedDate()) }} at {{ selectedTime() }}
+                {{ i18n.translate('VISIT_REQUEST.VISIT_CONFIRMED', { date: formatDate(selectedDate()), time: selectedTime() }) }}
               </div>
             }
           </div>
@@ -109,46 +109,46 @@
             <span class="material-symbols-outlined" [class.text-primary]="customerInfoDone()" [class.text-slate-500]="!customerInfoDone()">
               {{ customerInfoDone() ? 'check_circle' : 'person' }}
             </span>
-            Step 2: Your Information
+            {{ 'VISIT_REQUEST.STEP2_TITLE' | translate }}
           </h2>
 
           <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="space-y-2">
-                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">First Name</label>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.FIRST_NAME' | translate }}</label>
                 <input type="text" formControlName="firstName" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
               </div>
               <div class="space-y-2">
-                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Last Name</label>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.LAST_NAME' | translate }}</label>
                 <input type="text" formControlName="lastName" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
               </div>
               <div class="space-y-2">
-                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Phone Number</label>
-                <app-phone-input formControlName="phone" [placeholder]="'Phone Number'"></app-phone-input>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.PHONE_NUMBER' | translate }}</label>
+                <app-phone-input formControlName="phone" [placeholder]="'COMMON.PHONE_NUMBER' | translate"></app-phone-input>
                 @if (customerForm.get('phone')?.touched && customerForm.get('phone')?.invalid) {
                   <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1 flex items-center gap-1">
                     <span class="material-symbols-outlined text-xs">error</span>
                     @if (customerForm.get('phone')?.hasError('required')) {
-                      Phone number is required
+                      {{ 'COMMON.PHONE_NUMBER_REQUIRED' | translate }}
                     } @else if (customerForm.get('phone')?.hasError('pattern')) {
-                      Invalid phone format
+                      {{ 'COMMON.PHONE_INVALID_FORMAT' | translate }}
                     }
                   </div>
                 }
               </div>
               <div class="space-y-2">
-                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Email</label>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.EMAIL' | translate }}</label>
                 <input type="email" formControlName="email" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
                 @if (customerForm.get('email')?.touched && customerForm.get('email')?.hasError('email')) {
                   <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1 flex items-center gap-1">
                     <span class="material-symbols-outlined text-xs">error</span>
-                    Invalid email format
+                    {{ 'COMMON.EMAIL_INVALID_FORMAT' | translate }}
                   </div>
                 }
               </div>
               <div class="space-y-2 md:col-span-2">
-                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Notes</label>
-                <textarea formControlName="notes" rows="3" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" placeholder="Any additional information..."></textarea>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'LEAD_FORM.NOTES' | translate }}</label>
+                <textarea formControlName="notes" rows="3" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" [placeholder]="'VISIT_REQUEST.NOTES_PLACEHOLDER' | translate"></textarea>
               </div>
             </div>
 
@@ -158,7 +158,7 @@
                 [disabled]="saving() || !customerForm.valid"
                 class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all"
               >
-                {{ saving() ? 'Submitting...' : 'Submit Request' }}
+                {{ saving() ? ('VISIT_REQUEST.SUBMITTING' | translate) : ('VISIT_REQUEST.SUBMIT_REQUEST' | translate) }}
               </button>
             </div>
           </form>
@@ -168,14 +168,14 @@
       <!-- Success message after submission -->
       <div *ngIf="submitted()" class="glass-card rounded-2xl border border-emerald-500/30 p-8 text-center space-y-4">
         <span class="material-symbols-outlined text-5xl text-emerald-400">check_circle</span>
-        <h2 class="text-2xl font-bold text-white">Request Submitted!</h2>
-        <p class="text-slate-400">Your visit request has been submitted. The agency will contact you shortly to schedule a visit.</p>
+        <h2 class="text-2xl font-bold text-white">{{ 'VISIT_REQUEST.REQUEST_SUBMITTED' | translate }}</h2>
+        <p class="text-slate-400">{{ 'VISIT_REQUEST.SUCCESS_MESSAGE' | translate }}</p>
       </div>
     </div>
 
     <div *ngIf="!loading() && !visitRequest()" class="text-center py-12">
       <span class="material-symbols-outlined text-5xl text-slate-500">error</span>
-      <p class="mt-4 text-slate-400">Visit request not found</p>
+      <p class="mt-4 text-slate-400">{{ 'VISIT_REQUEST.NOT_FOUND' | translate }}</p>
     </div>
   </div>
 </div>

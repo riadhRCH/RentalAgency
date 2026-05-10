@@ -7,6 +7,7 @@ import { PublicNavbarComponent } from '../shared/components/public-navbar/public
 import { CircularGalleryItem } from '../public/circular-gallery/circular-gallery.component';
 import { SharedSearchBarComponent, SearchFilters } from '../shared/components/search-bar/search-bar.component';
 import { PropertyCardComponent } from '../shared/components/property-card/property-card.component';
+import { TranslatePipe } from '../i18n/translate.pipe';
 import { AgencyService, AgencyProfile } from '../services/agency.service';
 import { AnnouncementsService, Announcement, PaginatedAnnouncements } from '../services/announcements.service';
 import { PaymentType } from '../shared/enums';
@@ -14,7 +15,7 @@ import { PaymentType } from '../shared/enums';
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, PublicNavbarComponent, PublicFooterComponent, SharedSearchBarComponent, PropertyCardComponent],
+  imports: [CommonModule, FormsModule, RouterModule, TranslatePipe, PublicNavbarComponent, PublicFooterComponent, SharedSearchBarComponent, PropertyCardComponent],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.scss',
 })

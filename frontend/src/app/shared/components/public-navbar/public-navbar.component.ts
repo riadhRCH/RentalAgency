@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../auth/auth.service';
 import { I18nService } from '../../../i18n/i18n.service';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 import type { Language } from '../../../i18n/translations';
 
 @Component({
   selector: 'app-public-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './public-navbar.component.html',
   styleUrls: ['./public-navbar.component.scss']
 })

@@ -17,10 +17,10 @@
     <div style="justify-content: end;" class="landing-nav-panel md:flex-1" [class.open]="mobileMenuOpen">
         <div style="width: 100%;" class="flex flex-col gap-4 pt-4 md:flex-row md:items-center md:justify-between md:gap-6 md:pt-0">
         <div class="flex flex-col gap-3 md:flex-row md:items-center md:gap-8 text-sm font-medium tracking-widest uppercase text-silver-300">
-            <a class="hover:text-primary transition-colors" href="javascript:void(0)" (click)="scrollTo('agencies')">AGENCIES</a>
-            <a class="hover:text-primary transition-colors" href="javascript:void(0)" (click)="scrollTo('family-escape')">FAMILY ESCAPE</a>
-            <a class="hover:text-primary transition-colors" href="javascript:void(0)" (click)="scrollTo('sales')">SALES</a>
-            <a class="hover:text-primary transition-colors" href="javascript:void(0)" (click)="scrollTo('rental')">RENTAL</a>
+            <a class="hover:text-primary transition-colors" href="javascript:void(0)" (click)="scrollTo('agencies')">{{ 'PUBLIC_NAVBAR.AGENCIES' | translate }}</a>
+            <a class="hover:text-primary transition-colors" href="javascript:void(0)" (click)="scrollTo('family-escape')">{{ 'PUBLIC_NAVBAR.FAMILY_ESCAPE' | translate }}</a>
+            <a class="hover:text-primary transition-colors" href="javascript:void(0)" (click)="scrollTo('sales')">{{ 'PUBLIC_NAVBAR.SALES' | translate }}</a>
+            <a class="hover:text-primary transition-colors" href="javascript:void(0)" (click)="scrollTo('rental')">{{ 'PUBLIC_NAVBAR.RENTAL' | translate }}</a>
         </div>
         <div class="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
             <!-- Language Switch -->
@@ -57,7 +57,7 @@
                 <a routerLink="/auth/login"
                     (click)="closeMobileMenu()"
                     class="inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-white px-6 py-3 md:py-2 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20">
-                    Login
+                    {{ 'LANDING.NAV.LOGIN' | translate }}
                 </a>
             </ng-container>
 
@@ -68,14 +68,14 @@
                         <span class="material-symbols-outlined text-sm">person</span>
                     </div>
                     <span class="text-[10px] font-bold text-silver-300 uppercase tracking-widest group-hover:text-white transition-colors">
-                        {{ authService.currentUser()?.firstName || 'Account' }}
+                        {{ authService.currentUser()?.firstName || ('COMMON.ACCOUNT' | translate) }}
                     </span>
                 </button>
             </ng-template>
 
             <button
                 class="bg-white/5 hover:bg-white/10 text-white px-6 py-3 md:py-2 rounded border border-white/10 uppercase text-xs font-bold tracking-widest transition-all">
-                Book Viewing
+                {{ 'LANDING.NAV.BOOK_VIEWING' | translate }}
             </button>
         </div>
         </div>

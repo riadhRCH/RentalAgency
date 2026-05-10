@@ -1,0 +1,4 @@
+add new notifications
+- notify agency owner when a lead is crerated 
+- notify agency owner when a visit request is created
+- notify agency owner when a visit request visitDate or time is changed

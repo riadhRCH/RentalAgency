@@ -747,7 +747,8 @@
     "SUBTITLE": "Gerer les visites de biens planifiees",
     "TITLE": "Demandes de visite",
     "VISITOR": "Visiteur",
-    "VISIT_DATE": "Date de visite"
+    "VISIT_DATE": "Date de visite",
+    "VISIT_TIME": "Heure de visite"
   },
   "WEEKLY": "Semaine"
 }

@@ -747,7 +747,8 @@
     "SUBTITLE": "Manage scheduled property visits",
     "TITLE": "Visit Requests",
     "VISITOR": "Visitor",
-    "VISIT_DATE": "Visit Date"
+    "VISIT_DATE": "Visit Date",
+    "VISIT_TIME": "Visit Time"
   },
   "WEEKLY": "Week"
 }

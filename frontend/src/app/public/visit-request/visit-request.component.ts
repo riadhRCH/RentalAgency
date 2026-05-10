@@ -43,6 +43,7 @@ export class VisitRequestComponent implements OnInit, OnDestroy {
   private fp: any;
 
   selectedDate = signal<string>('');
+  selectedTime = signal<string>('');
   customerInfoExpanded = signal(true);
   customerInfoDone = signal(false);
   visitDateDone = signal(false);
@@ -127,6 +128,9 @@ export class VisitRequestComponent implements OnInit, OnDestroy {
       this.customerForm.patchValue({ visitDate: dateStr });
       this.visitDateDone.set(true);
     }
+    if (visit?.visitTime) {
+      this.selectedTime.set(visit.visitTime);
+    }
     this.checkCustomerInfoDone();
   }
 
@@ -139,9 +143,24 @@ export class VisitRequestComponent implements OnInit, OnDestroy {
     this.customerForm.patchValue({ visitDate: dateStr });
     this.visitDateDone.set(!!dateStr);
     if (dateStr && dateObj) {
-      const isoDate = new Date(Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate())).toISOString();
-      this.visitsService.updatePublicVisit(this.visitRequestId, { visitDate: isoDate }).subscribe({
+      const time = this.selectedTime() || '12:00';
+      const [hours, minutes] = time.split(':').map(Number);
+      const isoDate = new Date(Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate(), hours, minutes)).toISOString();
+      this.visitsService.updatePublicVisit(this.visitRequestId, { visitDate: isoDate, visitTime: time }).subscribe({
         error: (err) => console.error('Failed to update visit date:', err),
+      });
+    }
+  }
+
+  onTimeChange(time: string) {
+    this.selectedTime.set(time);
+    const dateStr = this.selectedDate();
+    if (dateStr) {
+      const [hours, minutes] = time.split(':').map(Number);
+      const d = new Date(dateStr + 'T12:00:00');
+      const isoDate = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), hours, minutes)).toISOString();
+      this.visitsService.updatePublicVisit(this.visitRequestId, { visitDate: isoDate, visitTime: time }).subscribe({
+        error: (err) => console.error('Failed to update visit time:', err),
       });
     }
   }
@@ -174,16 +193,21 @@ export class VisitRequestComponent implements OnInit, OnDestroy {
 
       this.personnelService.createOrUpdatePersonnel(personnelData).subscribe({
         next: () => {
-          const visitDate = formValue.visitDate
-            ? new Date(formValue.visitDate + 'T12:00:00').toISOString()
-            : undefined;
-          this.visitsService.updatePublicVisit(this.visitRequestId, {
+          const time = this.selectedTime() || '12:00';
+          const [hours, minutes] = time.split(':').map(Number);
+          const visitDateStr = formValue.visitDate;
+          const visitPayload: any = {
             customerName: `${formValue.firstName} ${formValue.lastName}`.trim(),
             customerPhone: formValue.phone,
             customerEmail: formValue.email?.trim() || undefined,
             notes: formValue.notes || undefined,
-            visitDate
-          }).subscribe({
+          };
+          if (visitDateStr) {
+            const d = new Date(visitDateStr + 'T12:00:00');
+            visitPayload.visitDate = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), hours, minutes)).toISOString();
+            visitPayload.visitTime = time;
+          }
+          this.visitsService.updatePublicVisit(this.visitRequestId, visitPayload).subscribe({
             next: () => {
               this.saving.set(false);
               this.customerInfoDone.set(true);

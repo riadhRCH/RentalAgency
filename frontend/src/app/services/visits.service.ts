@@ -19,6 +19,7 @@ export interface VisitRequest {
   visitorId?: VisitVisitorProfile;
   agencyId: string;
   visitDate?: Date;
+  visitTime?: string;
   customerName?: string;
   customerPhone?: string;
   customerEmail?: string;

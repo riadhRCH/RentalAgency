@@ -1,0 +1,4 @@
+translation work in frontend project
+
+1- refactor current translations, break frontend\src\app\i18n\translations.ts into two files (en.json and fe.json)
+2- run a discovery for missing translations, loop through all html files and do missing translations

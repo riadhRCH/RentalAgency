@@ -126,13 +126,20 @@
           </span>
         </div>
 
-        <!-- Visit Date -->
+        <!-- Visit Date & Time -->
         <div class="glass-card rounded-2xl border border-white/10 p-6 space-y-4">
           <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Visit Date</h3>
           @if (v.visitDate) {
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-primary">calendar_month</span>
               <span class="text-white text-sm font-bold">{{ v.visitDate | date:'MMM d, yyyy' }}</span>
+            </div>
+            <div class="flex items-center gap-3 pt-2 border-t border-white/5">
+              <span class="material-symbols-outlined text-primary">schedule</span>
+              <div>
+                <span class="text-white text-sm font-bold">{{ v.visitTime || (v.visitDate | date:'h:mm a') }}</span>
+                <span class="text-slate-500 text-[10px] uppercase tracking-widest ml-2">Preferred Time</span>
+              </div>
             </div>
           } @else {
             <p class="text-slate-500 text-xs italic">Not scheduled</p>

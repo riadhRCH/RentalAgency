@@ -41,40 +41,61 @@
         </div>
       </div>
 
-      <!-- Step 1: Visit Date -->
+      <!-- Step 1: Visit Date & Time -->
       <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
         <div class="p-8">
           <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
             <span class="material-symbols-outlined text-primary">calendar_month</span>
-            Step 1: Choose Your Visit Date
+            Step 1: Choose Your Visit Date & Time
           </h2>
 
           <div class="flex flex-col items-center gap-6">
-            <!-- Large Date Display -->
-            <div class="relative w-full max-w-md mx-auto">
-              <input #datePickerInput type="text" readonly
-                     class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-              <div class="bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl border border-primary/30 p-8 text-center pointer-events-none">
-                <span class="material-symbols-outlined text-6xl text-primary mb-4 block">calendar_month</span>
-                @if (selectedDate()) {
-                  <div class="text-3xl font-bold text-white mb-2">
-                    {{ formatDate(selectedDate()) }}
-                  </div>
-                  <div class="text-primary text-xs font-bold uppercase tracking-widest">Change Date</div>
-                } @else {
-                  <div class="text-2xl font-bold text-white/60 mb-4">No date selected</div>
-                  <div class="bg-primary text-white px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-widest shadow-lg shadow-primary/20 inline-flex items-center gap-2">
-                    <span class="material-symbols-outlined text-sm align-middle">event</span>
-                    Select a Date
-                  </div>
-                }
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl mx-auto">
+              <!-- Date Picker -->
+              <div class="relative">
+                <input #datePickerInput type="text" readonly
+                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl border border-primary/30 p-6 text-center pointer-events-none h-full flex flex-col items-center justify-center min-h-[200px]">
+                  <span class="material-symbols-outlined text-4xl text-primary mb-2 block">calendar_month</span>
+                  @if (selectedDate()) {
+                    <div class="text-lg font-bold text-white mb-1">
+                      {{ formatDate(selectedDate()) }}
+                    </div>
+                    <div class="text-primary text-[10px] font-bold uppercase tracking-widest">Change Date</div>
+                  } @else {
+                    <div class="text-sm font-bold text-white/60 mb-3">No date selected</div>
+                    <div class="bg-primary text-white px-5 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-primary/20 inline-flex items-center gap-1">
+                      <span class="material-symbols-outlined text-xs align-middle">event</span>
+                      Select a Date
+                    </div>
+                  }
+                </div>
               </div>
+
+              <!-- Time Picker -->
+              @if (selectedDate()) {
+                <div class="bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl border border-primary/30 p-6 text-center flex flex-col items-center justify-center min-h-[200px]">
+                  <span class="material-symbols-outlined text-4xl text-primary mb-2 block">schedule</span>
+                  <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3 block">Preferred Visit Time</label>
+                  <input
+                    type="time"
+                    [value]="selectedTime()"
+                    (input)="onTimeChange($event.target.value)"
+                    class="w-full bg-white/10 border border-white/20 text-white text-xl font-bold rounded-xl p-3 text-center outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all [color-scheme:dark]"
+                    style="color-scheme: dark; accent-color: #8B5CF6;" />
+                </div>
+              } @else {
+                <div class="bg-white/5 rounded-2xl border border-white/10 p-6 text-center flex flex-col items-center justify-center min-h-[200px] opacity-50">
+                  <span class="material-symbols-outlined text-4xl text-slate-500 mb-2 block">schedule</span>
+                  <p class="text-xs text-slate-500 font-bold uppercase tracking-widest">Select a date first</p>
+                </div>
+              }
             </div>
 
-            @if (selectedDate()) {
+            @if (selectedDate() && selectedTime()) {
               <div class="flex items-center gap-2 text-emerald-400 text-sm">
                 <span class="material-symbols-outlined text-lg">check_circle</span>
-                Visit date confirmed
+                Visit confirmed for {{ formatDate(selectedDate()) }} at {{ selectedTime() }}
               </div>
             }
           </div>

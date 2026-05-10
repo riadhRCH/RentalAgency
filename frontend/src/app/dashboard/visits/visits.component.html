@@ -100,9 +100,12 @@
             <td class="p-6">
               <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                 {{ visit.visitDate ? (visit.visitDate | date:'MMM d, yyyy') : 'Not scheduled' }}
-                <span class="block text-[9px] text-slate-500 font-normal lowercase mt-1" *ngIf="visit.visitDate">
-                  at {{ visit.visitDate | date:'h:mm a' }}
-                </span>
+                @if (visit.visitDate) {
+                  <span class="block text-white/70 font-semibold lowercase text-xs mt-1 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[10px] text-primary">schedule</span>
+                    {{ visit.visitTime || (visit.visitDate | date:'h:mm a') }}
+                  </span>
+                }
               </div>
             </td>
             <td class="p-6">

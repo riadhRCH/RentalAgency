@@ -6,6 +6,7 @@ import { Announcement, AnnouncementSchema } from '../schemas/announcement.schema
 import { VisitRequestsController } from './visits.controller';
 import { VisitRequestsService } from './visits.service';
 import { AuthModule } from '../auth/auth.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schema';
 
 @Module({
@@ -17,6 +18,7 @@ import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schem
       { name: Announcement.name, schema: AnnouncementSchema },
     ]),
     AuthModule,
+    NotificationsModule,
   ],
   controllers: [VisitRequestsController],
   providers: [VisitRequestsService],

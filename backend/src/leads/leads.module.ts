@@ -5,6 +5,7 @@ import { Personnel, PersonnelSchema } from '../schemas/personnel.schema';
 import { LeadsController } from './leads.controller';
 import { LeadsService } from './leads.service';
 import { AuthModule } from '../auth/auth.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schema';
 
 @Module({
@@ -15,6 +16,7 @@ import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schem
       { name: Personnel.name, schema: PersonnelSchema },
     ]),
     AuthModule,
+    NotificationsModule,
   ],
   controllers: [LeadsController],
   providers: [LeadsService],

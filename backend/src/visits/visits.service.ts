@@ -4,6 +4,9 @@ import { Model, Types } from 'mongoose';
 import { VisitRequest, VisitRequestDocument } from '../schemas/visit-request.schema';
 import { Property, PropertyDocument } from '../schemas/property.schema';
 import { Announcement, AnnouncementDocument } from '../schemas/announcement.schema';
+import { RentalAgency, RentalAgencyDocument } from '../schemas/rental-agency.schema';
+import { NotificationService } from '../notifications/notifications.service';
+import { NotificationType } from '../schemas/notification.schema';
 
 @Injectable()
 export class VisitRequestsService {
@@ -14,6 +17,9 @@ export class VisitRequestsService {
     private readonly propertyModel: Model<PropertyDocument>,
     @InjectModel(Announcement.name)
     private readonly announcementModel: Model<AnnouncementDocument>,
+    @InjectModel(RentalAgency.name)
+    private readonly agencyModel: Model<RentalAgencyDocument>,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async createPublic(dto: any) {
@@ -25,7 +31,7 @@ export class VisitRequestsService {
     const property = await this.propertyModel.findById(announcement.propertyId);
     if (!property) throw new NotFoundException('Property not found');
 
-    return this.visitModel.create({
+    const visit = await this.visitModel.create({
       propertyId: announcement.propertyId,
       agencyId: property.agencyId,
       customerPhone: dto.customerPhone,
@@ -33,6 +39,10 @@ export class VisitRequestsService {
       customerEmail: dto.customerEmail,
       notes: dto.notes,
     });
+
+    await this.notifyAgencyOwner(property.agencyId.toString(), 'created', dto.customerName, dto.customerPhone);
+
+    return visit;
   }
 
   async findOnePublic(id: string) {
@@ -44,17 +54,31 @@ export class VisitRequestsService {
   }
 
   async updatePublic(id: string, dto: any) {
-    const allowedFields = ['customerName', 'customerPhone', 'customerEmail', 'notes', 'visitDate'];
+    const existing = await this.visitModel.findById(new Types.ObjectId(id));
+    if (!existing) throw new NotFoundException('Visit request not found');
+
+    const allowedFields = ['customerName', 'customerPhone', 'customerEmail', 'notes', 'visitDate', 'visitTime'];
     const update: any = {};
     for (const field of allowedFields) {
       if (dto[field] !== undefined) update[field] = dto[field];
     }
+
     const visit = await this.visitModel.findByIdAndUpdate(
       new Types.ObjectId(id),
       { $set: update },
       { new: true },
     );
     if (!visit) throw new NotFoundException('Visit request not found');
+
+    const dateChanged = dto.visitDate !== undefined && dto.visitDate !== existing.visitDate?.toISOString();
+    const timeChanged = dto.visitTime !== undefined && dto.visitTime !== existing.visitTime;
+    if (dateChanged || timeChanged) {
+      const property = await this.propertyModel.findById(existing.propertyId);
+      if (property) {
+        await this.notifyAgencyOwner(property.agencyId.toString(), 'date-changed', visit.customerName, visit.customerPhone);
+      }
+    }
+
     return visit;
   }
 
@@ -109,5 +133,37 @@ export class VisitRequestsService {
     });
     if (!result) throw new NotFoundException('Visit request not found');
     return { message: 'Visit request deleted successfully' };
+  }
+
+  private async notifyAgencyOwner(agencyId: string, event: 'created' | 'date-changed', customerName?: string, customerPhone?: string) {
+    try {
+      const agency = await this.agencyModel.findById(new Types.ObjectId(agencyId));
+      if (!agency || !agency.ownerId) return;
+
+      const name = customerName || customerPhone || 'Unknown';
+      const link = `${process.env.FRONTEND_URL || 'http://localhost:4200'}/dashboard/overview/visits`;
+
+      if (event === 'created') {
+        await this.notificationService.sendNotification(
+          agency.ownerId.toString(),
+          NotificationType.VISIT_REQUEST_CREATED,
+          'Nouvelle Demande de Visite',
+          `Une nouvelle demande de visite a ete creee par ${name}.`,
+          link,
+          { agencyId, customerPhone },
+        );
+      } else if (event === 'date-changed') {
+        await this.notificationService.sendNotification(
+          agency.ownerId.toString(),
+          NotificationType.VISIT_REQUEST_UPDATED,
+          'Visite Mise a Jour',
+          `${name} a modifie la date ou l'heure de sa visite.`,
+          link,
+          { agencyId, customerPhone },
+        );
+      }
+    } catch (error) {
+      // Notification failure should not block the operation
+    }
   }
 }

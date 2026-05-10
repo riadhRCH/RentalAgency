@@ -19,6 +19,9 @@ export class VisitRequest {
   visitDate: Date;
 
   @Prop()
+  visitTime: string;
+
+  @Prop()
   customerName: string;
 
   @Prop()

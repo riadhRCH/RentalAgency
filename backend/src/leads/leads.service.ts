@@ -6,8 +6,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Lead, LeadDocument } from '../schemas/lead.schema';
 import { Personnel, PersonnelDocument } from '../schemas/personnel.schema';
+import { RentalAgency, RentalAgencyDocument } from '../schemas/rental-agency.schema';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
+import { NotificationService } from '../notifications/notifications.service';
+import { NotificationType } from '../schemas/notification.schema';
 
 @Injectable()
 export class LeadsService {
@@ -16,6 +19,9 @@ export class LeadsService {
     private readonly leadModel: Model<LeadDocument>,
     @InjectModel(Personnel.name)
     private readonly personnelModel: Model<PersonnelDocument>,
+    @InjectModel(RentalAgency.name)
+    private readonly agencyModel: Model<RentalAgencyDocument>,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async findAll(
@@ -75,6 +81,11 @@ export class LeadsService {
       notes: dto.notes,
       activities: [{ type: 'MANUAL' }],
     });
+
+    if (dto.agencyId) {
+      await this.notifyAgencyOwner(dto.agencyId, dto.customerName, dto.customerPhone);
+    }
+
     return lead;
   }
 
@@ -87,7 +98,31 @@ export class LeadsService {
       notes: dto.notes,
       activities: [{ type: 'MANUAL' }],
     });
+
+    await this.notifyAgencyOwner(agencyId, dto.customerName, dto.customerPhone);
+
     return lead;
+  }
+
+  private async notifyAgencyOwner(agencyId: string, customerName?: string, customerPhone?: string) {
+    try {
+      const agency = await this.agencyModel.findById(new Types.ObjectId(agencyId));
+      if (!agency || !agency.ownerId) return;
+
+      const name = customerName || customerPhone || 'Unknown';
+      const link = `${process.env.FRONTEND_URL || 'http://localhost:4200'}/dashboard/overview/leads`;
+
+      await this.notificationService.sendNotification(
+        agency.ownerId.toString(),
+        NotificationType.LEAD_CREATED,
+        'Nouveau Lead',
+        `Un nouveau lead a ete cree : ${name}.`,
+        link,
+        { agencyId, customerPhone },
+      );
+    } catch (error) {
+      // Notification failure should not block lead creation
+    }
   }
 
   async update(agencyId: string, leadId: string, dto: UpdateLeadDto) {

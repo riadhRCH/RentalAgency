@@ -91,6 +91,14 @@ export class DashboardLayoutComponent implements OnInit {
       { label: 'SIDEBAR.SETTINGS', icon: 'settings', route: '/dashboard/config' },
     );
 
+    if (this.authService.isAdmin()) {
+      items.push(
+        { label: 'SIDEBAR.ADMIN', icon: '', isHeader: true },
+        { label: 'SIDEBAR.AGENCIES_MANAGEMENT', icon: 'business', route: '/dashboard/admin/agencies-management' },
+        { label: 'SIDEBAR.ADD_AGENCY', icon: 'add_business', route: '/auth/register' },
+      );
+    }
+
     this.navItems.set(items);
   }
 

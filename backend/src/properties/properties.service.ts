@@ -5,6 +5,8 @@ import { Property, PropertyDocument } from '../schemas/property.schema';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { Personnel, PersonnelDocument } from '../schemas/personnel.schema';
+import { Announcement, AnnouncementDocument } from '../schemas/announcement.schema';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class PropertiesService {
@@ -13,6 +15,9 @@ export class PropertiesService {
     private readonly propertyModel: Model<PropertyDocument>,
     @InjectModel(Personnel.name)
     private readonly personnelModel: Model<PersonnelDocument>,
+    @InjectModel(Announcement.name)
+    private readonly announcementModel: Model<AnnouncementDocument>,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   private async generateNextReference() {
@@ -151,6 +156,23 @@ export class PropertiesService {
       { new: true },
     );
     if (!property) throw new NotFoundException('Property not found');
-    return { message: 'Property soft-deleted successfully' };
+
+    const announcements = await this.announcementModel.find({
+      propertyId: property._id,
+      deletedAt: { $exists: false },
+    });
+
+    for (const announcement of announcements) {
+      await this.cloudinaryService.deleteFilesFromUrls(announcement.photos ?? []);
+      await this.announcementModel.updateOne(
+        { _id: announcement._id },
+        { $set: { deletedAt: new Date() } },
+      );
+    }
+
+    await this.cloudinaryService.deleteFilesFromUrls(property.photos ?? []);
+    await this.cloudinaryService.deleteFilesFromUrls(property.videos ?? [], 'video');
+
+    return { message: 'Property deleted successfully' };
   }
 }

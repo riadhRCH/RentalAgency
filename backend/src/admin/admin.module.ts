@@ -1,27 +1,27 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Property, PropertySchema } from '../schemas/property.schema';
-import { PropertiesController } from './properties.controller';
-import { PropertiesService } from './properties.service';
+import { AdminController } from './admin.controller';
+import { AdminService } from './admin.service';
 import { AuthModule } from '../auth/auth.module';
-import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schema';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
+import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schema';
 import { Personnel, PersonnelSchema } from '../schemas/personnel.schema';
+import { Property, PropertySchema } from '../schemas/property.schema';
 import { Announcement, AnnouncementSchema } from '../schemas/announcement.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: Property.name, schema: PropertySchema },
       { name: RentalAgency.name, schema: RentalAgencySchema },
       { name: Personnel.name, schema: PersonnelSchema },
+      { name: Property.name, schema: PropertySchema },
       { name: Announcement.name, schema: AnnouncementSchema },
     ]),
     AuthModule,
     CloudinaryModule,
   ],
-  controllers: [PropertiesController],
-  providers: [PropertiesService],
-  exports: [PropertiesService],
+  controllers: [AdminController],
+  providers: [AdminService],
+  exports: [AdminService],
 })
-export class PropertiesModule {}
+export class AdminModule {}

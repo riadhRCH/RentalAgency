@@ -4,6 +4,8 @@ import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { AgencySelectionComponent } from './auth/agency-selection/agency-selection.component';
 import { authGuard, agencyGuard } from './auth/auth.guard';
+import { adminGuard } from './auth/admin.guard';
+import { AgenciesManagementComponent } from './dashboard/admin/agencies-management/agencies-management.component';
 import { OverviewComponent } from './dashboard/overview/overview.component';
 import { AgencyOverviewComponent } from './dashboard/overview/agency-overview.component';
 import { LeadsComponent } from './dashboard/leads/leads.component';
@@ -46,7 +48,7 @@ export const routes: Routes = [
     { path: 'thank-you', component: ThankYouComponent },
     { path: 'carousel', component: CarouselComponent },
     { path: 'auth/login', component: LoginComponent },
-    { path: 'auth/register', component: RegisterComponent },
+    { path: 'auth/register', component: RegisterComponent, canActivate: [authGuard, adminGuard] },
     { path: 'auth/select-agency', component: AgencySelectionComponent, canActivate: [authGuard] },
     {
         path: 'dashboard',
@@ -82,7 +84,8 @@ export const routes: Routes = [
             { path: 'personnel/profile/:id', component: ProfilePageComponent },
             { path: 'teams', component: TeamsComponent },
             { path: 'config', component: ConfigComponent },
-            { path: 'bank-details', component: BankDetailsComponent }
+            { path: 'bank-details', component: BankDetailsComponent },
+            { path: 'admin/agencies-management', component: AgenciesManagementComponent }
         ]
     },
     { path: ':agencyId', component: AgencyLandingPageComponent }

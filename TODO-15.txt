@@ -2,10 +2,13 @@ prepare admin dashboard
 prepare admin sidebar (use shared one)
 prepare admin conrtroller
 
-- add one link: agencies management
-- load list of all available agencies, allow admin to delete agencies 
-- show check list in this operation (delete properties, delete personnels (owners staff)) make them checked in default
-- delete agency should use delete property api for all agency properties
-- delete property api should use delete announcement api if the proepry have announces
-- delete agency api shoudl lauch delete personnel api for all personnels linked to the agency
-- delete property api and delete announce api and delete personel api should delete attahced files (photos, videos) from file storage provider
+- add sidebar link: agencies management
+    - load list of all available agencies, allow admin to delete agencies 
+    - show check list in this operation (delete properties, delete personnels (owners staff)) make them checked in default
+    - delete agency should use delete property api for all agency properties
+    - delete property api should use delete announcement api if the proepry have announces
+    - delete agency api shoudl lauch delete personnel api for all personnels linked to the agency
+    - delete property api and delete announce api and delete personel api should delete attahced files (photos, videos) from file storage provider
+
+- add sidebar link add agency this way
+    - make the http://localhost:4200/auth/register available in admin dashboard only, remove its public access

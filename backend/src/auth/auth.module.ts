@@ -6,6 +6,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy, JwtRefreshStrategy } from './jwt.strategy';
 import { AgencyGuard } from './agency.guard';
+import { AdminGuard } from './admin.guard';
 import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schema';
 import { Personnel, PersonnelSchema } from '../schemas/personnel.schema';
 
@@ -22,7 +23,7 @@ import { Personnel, PersonnelSchema } from '../schemas/personnel.schema';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, JwtRefreshStrategy, AgencyGuard],
-  exports: [JwtModule, AgencyGuard],
+  providers: [AuthService, JwtStrategy, JwtRefreshStrategy, AgencyGuard, AdminGuard],
+  exports: [JwtModule, AgencyGuard, AdminGuard],
 })
 export class AuthModule {}

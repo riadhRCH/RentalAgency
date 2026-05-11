@@ -9,6 +9,7 @@ export interface User {
   phone: string;
   firstName?: string;
   lastName?: string;
+  isAdmin?: boolean;
 }
 
 export interface Agency {
@@ -39,6 +40,7 @@ export class AuthService {
   agencyServices = signal<string[]>([]);
   
   isAuthenticated = computed(() => !!this.currentUser());
+  isAdmin = computed(() => this.currentUser()?.isAdmin ?? false);
 
   private refreshInProgress = new BehaviorSubject<boolean>(false);
   private servicesRefresh = new BehaviorSubject<void>(undefined);

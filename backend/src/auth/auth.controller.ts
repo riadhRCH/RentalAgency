@@ -1,14 +1,16 @@
-import { Body, Controller, Get, Post, Request, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { AdminGuard } from './admin.guard';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Post('register')
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
@@ -24,7 +26,10 @@ export class AuthController {
   async getMe(@Request() req) {
     const context = await this.authService.getPersonnelContext(req.user._id);
     return {
-      user: req.user,
+      user: {
+        ...req.user.toObject ? req.user.toObject() : req.user,
+        isAdmin: req.user.isAdmin || false,
+      },
       ...context,
     };
   }

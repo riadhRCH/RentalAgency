@@ -11,6 +11,7 @@ import { CreatePersonnelDto } from './dto/create-personnel.dto';
 import { UpdatePersonnelDto } from './dto/update-personnel.dto';
 import { NotificationService } from '../notifications/notifications.service';
 import { NotificationType } from '../schemas/notification.schema';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class PersonnelService {
@@ -28,6 +29,7 @@ export class PersonnelService {
     @InjectModel(Cashout.name)
     private readonly cashoutModel: Model<CashoutDocument>,
     private readonly notificationService: NotificationService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async findAll(page = 1, limit = 20, source?: string, status?: string) {
@@ -115,7 +117,12 @@ export class PersonnelService {
       { new: true },
     );
     if (!person) throw new NotFoundException('Personnel not found');
-    return { message: 'Personnel soft-deleted successfully' };
+
+    if (person.profilePicture) {
+      await this.cloudinaryService.deleteFilesFromUrls([person.profilePicture]);
+    }
+
+    return { message: 'Personnel deleted successfully' };
   }
 
   async identify(phone: string, source: string = 'manual') {

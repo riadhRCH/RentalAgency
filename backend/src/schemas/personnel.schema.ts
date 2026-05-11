@@ -74,6 +74,9 @@ export class Personnel {
 
   @Prop()
   deletedAt: Date;
+
+  @Prop({ default: false })
+  isAdmin: boolean;
 }
 
 export const PersonnelSchema = SchemaFactory.createForClass(Personnel);

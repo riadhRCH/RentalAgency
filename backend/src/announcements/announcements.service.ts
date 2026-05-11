@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Announcement, AnnouncementDocument } from '../schemas/announcement.schema';
 import { Property, PropertyDocument } from '../schemas/property.schema';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 type PublicAnnouncementFilters = {
   query?: string;
@@ -25,6 +26,7 @@ export class AnnouncementsService {
     private readonly announcementModel: Model<AnnouncementDocument>,
     @InjectModel(Property.name)
     private readonly propertyModel: Model<PropertyDocument>,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   private buildTitle(property: PropertyDocument | Property) {
@@ -189,6 +191,8 @@ export class AnnouncementsService {
     if (!announcement) {
       throw new NotFoundException('Announcement not found');
     }
+
+    await this.cloudinaryService.deleteFilesFromUrls(announcement.photos ?? []);
 
     return { message: 'Announcement deleted successfully' };
   }

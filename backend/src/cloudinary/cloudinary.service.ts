@@ -40,4 +40,34 @@ export class CloudinaryService {
   ): Promise<UploadApiResponse | UploadApiErrorResponse> {
     return this.uploadFile(file, 'video');
   }
+
+  async deleteFile(publicId: string, resourceType: 'image' | 'video' | 'raw' = 'image'): Promise<any> {
+    return cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
+  }
+
+  extractPublicId(url: string): string | null {
+    try {
+      const parsed = new URL(url);
+      if (!parsed.hostname.includes('cloudinary')) return null;
+      const parts = parsed.pathname.split('/');
+      const uploadIndex = parts.indexOf('upload');
+      if (uploadIndex === -1) return null;
+      const publicIdParts = parts.slice(uploadIndex + 2);
+      const publicIdWithExt = publicIdParts.join('/');
+      return publicIdWithExt.replace(/\.[^.]+$/, '');
+    } catch {
+      return null;
+    }
+  }
+
+  async deleteFilesFromUrls(urls: string[], resourceType: 'image' | 'video' | 'raw' = 'image'): Promise<void> {
+    for (const url of urls) {
+      const publicId = this.extractPublicId(url);
+      if (publicId) {
+        try {
+          await this.deleteFile(publicId, resourceType);
+        } catch {}
+      }
+    }
+  }
 }

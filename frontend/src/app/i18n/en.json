@@ -615,7 +615,10 @@
     "SETTINGS": "Settings",
     "SYSTEM": "System",
     "TEAM_MANAGEMENT": "Team Management",
-    "VISITS": "Visits"
+    "VISITS": "Visits",
+    "ADMIN": "Admin",
+    "AGENCIES_MANAGEMENT": "Agencies Management",
+    "ADD_AGENCY": "Add Agency"
   },
   "TEAMS": {
     "ACTIVE_MEMBERS": "Active Members",

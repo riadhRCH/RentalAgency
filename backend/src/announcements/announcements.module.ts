@@ -7,18 +7,20 @@ import { AnnouncementsController } from './announcements.controller';
 import { AnnouncementsService } from './announcements.service';
 import { AgencyGuard } from 'src/auth/agency.guard';
 import { RentalAgency, RentalAgencySchema } from 'src/schemas/rental-agency.schema';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Announcement.name, schema: AnnouncementSchema },
       { name: Property.name, schema: PropertySchema },
-       { name: RentalAgency.name, schema: RentalAgencySchema }, // 👈
+       { name: RentalAgency.name, schema: RentalAgencySchema },
     ]),
     AuthModule,
+    CloudinaryModule,
   ],
   controllers: [AnnouncementsController],
-  providers: [AnnouncementsService, AgencyGuard], // 👈
+  providers: [AnnouncementsService, AgencyGuard],
   exports: [AnnouncementsService],
 })
 export class AnnouncementsModule {}

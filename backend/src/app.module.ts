@@ -13,6 +13,7 @@ import { WebhooksModule } from './webhooks/webhooks.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { CashoutsModule } from './cashouts/cashouts.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { AdminModule } from './admin/admin.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -36,6 +37,7 @@ import { AppController } from './app.controller';
     TransactionsModule,
     CashoutsModule,
     NotificationsModule,
+    AdminModule,
   ],
   controllers: [AppController],
 })

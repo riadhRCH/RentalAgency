@@ -73,6 +73,9 @@ export class RentalAgency {
 
   @Prop({ default: false })
   hasUnreadNotification: boolean;
+
+  @Prop()
+  deletedAt?: Date;
 }
 
 export const RentalAgencySchema = SchemaFactory.createForClass(RentalAgency);

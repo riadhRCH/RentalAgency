@@ -29,9 +29,11 @@ export class LeadsService {
     page = 1,
     limit = 20,
     status?: string,
+    pipelineStage?: string,
   ) {
     const query: any = { agencyId: new Types.ObjectId(agencyId) };
     if (status) query.status = status;
+    if (pipelineStage) query.pipelineStage = pipelineStage;
 
     const skip = (page - 1) * limit;
     const [leads, total] = await Promise.all([
@@ -46,10 +48,19 @@ export class LeadsService {
     const leadsWithProfiles = await Promise.all(
       leads.map(async (lead) => {
         const leadObj = lead.toObject();
-        const person = await this.personnelModel.findOne(
-          { phone: lead.customerPhone, deletedAt: { $exists: false } },
-          { firstName: 1, lastName: 1, phone: 1, profilePicture: 1, preferredContact: 1, email: 1 },
-        );
+        let person = null;
+        if (lead.personnelId) {
+          person = await this.personnelModel.findById(
+            lead.personnelId,
+            { firstName: 1, lastName: 1, phone: 1, profilePicture: 1, preferredContact: 1, email: 1 },
+          );
+        }
+        if (!person) {
+          person = await this.personnelModel.findOne(
+            { phone: lead.customerPhone, deletedAt: { $exists: false } },
+            { firstName: 1, lastName: 1, phone: 1, profilePicture: 1, preferredContact: 1, email: 1 },
+          );
+        }
         return { ...leadObj, customerProfile: person };
       }),
     );
@@ -69,6 +80,51 @@ export class LeadsService {
       agencyId: new Types.ObjectId(agencyId),
     });
     if (!lead) throw new NotFoundException('Lead not found');
+
+    const leadObj = lead.toObject();
+    let person = null;
+    if (lead.personnelId) {
+      person = await this.personnelModel.findById(
+        lead.personnelId,
+        { firstName: 1, lastName: 1, phone: 1, profilePicture: 1, preferredContact: 1, email: 1 },
+      );
+    }
+    if (!person) {
+      person = await this.personnelModel.findOne(
+        { phone: lead.customerPhone, deletedAt: { $exists: false } },
+        { firstName: 1, lastName: 1, phone: 1, profilePicture: 1, preferredContact: 1, email: 1 },
+      );
+    }
+    return { ...leadObj, customerProfile: person };
+  }
+
+  async getPipelineStats(agencyId: string) {
+    const objectId = new Types.ObjectId(agencyId);
+    const [prospectCount, visiteAPlanifierCount, total] = await Promise.all([
+      this.leadModel.countDocuments({ agencyId: objectId, pipelineStage: 'PROSPECT' }),
+      this.leadModel.countDocuments({ agencyId: objectId, pipelineStage: 'VISITE_A_PLANIFIER' }),
+      this.leadModel.countDocuments({ agencyId: objectId }),
+    ]);
+
+    return {
+      total,
+      stages: {
+        PROSPECT: prospectCount,
+        VISITE_A_PLANIFIER: visiteAPlanifierCount,
+      },
+    };
+  }
+
+  async updatePipelineStage(agencyId: string, leadId: string, pipelineStage: string) {
+    const lead = await this.leadModel.findOneAndUpdate(
+      {
+        _id: new Types.ObjectId(leadId),
+        agencyId: new Types.ObjectId(agencyId),
+      },
+      { $set: { pipelineStage } },
+      { new: true },
+    );
+    if (!lead) throw new NotFoundException('Lead not found');
     return lead;
   }
 
@@ -79,6 +135,15 @@ export class LeadsService {
       customerName: dto.customerName,
       tags: dto.tags || [],
       notes: dto.notes,
+      pipelineStage: dto.pipelineStage || 'PROSPECT',
+      budget: dto.budget,
+      purchaseType: dto.purchaseType,
+      interestedProperties: dto.interestedProperties?.map(id => new Types.ObjectId(id)),
+      zones: dto.zones,
+      mustHaveFeatures: dto.mustHaveFeatures,
+      nbBedrooms: dto.nbBedrooms,
+      availability: dto.availability,
+      additionalNotes: dto.additionalNotes,
       activities: [{ type: 'MANUAL' }],
     });
 
@@ -96,6 +161,15 @@ export class LeadsService {
       customerName: dto.customerName,
       tags: dto.tags || [],
       notes: dto.notes,
+      pipelineStage: dto.pipelineStage || 'PROSPECT',
+      budget: dto.budget,
+      purchaseType: dto.purchaseType,
+      interestedProperties: dto.interestedProperties?.map(id => new Types.ObjectId(id)),
+      zones: dto.zones,
+      mustHaveFeatures: dto.mustHaveFeatures,
+      nbBedrooms: dto.nbBedrooms,
+      availability: dto.availability,
+      additionalNotes: dto.additionalNotes,
       activities: [{ type: 'MANUAL' }],
     });
 
@@ -126,12 +200,16 @@ export class LeadsService {
   }
 
   async update(agencyId: string, leadId: string, dto: UpdateLeadDto) {
+    const updateData: any = { ...dto };
+    if (dto.interestedProperties) {
+      updateData.interestedProperties = dto.interestedProperties.map(id => new Types.ObjectId(id));
+    }
     const lead = await this.leadModel.findOneAndUpdate(
       {
         _id: new Types.ObjectId(leadId),
         agencyId: new Types.ObjectId(agencyId),
       },
-      { $set: dto },
+      { $set: updateData },
       { new: true },
     );
     if (!lead) throw new NotFoundException('Lead not found');

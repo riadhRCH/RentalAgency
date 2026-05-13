@@ -31,6 +31,19 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
               
               <div class="w-px h-8 sm:h-12 my-auto bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
 
+              <button
+                [routerLink]="['/dashboard/pipeline']"
+                class="group relative flex-1 sm:flex-none flex flex-col items-center justify-center py-3 sm:py-4 px-4 sm:px-10 rounded-lg sm:rounded-xl transition-all duration-300 hover:bg-white/5 min-w-0 sm:min-w-[160px]">
+                <span class="text-2xl sm:text-3xl font-black silver-glow mb-0.5 sm:mb-1 tracking-tighter group-hover:scale-110 transition-transform duration-300">
+                  {{ stats.pipelineProspects + stats.pipelineVisites || 0 }}
+                </span>
+                <span class="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity truncate w-full text-center">
+                  Pipeline
+                </span>
+              </button>
+
+              <div class="w-px h-8 sm:h-12 my-auto bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
+
               <button 
                 [routerLink]="['visits']" 
                 routerLinkActive="bg-primary/10 text-primary border-primary/20 shadow-inner shadow-primary/5"
@@ -92,7 +105,9 @@ export class AgencyOverviewComponent implements OnInit {
   stats: AgencyStats = {
     totalLeads: 0,
     totalTransactions: 0, 
-    totalVisits: 0
+    totalVisits: 0,
+    pipelineProspects: 0,
+    pipelineVisites: 0,
   }
 
   ngOnInit() {

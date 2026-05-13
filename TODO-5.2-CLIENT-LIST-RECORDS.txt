@@ -1,0 +1,48 @@
+CLIENT LIST VIEW & INDIVIDUAL RECORDS
+
+Overview:
+  Build a full table/spreadsheet view of all clients plus individual client profile pages.
+
+Client List View Columns:
+  - Statut (Status badge: Prospect / Visite à planifier)
+  - Nom (Client full name)
+  - Téléphone (Phone number)
+  - E-mail (Email address)
+  - Moyen de contact favori (Preferred contact: Téléphone / E-mail / SMS message)
+  - Disponibilité (Free-text availability)
+  - Les propriétés qui vous intéressent (Multi-select properties)
+  - Zones (Multi-select geographic zones)
+  - Budget (Budget range in €)
+  - Type d'achat (Paiement comptant / Emprunt)
+  - Caractéristiques indispensables (Multi-select must-have features)
+  - Nombre de chambres (Multi-select: Studio / Une / Deux / Trois / Quatre ou plus)
+  - Autres détails importants (Free-text notes)
+  - Agent assigné (Assigned workspace member)
+  - Date de création (Date/time created)
+
+Individual Client Record Page:
+  - Full profile displaying all attributes at a glance
+  - Same fields as list view with richer layout
+
+Acceptance Criteria:
+  ✓ Table view renders all columns with sortable headers
+  ✓ Multi-select values display as badges/chips
+  ✓ Filterable by stage, agent, zone, budget
+  ✓ Searchable by name, email, phone
+  ✓ Click row to navigate to individual client profile
+  ✓ Individual profile page shows all fields in a card/panel layout
+  ✓ Edit capability for client fields
+  ✓ Pagination for large client lists
+  ✓ Agent assignment via user picker
+
+Technical Notes:
+  - Create Angular standalone table component with sorting/filtering
+  - Backend GET endpoint with query params for filter, sort, pagination
+  - Mongoose schema for client with all specified fields
+  - Badge/chip components for multi-select values
+  - Individual profile as a routed component with client/:id
+  - PATCH endpoint for updating client fields
+  - Audit date_creation automatically on first save
+
+Priority: High
+Dependencies: Client schema (Mongoose), Auth module, Personnel module (agent assignment)

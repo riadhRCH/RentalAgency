@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { LeadStatus, ActivityType } from '../shared/enums';
+import { LeadStatus, ActivityType, PipelineStage, PurchaseType, BudgetRange } from '../shared/enums';
 
 export type LeadDocument = Lead & Document;
 
@@ -48,6 +48,40 @@ export class Lead {
     default: LeadStatus.NEW,
   })
   status: string;
+
+  @Prop({
+    type: String,
+    enum: Object.values(PipelineStage),
+    default: PipelineStage.PROSPECT,
+  })
+  pipelineStage: string;
+
+  @Prop()
+  budget: string;
+
+  @Prop({
+    type: String,
+    enum: Object.values(PurchaseType),
+  })
+  purchaseType: string;
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Property' }] })
+  interestedProperties: Types.ObjectId[];
+
+  @Prop({ type: [String] })
+  zones: string[];
+
+  @Prop({ type: [String] })
+  mustHaveFeatures: string[];
+
+  @Prop({ type: [String] })
+  nbBedrooms: string[];
+
+  @Prop()
+  availability: string;
+
+  @Prop()
+  additionalNotes: string;
 
   @Prop({ type: [ActivitySchema], default: [] })
   activities: Activity[];

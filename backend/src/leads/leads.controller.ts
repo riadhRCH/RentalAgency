@@ -34,18 +34,38 @@ export class LeadsController {
     @Query('page') page = '1',
     @Query('limit') limit = '20',
     @Query('status') status?: string,
+    @Query('pipelineStage') pipelineStage?: string,
   ) {
     return this.leadsService.findAll(
       req.agencyId.toString(),
       parseInt(page),
       parseInt(limit),
       status,
+      pipelineStage,
     );
+  }
+
+  @Get('pipeline/stats')
+  getPipelineStats(@Request() req) {
+    return this.leadsService.getPipelineStats(req.agencyId.toString());
   }
 
   @Get(':id')
   findOne(@Request() req, @Param('id') id: string) {
     return this.leadsService.findOne(req.agencyId.toString(), id);
+  }
+
+  @Patch(':id/pipeline-stage')
+  updatePipelineStage(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() body: { pipelineStage: string },
+  ) {
+    return this.leadsService.updatePipelineStage(
+      req.agencyId.toString(),
+      id,
+      body.pipelineStage,
+    );
   }
 
   @Post()

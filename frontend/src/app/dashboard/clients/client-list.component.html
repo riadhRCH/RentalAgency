@@ -1,0 +1,233 @@
+<div class="p-8 max-w-7xl mx-auto space-y-8">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+        Clients
+      </h1>
+      <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+        {{ totalClients() }} clients enregistrés
+      </p>
+    </div>
+  </header>
+
+  <div class="flex flex-col sm:flex-row gap-4">
+    <div class="relative flex-1">
+      <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">search</span>
+      <input
+        type="text"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="onSearchQueryChange($event)"
+        placeholder="Rechercher par nom, email ou téléphone..."
+        class="w-full bg-white/5 border border-white/10 text-white rounded-xl p-3 pl-11 text-sm outline-none focus:border-primary transition-all"
+      />
+    </div>
+    <div class="flex gap-3">
+      <select
+        [ngModel]="stageFilter()"
+        (ngModelChange)="onStageFilterChange($event)"
+        class="bg-white/5 border border-white/10 text-white rounded-xl p-3 text-xs font-bold uppercase tracking-widest outline-none focus:border-primary transition-all"
+      >
+        <option value="" class="bg-background-dark">Tous les statuts</option>
+        <option value="PROSPECT" class="bg-background-dark">Prospect</option>
+        <option value="VISITE_A_PLANIFIER" class="bg-background-dark">Visite à planifier</option>
+      </select>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="p-12 text-center text-slate-500">
+      <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
+    </div>
+  } @else {
+    <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-white/5 border-b border-white/10">
+            <tr>
+              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500 cursor-pointer hover:text-white transition-colors" (click)="sortBy('pipelineStage')">
+                Statut
+                @if (sortField() === 'pipelineStage') {
+                  <span class="ml-1">{{ sortDir() === 'asc' ? '↑' : '↓' }}</span>
+                }
+              </th>
+              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500 cursor-pointer hover:text-white transition-colors" (click)="sortBy('customerName')">
+                Nom
+                @if (sortField() === 'customerName') {
+                  <span class="ml-1">{{ sortDir() === 'asc' ? '↑' : '↓' }}</span>
+                }
+              </th>
+              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Téléphone</th>
+              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">E-mail</th>
+              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Contact favori</th>
+              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Disponibilité</th>
+              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Propriétés</th>
+              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Zones</th>
+              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Budget</th>
+              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Type d'achat</th>
+              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Caractéristiques</th>
+              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Chambres</th>
+              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Notes</th>
+              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Agent</th>
+              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500 cursor-pointer hover:text-white transition-colors" (click)="sortBy('createdAt')">
+                Date
+                @if (sortField() === 'createdAt') {
+                  <span class="ml-1">{{ sortDir() === 'asc' ? '↑' : '↓' }}</span>
+                }
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            @for (lead of filteredLeads(); track lead._id) {
+              <tr
+                class="group hover:bg-white/5 transition-colors cursor-pointer"
+                (click)="viewProfile(lead)"
+              >
+                <td class="p-4">
+                  <span
+                    class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
+                    [ngClass]="lead.pipelineStage === 'PROSPECT' ? 'bg-gray-500/10 text-gray-400' : 'bg-blue-500/10 text-blue-400'"
+                  >
+                    {{ lead.pipelineStage === 'PROSPECT' ? 'Prospect' : 'Visite' }}
+                  </span>
+                </td>
+                <td class="p-4">
+                  <div class="flex items-center gap-2">
+                    <div
+                      class="h-7 w-7 rounded-full overflow-hidden flex-shrink-0"
+                      [ngClass]="lead.customerProfile?.profilePicture ? '' : 'bg-primary/10 flex items-center justify-center text-primary'"
+                    >
+                      @if (lead.customerProfile?.profilePicture) {
+                        <img [src]="lead.customerProfile!.profilePicture" alt="" class="w-full h-full object-cover" />
+                      } @else {
+                        <span class="material-symbols-outlined text-[11px]">person</span>
+                      }
+                    </div>
+                    <span class="text-xs font-bold text-slate-200 truncate max-w-[120px]">{{ getFullName(lead) }}</span>
+                  </div>
+                </td>
+                <td class="p-4 text-[11px] text-slate-400">{{ lead.customerPhone }}</td>
+                <td class="p-4 text-[11px] text-slate-400 truncate max-w-[140px]">{{ lead.customerProfile?.email || '-' }}</td>
+                <td class="p-4">
+                  @if (lead.customerProfile?.preferredContact) {
+                    <span class="text-[9px] font-bold uppercase text-slate-500">
+                      {{ lead.customerProfile!.preferredContact }}
+                    </span>
+                  } @else {
+                    <span class="text-[9px] text-slate-600">-</span>
+                  }
+                </td>
+                <td class="p-4 text-[11px] text-slate-400 truncate max-w-[100px]">{{ lead.availability || '-' }}</td>
+                <td class="p-4">
+                  @if (lead.interestedProperties?.length) {
+                    <div class="flex gap-1 flex-wrap">
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold bg-white/5 text-slate-400">
+                        {{ lead.interestedProperties!.length }} bien(s)
+                      </span>
+                    </div>
+                  } @else {
+                    <span class="text-[9px] text-slate-600">-</span>
+                  }
+                </td>
+                <td class="p-4">
+                  @if (lead.zones?.length) {
+                    <div class="flex gap-1 flex-wrap max-w-[120px]">
+                      @for (zone of lead.zones!.slice(0, 2); track zone) {
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold bg-emerald-500/10 text-emerald-400">
+                          {{ zone }}
+                        </span>
+                      }
+                      @if (lead.zones!.length > 2) {
+                        <span class="text-[8px] text-slate-500">+{{ lead.zones!.length - 2 }}</span>
+                      }
+                    </div>
+                  } @else {
+                    <span class="text-[9px] text-slate-600">-</span>
+                  }
+                </td>
+                <td class="p-4">
+                  @if (lead.budget) {
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold" [ngStyle]="{ backgroundColor: getBudgetColor(lead.budget) + '20', color: getBudgetColor(lead.budget) }">
+                      {{ getBudgetLabel(lead.budget) }}
+                    </span>
+                  } @else {
+                    <span class="text-[9px] text-slate-600">-</span>
+                  }
+                </td>
+                <td class="p-4">
+                  @if (lead.purchaseType) {
+                    <span class="text-[9px] font-bold uppercase" [ngClass]="lead.purchaseType === 'CASH' ? 'text-indigo-400' : 'text-amber-400'">
+                      {{ lead.purchaseType === 'CASH' ? 'Comptant' : 'Emprunt' }}
+                    </span>
+                  } @else {
+                    <span class="text-[9px] text-slate-600">-</span>
+                  }
+                </td>
+                <td class="p-4">
+                  @if (lead.mustHaveFeatures?.length) {
+                    <div class="flex gap-1 flex-wrap max-w-[120px]">
+                      @for (f of lead.mustHaveFeatures!.slice(0, 2); track f) {
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold bg-purple-500/10 text-purple-400">
+                          {{ f }}
+                        </span>
+                      }
+                      @if (lead.mustHaveFeatures!.length > 2) {
+                        <span class="text-[8px] text-slate-500">+{{ lead.mustHaveFeatures!.length - 2 }}</span>
+                      }
+                    </div>
+                  } @else {
+                    <span class="text-[9px] text-slate-600">-</span>
+                  }
+                </td>
+                <td class="p-4">
+                  @if (lead.nbBedrooms?.length) {
+                    <div class="flex gap-1 flex-wrap">
+                      @for (b of lead.nbBedrooms; track b) {
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold bg-cyan-500/10 text-cyan-400">
+                          {{ b }}
+                        </span>
+                      }
+                    </div>
+                  } @else {
+                    <span class="text-[9px] text-slate-600">-</span>
+                  }
+                </td>
+                <td class="p-4 text-[11px] text-slate-400 truncate max-w-[100px]">{{ lead.additionalNotes || lead.notes || '-' }}</td>
+                <td class="p-4 text-[11px] text-slate-400 truncate max-w-[100px]">{{ lead.customerProfile ? getAgentName(lead) : '-' }}</td>
+                <td class="p-4 text-[10px] text-slate-500 whitespace-nowrap">{{ lead.createdAt | date:'dd/MM/yyyy' }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="15" class="p-12 text-center text-slate-500">
+                  <span class="material-symbols-outlined text-4xl mb-3 block">people_outline</span>
+                  <p class="text-xs font-bold uppercase tracking-widest">Aucun client trouvé</p>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between gap-4">
+      <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">
+        Page {{ currentPage() }} / {{ totalPages() }}
+      </p>
+      <div class="flex gap-3">
+        <button
+          (click)="loadClients(currentPage() - 1)"
+          [disabled]="currentPage() === 1"
+          class="flex items-center justify-center p-3 rounded-xl border border-white/10 text-slate-500 hover:text-white hover:border-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        >
+          <span class="material-symbols-outlined text-sm">chevron_left</span>
+        </button>
+        <button
+          (click)="loadClients(currentPage() + 1)"
+          [disabled]="currentPage() === totalPages()"
+          class="flex items-center justify-center p-3 rounded-xl border border-white/10 text-slate-500 hover:text-white hover:border-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        >
+          <span class="material-symbols-outlined text-sm">chevron_right</span>
+        </button>
+      </div>
+    </div>
+  }
+</div>

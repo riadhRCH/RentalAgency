@@ -48,13 +48,21 @@ export class AgenciesService {
 
   async getStats(agencyId: string) {
     const objectId = new Types.ObjectId(agencyId)
-    const [totalLeads, totalVisits, totalTransactions] = await Promise.all([
+    const [totalLeads, totalVisits, totalTransactions, pipelineProspects, pipelineVisites] = await Promise.all([
       this.leadModel.countDocuments({  agencyId: objectId }),
       this.visitRequestModel.countDocuments({ agencyId: objectId }),
       this.transactionsModel.countDocuments({ agencyId: objectId }),
+      this.leadModel.countDocuments({ agencyId: objectId, pipelineStage: 'PROSPECT' }),
+      this.leadModel.countDocuments({ agencyId: objectId, pipelineStage: 'VISITE_A_PLANIFIER' }),
     ]);
 
-    return { totalLeads, totalVisits, totalTransactions };
+    return {
+      totalLeads,
+      totalVisits,
+      totalTransactions,
+      pipelineProspects,
+      pipelineVisites,
+    };
   }
 
   async getProfile(agencyId: string) {

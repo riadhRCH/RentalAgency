@@ -10,6 +10,8 @@ import { OverviewComponent } from './dashboard/overview/overview.component';
 import { AgencyOverviewComponent } from './dashboard/overview/agency-overview.component';
 import { LeadsComponent } from './dashboard/leads/leads.component';
 import { AddLeadComponent } from './dashboard/leads/add-lead/add-lead.component';
+import { PipelineKanbanComponent } from './dashboard/pipeline/pipeline-kanban.component';
+import { ClientListComponent } from './dashboard/clients/client-list.component';
 import { ConfigComponent } from './dashboard/config/config.component';
 import { VisitsComponent } from './dashboard/visits/visits.component';
 import { VisitDetailComponent } from './dashboard/visits/visit-detail.component';
@@ -70,6 +72,8 @@ export const routes: Routes = [
             { path: 'leads', redirectTo: 'overview/leads' },
             { path: 'visits', redirectTo: 'overview/visits' },
             { path: 'transactions', redirectTo: 'overview/transactions' },
+            { path: 'pipeline', component: PipelineKanbanComponent },
+            { path: 'clients', component: ClientListComponent },
             { path: 'leads/add', component: AddLeadComponent },
             { path: 'properties', component: PropertiesMgmtComponent },
             { path: 'cashouts', component: AgencyCashoutsComponent },

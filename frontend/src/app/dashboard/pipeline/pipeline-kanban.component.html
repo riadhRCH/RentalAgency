@@ -1,0 +1,228 @@
+<div class="p-8 max-w-7xl mx-auto space-y-8">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+        Pipeline / Entonnoir
+      </h1>
+      <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+        {{ totalItems() }} clients dans le pipeline
+      </p>
+    </div>
+  </header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <div class="lg:col-span-3">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        @for (column of columns(); track column.key) {
+          <div class="space-y-4">
+            <div class="flex items-center justify-between px-1">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-lg" [style.color]="column.color">
+                  {{ column.icon }}
+                </span>
+                <h2 class="text-sm font-bold uppercase tracking-widest" [style.color]="column.color">
+                  {{ column.label }}
+                </h2>
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-white/5 text-slate-400">
+                  {{ column.items.length }}
+                </span>
+              </div>
+            </div>
+
+            <div class="space-y-3 min-h-[200px] p-2 rounded-xl border border-dashed border-white/5">
+              @if (column.key === 'PROSPECT') {
+                @for (lead of getLeadItems(column); track lead._id) {
+                  <div class="glass-card rounded-xl border border-white/10 p-4 space-y-3 group">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div
+                          class="h-9 w-9 rounded-full overflow-hidden flex-shrink-0"
+                          [ngClass]="lead.customerProfile?.profilePicture ? '' : 'bg-primary/10 flex items-center justify-center text-primary'"
+                        >
+                          @if (lead.customerProfile?.profilePicture) {
+                            <img [src]="lead.customerProfile!.profilePicture" alt="" class="w-full h-full object-cover" />
+                          } @else {
+                            <span class="material-symbols-outlined text-sm">person</span>
+                          }
+                        </div>
+                        <div class="min-w-0">
+                          <h3 class="font-bold text-slate-900 dark:text-white text-sm truncate">
+                            {{ getFullName(lead) }}
+                          </h3>
+                          <p class="text-[10px] text-slate-500 uppercase tracking-widest truncate">
+                            {{ lead.customerProfile?.email || lead.customerPhone }}
+                          </p>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-1.5 flex-shrink-0">
+                        @if (lead.customerProfile?._id) {
+                          <a
+                            [routerLink]="['/dashboard/personnel/profile', lead.customerProfile!._id]"
+                            class="p-1.5 rounded-lg hover:bg-white/10 text-slate-500 hover:text-primary transition-all opacity-0 group-hover:opacity-100"
+                            title="Voir profil"
+                          >
+                            <span class="material-symbols-outlined text-sm">open_in_new</span>
+                          </a>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-1.5">
+                      @if (lead.budget) {
+                        <span
+                          class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
+                          [ngStyle]="{ backgroundColor: getBudgetColor(lead.budget) + '20', color: getBudgetColor(lead.budget) }"
+                        >
+                          {{ getBudgetLabel(lead.budget) }}
+                        </span>
+                      }
+                      @if (lead.purchaseType) {
+                        <span
+                          class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-indigo-500/10 text-indigo-400"
+                        >
+                          {{ lead.purchaseType === 'CASH' ? 'Paiement comptant' : 'Emprunt' }}
+                        </span>
+                      }
+                      @if (lead.zones?.length) {
+                        <span
+                          class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400"
+                        >
+                          {{ lead.zones!.length }} zone(s)
+                        </span>
+                      }
+                    </div>
+
+                    @if (lead.customerProfile?._id) {
+                      <div class="flex items-center gap-2 pt-1 border-t border-white/5">
+                        <div class="h-5 w-5 rounded-full overflow-hidden flex-shrink-0 bg-white/5 flex items-center justify-center">
+                          <span class="material-symbols-outlined text-[10px] text-slate-500">support_agent</span>
+                        </div>
+                        <span class="text-[10px] text-slate-500 truncate">
+                          {{ lead.customerProfile!.firstName || lead.customerProfile!.phone }}
+                        </span>
+                      </div>
+                    }
+                  </div>
+                } @empty {
+                  <div class="flex flex-col items-center justify-center py-12 text-slate-600">
+                    <span class="material-symbols-outlined text-3xl mb-2">inbox</span>
+                    <p class="text-[10px] uppercase tracking-widest font-bold">Aucun client</p>
+                  </div>
+                }
+              } @else {
+                @for (visit of getVisitItems(column); track visit._id) {
+                  <div class="glass-card rounded-xl border border-white/10 p-4 space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="h-9 w-9 rounded-full overflow-hidden flex-shrink-0 bg-primary/10 flex items-center justify-center text-primary">
+                          <span class="material-symbols-outlined text-sm">event</span>
+                        </div>
+                        <div class="min-w-0">
+                          <h3 class="font-bold text-slate-900 dark:text-white text-sm truncate">
+                            {{ visit.customerName || visit.customerPhone }}
+                          </h3>
+                          <p class="text-[10px] text-slate-500 uppercase tracking-widest truncate">
+                            {{ visit.customerEmail }}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-1.5">
+                      <span
+                        class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
+                        [ngStyle]="{ backgroundColor: getVisitStatusColor(visit.status) + '20', color: getVisitStatusColor(visit.status) }"
+                      >
+                        {{ getVisitStatusLabel(visit.status) }}
+                      </span>
+                      @if (visit.visitDate) {
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-indigo-500/10 text-indigo-400">
+                          {{ visit.visitDate | date:'shortDate' }}
+                        </span>
+                      }
+                      @if (visit.propertyId?.reference) {
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400">
+                          {{ visit.propertyId.reference }}
+                        </span>
+                      }
+                    </div>
+
+                    @if (visit.visitDate) {
+                      <div class="flex items-center gap-2 pt-1 border-t border-white/5">
+                        <span class="material-symbols-outlined text-[10px] text-slate-500">schedule</span>
+                        <span class="text-[10px] text-slate-500 truncate">
+                          {{ visit.visitDate | date:'mediumDate' }}{{ visit.visitTime ? ' à ' + visit.visitTime : '' }}
+                        </span>
+                      </div>
+                    }
+                  </div>
+                } @empty {
+                  <div class="flex flex-col items-center justify-center py-12 text-slate-600">
+                    <span class="material-symbols-outlined text-3xl mb-2">inbox</span>
+                    <p class="text-[10px] uppercase tracking-widest font-bold">Aucune visite</p>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="lg:col-span-1">
+      <div class="glass-card rounded-2xl border border-white/10 p-6 space-y-6 sticky top-28">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 text-center">
+          Distribution
+        </h3>
+
+        <div class="flex justify-center">
+          <svg viewBox="0 0 120 120" class="w-40 h-40 -rotate-90">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="16"/>
+            <circle
+              cx="60" cy="60" r="50"
+              fill="none"
+              stroke="#6b7280"
+              stroke-width="16"
+              stroke-dasharray="314.159"
+              [attr.stroke-dashoffset]="prospectOffset()"
+              stroke-linecap="round"
+              class="transition-all duration-500"
+            />
+            <circle
+              cx="60" cy="60" r="50"
+              fill="none"
+              stroke="#3b82f6"
+              stroke-width="16"
+              stroke-dasharray="314.159"
+              [attr.stroke-dashoffset]="visiteOffset()"
+              stroke-linecap="round"
+              class="transition-all duration-500"
+            />
+          </svg>
+        </div>
+
+        <div class="text-center">
+          <p class="text-3xl font-black text-white silver-glow">{{ totalItems() }}</p>
+          <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mt-1">Total</p>
+        </div>
+
+        <div class="space-y-3 pt-2 border-t border-white/5">
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full" style="background-color: #6b7280"></span>
+              <span class="text-slate-400 font-medium">Prospect</span>
+            </div>
+            <span class="text-slate-300 font-bold">{{ columns()[0].items.length }}</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full" style="background-color: #3b82f6"></span>
+              <span class="text-slate-400 font-medium">Visite à planifier</span>
+            </div>
+            <span class="text-slate-300 font-bold">{{ columns()[1].items.length }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -47,6 +47,27 @@ export enum ActivityType {
   MANUAL = 'MANUAL'
 }
 
+// Pipeline Stage Enum
+export enum PipelineStage {
+  PROSPECT = 'PROSPECT',
+  VISITE_A_PLANIFIER = 'VISITE_A_PLANIFIER'
+}
+
+// Budget Range Enum
+export enum BudgetRange {
+  UNDER_50K = 'UNDER_50K',
+  FROM_50K_TO_100K = 'FROM_50K_TO_100K',
+  FROM_100K_TO_200K = 'FROM_100K_TO_200K',
+  FROM_200K_TO_500K = 'FROM_200K_TO_500K',
+  ABOVE_500K = 'ABOVE_500K'
+}
+
+// Purchase Type Enum
+export enum PurchaseType {
+  CASH = 'CASH',
+  LOAN = 'LOAN'
+}
+
 // Team Role Enum
 export enum TeamRole {
   AGENT = 'agent',

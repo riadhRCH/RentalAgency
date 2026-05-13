@@ -32,7 +32,9 @@ export interface PaymentMethod {
 export interface AgencyStats { 
   totalLeads: number; 
   totalVisits: number;
-  totalTransactions: number
+  totalTransactions: number;
+  pipelineProspects: number;
+  pipelineVisites: number;
 }
 
 export interface AgencyProfile {

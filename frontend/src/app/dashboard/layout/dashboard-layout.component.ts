@@ -67,6 +67,8 @@ export class DashboardLayoutComponent implements OnInit {
           { label: 'SIDEBAR.ACTIVE_TRANSACTIONS', icon: 'contract', route: '/dashboard/overview/transactions' },
         ] : undefined,
       },
+      { label: 'SIDEBAR.PIPELINE', icon: 'account_tree', route: '/dashboard/pipeline' },
+      { label: 'SIDEBAR.CLIENTS', icon: 'people_outline', route: '/dashboard/clients' },
       { label: 'SIDEBAR.PROPERTIES', icon: 'real_estate_agent', route: '/dashboard/properties' },
       { label: 'SIDEBAR.ANNOUNCEMENTS', icon: 'campaign', route: '/dashboard/announcements' },
       {

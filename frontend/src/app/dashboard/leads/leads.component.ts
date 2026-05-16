@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { LeadsService, Lead } from '../../services/leads.service';
 import { FormsModule } from '@angular/forms';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { PersonnelCardComponent } from '../../shared/components/personnel-card/personnel-card.component';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
 import { LeadStatus, getEnumValues } from '../../shared/enums';
@@ -11,7 +12,7 @@ import { LeadStatus, getEnumValues } from '../../shared/enums';
 @Component({
   selector: 'app-leads',
   standalone: true,
-  imports: [CommonModule, FormsModule, EmptyStateComponent, RouterModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, EmptyStateComponent, PersonnelCardComponent, RouterModule, TranslatePipe],
   templateUrl: './leads.component.html',
   styleUrls: ['./leads.component.scss']
 })

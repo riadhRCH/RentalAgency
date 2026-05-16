@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { TransactionsService, Transaction } from '../../services/transactions.service';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { PersonnelCardComponent } from '../../shared/components/personnel-card/personnel-card.component';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
 
 @Component({
   selector: 'app-transactions-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, EmptyStateComponent, TranslatePipe],
+  imports: [CommonModule, RouterModule, EmptyStateComponent, PersonnelCardComponent, TranslatePipe],
   templateUrl: './transactions-list.component.html',
   styleUrls: ['./transactions-list.component.scss']
 })

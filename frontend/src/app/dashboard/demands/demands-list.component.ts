@@ -2,11 +2,12 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { DemandsService, Demand } from '../../services/demands.service';
+import { PersonnelCardComponent } from '../../shared/components/personnel-card/personnel-card.component';
 
 @Component({
   selector: 'app-demands-list',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, PersonnelCardComponent],
   templateUrl: './demands-list.component.html',
   styleUrls: ['./demands-list.component.scss'],
 })

@@ -24,20 +24,6 @@
   </header>
 
   <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-    <!-- Personnel Card Template (matches transactions Client column) -->
-    <ng-template #visitorCard let-visitor="visitor">
-      <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 cursor-pointer hover:bg-white/10 transition-all"
-           (click)="$event.stopPropagation(); visitor?._id && router.navigate(['/dashboard/personnel/profile', visitor._id])">
-        <div class="h-10 w-10 rounded-full overflow-hidden flex-shrink-0" [ngClass]="visitor?.profilePicture ? '' : 'bg-primary/10 flex items-center justify-center text-primary'">
-          <img *ngIf="visitor?.profilePicture" [src]="visitor.profilePicture" alt="" class="w-full h-full object-cover" />
-          <span *ngIf="!visitor?.profilePicture" class="material-symbols-outlined">person</span>
-        </div>
-        <div class="min-w-0">
-          <div class="text-xs font-bold text-slate-200 truncate">{{ visitor?.firstName }} {{ visitor?.lastName }}</div>
-          <div class="text-[10px] text-slate-500">{{ visitor?.phone || 'N/A' }}</div>
-        </div>
-      </div>
-    </ng-template>
     <!-- Customer info fallback -->
     <ng-template #customerInfo let-visit="visit">
       <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5">
@@ -91,12 +77,10 @@
                 </div>
               </div>
             </td>
-          <!-- TODO make the following td content similar to this from frontend\src\app\dashboard\transactions\transactions-list.component.html
-           <ng-container *ngTemplateOutlet="personnelCard; context: { $implicit: transaction.personnelId }"></ng-container>
-           make this personnelCard templatre a shared  one file componnet and reuse it here and in http://localhost:4200/dashboard/overview/demands, and in http://localhost:4200/dashboard/overview/leads
-            -->
-            <td class="p-6">
-              <ng-container *ngIf="visit.visitorId; else customerInfoRef" [ngTemplateOutlet]="visitorCard" [ngTemplateOutletContext]="{ visitor: visit.visitorId }"></ng-container>
+            <td class="p-6" (click)="$event.stopPropagation()">
+              <ng-container *ngIf="visit.visitorId; else customerInfoRef">
+                <app-personnel-card [personnel]="visit.visitorId"></app-personnel-card>
+              </ng-container>
               <ng-template #customerInfoRef>
                 <ng-container *ngTemplateOutlet="customerInfo; context: { visit: visit }"></ng-container>
               </ng-template>
@@ -113,10 +97,10 @@
               </div>
             </td>
             <td class="p-6">
-              <!--//TODO interacting with this still opening a visit request page-->
               <select 
                 [ngModel]="visit.status"
-                (ngModelChange)="$event.stopPropagation(); updateStatus(visit, $event)"
+                (click)="$event.stopPropagation()"
+                (ngModelChange)="updateStatus(visit, $event)"
                 class="bg-transparent border-none text-[10px] font-bold uppercase tracking-widest outline-none cursor-pointer"
                 [ngClass]="{
                   'text-amber-500': visit.status === 'PENDING',
@@ -130,7 +114,7 @@
                 <option value="CANCELLED">{{ getVisitStatusLabel('CANCELLED') }}</option>
               </select>
             </td>
-            <td class="p-6 text-right">
+            <td class="p-6 text-right" (click)="$event.stopPropagation()">
               <div class="flex items-center justify-end gap-3">
                 <button (click)="copyVisitLink(visit._id)" class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-primary transition-all"
                    [title]="'Copy link'">

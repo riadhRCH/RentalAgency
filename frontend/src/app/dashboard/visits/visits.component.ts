@@ -4,13 +4,14 @@ import { Router, RouterModule } from '@angular/router';
 import { VisitsService, VisitRequest } from '../../services/visits.service';
 import { FormsModule } from '@angular/forms';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { PersonnelCardComponent } from '../../shared/components/personnel-card/personnel-card.component';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { I18nService } from '../../i18n/i18n.service';
 
 @Component({
   selector: 'app-visits',
   standalone: true,
-  imports: [CommonModule, FormsModule, EmptyStateComponent, RouterModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, EmptyStateComponent, PersonnelCardComponent, RouterModule, TranslatePipe],
   templateUrl: './visits.component.html',
   styleUrls: ['./visits.component.scss']
 })

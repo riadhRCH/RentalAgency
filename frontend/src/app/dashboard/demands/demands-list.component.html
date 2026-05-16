@@ -82,9 +82,7 @@
                 </td>
                 <td class="p-6">
                   @if (demand.personnelId) {
-                    <div class="text-xs text-slate-400">
-                      {{ demand.personnelId.firstName || '' }} {{ demand.personnelId.lastName || '' }}
-                    </div>
+                    <app-personnel-card [personnel]="demand.personnelId"></app-personnel-card>
                   } @else {
                     <span class="text-[10px] text-slate-500">—</span>
                   }

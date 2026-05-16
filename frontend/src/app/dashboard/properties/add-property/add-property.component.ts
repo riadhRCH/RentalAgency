@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { GoogleMap, GoogleMapsModule } from '@angular/google-maps';
 import { PropertiesService } from '../../../services/properties.service';
-import { PersonnelService } from '../../../services/personnel.service';
+
 import { PhoneInputComponent } from '../../../shared/components/phone-input/phone-input.component';
 import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { PropertyType, PropertyStatus, PaymentType, getEnumValues } from '../../../shared/enums';
@@ -20,7 +20,6 @@ import { environment } from '../../../../environments/environment';
 export class AddPropertyComponent implements OnInit {
   private fb = inject(FormBuilder);
   private propertiesService = inject(PropertiesService);
-  private personnelService = inject(PersonnelService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -37,10 +36,8 @@ export class AddPropertyComponent implements OnInit {
   propertyForm: FormGroup;
   loading = signal(false);
   uploading = signal(false);
-  personnel = signal<any[]>([]);
   uploadedPhotos = signal<string[]>([]);
   previewVideoUploading = signal(false);
-  ownerSelectionMode = signal<'existing' | 'new'>('existing');
   propertyId: string | null = null;
   isEditMode = signal(false);
   
@@ -103,31 +100,13 @@ export class AddPropertyComponent implements OnInit {
     this.updateOwnerValidators();
   }
 
-  setOwnerSelectionMode(mode: 'existing' | 'new') {
-    this.ownerSelectionMode.set(mode);
-    this.updateOwnerValidators();
-  }
-
   private updateOwnerValidators() {
-    const ownerIdControl = this.propertyForm.get('ownerId');
     const ownerPhoneControl = this.propertyForm.get('ownerPhone');
-
-    if (this.ownerSelectionMode() === 'existing') {
-      ownerIdControl?.setValidators([Validators.required]);
-      ownerPhoneControl?.clearValidators();
-      ownerPhoneControl?.setValue('');
-    } else {
-      ownerPhoneControl?.setValidators([Validators.required]);
-      ownerIdControl?.clearValidators();
-      ownerIdControl?.setValue('');
-    }
-
-    ownerIdControl?.updateValueAndValidity();
+    ownerPhoneControl?.setValidators([Validators.required]);
     ownerPhoneControl?.updateValueAndValidity();
   }
 
   ngOnInit() {
-    this.loadPersonnel();
     this.checkEditMode();
   }
 
@@ -174,13 +153,6 @@ export class AddPropertyComponent implements OnInit {
         }
       });
     }
-  }
-
-  loadPersonnel() {
-    this.personnelService.getPersonnel().subscribe({
-      next: (res: any) => this.personnel.set(res.data || []),
-      error: (err) => console.error('Error loading personnel', err)
-    });
   }
 
   onFileSelected(event: any) {

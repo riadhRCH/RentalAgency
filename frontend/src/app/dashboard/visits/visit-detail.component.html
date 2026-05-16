@@ -102,6 +102,71 @@
           </div>
         </section>
 
+        <!-- Additional Info -->
+        @if (v.preferredContact || v.availability || v.purchaseType || v.budget) {
+          <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+            <div class="p-8">
+              <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-6">
+                <span class="material-symbols-outlined text-primary">info</span>
+                Additional Info
+              </h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                @if (v.preferredContact) {
+                  <div>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Preferred Contact</p>
+                    <p class="text-sm text-white">{{ getPreferredContactLabel(v.preferredContact) }}</p>
+                  </div>
+                }
+                @if (v.availability) {
+                  <div>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Availability</p>
+                    <p class="text-sm text-white whitespace-pre-wrap">{{ v.availability }}</p>
+                  </div>
+                }
+                @if (v.purchaseType) {
+                  <div>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Purchase Type</p>
+                    <p class="text-sm text-white">{{ v.purchaseType === 'CASH' ? 'Paiement comptant' : 'Emprunt' }}</p>
+                  </div>
+                }
+                @if (v.budget) {
+                  <div>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Budget</p>
+                    <p class="text-sm text-white">{{ getBudgetLabel(v.budget) }}</p>
+                  </div>
+                }
+              </div>
+            </div>
+          </section>
+        }
+
+        <!-- Interested Properties -->
+        @if (v.interestedProperties?.length) {
+          <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+            <div class="p-8">
+              <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-6">
+                <span class="material-symbols-outlined text-primary">home</span>
+                Interested Properties
+              </h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                @for (prop of v.interestedProperties; track prop._id) {
+                  <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5">
+                    <div class="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                      <span class="material-symbols-outlined">home</span>
+                    </div>
+                    <div class="min-w-0">
+                      <div class="text-xs font-bold text-white truncate">{{ prop.reference || 'Property' }}</div>
+                      @if (prop.address) {
+                        <div class="text-[10px] text-slate-500 truncate">{{ prop.address }}</div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </section>
+        }
+
         <!-- Notes -->
         @if (v.notes) {
           <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">

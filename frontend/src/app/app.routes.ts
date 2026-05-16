@@ -12,6 +12,8 @@ import { LeadsComponent } from './dashboard/leads/leads.component';
 import { AddLeadComponent } from './dashboard/leads/add-lead/add-lead.component';
 import { PipelineKanbanComponent } from './dashboard/pipeline/pipeline-kanban.component';
 import { ClientListComponent } from './dashboard/clients/client-list.component';
+import { DemandsListComponent } from './dashboard/demands/demands-list.component';
+import { DemandFormComponent } from './dashboard/demands/demand-form.component';
 import { ConfigComponent } from './dashboard/config/config.component';
 import { VisitsComponent } from './dashboard/visits/visits.component';
 import { VisitDetailComponent } from './dashboard/visits/visit-detail.component';
@@ -28,6 +30,7 @@ import { ThankYouComponent } from './public/thank-you/thank-you.component';
 import { CarouselComponent } from './public/carousel/carousel.component';
 import { TransactionComponent } from './public/transaction/transaction.component';
 import { VisitRequestComponent } from './public/visit-request/visit-request.component';
+import { DemandFormComponent as PublicDemandFormComponent } from './public/demand-form/demand-form.component';
 import { BankDetailsComponent } from './dashboard/bank-details/bank-details.component';
 import { OwnersPageComponent } from './dashboard/personnel/owners-page/owners-page.component';
 import { ProfilePageComponent } from './dashboard/personnel/profile-page/profile-page.component';
@@ -44,6 +47,7 @@ export const routes: Routes = [
     { path: 'announce/:id', component: PropertyDetailsComponent },
     { path: 'transaction/:id', component: TransactionComponent },
     { path: 'visit-request/:id', component: VisitRequestComponent },
+    { path: 'demand/:id', component: PublicDemandFormComponent },
     { path: 'owner-dashboard/:token', component: OwnerDashboardComponent },
     { path: 'owner-dashboard/:token/payments', component: OwnerDashboardComponent }, // Will handle multiple views in component
     { path: 'owner-dashboard/:token/profile', component: OwnerDashboardComponent }, // Profile view
@@ -87,6 +91,8 @@ export const routes: Routes = [
             { path: 'personnel/owners', component: OwnersPageComponent },
             { path: 'personnel/profile/:id', component: ProfilePageComponent },
             { path: 'teams', component: TeamsComponent },
+            { path: 'demands', component: DemandsListComponent },
+            { path: 'demands/new', component: DemandFormComponent },
             { path: 'config', component: ConfigComponent },
             { path: 'bank-details', component: BankDetailsComponent },
             { path: 'admin/agencies-management', component: AgenciesManagementComponent }

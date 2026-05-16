@@ -58,4 +58,24 @@ export class VisitDetailComponent implements OnInit {
   getPropertyPhoto(visit: VisitRequest | null): string {
     return visit?.propertyId?.photos?.[0] || '';
   }
+
+  getBudgetLabel(budget: string): string {
+    const labels: Record<string, string> = {
+      '100K_120K': '100K – 120K €',
+      '120K_150K': '120K – 150K €',
+      '150K_200K': '150K – 200K €',
+      '200K_250K': '200K – 250K €',
+      '250K_300K': '250K – 300K €',
+    };
+    return labels[budget] || budget;
+  }
+
+  getPreferredContactLabel(contact: string): string {
+    const labels: Record<string, string> = {
+      'PHONE': 'Téléphone',
+      'EMAIL': 'E-mail',
+      'SMS': 'SMS',
+    };
+    return labels[contact] || contact;
+  }
 }

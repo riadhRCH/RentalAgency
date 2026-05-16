@@ -5,178 +5,219 @@
     <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
         <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
-          {{ 'VISIT_REQUEST.TITLE' | translate }}
+          Formulaire de demande de visite
         </h1>
         <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
-          {{ 'VISIT_REQUEST.SUBTITLE' | translate }}
+          Merci pour votre intérêt pour nos propriétés. L'un de nos agents reviendra vers vous sous 24h.
         </p>
       </div>
     </header>
 
-    <div *ngIf="loading()" class="flex justify-center items-center h-64">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-    </div>
-
-    <div *ngIf="!loading() && visitRequest()" class="space-y-8">
-      <!-- Property Info -->
-      <div class="glass-card rounded-2xl border border-white/10 p-6">
-        <h3 class="text-lg font-bold text-white uppercase tracking-wider mb-4">
-          {{ 'VISIT_REQUEST.SELECTED_PROPERTY' | translate }}
-        </h3>
-        <div class="flex flex-col lg:flex-row gap-6">
-          <div class="flex-1">
-            <div *ngIf="visitRequest()?.propertyId?.photos && visitRequest()?.propertyId?.photos.length > 0" class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-              <img
-                *ngFor="let photo of visitRequest()?.propertyId?.photos.slice(0, 6)"
-                [src]="photo"
-                [alt]="'VISIT_REQUEST.PROPERTY_PHOTO_ALT' | translate"
-                class="w-full h-32 object-cover rounded-lg border border-white/10"
-              />
-            </div>
-            <div class="space-y-2">
-              <h4 class="text-white font-semibold">{{ visitRequest()?.propertyId?.reference }}</h4>
-              <p class="text-slate-400 text-sm">{{ visitRequest()?.propertyId?.address }}</p>
-            </div>
-          </div>
-        </div>
+    @if (loading()) {
+      <div class="flex justify-center items-center h-64">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
+    }
 
-      <!-- Step 1: Visit Date & Time -->
-      <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-        <div class="p-8">
-          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
-            <span class="material-symbols-outlined text-primary">calendar_month</span>
-            {{ 'VISIT_REQUEST.STEP1_TITLE' | translate }}
-          </h2>
-
-          <div class="flex flex-col items-center gap-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl mx-auto">
-              <!-- Date Picker -->
-              <div class="relative">
-                <input #datePickerInput type="text" readonly
-                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                <div class="bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl border border-primary/30 p-6 text-center pointer-events-none h-full flex flex-col items-center justify-center min-h-[200px]">
-                  <span class="material-symbols-outlined text-4xl text-primary mb-2 block">calendar_month</span>
-                  @if (selectedDate()) {
-                    <div class="text-lg font-bold text-white mb-1">
-                      {{ formatDate(selectedDate()) }}
-                    </div>
-                    <div class="text-primary text-[10px] font-bold uppercase tracking-widest">{{ 'VISIT_REQUEST.CHANGE_DATE' | translate }}</div>
-                  } @else {
-                    <div class="text-sm font-bold text-white/60 mb-3">{{ 'VISIT_REQUEST.NO_DATE_SELECTED' | translate }}</div>
-                    <div class="bg-primary text-white px-5 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-primary/20 inline-flex items-center gap-1">
-                      <span class="material-symbols-outlined text-xs align-middle">event</span>
-                      {{ 'VISIT_REQUEST.SELECT_DATE' | translate }}
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <!-- Time Picker -->
-              @if (selectedDate()) {
-                <div class="bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl border border-primary/30 p-6 text-center flex flex-col items-center justify-center min-h-[200px]">
-                  <span class="material-symbols-outlined text-4xl text-primary mb-2 block">schedule</span>
-                  <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3 block">{{ 'VISIT_REQUEST.PREFERRED_VISIT_TIME' | translate }}</label>
-                  <input
-                    type="time"
-                    [value]="selectedTime()"
-                    (input)="onTimeChange($event.target.value)"
-                    class="w-full bg-white/10 border border-white/20 text-white text-xl font-bold rounded-xl p-3 text-center outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all [color-scheme:dark]"
-                    style="color-scheme: dark; accent-color: #8B5CF6;" />
-                </div>
-              } @else {
-                <div class="bg-white/5 rounded-2xl border border-white/10 p-6 text-center flex flex-col items-center justify-center min-h-[200px] opacity-50">
-                  <span class="material-symbols-outlined text-4xl text-slate-500 mb-2 block">schedule</span>
-                  <p class="text-xs text-slate-500 font-bold uppercase tracking-widest">{{ 'VISIT_REQUEST.SELECT_DATE_FIRST' | translate }}</p>
-                </div>
-              }
-            </div>
-
-            @if (selectedDate() && selectedTime()) {
-              <div class="flex items-center gap-2 text-emerald-400 text-sm">
-                <span class="material-symbols-outlined text-lg">check_circle</span>
-                {{ i18n.translate('VISIT_REQUEST.VISIT_CONFIRMED', { date: formatDate(selectedDate()), time: selectedTime() }) }}
-              </div>
-            }
-          </div>
-        </div>
-      </section>
-
-      <!-- Step 2: Your Information -->
-      <section *ngIf="!submitted()" class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-        <div class="p-8">
-          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
-            <span class="material-symbols-outlined" [class.text-primary]="customerInfoDone()" [class.text-slate-500]="!customerInfoDone()">
-              {{ customerInfoDone() ? 'check_circle' : 'person' }}
-            </span>
-            {{ 'VISIT_REQUEST.STEP2_TITLE' | translate }}
-          </h2>
-
-          <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="space-y-6">
+    @if (!loading() && mode() === 'create' && !submitted()) {
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-8">
+        <!-- Personal Info -->
+        <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+          <div class="p-8">
+            <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+              <span class="material-symbols-outlined text-primary">person</span>
+              Informations personnelles
+            </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="space-y-2">
-                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.FIRST_NAME' | translate }}</label>
-                <input type="text" formControlName="firstName" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
-              </div>
-              <div class="space-y-2">
-                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.LAST_NAME' | translate }}</label>
-                <input type="text" formControlName="lastName" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
-              </div>
-              <div class="space-y-2">
-                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.PHONE_NUMBER' | translate }}</label>
-                <app-phone-input formControlName="phone" [placeholder]="'COMMON.PHONE_NUMBER' | translate"></app-phone-input>
-                @if (customerForm.get('phone')?.touched && customerForm.get('phone')?.invalid) {
-                  <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1 flex items-center gap-1">
-                    <span class="material-symbols-outlined text-xs">error</span>
-                    @if (customerForm.get('phone')?.hasError('required')) {
-                      {{ 'COMMON.PHONE_NUMBER_REQUIRED' | translate }}
-                    } @else if (customerForm.get('phone')?.hasError('pattern')) {
-                      {{ 'COMMON.PHONE_INVALID_FORMAT' | translate }}
-                    }
-                  </div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                  Nom <span class="text-red-400">*</span>
+                </label>
+                <input type="text" formControlName="customerName"
+                  class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
+                  placeholder="Votre nom complet">
+                @if (form.get('customerName')?.touched && form.get('customerName')?.invalid) {
+                  <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1">Champ requis</div>
                 }
               </div>
               <div class="space-y-2">
-                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'COMMON.EMAIL' | translate }}</label>
-                <input type="email" formControlName="email" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all">
-                @if (customerForm.get('email')?.touched && customerForm.get('email')?.hasError('email')) {
-                  <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1 flex items-center gap-1">
-                    <span class="material-symbols-outlined text-xs">error</span>
-                    {{ 'COMMON.EMAIL_INVALID_FORMAT' | translate }}
-                  </div>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                  Téléphone <span class="text-red-400">*</span>
+                </label>
+                <input type="tel" formControlName="customerPhone"
+                  class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
+                  placeholder="Votre numéro de téléphone">
+                @if (form.get('customerPhone')?.touched && form.get('customerPhone')?.invalid) {
+                  <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1">Numéro invalide</div>
                 }
               </div>
               <div class="space-y-2 md:col-span-2">
-                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">{{ 'LEAD_FORM.NOTES' | translate }}</label>
-                <textarea formControlName="notes" rows="3" class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all" [placeholder]="'VISIT_REQUEST.NOTES_PLACEHOLDER' | translate"></textarea>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                  E-mail <span class="text-red-400">*</span>
+                </label>
+                <input type="email" formControlName="customerEmail"
+                  class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
+                  placeholder="votre@email.com">
+                @if (form.get('customerEmail')?.touched && form.get('customerEmail')?.invalid) {
+                  <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1">Email invalide</div>
+                }
               </div>
             </div>
+          </div>
+        </section>
 
-            <div class="flex justify-end">
-              <button
-                type="submit"
-                [disabled]="saving() || !customerForm.valid"
-                class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all"
-              >
-                {{ saving() ? ('VISIT_REQUEST.SUBMITTING' | translate) : ('VISIT_REQUEST.SUBMIT_REQUEST' | translate) }}
-              </button>
+        <!-- Preferred Contact -->
+        <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+          <div class="p-8">
+            <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+              <span class="material-symbols-outlined text-primary">contact_phone</span>
+              Moyen de contact favori <span class="text-red-400">*</span>
+            </h2>
+            <div class="flex flex-wrap gap-4">
+              <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                <input type="radio" formControlName="preferredContact" value="PHONE" class="accent-primary">
+                <span class="text-sm text-white font-medium">Téléphone</span>
+              </label>
+              <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                <input type="radio" formControlName="preferredContact" value="EMAIL" class="accent-primary">
+                <span class="text-sm text-white font-medium">E-mail</span>
+              </label>
+              <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                <input type="radio" formControlName="preferredContact" value="SMS" class="accent-primary">
+                <span class="text-sm text-white font-medium">SMS</span>
+              </label>
             </div>
-          </form>
+          </div>
+        </section>
+
+        <!-- Interested Properties -->
+        <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+          <div class="p-8">
+            <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+              <span class="material-symbols-outlined text-primary">home</span>
+              Les propriétés qui vous intéressent <span class="text-red-400">*</span>
+            </h2>
+            @if (properties().length === 0) {
+              <p class="text-slate-500 text-sm">Chargement des propriétés...</p>
+            } @else {
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                @for (prop of properties(); track prop._id) {
+                  <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                    <input type="checkbox"
+                      [checked]="selectedProperties().includes(prop._id)"
+                      (change)="toggleProperty(prop._id)"
+                      class="accent-primary">
+                    <div class="min-w-0">
+                      <div class="text-sm text-white font-medium truncate">{{ prop.reference }}</div>
+                      <div class="text-[10px] text-slate-500 uppercase tracking-widest truncate">{{ prop.address }}</div>
+                      @if (prop.price) {
+                        <div class="text-[10px] text-primary font-bold mt-0.5">{{ prop.price.toLocaleString() }} €</div>
+                      }
+                    </div>
+                  </label>
+                }
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- Availability -->
+        <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+          <div class="p-8">
+            <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+              <span class="material-symbols-outlined text-primary">calendar_today</span>
+              Disponibilité <span class="text-red-400">*</span>
+            </h2>
+            <textarea formControlName="availability" rows="3"
+              class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
+              placeholder="Veuillez indiquer vos disponibilités pour les 3-4 prochains jours..."></textarea>
+            @if (form.get('availability')?.touched && form.get('availability')?.invalid) {
+              <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1 mt-1">Champ requis</div>
+            }
+          </div>
+        </section>
+
+        <!-- Purchase Type -->
+        <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+          <div class="p-8">
+            <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+              <span class="material-symbols-outlined text-primary">payments</span>
+              Type d'achat
+            </h2>
+            <div class="flex flex-wrap gap-4">
+              <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                <input type="radio" formControlName="purchaseType" value="CASH" class="accent-primary">
+                <span class="text-sm text-white font-medium">Paiement comptant</span>
+              </label>
+              <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                <input type="radio" formControlName="purchaseType" value="LOAN" class="accent-primary">
+                <span class="text-sm text-white font-medium">Emprunt</span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Budget -->
+        <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+          <div class="p-8">
+            <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+              <span class="material-symbols-outlined text-primary">account_balance</span>
+              Budget
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              @for (opt of budgetOptions; track opt.value) {
+                <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                  <input type="radio" formControlName="budget" [value]="opt.value" class="accent-primary">
+                  <span class="text-sm text-white font-medium">{{ opt.label }}</span>
+                </label>
+              }
+            </div>
+          </div>
+        </section>
+
+        <!-- Submit -->
+        <div class="flex justify-end">
+          <button type="submit" [disabled]="saving() || form.invalid"
+            class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-10 py-4 rounded-xl uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20">
+            @if (saving()) {
+              <span class="flex items-center gap-2">
+                <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                Envoi en cours...
+              </span>
+            } @else {
+              Envoyer ma demande
+            }
+          </button>
         </div>
-      </section>
+      </form>
+    }
 
-      <!-- Success message after submission -->
-      <div *ngIf="submitted()" class="glass-card rounded-2xl border border-emerald-500/30 p-8 text-center space-y-4">
-        <span class="material-symbols-outlined text-5xl text-emerald-400">check_circle</span>
-        <h2 class="text-2xl font-bold text-white">{{ 'VISIT_REQUEST.REQUEST_SUBMITTED' | translate }}</h2>
-        <p class="text-slate-400">{{ 'VISIT_REQUEST.SUCCESS_MESSAGE' | translate }}</p>
+    <!-- Success -->
+    @if (!loading() && mode() === 'create' && submitted()) {
+      <div class="glass-card rounded-2xl border border-emerald-500/30 p-12 text-center space-y-6">
+        <span class="material-symbols-outlined text-6xl text-emerald-400">check_circle</span>
+        <h2 class="text-2xl font-bold text-white">Demande envoyée avec succès !</h2>
+        <p class="text-slate-400 max-w-md mx-auto">
+          Merci pour votre demande. L'un de nos agents vous contactera sous 24h pour planifier une visite.
+        </p>
+        <button (click)="submitted.set(false); form.reset(); selectedProperties.set([])"
+          class="text-primary hover:text-primary/80 text-xs font-bold uppercase tracking-widest transition-colors">
+          Envoyer une autre demande
+        </button>
       </div>
-    </div>
+    }
 
-    <div *ngIf="!loading() && !visitRequest()" class="text-center py-12">
-      <span class="material-symbols-outlined text-5xl text-slate-500">error</span>
-      <p class="mt-4 text-slate-400">{{ 'VISIT_REQUEST.NOT_FOUND' | translate }}</p>
-    </div>
+    <!-- Edit mode (existing visit) -->
+    @if (!loading() && mode() === 'edit' && visitRequest(); as v) {
+      <div class="glass-card rounded-2xl border border-white/10 p-8 text-center space-y-4">
+        <span class="material-symbols-outlined text-5xl text-primary">event</span>
+        <h2 class="text-xl font-bold text-white">Demande de visite existante</h2>
+        <p class="text-slate-400">
+          Cette demande concerne la propriété <strong class="text-white">{{ v.propertyId?.reference || 'N/A' }}</strong>.
+        </p>
+        <p class="text-slate-500 text-sm">Vous pouvez gérer cette visite depuis votre tableau de bord.</p>
+      </div>
+    }
   </div>
 </div>
 

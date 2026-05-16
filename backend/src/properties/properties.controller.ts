@@ -79,6 +79,12 @@ export class PropertiesController {
     );
   }
 
+  @Public()
+  @Get('active/:agencyId')
+  findActiveByAgency(@Param('agencyId') agencyId: string) {
+    return this.propertiesService.findActiveByAgency(agencyId);
+  }
+
   @UseGuards(AgencyGuard)
   @Get(':id')
   findOne(@Request() req, @Param('id') id: string) {

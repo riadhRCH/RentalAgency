@@ -3,10 +3,12 @@ export interface AppEnvironment {
   appName: string;
   apiBaseUrl: string;
   googleMapsApiKey: string;
-  appUrl: string
+  appUrl: string;
+  defaultAgencyId: string;
 }
 
 export const sharedEnvironment = {
   appName: 'Rental Agency Frontend',
-  googleMapsApiKey: 'AIzaSyCe6374KnYQjlnY_7vpD3oKUeDtodQ6804'
+  googleMapsApiKey: 'AIzaSyCe6374KnYQjlnY_7vpD3oKUeDtodQ6804',
+  defaultAgencyId: '69eb9759b32a11652fded090'
 } as const;

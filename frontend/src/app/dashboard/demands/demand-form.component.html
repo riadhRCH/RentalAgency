@@ -1,0 +1,193 @@
+<div class="p-8 max-w-4xl mx-auto space-y-8">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+        Formulaire de demande de biens
+      </h1>
+      <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+        Faites nous part de ce que vous recherchez et nous vous enverrons un e-mail si quelque chose susceptible de vous intéresser se présente.
+      </p>
+    </div>
+  </header>
+
+  @if (!submitted()) {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-8">
+      <!-- Personal Info -->
+      <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+        <div class="p-8">
+          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+            <span class="material-symbols-outlined text-primary">person</span>
+            Informations personnelles
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                Nom <span class="text-red-400">*</span>
+              </label>
+              <input type="text" formControlName="customerName"
+                class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
+                placeholder="Nom complet du client">
+              @if (form.get('customerName')?.touched && form.get('customerName')?.invalid) {
+                <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1">Champ requis</div>
+              }
+            </div>
+            <div class="space-y-2">
+              <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                E-mail <span class="text-red-400">*</span>
+              </label>
+              <input type="email" formControlName="customerEmail"
+                class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
+                placeholder="email@client.com">
+              @if (form.get('customerEmail')?.touched && form.get('customerEmail')?.invalid) {
+                <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1">Email invalide</div>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bedrooms -->
+      <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+        <div class="p-8">
+          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+            <span class="material-symbols-outlined text-primary">bed</span>
+            Nombre de chambres <span class="text-red-400">*</span>
+          </h2>
+          <div class="flex flex-wrap gap-3">
+            @for (opt of bedroomOptions; track opt.value) {
+              <label class="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                <input type="checkbox"
+                  [checked]="selectedBedrooms().includes(opt.value)"
+                  (change)="toggleSelection(selectedBedrooms, opt.value)"
+                  class="accent-primary">
+                <span class="text-sm text-white font-medium">{{ opt.label }}</span>
+              </label>
+            }
+          </div>
+          @if (selectedBedrooms().length === 0 && form.touched) {
+            <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1 mt-2">Sélectionnez au moins une option</div>
+          }
+        </div>
+      </section>
+
+      <!-- Zones -->
+      <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+        <div class="p-8">
+          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+            <span class="material-symbols-outlined text-primary">map</span>
+            Zones <span class="text-red-400">*</span>
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            @for (zone of zones; track zone.value) {
+              <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                <input type="checkbox"
+                  [checked]="selectedZones().includes(zone.value)"
+                  (change)="toggleSelection(selectedZones, zone.value)"
+                  class="accent-primary">
+                <span class="text-sm text-white font-medium">{{ zone.label }}</span>
+              </label>
+            }
+          </div>
+          @if (selectedZones().length === 0 && form.touched) {
+            <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1 mt-2">Sélectionnez au moins une zone</div>
+          }
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+        <div class="p-8">
+          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+            <span class="material-symbols-outlined text-primary">checklist</span>
+            Caractéristiques indispensables
+          </h2>
+          <div class="flex flex-wrap gap-3">
+            @for (opt of featureOptions; track opt.value) {
+              <label class="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                <input type="checkbox"
+                  [checked]="selectedFeatures().includes(opt.value)"
+                  (change)="toggleSelection(selectedFeatures, opt.value)"
+                  class="accent-primary">
+                <span class="text-sm text-white font-medium">{{ opt.label }}</span>
+              </label>
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- Budget -->
+      <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+        <div class="p-8">
+          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+            <span class="material-symbols-outlined text-primary">account_balance</span>
+            Budget <span class="text-red-400">*</span>
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            @for (opt of budgetOptions; track opt.value) {
+              <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                <input type="radio" formControlName="budget" [value]="opt.value" class="accent-primary">
+                <span class="text-sm text-white font-medium">{{ opt.label }}</span>
+              </label>
+            }
+          </div>
+          @if (form.get('budget')?.touched && form.get('budget')?.invalid) {
+            <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1 mt-2">Champ requis</div>
+          }
+        </div>
+      </section>
+
+      <!-- Additional Notes -->
+      <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+        <div class="p-8">
+          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+            <span class="material-symbols-outlined text-primary">notes</span>
+            Autres détails importants
+          </h2>
+          <textarea formControlName="additionalNotes" rows="4"
+            class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
+            placeholder="Informations complémentaires..."></textarea>
+        </div>
+      </section>
+
+      <!-- Submit -->
+      <div class="flex justify-end gap-4">
+        <a routerLink="/dashboard/demands"
+          class="px-6 py-3 rounded-xl border border-white/10 text-slate-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-all">
+          Annuler
+        </a>
+        <button type="submit" [disabled]="saving()"
+          class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-10 py-3 rounded-xl uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20">
+          @if (saving()) {
+            <span class="flex items-center gap-2">
+              <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+              Envoi...
+            </span>
+          } @else {
+            Envoyer la demande
+          }
+        </button>
+      </div>
+    </form>
+  }
+
+  <!-- Success -->
+  @if (submitted()) {
+    <div class="glass-card rounded-2xl border border-emerald-500/30 p-12 text-center space-y-6">
+      <span class="material-symbols-outlined text-6xl text-emerald-400">check_circle</span>
+      <h2 class="text-2xl font-bold text-white">Demande envoyée avec succès !</h2>
+      <p class="text-slate-400 max-w-md mx-auto">
+        La demande de bien a été enregistrée. Nous vous contacterons si une propriété correspondant à vos critères devient disponible.
+      </p>
+      <div class="flex justify-center gap-4">
+        <a routerLink="/dashboard/demands"
+          class="text-primary hover:text-primary/80 text-xs font-bold uppercase tracking-widest transition-colors">
+          Voir toutes les demandes
+        </a>
+        <button (click)="submitted.set(false); form.reset(); selectedBedrooms.set([]); selectedZones.set([]); selectedFeatures.set([])"
+          class="text-slate-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
+          Nouvelle demande
+        </button>
+      </div>
+    </div>
+  }
+</div>

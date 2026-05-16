@@ -789,5 +789,24 @@
     "VISIT_DATE": "Date de visite",
     "VISIT_TIME": "Heure de visite"
   },
-  "WEEKLY": "Semaine"
+  "WEEKLY": "Semaine",
+  "DEMAND_FORM": {
+    "TITLE": "Votre demande",
+    "SUBTITLE": "Remplissez vos coordonnées et nous vous recontacterons sous peu.",
+    "PERSONAL_INFO": "Informations personnelles",
+    "NAME": "Nom complet",
+    "NAME_PLACEHOLDER": "Votre nom complet",
+    "EMAIL": "E-mail",
+    "EMAIL_PLACEHOLDER": "votre@email.com",
+    "INVALID_EMAIL": "E-mail invalide",
+    "REQUIRED": "Requis",
+    "BUDGET": "Budget",
+    "BUDGET_PLACEHOLDER": "ex. 200k - 300k TND",
+    "NOTES": "Notes supplémentaires",
+    "NOTES_PLACEHOLDER": "Toute information supplémentaire...",
+    "SUBMIT": "Envoyer ma demande",
+    "SAVING": "Envoi en cours...",
+    "SUCCESS_TITLE": "Demande envoyée avec succès !",
+    "SUCCESS_MESSAGE": "Merci pour votre demande. L'un de nos agents vous contactera sous 24h."
+  }
 }

@@ -5,6 +5,7 @@ import { VisitRequest, VisitRequestDocument } from '../schemas/visit-request.sch
 import { Property, PropertyDocument } from '../schemas/property.schema';
 import { Announcement, AnnouncementDocument } from '../schemas/announcement.schema';
 import { RentalAgency, RentalAgencyDocument } from '../schemas/rental-agency.schema';
+import { Personnel, PersonnelDocument } from '../schemas/personnel.schema';
 import { NotificationService } from '../notifications/notifications.service';
 import { NotificationType } from '../schemas/notification.schema';
 
@@ -19,36 +20,103 @@ export class VisitRequestsService {
     private readonly announcementModel: Model<AnnouncementDocument>,
     @InjectModel(RentalAgency.name)
     private readonly agencyModel: Model<RentalAgencyDocument>,
+    @InjectModel(Personnel.name)
+    private readonly personnelModel: Model<PersonnelDocument>,
     private readonly notificationService: NotificationService,
   ) {}
 
   async createPublic(dto: any) {
-    const announcement = await this.announcementModel.findById(
-      new Types.ObjectId(dto.announcementId),
-    );
-    if (!announcement) throw new NotFoundException('Announcement not found');
+    let agencyId: string;
+    let propertyIds: Types.ObjectId[] = [];
 
-    const property = await this.propertyModel.findById(announcement.propertyId);
-    if (!property) throw new NotFoundException('Property not found');
+    if (dto.announcementId) {
+      const announcement = await this.announcementModel.findById(
+        new Types.ObjectId(dto.announcementId),
+      );
+      if (!announcement) throw new NotFoundException('Announcement not found');
+
+      const property = await this.propertyModel.findById(announcement.propertyId);
+      if (!property) throw new NotFoundException('Property not found');
+
+      agencyId = property.agencyId.toString();
+      propertyIds = [announcement.propertyId];
+    } else if (dto.agencyId) {
+      agencyId = dto.agencyId;
+      if (dto.interestedProperties?.length) {
+        propertyIds = dto.interestedProperties.map((id: string) => new Types.ObjectId(id));
+      }
+    } else {
+      throw new NotFoundException('Either announcementId or agencyId is required');
+    }
+
+    const personnel = await this.findOrCreatePersonnel(dto);
 
     const visit = await this.visitModel.create({
-      propertyId: announcement.propertyId,
-      agencyId: property.agencyId,
-      customerPhone: dto.customerPhone,
+      propertyId: propertyIds[0] || undefined,
+      interestedProperties: propertyIds.length > 0 ? propertyIds : undefined,
+      agencyId: new Types.ObjectId(agencyId),
+      visitorId: personnel._id,
       customerName: dto.customerName,
+      customerPhone: dto.customerPhone,
       customerEmail: dto.customerEmail,
-      notes: dto.notes,
+      preferredContact: dto.preferredContact,
+      availability: dto.availability,
+      purchaseType: dto.purchaseType,
+      budget: dto.budget,
+      notes: dto.notes || dto.additionalNotes,
+      source: 'public',
     });
 
-    await this.notifyAgencyOwner(property.agencyId.toString(), 'created', dto.customerName, dto.customerPhone);
+    await this.notifyAgencyOwner(agencyId, 'created', dto.customerName, dto.customerPhone);
 
     return visit;
+  }
+
+  private async findOrCreatePersonnel(dto: any): Promise<PersonnelDocument> {
+    if (!dto.customerPhone) {
+      return null;
+    }
+
+    const existing = await this.personnelModel.findOne({
+      phone: dto.customerPhone,
+      deletedAt: { $exists: false },
+    });
+
+    if (existing) {
+      if (dto.customerName && !existing.firstName) {
+        const parts = dto.customerName.split(' ');
+        existing.firstName = parts[0] || '';
+        existing.lastName = parts.slice(1).join(' ') || '';
+      }
+      if (dto.customerEmail && !existing.email) {
+        existing.email = dto.customerEmail;
+      }
+      if (dto.preferredContact) {
+        existing.preferredContact = dto.preferredContact;
+      }
+      if (existing.isModified()) {
+        await existing.save();
+      }
+      return existing;
+    }
+
+    const nameParts = (dto.customerName || '').split(' ');
+    return this.personnelModel.create({
+      phone: dto.customerPhone,
+      firstName: nameParts[0] || '',
+      lastName: nameParts.slice(1).join(' ') || '',
+      email: dto.customerEmail,
+      preferredContact: dto.preferredContact || 'PHONE',
+      source: 'public',
+      status: 'active',
+    });
   }
 
   async findOnePublic(id: string) {
     const visit = await this.visitModel.findById(new Types.ObjectId(id))
       .populate('propertyId')
-      .populate('visitorId');
+      .populate('visitorId')
+      .populate('interestedProperties');
     if (!visit) throw new NotFoundException('Visit request not found');
     return visit;
   }
@@ -94,7 +162,8 @@ export class VisitRequestsService {
         .skip(skip)
         .limit(limit)
         .populate('propertyId')
-        .populate('visitorId'),
+        .populate('visitorId')
+        .populate('interestedProperties'),
       this.visitModel.countDocuments(query),
     ]);
 
@@ -111,7 +180,7 @@ export class VisitRequestsService {
     const visit = await this.visitModel.findOne({
       _id: new Types.ObjectId(id),
       agencyId: new Types.ObjectId(agencyId),
-    }).populate('propertyId').populate('visitorId');
+    }).populate('propertyId').populate('visitorId').populate('interestedProperties');
     if (!visit) throw new NotFoundException('Visit request not found');
     return visit;
   }

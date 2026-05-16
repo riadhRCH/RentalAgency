@@ -8,6 +8,7 @@ import { VisitRequestsService } from './visits.service';
 import { AuthModule } from '../auth/auth.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schema';
+import { Personnel, PersonnelSchema } from '../schemas/personnel.schema';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { RentalAgency, RentalAgencySchema } from '../schemas/rental-agency.schem
       { name: Property.name, schema: PropertySchema },
       { name: RentalAgency.name, schema: RentalAgencySchema },
       { name: Announcement.name, schema: AnnouncementSchema },
+      { name: Personnel.name, schema: PersonnelSchema },
     ]),
     AuthModule,
     NotificationsModule,

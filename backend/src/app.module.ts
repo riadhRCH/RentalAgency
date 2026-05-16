@@ -14,6 +14,7 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { CashoutsModule } from './cashouts/cashouts.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { AdminModule } from './admin/admin.module';
+import { DemandsModule } from './demands/demands.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -38,6 +39,7 @@ import { AppController } from './app.controller';
     CashoutsModule,
     NotificationsModule,
     AdminModule,
+    DemandsModule,
   ],
   controllers: [AppController],
 })

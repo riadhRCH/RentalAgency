@@ -4,6 +4,8 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../auth/auth.service';
 import { I18nService } from '../../../i18n/i18n.service';
 import { TranslatePipe } from '../../../i18n/translate.pipe';
+import { DemandsService } from '../../../services/demands.service';
+import { environment } from '../../../../environments/environment';
 import type { Language } from '../../../i18n/translations';
 
 @Component({
@@ -17,6 +19,7 @@ export class PublicNavbarComponent {
   authService = inject(AuthService);
   readonly i18n = inject(I18nService);
   private router = inject(Router);
+  private demandsService = inject(DemandsService);
   mobileMenuOpen = false;
   langDropdownOpen = false;
 
@@ -62,6 +65,23 @@ export class PublicNavbarComponent {
   navigateToDashboard(): void {
     this.mobileMenuOpen = false;
     this.router.navigate(['/dashboard/overview']);
+  }
+
+  bookViewing(): void {
+    this.mobileMenuOpen = false;
+    const segments = this.router.url.split('/').filter(s => s);
+    const knownPaths = ['search', 'announce', 'transaction', 'visit-request', 'owner-dashboard', 'thank-you', 'carousel', 'auth', 'dashboard'];
+    let agencyId: string = environment.defaultAgencyId;
+
+    if (segments.length === 1 && !knownPaths.includes(segments[0])) {
+      agencyId = segments[0];
+    }
+
+    this.demandsService.createPublicDemand(agencyId).subscribe({
+      next: (demand) => {
+        this.router.navigate(['/demand', demand._id]);
+      },
+    });
   }
 
   logout(): void {

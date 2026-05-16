@@ -58,6 +58,10 @@ export class PropertiesService {
     return this.http.get<PaginatedProperties>(url);
   }
 
+  getActiveProperties(agencyId: string): Observable<Property[]> {
+    return this.http.get<Property[]>(`${this.apiUrl}/active/${agencyId}`);
+  }
+
   getProperty(id: string): Observable<Property> {
     return this.http.get<Property>(`${this.apiUrl}/${id}`);
   }

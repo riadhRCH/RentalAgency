@@ -116,6 +116,15 @@ export class PropertiesService {
     };
   }
 
+  async findActiveByAgency(agencyId: string) {
+    const properties = await this.propertyModel.find({
+      agencyId: new Types.ObjectId(agencyId),
+      status: 'available',
+      deletedAt: { $exists: false },
+    }).select('_id reference type address price photos surface');
+    return properties;
+  }
+
   async findOne(agencyId: string, id: string) {
     const property = await this.propertyModel
       .findOne({

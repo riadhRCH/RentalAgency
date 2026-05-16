@@ -1,0 +1,114 @@
+<app-public-navbar></app-public-navbar>
+
+<div class="min-h-screen bg-background-dark pt-24 pb-12">
+  <div class="p-8 max-w-4xl mx-auto space-y-12">
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <h1 class="font-serif text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase silver-glow">
+          {{ 'DEMAND_FORM.TITLE' | translate }}
+        </h1>
+        <p class="font-display text-slate-500 text-sm tracking-widest uppercase mt-1">
+          {{ 'DEMAND_FORM.SUBTITLE' | translate }}
+        </p>
+      </div>
+    </header>
+
+    @if (loading()) {
+      <div class="flex justify-center items-center h-64">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    }
+
+    @if (!loading() && !submitted()) {
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-8">
+        <!-- Personal Info -->
+        <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+          <div class="p-8">
+            <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+              <span class="material-symbols-outlined text-primary">person</span>
+              {{ 'DEMAND_FORM.PERSONAL_INFO' | translate }}
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                  {{ 'DEMAND_FORM.NAME' | translate }} <span class="text-red-400">*</span>
+                </label>
+                <input type="text" formControlName="customerName"
+                  class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
+                  [placeholder]="'DEMAND_FORM.NAME_PLACEHOLDER' | translate">
+                @if (form.get('customerName')?.touched && form.get('customerName')?.invalid) {
+                  <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1">{{ 'DEMAND_FORM.REQUIRED' | translate }}</div>
+                }
+              </div>
+              <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                  {{ 'DEMAND_FORM.EMAIL' | translate }} <span class="text-red-400">*</span>
+                </label>
+                <input type="email" formControlName="customerEmail"
+                  class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
+                  [placeholder]="'DEMAND_FORM.EMAIL_PLACEHOLDER' | translate">
+                @if (form.get('customerEmail')?.touched && form.get('customerEmail')?.invalid) {
+                  <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1">{{ 'DEMAND_FORM.INVALID_EMAIL' | translate }}</div>
+                }
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Budget -->
+        <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+          <div class="p-8">
+            <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+              <span class="material-symbols-outlined text-primary">account_balance</span>
+              {{ 'DEMAND_FORM.BUDGET' | translate }}
+            </h2>
+            <input type="text" formControlName="budget"
+              class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
+              [placeholder]="'DEMAND_FORM.BUDGET_PLACEHOLDER' | translate">
+          </div>
+        </section>
+
+        <!-- Additional Notes -->
+        <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+          <div class="p-8">
+            <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+              <span class="material-symbols-outlined text-primary">notes</span>
+              {{ 'DEMAND_FORM.NOTES' | translate }}
+            </h2>
+            <textarea formControlName="additionalNotes" rows="4"
+              class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
+              [placeholder]="'DEMAND_FORM.NOTES_PLACEHOLDER' | translate"></textarea>
+          </div>
+        </section>
+
+        <!-- Submit -->
+        <div class="flex justify-end">
+          <button type="submit" [disabled]="saving() || form.invalid"
+            class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-10 py-4 rounded-xl uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20">
+            @if (saving()) {
+              <span class="flex items-center gap-2">
+                <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                {{ 'DEMAND_FORM.SAVING' | translate }}
+              </span>
+            } @else {
+              {{ 'DEMAND_FORM.SUBMIT' | translate }}
+            }
+          </button>
+        </div>
+      </form>
+    }
+
+    <!-- Success -->
+    @if (!loading() && submitted()) {
+      <div class="glass-card rounded-2xl border border-emerald-500/30 p-12 text-center space-y-6">
+        <span class="material-symbols-outlined text-6xl text-emerald-400">check_circle</span>
+        <h2 class="text-2xl font-bold text-white">{{ 'DEMAND_FORM.SUCCESS_TITLE' | translate }}</h2>
+        <p class="text-slate-400 max-w-md mx-auto">
+          {{ 'DEMAND_FORM.SUCCESS_MESSAGE' | translate }}
+        </p>
+      </div>
+    }
+  </div>
+</div>
+
+<app-public-footer></app-public-footer>

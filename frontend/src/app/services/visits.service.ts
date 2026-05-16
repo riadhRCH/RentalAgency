@@ -25,6 +25,12 @@ export interface VisitRequest {
   customerEmail?: string;
   status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
   notes: string;
+  preferredContact?: string;
+  interestedProperties?: any[];
+  availability?: string;
+  purchaseType?: string;
+  budget?: string;
+  source?: string;
   createdAt: Date;
 }
 

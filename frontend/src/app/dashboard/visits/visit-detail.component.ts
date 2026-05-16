@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { VisitsService, VisitRequest } from '../../services/visits.service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
@@ -8,7 +9,7 @@ import { I18nService } from '../../i18n/i18n.service';
 @Component({
   selector: 'app-visit-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterModule, TranslatePipe],
   templateUrl: './visit-detail.component.html',
   styleUrls: ['./visit-detail.component.scss']
 })
@@ -20,6 +21,8 @@ export class VisitDetailComponent implements OnInit {
 
   visit = signal<VisitRequest | null>(null);
   loading = signal(true);
+  notes = signal('');
+  saving = signal(false);
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -33,6 +36,7 @@ export class VisitDetailComponent implements OnInit {
     this.visitsService.getVisit(id).subscribe({
       next: (data) => {
         this.visit.set(data);
+        this.notes.set(data.notes || '');
         this.loading.set(false);
       },
       error: () => this.loading.set(false)
@@ -61,11 +65,12 @@ export class VisitDetailComponent implements OnInit {
 
   getBudgetLabel(budget: string): string {
     const labels: Record<string, string> = {
-      '100K_120K': '100K – 120K €',
-      '120K_150K': '120K – 150K €',
-      '150K_200K': '150K – 200K €',
-      '200K_250K': '200K – 250K €',
-      '250K_300K': '250K – 300K €',
+      '100_120': '100 – 120 TND',
+      '120_150': '120 – 150 TND',
+      '150_200': '150 – 200 TND',
+      '200_250': '200 – 250 TND',
+      '250_300': '250 – 300 TND',
+      '300_plus': '300+ TND',
     };
     return labels[budget] || budget;
   }
@@ -77,5 +82,18 @@ export class VisitDetailComponent implements OnInit {
       'SMS': 'SMS',
     };
     return labels[contact] || contact;
+  }
+
+  saveNotes() {
+    const visitId = this.visit()?._id;
+    if (!visitId) return;
+    this.saving.set(true);
+    this.visitsService.updateVisit(visitId, { notes: this.notes() }).subscribe({
+      next: () => {
+        this.visit.update(v => ({ ...v!, notes: this.notes() }));
+        this.saving.set(false);
+      },
+      error: () => this.saving.set(false)
+    });
   }
 }

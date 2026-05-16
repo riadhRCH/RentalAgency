@@ -1,2 +1,2 @@
-in this page http://localhost:4200/visit-request/6a08a89739c7baa479b8bcad
-do a debounce time on any change of the form, smth about 1 second and lauch a patch request to make the data in sync
+i want you to display missing information in this page http://localhost:4200/dashboard/overview/visits/6a08a89739c7baa479b8bcad
+informations are what user inputted here http://localhost:4200/visit-request/6a08a90d39c7baa479b8bd3d

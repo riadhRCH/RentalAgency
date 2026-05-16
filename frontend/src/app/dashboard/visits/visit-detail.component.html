@@ -61,49 +61,25 @@
               <span class="material-symbols-outlined text-primary">person</span>
               Visitor
             </h2>
-            @if (v.visitorId) {
-              <div class="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
-                <div class="h-14 w-14 rounded-full overflow-hidden flex-shrink-0" [ngClass]="v.visitorId.profilePicture ? '' : 'bg-primary/10 flex items-center justify-center text-primary'">
-                  @if (v.visitorId.profilePicture) {
-                    <img [src]="v.visitorId.profilePicture" alt="" class="w-full h-full object-cover" />
-                  } @else {
-                    <span class="material-symbols-outlined text-2xl">person</span>
-                  }
-                </div>
-                <div>
-                  <div class="text-sm font-bold text-white">{{ v.visitorId.firstName }} {{ v.visitorId.lastName }}</div>
-                  <div class="text-xs text-slate-400">{{ v.visitorId.phone }}</div>
-                  @if (v.visitorId.email) {
-                    <div class="text-xs text-slate-400">{{ v.visitorId.email }}</div>
-                  }
-                </div>
-                <a [routerLink]="['/dashboard/personnel/profile', v.visitorId._id]" class="ml-auto text-primary hover:text-primary/80 text-xs font-bold uppercase tracking-widest">
-                  View Profile
-                </a>
+            <div class="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
+              <div class="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                <span class="material-symbols-outlined text-2xl">person</span>
               </div>
-            } @else {
-              <div class="space-y-3">
-                <div class="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
-                  <div class="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
-                    <span class="material-symbols-outlined text-2xl">person</span>
-                  </div>
-                  <div>
-                    <div class="text-sm font-bold text-white">{{ v.customerName || 'Public Request' }}</div>
-                    @if (v.customerPhone) {
-                      <div class="text-xs text-slate-400">{{ v.customerPhone }}</div>
-                    }
-                    @if (v.customerEmail) {
-                      <div class="text-xs text-slate-400">{{ v.customerEmail }}</div>
-                    }
-                  </div>
-                </div>
+              <div>
+                <div class="text-sm font-bold text-white">{{ v.customerName || 'Public Request' }}</div>
+                @if (v.customerPhone) {
+                  <div class="text-xs text-slate-400">{{ v.customerPhone }}</div>
+                }
+                @if (v.customerEmail) {
+                  <div class="text-xs text-slate-400">{{ v.customerEmail }}</div>
+                }
               </div>
-            }
+            </div>
           </div>
         </section>
 
         <!-- Additional Info -->
-        @if (v.preferredContact || v.availability || v.purchaseType || v.budget) {
+        @if (v.preferredContact || v.purchaseType || v.budget) {
           <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
             <div class="p-8">
               <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-6">
@@ -115,12 +91,6 @@
                   <div>
                     <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Preferred Contact</p>
                     <p class="text-sm text-white">{{ getPreferredContactLabel(v.preferredContact) }}</p>
-                  </div>
-                }
-                @if (v.availability) {
-                  <div>
-                    <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Availability</p>
-                    <p class="text-sm text-white whitespace-pre-wrap">{{ v.availability }}</p>
                   </div>
                 }
                 @if (v.purchaseType) {
@@ -140,45 +110,32 @@
           </section>
         }
 
-        <!-- Interested Properties -->
-        @if (v.interestedProperties?.length) {
-          <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-            <div class="p-8">
-              <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-6">
-                <span class="material-symbols-outlined text-primary">home</span>
-                Interested Properties
-              </h2>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                @for (prop of v.interestedProperties; track prop._id) {
-                  <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5">
-                    <div class="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
-                      <span class="material-symbols-outlined">home</span>
-                    </div>
-                    <div class="min-w-0">
-                      <div class="text-xs font-bold text-white truncate">{{ prop.reference || 'Property' }}</div>
-                      @if (prop.address) {
-                        <div class="text-[10px] text-slate-500 truncate">{{ prop.address }}</div>
-                      }
-                    </div>
-                  </div>
-                }
-              </div>
-            </div>
-          </section>
-        }
-
         <!-- Notes -->
-        @if (v.notes) {
-          <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-            <div class="p-8">
-              <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-6">
-                <span class="material-symbols-outlined text-primary">notes</span>
-                Notes
-              </h2>
-              <p class="text-slate-300 text-sm whitespace-pre-wrap">{{ v.notes }}</p>
+        <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+          <div class="p-8">
+            <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-6">
+              <span class="material-symbols-outlined text-primary">notes</span>
+              Notes
+            </h2>
+            <textarea
+              [(ngModel)]="notes"
+              class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white placeholder-slate-500 resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[120px]"
+              placeholder="Add notes..."
+            ></textarea>
+            <div class="mt-4 flex justify-end">
+              <button
+                (click)="saveNotes()"
+                [disabled]="saving()"
+                class="px-5 py-2 rounded-xl bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                @if (saving()) {
+                  <span class="animate-spin inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full"></span>
+                }
+                {{ saving() ? 'Saving...' : 'Save Notes' }}
+              </button>
             </div>
-          </section>
-        }
+          </div>
+        </section>
       </div>
 
       <!-- Sidebar -->

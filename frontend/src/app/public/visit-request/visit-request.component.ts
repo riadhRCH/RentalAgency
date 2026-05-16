@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { VisitsService, VisitRequest } from '../../services/visits.service';
+import { VisitsService } from '../../services/visits.service';
 import { PropertiesService, Property } from '../../services/properties.service';
 import { PublicNavbarComponent } from '../../shared/components/public-navbar/public-navbar.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer/public-footer.component';
@@ -21,18 +21,15 @@ import { PublicFooterComponent } from '../../shared/components/public-footer/pub
 })
 export class VisitRequestComponent implements OnInit {
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private fb = inject(FormBuilder);
   private visitsService = inject(VisitsService);
   private propertiesService = inject(PropertiesService);
 
-  mode = signal<'create' | 'edit'>('create');
   paramId = '';
   loading = signal(true);
   saving = signal(false);
   submitted = signal(false);
 
-  visitRequest = signal<VisitRequest | null>(null);
   properties = signal<Property[]>([]);
   selectedProperties = signal<string[]>([]);
 
@@ -60,23 +57,8 @@ export class VisitRequestComponent implements OnInit {
 
   ngOnInit() {
     this.paramId = this.route.snapshot.params['id'];
-    this.tryLoadVisit();
-  }
-
-  tryLoadVisit() {
-    this.loading.set(true);
-    this.visitsService.getPublicVisit(this.paramId).subscribe({
-      next: (visit) => {
-        this.visitRequest.set(visit);
-        this.mode.set('edit');
-        this.loading.set(false);
-      },
-      error: () => {
-        this.mode.set('create');
-        this.loadActiveProperties();
-        this.loading.set(false);
-      }
-    });
+    this.loadActiveProperties();
+    this.loading.set(false);
   }
 
   loadActiveProperties() {

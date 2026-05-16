@@ -19,7 +19,7 @@
       </div>
     }
 
-    @if (!loading() && mode() === 'create' && !submitted()) {
+    @if (!loading() && !submitted()) {
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-8">
         <!-- Personal Info -->
         <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
@@ -193,7 +193,7 @@
     }
 
     <!-- Success -->
-    @if (!loading() && mode() === 'create' && submitted()) {
+    @if (!loading() && submitted()) {
       <div class="glass-card rounded-2xl border border-emerald-500/30 p-12 text-center space-y-6">
         <span class="material-symbols-outlined text-6xl text-emerald-400">check_circle</span>
         <h2 class="text-2xl font-bold text-white">Demande envoyée avec succès !</h2>
@@ -207,17 +207,7 @@
       </div>
     }
 
-    <!-- Edit mode (existing visit) -->
-    @if (!loading() && mode() === 'edit' && visitRequest(); as v) {
-      <div class="glass-card rounded-2xl border border-white/10 p-8 text-center space-y-4">
-        <span class="material-symbols-outlined text-5xl text-primary">event</span>
-        <h2 class="text-xl font-bold text-white">Demande de visite existante</h2>
-        <p class="text-slate-400">
-          Cette demande concerne la propriété <strong class="text-white">{{ v.propertyId?.reference || 'N/A' }}</strong>.
-        </p>
-        <p class="text-slate-500 text-sm">Vous pouvez gérer cette visite depuis votre tableau de bord.</p>
-      </div>
-    }
+
   </div>
 </div>
 

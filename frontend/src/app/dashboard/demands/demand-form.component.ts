@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DemandsService } from '../../services/demands.service';
 
@@ -15,7 +15,10 @@ export class DemandFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private demandsService = inject(DemandsService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
+  demandId: string | null = null;
+  loading = signal(true);
   saving = signal(false);
   submitted = signal(false);
 
@@ -37,12 +40,12 @@ export class DemandFormComponent implements OnInit {
   ];
 
   budgetOptions = [
-    { value: '100K_120K', label: '100K – 120K €' },
-    { value: '120K_150K', label: '120K – 150K €' },
-    { value: '150K_200K', label: '150K – 200K €' },
-    { value: '200K_250K', label: '200K – 250K €' },
-    { value: '250K_300K', label: '250K – 300K €' },
-    { value: '300K_plus', label: '300K+ €' },
+    { value: '100_120', label: '100 – 120 TND' },
+    { value: '120_150', label: '120 – 150 TND' },
+    { value: '150_200', label: '150 – 200 TND' },
+    { value: '200_250', label: '200 – 250 TND' },
+    { value: '250_300', label: '250 – 300 TND' },
+    { value: '300_plus', label: '300+ TND' },
   ];
 
   selectedBedrooms = signal<string[]>([]);
@@ -68,7 +71,34 @@ export class DemandFormComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    const id = this.route.snapshot.params['id'];
+    if (id && id !== 'new') {
+      this.demandId = id;
+      this.loadDemand();
+    } else {
+      this.loading.set(false);
+    }
+  }
+
+  private loadDemand() {
+    this.loading.set(true);
+    this.demandsService.getDemand(this.demandId!).subscribe({
+      next: (demand) => {
+        this.form.patchValue({
+          customerName: demand.customerName || '',
+          customerEmail: demand.customerEmail || '',
+          additionalNotes: demand.additionalNotes || '',
+          budget: demand.budget || '',
+        });
+        this.selectedBedrooms.set(demand.nbBedrooms || []);
+        this.selectedZones.set(demand.zones || []);
+        this.selectedFeatures.set(demand.mustHaveFeatures || []);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false),
+    });
+  }
 
   toggleSelection(arr: WritableSignal<string[]>, value: string) {
     const current = arr();
@@ -85,7 +115,7 @@ export class DemandFormComponent implements OnInit {
     this.saving.set(true);
     const formValue = this.form.value;
 
-    this.demandsService.createDemand({
+    const payload = {
       customerName: formValue.customerName,
       customerEmail: formValue.customerEmail,
       nbBedrooms: this.selectedBedrooms(),
@@ -93,7 +123,13 @@ export class DemandFormComponent implements OnInit {
       mustHaveFeatures: this.selectedFeatures(),
       additionalNotes: formValue.additionalNotes,
       budget: formValue.budget,
-    }).subscribe({
+    };
+
+    const request = this.demandId
+      ? this.demandsService.updateDemand(this.demandId, payload)
+      : this.demandsService.createDemand(payload);
+
+    request.subscribe({
       next: () => {
         this.saving.set(false);
         this.submitted.set(true);

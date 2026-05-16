@@ -111,7 +111,7 @@
                       <div class="text-sm text-white font-medium truncate">{{ prop.reference }}</div>
                       <div class="text-[10px] text-slate-500 uppercase tracking-widest truncate">{{ prop.address }}</div>
                       @if (prop.price) {
-                        <div class="text-[10px] text-primary font-bold mt-0.5">{{ prop.price.toLocaleString() }} €</div>
+                        <div class="text-[10px] text-primary font-bold mt-0.5">{{ prop.price.toLocaleString() }} TND</div>
                       }
                     </div>
                   </label>
@@ -121,18 +121,42 @@
           </div>
         </section>
 
-        <!-- Availability -->
+        <!-- Visit Date & Time -->
         <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
           <div class="p-8">
             <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
-              <span class="material-symbols-outlined text-primary">calendar_today</span>
-              Disponibilité <span class="text-red-400">*</span>
+              <span class="material-symbols-outlined text-primary">calendar_month</span>
+              Disponibilité
             </h2>
-            <textarea formControlName="availability" rows="3"
-              class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
-              placeholder="Veuillez indiquer vos disponibilités pour les 3-4 prochains jours..."></textarea>
-            @if (form.get('availability')?.touched && form.get('availability')?.invalid) {
-              <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1 mt-1">Champ requis</div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+              <!-- Date Picker -->
+              <div class="bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl border border-primary/30 p-6 text-center flex flex-col items-center justify-center min-h-[200px]">
+                <span class="material-symbols-outlined text-4xl text-primary mb-2 block">calendar_month</span>
+                @if (selectedDate()) {
+                  <div class="text-lg font-bold text-white mb-1">{{ formatDate(selectedDate()) }}</div>
+                  <div class="text-primary text-[10px] font-bold uppercase tracking-widest">Changer la date</div>
+                } @else {
+                  <div class="text-sm font-bold text-white/60 mb-3">Aucune date sélectionnée</div>
+                }
+                <input type="date" [value]="selectedDate()" (input)="onDateChange($any($event.target).value)"
+                  class="mt-3 w-full bg-white/10 border border-white/20 text-white rounded-xl p-3 text-sm outline-none focus:border-primary transition-all [color-scheme:dark]" />
+              </div>
+
+              <!-- Time Picker -->
+              <div class="bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl border border-primary/30 p-6 text-center flex flex-col items-center justify-center min-h-[200px]">
+                <span class="material-symbols-outlined text-4xl text-primary mb-2 block">schedule</span>
+                <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3 block">Heure de visite souhaitée</label>
+                <input type="time" [value]="selectedTime()" (input)="onTimeChange($any($event.target).value)"
+                  class="w-full bg-white/10 border border-white/20 text-white text-xl font-bold rounded-xl p-3 text-center outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all [color-scheme:dark]" />
+              </div>
+            </div>
+
+            @if (selectedDate() && selectedTime()) {
+              <div class="flex items-center justify-center gap-2 text-emerald-400 text-sm mt-6">
+                <span class="material-symbols-outlined text-lg">check_circle</span>
+                Visite prévue le {{ formatDate(selectedDate()) }} à {{ selectedTime() }}
+              </div>
             }
           </div>
         </section>

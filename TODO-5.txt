@@ -1,11 +1,2 @@
-this TODO is splitted into small TODO's TODO-5.1.txt to TODO-5.5.txt
-
-important notes to consider 
-- add each feature from TODO in a page in dashboard
-- use lead existing implementation and add things to it to match this 'Prospect' task, (each lead have a personnelId witch represents the client info)
-- use visit-request implementation and improve it to match what is described in this `Visite à planifier` (each visit request have a visitorId witch represents the client info)
-- use existing Personnel schema to add client related details from the tasks
-- the visit request form task described in TODO-5.3.txt should be implemented here 
-    - https://rental-agency-frontend.onrender.com/visit-request/6a0063b12ac7a9de65f5ac9f this link should be the public form user can fill (add things to visit-request schema if needed)
-    - https://rental-agency-frontend.onrender.com/dashboard/overview/visits/6a0063b12ac7a9de65f5ac9f this should disply all user inputted info's
-- for the TODO-5.4.txt create a demand schema (brand new) that should be implemented similarly to how visit-request are implemented, it should have a page in dashboard and a public link for users to fill the form
+in this page http://localhost:4200/visit-request/6a08a89739c7baa479b8bcad
+do a debounce time on any change of the form, smth about 1 second and lauch a patch request to make the data in sync

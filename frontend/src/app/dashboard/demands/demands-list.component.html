@@ -51,7 +51,7 @@
             </tr>
           } @else {
             @for (demand of demands; track demand._id) {
-              <tr class="group hover:bg-white/5 transition-colors">
+              <tr class="group hover:bg-white/5 transition-colors cursor-pointer" (click)="openDemand(demand._id)">
                 <td class="p-6">
                   <div class="min-w-0">
                     <div class="text-sm font-bold text-white truncate">{{ demand.customerName }}</div>
@@ -87,7 +87,7 @@
                     <span class="text-[10px] text-slate-500">—</span>
                   }
                 </td>
-                <td class="p-6 text-right">
+                <td class="p-6 text-right" (click)="$event.stopPropagation()">
                   <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
                     <button (click)="deleteDemand(demand._id)"
                       class="p-2 rounded hover:bg-white/10 text-slate-400 hover:text-red-500 transition-all"

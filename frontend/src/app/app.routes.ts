@@ -93,6 +93,7 @@ export const routes: Routes = [
             { path: 'personnel/profile/:id', component: ProfilePageComponent },
             { path: 'teams', component: TeamsComponent },
             { path: 'demands/new', component: DemandFormComponent },
+            { path: 'demands/:id', component: DemandFormComponent },
             { path: 'config', component: ConfigComponent },
             { path: 'bank-details', component: BankDetailsComponent },
             { path: 'admin/agencies-management', component: AgenciesManagementComponent }

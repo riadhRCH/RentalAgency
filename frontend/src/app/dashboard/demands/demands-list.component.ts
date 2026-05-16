@@ -59,14 +59,18 @@ export class DemandsListComponent implements OnInit {
 
   getBudgetLabel(budget: string): string {
     const labels: Record<string, string> = {
-      '100K_120K': '100K – 120K €',
-      '120K_150K': '120K – 150K €',
-      '150K_200K': '150K – 200K €',
-      '200K_250K': '200K – 250K €',
-      '250K_300K': '250K – 300K €',
-      '300K_plus': '300K+ €',
+      '100K_120K': '100K – 120K TND',
+      '120K_150K': '120K – 150K TND',
+      '150K_200K': '150K – 200K TND',
+      '200K_250K': '200K – 250K TND',
+      '250K_300K': '250K – 300K TND',
+      '300K_plus': '300K+ TND',
     };
     return labels[budget] || budget;
+  }
+
+  openDemand(id: string) {
+    this.router.navigate(['/dashboard/demands', id]);
   }
 
   deleteDemand(id: string) {

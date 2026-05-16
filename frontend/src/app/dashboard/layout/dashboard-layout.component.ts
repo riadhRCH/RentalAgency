@@ -63,6 +63,7 @@ export class DashboardLayoutComponent implements OnInit {
         route: '/dashboard/overview',
         subItems: hasRentalOrSales ? [
           { label: 'SIDEBAR.LEADS', icon: 'group', route: '/dashboard/overview/leads' },
+          { label: 'SIDEBAR.DEMANDS', icon: 'assignment', route: '/dashboard/overview/demands' },
           { label: 'SIDEBAR.VISITS', icon: 'event', route: '/dashboard/overview/visits' },
           { label: 'SIDEBAR.ACTIVE_TRANSACTIONS', icon: 'contract', route: '/dashboard/overview/transactions' },
         ] : undefined,

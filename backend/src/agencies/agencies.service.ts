@@ -16,6 +16,7 @@ import { CreateAgencyDto } from './dto/create-agency.dto';
 import { ProvisionNumberDto } from './dto/provision-number.dto';
 import { UpdateAgencyProfileDto } from './dto/update-agency-profile.dto';
 import { Transaction, TransactionDocument } from 'src/schemas/transaction.schema';
+import { Demand, DemandDocument } from '../schemas/demand.schema';
 import { COUNTRY_DEFAULTS } from '../shared/constants';
 
 @Injectable()
@@ -33,6 +34,8 @@ export class AgenciesService {
     private readonly visitRequestModel: Model<VisitRequestDocument>,
     @InjectModel(Transaction.name)
     private readonly transactionsModel: Model<TransactionDocument>,
+    @InjectModel(Demand.name)
+    private readonly demandModel: Model<DemandDocument>,
     @InjectModel(Rental.name)
     private readonly rentalModel: Model<RentalDocument>,
   ) {
@@ -48,10 +51,11 @@ export class AgenciesService {
 
   async getStats(agencyId: string) {
     const objectId = new Types.ObjectId(agencyId)
-    const [totalLeads, totalVisits, totalTransactions, pipelineProspects, pipelineVisites] = await Promise.all([
+    const [totalLeads, totalVisits, totalTransactions, totalDemands, pipelineProspects, pipelineVisites] = await Promise.all([
       this.leadModel.countDocuments({  agencyId: objectId }),
       this.visitRequestModel.countDocuments({ agencyId: objectId }),
       this.transactionsModel.countDocuments({ agencyId: objectId }),
+      this.demandModel.countDocuments({ agencyId: objectId }),
       this.leadModel.countDocuments({ agencyId: objectId, pipelineStage: 'PROSPECT' }),
       this.leadModel.countDocuments({ agencyId: objectId, pipelineStage: 'VISITE_A_PLANIFIER' }),
     ]);
@@ -60,6 +64,7 @@ export class AgenciesService {
       totalLeads,
       totalVisits,
       totalTransactions,
+      totalDemands,
       pipelineProspects,
       pipelineVisites,
     };

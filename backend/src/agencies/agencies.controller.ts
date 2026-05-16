@@ -160,4 +160,15 @@ export class AgenciesController {
     await this.agenciesService.markNotificationsRead(req.agencyId.toString());
     return { success: true };
   }
+
+  /*new api : get dashboard services
+  //public dumb api that will return a predefined list of agencies
+  //it will return these 3 objects 
+   [
+{ agencyId: id, label : 'PUBLIC_NAVBAR.FAMILY_ESCAPE' },
+ { agencyId: id, label : 'PUBLIC_NAVBAR.SALES' },
+  { agencyId: id, label : 'PUBLIC_NAVBAR.RENTAL' }
+   ] 
+
+  */
 }

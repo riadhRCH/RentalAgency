@@ -9,6 +9,7 @@ import { VisitRequest, VisitRequestSchema } from '../schemas/visit-request.schem
 import { Rental, RentalSchema } from '../schemas/rental.schema';
 import { AuthModule } from '../auth/auth.module';
 import { Transaction, TransactionSchema } from 'src/schemas/transaction.schema';
+import { Demand, DemandSchema } from '../schemas/demand.schema';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
@@ -20,6 +21,7 @@ import { CloudinaryModule } from '../cloudinary/cloudinary.module';
       { name: VisitRequest.name, schema: VisitRequestSchema },
       { name: Rental.name, schema: RentalSchema },
        { name: Transaction.name, schema: TransactionSchema },
+       { name: Demand.name, schema: DemandSchema },
     ]),
     AuthModule,
     CloudinaryModule,

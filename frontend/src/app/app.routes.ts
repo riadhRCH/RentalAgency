@@ -70,6 +70,7 @@ export const routes: Routes = [
                     { path: 'leads', component: LeadsComponent },
                     { path: 'visits', component: VisitsComponent },
                     { path: 'visits/:id', component: VisitDetailComponent },
+                    { path: 'demands', component: DemandsListComponent },
                     { path: 'transactions', component: TransactionsListComponent }
                 ]
             },
@@ -91,7 +92,6 @@ export const routes: Routes = [
             { path: 'personnel/owners', component: OwnersPageComponent },
             { path: 'personnel/profile/:id', component: ProfilePageComponent },
             { path: 'teams', component: TeamsComponent },
-            { path: 'demands', component: DemandsListComponent },
             { path: 'demands/new', component: DemandFormComponent },
             { path: 'config', component: ConfigComponent },
             { path: 'bank-details', component: BankDetailsComponent },

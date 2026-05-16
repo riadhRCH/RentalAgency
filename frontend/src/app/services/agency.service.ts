@@ -33,6 +33,7 @@ export interface AgencyStats {
   totalLeads: number; 
   totalVisits: number;
   totalTransactions: number;
+  totalDemands: number;
   pipelineProspects: number;
   pipelineVisites: number;
 }

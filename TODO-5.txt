@@ -2,33 +2,6 @@ for visits:
     - missing infor from excel photo sent 
 
 TODO
-delete this zones thing from everywhere in the plateform
-
-TODO
 recheck services 
 from agencyServices = signal<string[]>([]); create 3 signals isRentalServiceActive, isSalesServiceActive, is isShortTermServiceActive 
 
-TODO
-bug: navigating to any link in dashboard is automatically trigering 6 requests 
-Request URL
-http://localhost:3000/agencies/stats
-Request Method
-GET
-Status Code
-304 Not Modified
-Remote Address
-[::1]:3000
-Referrer Policy
-strict-origin-when-cross-origin
- and 
-Request URL
-http://localhost:3000/agencies/profile
-Request Method
-GET
-Status Code
-304 Not Modified
-Remote Address
-[::1]:3000
-Referrer Policy
-strict-origin-when-cross-origin
-//remove that behaviour

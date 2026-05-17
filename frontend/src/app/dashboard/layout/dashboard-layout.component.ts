@@ -1,6 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
-import { filter, map } from 'rxjs/operators';
+import { RouterOutlet } from '@angular/router';
 import { SidebarComponent, NavItem } from '../../shared/components/sidebar/sidebar.component';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { AgencyService, AgencyProfile } from '../../services/agency.service';
@@ -16,7 +15,6 @@ import { AuthService } from '../../auth/auth.service';
 export class DashboardLayoutComponent implements OnInit {
   private agencyService = inject(AgencyService);
   private authService = inject(AuthService);
-  private router = inject(Router);
 
   sidebarCollapsed = false;
   mobileSidebarOpen = false;
@@ -28,12 +26,6 @@ export class DashboardLayoutComponent implements OnInit {
     this.loadAgencyProfile();
 
     this.authService.servicesRefresh$.subscribe(() => {
-      this.loadAgencyProfile();
-    });
-
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
       this.loadAgencyProfile();
     });
   }

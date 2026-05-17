@@ -1,8 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router, NavigationEnd } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { AgencyService, AgencyStats } from '../../services/agency.service';
-import { filter } from 'rxjs/operators';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 
 @Component({
@@ -101,7 +100,6 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
 })
 export class AgencyOverviewComponent implements OnInit {
   private agencyService = inject(AgencyService);
-  private router = inject(Router);
 
   stats: AgencyStats = {
     totalLeads: 0,
@@ -114,13 +112,6 @@ export class AgencyOverviewComponent implements OnInit {
 
   ngOnInit() {
     this.loadStats();
-    
-    // Refresh stats when navigating
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
-      this.loadStats();
-    });
   }
 
   loadStats() {

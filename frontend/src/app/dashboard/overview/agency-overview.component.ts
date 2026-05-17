@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AgencyService, AgencyStats } from '../../services/agency.service';
@@ -20,7 +20,7 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
                 routerLinkActive="bg-primary/10 text-primary border-primary/20 shadow-inner shadow-primary/5"
                 class="group relative flex-1 sm:flex-none flex flex-col items-center justify-center py-3 sm:py-4 px-4 sm:px-10 rounded-lg sm:rounded-xl transition-all duration-300 hover:bg-white/5 min-w-0 sm:min-w-[160px]">
                 <span class="text-2xl sm:text-3xl font-black silver-glow mb-0.5 sm:mb-1 tracking-tighter group-hover:scale-110 transition-transform duration-300">
-                  {{ stats.totalLeads }}
+                  {{ stats().totalLeads }}
                 </span>
                 <span class="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity truncate w-full text-center">
                   {{ 'SIDEBAR.LEADS' | translate }}
@@ -35,7 +35,7 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
                  routerLinkActive="bg-primary/10 text-primary border-primary/20 shadow-inner shadow-primary/5"
                 class="group relative flex-1 sm:flex-none flex flex-col items-center justify-center py-3 sm:py-4 px-4 sm:px-10 rounded-lg sm:rounded-xl transition-all duration-300 hover:bg-white/5 min-w-0 sm:min-w-[160px]">
                 <span class="text-2xl sm:text-3xl font-black silver-glow mb-0.5 sm:mb-1 tracking-tighter group-hover:scale-110 transition-transform duration-300">
-                  {{ stats.totalDemands }}
+                  {{ stats().totalDemands }}
                 </span>
                 <span class="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity truncate w-full text-center">
                   {{ 'SIDEBAR.DEMANDS' | translate }}
@@ -49,7 +49,7 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
                 routerLinkActive="bg-primary/10 text-primary border-primary/20 shadow-inner shadow-primary/5"
                 class="group relative flex-1 sm:flex-none flex flex-col items-center justify-center py-3 sm:py-4 px-4 sm:px-10 rounded-lg sm:rounded-xl transition-all duration-300 hover:bg-white/5 min-w-0 sm:min-w-[160px]">
                 <span class="text-2xl sm:text-3xl font-black silver-glow mb-0.5 sm:mb-1 tracking-tighter group-hover:scale-110 transition-transform duration-300">
-                  {{ stats.totalVisits }}
+                  {{ stats().totalVisits }}
                 </span>
                 <span class="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity truncate w-full text-center">
                   {{ 'SIDEBAR.VISITS' | translate }}
@@ -64,7 +64,7 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
                 routerLinkActive="bg-primary/10 text-primary border-primary/20 shadow-inner shadow-primary/5"
                 class="group relative flex-1 sm:flex-none flex flex-col items-center justify-center py-3 sm:py-4 px-4 sm:px-10 rounded-lg sm:rounded-xl transition-all duration-300 hover:bg-white/5 min-w-0 sm:min-w-[160px]">
                 <span class="text-2xl sm:text-3xl font-black silver-glow mb-0.5 sm:mb-1 tracking-tighter group-hover:scale-110 transition-transform duration-300">
-                  {{ stats.totalTransactions }}
+                  {{ stats().totalTransactions }}
                 </span>
                 <span class="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] opacity-60 group-hover:opacity-100 transition-opacity truncate w-full text-center">
                   {{ 'TRANSACTIONS.TITLE' | translate }}
@@ -101,14 +101,14 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
 export class AgencyOverviewComponent implements OnInit {
   private agencyService = inject(AgencyService);
 
-  stats: AgencyStats = {
+  stats = signal<AgencyStats>({
     totalLeads: 0,
     totalTransactions: 0, 
     totalVisits: 0,
     totalDemands: 0,
     pipelineProspects: 0,
     pipelineVisites: 0,
-  }
+  })
 
   ngOnInit() {
     this.loadStats();
@@ -117,7 +117,7 @@ export class AgencyOverviewComponent implements OnInit {
   loadStats() {
     this.agencyService.getStats().subscribe({
       next: (stats) => {
-        this.stats = stats;
+        this.stats.set(stats);
       },
       error: (err) => console.error('Error loading stats', err)
     });

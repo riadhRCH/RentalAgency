@@ -61,7 +61,6 @@
               <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Contact favori</th>
               <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Disponibilité</th>
               <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Propriétés</th>
-              <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Zones</th>
               <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Budget</th>
               <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Type d'achat</th>
               <th class="p-4 text-[9px] font-bold uppercase tracking-widest text-slate-500">Caractéristiques</th>
@@ -129,22 +128,6 @@
                   }
                 </td>
                 <td class="p-4">
-                  @if (lead.zones?.length) {
-                    <div class="flex gap-1 flex-wrap max-w-[120px]">
-                      @for (zone of lead.zones!.slice(0, 2); track zone) {
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold bg-emerald-500/10 text-emerald-400">
-                          {{ zone }}
-                        </span>
-                      }
-                      @if (lead.zones!.length > 2) {
-                        <span class="text-[8px] text-slate-500">+{{ lead.zones!.length - 2 }}</span>
-                      }
-                    </div>
-                  } @else {
-                    <span class="text-[9px] text-slate-600">-</span>
-                  }
-                </td>
-                <td class="p-4">
                   @if (lead.budget) {
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold" [ngStyle]="{ backgroundColor: getBudgetColor(lead.budget) + '20', color: getBudgetColor(lead.budget) }">
                       {{ getBudgetLabel(lead.budget) }}
@@ -197,7 +180,7 @@
               </tr>
             } @empty {
               <tr>
-                <td colspan="15" class="p-12 text-center text-slate-500">
+                <td colspan="14" class="p-12 text-center text-slate-500">
                   <span class="material-symbols-outlined text-4xl mb-3 block">people_outline</span>
                   <p class="text-xs font-bold uppercase tracking-widest">Aucun client trouvé</p>
                 </td>

@@ -69,9 +69,6 @@ export class Lead {
   interestedProperties: Types.ObjectId[];
 
   @Prop({ type: [String] })
-  zones: string[];
-
-  @Prop({ type: [String] })
   mustHaveFeatures: string[];
 
   @Prop({ type: [String] })

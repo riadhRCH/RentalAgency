@@ -31,7 +31,7 @@ export class DemandsService {
   async updatePublic(id: string, dto: any) {
     const allowedFields = [
       'customerName', 'customerEmail',
-      'nbBedrooms', 'zones', 'mustHaveFeatures',
+      'nbBedrooms', 'mustHaveFeatures',
       'additionalNotes', 'budget',
     ];
     const update: any = {};
@@ -54,7 +54,6 @@ export class DemandsService {
       customerName: dto.customerName,
       customerEmail: dto.customerEmail,
       nbBedrooms: dto.nbBedrooms,
-      zones: dto.zones,
       mustHaveFeatures: dto.mustHaveFeatures || [],
       additionalNotes: dto.additionalNotes,
       budget: dto.budget,

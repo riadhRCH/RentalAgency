@@ -1,5 +1,4 @@
 for visits:
-    - missing add new visit button in dashboard visits page
     - missing infor from excel photo sent 
 
 TODO
@@ -33,6 +32,3 @@ Remote Address
 Referrer Policy
 strict-origin-when-cross-origin
 //remove that behaviour
-
-TODO
-here http://localhost:4200/dashboard/overview/visits get the data sorted by documents updatedAt so user can see most relevant ones

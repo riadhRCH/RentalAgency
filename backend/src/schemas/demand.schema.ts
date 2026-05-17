@@ -21,9 +21,6 @@ export class Demand {
   nbBedrooms?: string[];
 
   @Prop({ type: [String] })
-  zones?: string[];
-
-  @Prop({ type: [String] })
   mustHaveFeatures?: string[];
 
   @Prop()

@@ -1,2 +1,105 @@
-for the demands i want you to do these fixes
-    - clicking a demand row in http://localhost:4200/dashboard/overview/demands should open a DemandFormComponent in dashboard that will load the demand and display its info
+update statuses for leads to be like this :
+
+Here's everything you need to implement those statuses:
+
+Status Groups & Description
+The statuses are grouped into 3 pipeline stages:
+GroupLabelMeaningÀ faireProspectLead identified, no action taken yetEn coursContactéFirst contact has been madeEn coursVisite à planifierVisit/meeting needs to be scheduledEn coursVisite planifiéeVisit/meeting is confirmed and scheduledEn coursOffre effectuéeA proposal/offer has been sentEn coursOffre rejetéeThe proposal was declinedTerminéOffre acceptéeThe proposal was accepted — deal won ✅
+
+Enum
+tsexport enum ProspectStatus {
+  PROSPECT          = 'PROSPECT',
+  CONTACTE          = 'CONTACTE',
+  VISITE_A_PLANIFIER = 'VISITE_A_PLANIFIER',
+  VISITE_PLANIFIEE  = 'VISITE_PLANIFIEE',
+  OFFRE_EFFECTUEE   = 'OFFRE_EFFECTUEE',
+  OFFRE_REJETEE     = 'OFFRE_REJETEE',
+  OFFRE_ACCEPTEE    = 'OFFRE_ACCEPTEE',
+}
+
+export enum StatusGroup {
+  A_FAIRE  = 'À faire',
+  EN_COURS = 'En cours',
+  TERMINE  = 'Terminé',
+}
+
+Design Styles
+Each badge uses a pill shape (fully rounded) with a colored dot on the left and medium-weight label text.
+tsexport const STATUS_CONFIG: Record<ProspectStatus, {
+  label: string;
+  group: StatusGroup;
+  dot: string;       // dot color
+  bg: string;        // badge background
+  text: string;      // label color
+}> = {
+  [ProspectStatus.PROSPECT]: {
+    label: 'Prospect',
+    group: StatusGroup.A_FAIRE,
+    dot:  '#9CA3AF',   // gray-400
+    bg:   '#F3F4F6',   // gray-100
+    text: '#374151',   // gray-700
+  },
+  [ProspectStatus.CONTACTE]: {
+    label: 'Contacté',
+    group: StatusGroup.EN_COURS,
+    dot:  '#3B82F6',   // blue-500
+    bg:   '#EFF6FF',   // blue-50
+    text: '#1D4ED8',   // blue-700
+  },
+  [ProspectStatus.VISITE_A_PLANIFIER]: {
+    label: 'Visite à planifier',
+    group: StatusGroup.EN_COURS,
+    dot:  '#3B82F6',
+    bg:   '#EFF6FF',
+    text: '#1D4ED8',
+  },
+  [ProspectStatus.VISITE_PLANIFIEE]: {
+    label: 'Visite planifiée',
+    group: StatusGroup.EN_COURS,
+    dot:  '#3B82F6',
+    bg:   '#EFF6FF',
+    text: '#1D4ED8',
+  },
+  [ProspectStatus.OFFRE_EFFECTUEE]: {
+    label: 'Offre effectuée',
+    group: StatusGroup.EN_COURS,
+    dot:  '#F59E0B',   // amber-400
+    bg:   '#FFFBEB',   // amber-50
+    text: '#92400E',   // amber-900
+  },
+  [ProspectStatus.OFFRE_REJETEE]: {
+    label: 'Offre rejetée',
+    group: StatusGroup.EN_COURS,
+    dot:  '#6B7280',   // gray-500
+    bg:   '#F9FAFB',   // gray-50
+    text: '#374151',   // gray-700
+  },
+  [ProspectStatus.OFFRE_ACCEPTEE]: {
+    label: 'Offre acceptée',
+    group: StatusGroup.TERMINE,
+    dot:  '#10B981',   // emerald-500
+    bg:   '#ECFDF5',   // emerald-50
+    text: '#065F46',   // emerald-900
+  },
+};
+
+CSS / Tailwind Badge Component
+tsx// StatusBadge.tsx
+const StatusBadge = ({ status }: { status: ProspectStatus }) => {
+  const config = STATUS_CONFIG[status];
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium"
+      style={{ backgroundColor: config.bg, color: config.text }}
+    >
+      <span
+        className="w-2 h-2 rounded-full flex-shrink-0"
+        style={{ backgroundColor: config.dot }}
+      />
+      {config.label}
+    </span>
+  );
+};
+
+Color Summary
+StatusDotStyleProspect🔘 GrayNeutral — not yet engagedContacté / Visites🔵 BlueActive pipelineOffre effectuée🟡 AmberPending decisionOffre rejetée⚫ GrayClosed, lostOffre acceptée🟢 GreenClosed, won

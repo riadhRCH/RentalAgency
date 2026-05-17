@@ -76,30 +76,6 @@
         </div>
       </section>
 
-      <!-- Zones -->
-      <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-        <div class="p-8">
-          <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
-            <span class="material-symbols-outlined text-primary">map</span>
-            Zones <span class="text-red-400">*</span>
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            @for (zone of zones; track zone.value) {
-              <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
-                <input type="checkbox"
-                  [checked]="selectedZones().includes(zone.value)"
-                  (change)="toggleSelection(selectedZones, zone.value)"
-                  class="accent-primary">
-                <span class="text-sm text-white font-medium">{{ zone.label }}</span>
-              </label>
-            }
-          </div>
-          @if (selectedZones().length === 0 && form.touched) {
-            <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1 mt-2">Sélectionnez au moins une zone</div>
-          }
-        </div>
-      </section>
-
       <!-- Features -->
       <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
         <div class="p-8">
@@ -189,7 +165,7 @@
           class="text-primary hover:text-primary/80 text-xs font-bold uppercase tracking-widest transition-colors">
           Voir toutes les demandes
         </a>
-        <button (click)="submitted.set(false); form.reset(); selectedBedrooms.set([]); selectedZones.set([]); selectedFeatures.set([])"
+        <button (click)="submitted.set(false); form.reset(); selectedBedrooms.set([]); selectedFeatures.set([])"
           class="text-slate-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
           Nouvelle demande
         </button>

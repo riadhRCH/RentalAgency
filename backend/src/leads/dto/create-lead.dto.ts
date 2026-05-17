@@ -48,11 +48,6 @@ export class CreateLeadDto {
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  zones?: string[];
-
-  @IsArray()
-  @IsString({ each: true })
-  @IsOptional()
   mustHaveFeatures?: string[];
 
   @IsArray()

@@ -83,13 +83,6 @@
                           {{ lead.purchaseType === 'CASH' ? 'Paiement comptant' : 'Emprunt' }}
                         </span>
                       }
-                      @if (lead.zones?.length) {
-                        <span
-                          class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400"
-                        >
-                          {{ lead.zones!.length }} zone(s)
-                        </span>
-                      }
                     </div>
 
                     @if (lead.customerProfile?._id) {

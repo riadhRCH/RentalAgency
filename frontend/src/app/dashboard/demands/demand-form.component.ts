@@ -49,18 +49,7 @@ export class DemandFormComponent implements OnInit {
   ];
 
   selectedBedrooms = signal<string[]>([]);
-  selectedZones = signal<string[]>([]);
   selectedFeatures = signal<string[]>([]);
-
-  zones = [
-    { value: 'Centre-ville', label: 'Centre-ville' },
-    { value: 'Quartier résidentiel', label: 'Quartier résidentiel' },
-    { value: 'Banlieue', label: 'Banlieue' },
-    { value: 'Zone industrielle', label: 'Zone industrielle' },
-    { value: 'Proche plage', label: 'Proche plage' },
-    { value: 'Proche école', label: 'Proche école' },
-    { value: 'Proche commerce', label: 'Proche commerce' },
-  ];
 
   constructor() {
     this.form = this.fb.group({
@@ -92,7 +81,6 @@ export class DemandFormComponent implements OnInit {
           budget: demand.budget || '',
         });
         this.selectedBedrooms.set(demand.nbBedrooms || []);
-        this.selectedZones.set(demand.zones || []);
         this.selectedFeatures.set(demand.mustHaveFeatures || []);
         this.loading.set(false);
       },
@@ -110,7 +98,7 @@ export class DemandFormComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.form.invalid || this.selectedBedrooms().length === 0 || this.selectedZones().length === 0) return;
+    if (this.form.invalid || this.selectedBedrooms().length === 0) return;
 
     this.saving.set(true);
     const formValue = this.form.value;
@@ -119,7 +107,6 @@ export class DemandFormComponent implements OnInit {
       customerName: formValue.customerName,
       customerEmail: formValue.customerEmail,
       nbBedrooms: this.selectedBedrooms(),
-      zones: this.selectedZones(),
       mustHaveFeatures: this.selectedFeatures(),
       additionalNotes: formValue.additionalNotes,
       budget: formValue.budget,

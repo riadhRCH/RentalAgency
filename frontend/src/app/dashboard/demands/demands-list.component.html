@@ -22,7 +22,6 @@
           <tr>
             <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Client</th>
             <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Chambres</th>
-            <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Zones</th>
             <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Budget</th>
             <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Statut</th>
             <th class="p-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">Agent</th>
@@ -32,13 +31,13 @@
         <tbody class="divide-y divide-white/5">
           @if (loading()) {
             <tr>
-              <td colspan="7" class="p-12 text-center text-slate-500">
+              <td colspan="6" class="p-12 text-center text-slate-500">
                 <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
               </td>
             </tr>
           } @else if (demands.length === 0) {
             <tr>
-              <td colspan="7" class="p-12 text-center text-slate-500">
+              <td colspan="6" class="p-12 text-center text-slate-500">
                 <div class="flex flex-col items-center gap-3">
                   <span class="material-symbols-outlined text-4xl">search</span>
                   <p class="text-sm">Aucune demande pour le moment</p>
@@ -62,13 +61,6 @@
                   <div class="flex flex-wrap gap-1">
                     @for (bed of demand.nbBedrooms; track bed) {
                       <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-slate-300">{{ bed }}</span>
-                    }
-                  </div>
-                </td>
-                <td class="p-6">
-                  <div class="flex flex-wrap gap-1 max-w-[200px]">
-                    @for (zone of demand.zones; track zone) {
-                      <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-slate-300 truncate">{{ zone }}</span>
                     }
                   </div>
                 </td>

@@ -24,7 +24,6 @@ export interface Lead {
   budget?: string;
   purchaseType?: 'CASH' | 'LOAN';
   interestedProperties?: string[];
-  zones?: string[];
   mustHaveFeatures?: string[];
   nbBedrooms?: string[];
   availability?: string;

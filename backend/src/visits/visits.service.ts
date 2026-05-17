@@ -189,7 +189,7 @@ export class VisitRequestsService {
     const [visits, total] = await Promise.all([
       this.visitModel
         .find(query)
-        .sort({ visitDate: 1 })
+        .sort({ updatedAt: -1 })
         .skip(skip)
         .limit(limit)
         .populate('propertyId')

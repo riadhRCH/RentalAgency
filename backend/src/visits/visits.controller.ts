@@ -20,6 +20,11 @@ import { VisitRequestsService } from './visits.service';
 export class VisitRequestsController {
   constructor(private readonly visitsService: VisitRequestsService) {}
 
+  @Post()
+  async create(@Request() req, @Body() dto: any) {
+    return this.visitsService.create(req.agencyId.toString(), dto);
+  }
+
   @Public()
   @Post('public')
   async createPublic(@Body() dto: any) {

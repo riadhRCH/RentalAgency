@@ -58,7 +58,7 @@
         <div class="max-w-7xl mx-auto px-4">
              <h2 class="section-title">{{ 'LANDING.PARTNERS_TITLE' | translate }}</h2>
             <div class="partners-grid" *ngIf="agencies.length">
-                <div class="partner-card" *ngFor="let agency of agencies; let i = index" [ngClass]="'partner-' + (i + 1)">
+                <div class="partner-card" *ngFor="let agency of agencies; let i = index" [ngClass]="'partner-' + (i + 1)" [routerLink]="['/' + agency.id]">
                     <div class="partner-logo-container">
                         <div class="partner-logo" *ngIf="agency.logo">
                             <img [src]="agency.logo" [alt]="agency.name">

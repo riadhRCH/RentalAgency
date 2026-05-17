@@ -10,6 +10,10 @@
     </div>
     
     <div class="flex items-center gap-4 w-full md:w-auto">
+      <button (click)="navigateToAddVisit()" class="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 whitespace-nowrap">
+        <span class="material-symbols-outlined text-sm">add</span>
+        {{ 'VISITS.NEW_VISIT' | translate }}
+      </button>
       <select 
         [(ngModel)]="statusFilter"
         (change)="loadVisits(1)"

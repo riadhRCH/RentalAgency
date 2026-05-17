@@ -1,2 +1,38 @@
-i want you to display missing information in this page http://localhost:4200/dashboard/overview/visits/6a08a89739c7baa479b8bcad
-informations are what user inputted here http://localhost:4200/visit-request/6a08a90d39c7baa479b8bd3d
+for visits:
+    - missing add new visit button in dashboard visits page
+    - missing infor from excel photo sent 
+
+TODO
+delete this zones thing from everywhere in the plateform
+
+TODO
+recheck services 
+from agencyServices = signal<string[]>([]); create 3 signals isRentalServiceActive, isSalesServiceActive, is isShortTermServiceActive 
+
+TODO
+bug: navigating to any link in dashboard is automatically trigering 6 requests 
+Request URL
+http://localhost:3000/agencies/stats
+Request Method
+GET
+Status Code
+304 Not Modified
+Remote Address
+[::1]:3000
+Referrer Policy
+strict-origin-when-cross-origin
+ and 
+Request URL
+http://localhost:3000/agencies/profile
+Request Method
+GET
+Status Code
+304 Not Modified
+Remote Address
+[::1]:3000
+Referrer Policy
+strict-origin-when-cross-origin
+//remove that behaviour
+
+TODO
+here http://localhost:4200/dashboard/overview/visits get the data sorted by documents updatedAt so user can see most relevant ones

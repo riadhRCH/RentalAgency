@@ -788,7 +788,8 @@
     "TITLE": "Demandes de visite",
     "VISITOR": "Visiteur",
     "VISIT_DATE": "Date de visite",
-    "VISIT_TIME": "Heure de visite"
+    "VISIT_TIME": "Heure de visite",
+    "NEW_VISIT": "Nouvelle visite"
   },
   "WEEKLY": "Semaine",
   "DEMAND_FORM": {

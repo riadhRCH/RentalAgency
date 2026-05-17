@@ -72,6 +72,37 @@ export class VisitRequestsService {
     return visit;
   }
 
+  async create(agencyId: string, dto: any) {
+    let propertyId: Types.ObjectId | undefined;
+    if (dto.propertyId) {
+      propertyId = new Types.ObjectId(dto.propertyId);
+    }
+
+    const personnel = await this.findOrCreatePersonnel(dto);
+
+    const visit = await this.visitModel.create({
+      propertyId,
+      interestedProperties: dto.interestedProperties?.length
+        ? dto.interestedProperties.map((id: string) => new Types.ObjectId(id))
+        : undefined,
+      agencyId: new Types.ObjectId(agencyId),
+      visitorId: personnel?._id,
+      customerName: dto.customerName,
+      customerPhone: dto.customerPhone,
+      customerEmail: dto.customerEmail,
+      preferredContact: dto.preferredContact,
+      visitDate: dto.visitDate,
+      visitTime: dto.visitTime,
+      availability: dto.availability,
+      purchaseType: dto.purchaseType,
+      budget: dto.budget,
+      notes: dto.notes,
+      source: 'dashboard',
+    });
+
+    return visit;
+  }
+
   private async findOrCreatePersonnel(dto: any): Promise<PersonnelDocument> {
     if (!dto.customerPhone) {
       return null;

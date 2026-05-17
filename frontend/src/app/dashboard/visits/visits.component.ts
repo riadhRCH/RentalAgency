@@ -74,6 +74,14 @@ export class VisitsComponent implements OnInit {
     this.router.navigate(['/dashboard/overview/visits', id]);
   }
 
+  navigateToAddVisit(): void {
+    this.visitsService.createVisit({}).subscribe({
+      next: (visit) => {
+        this.router.navigate(['/dashboard/overview/visits', visit._id]);
+      }
+    });
+  }
+
   copyVisitLink(id: string): void {
     const url = `${window.location.origin}/visit-request/${id}`;
     navigator.clipboard.writeText(url).then(() => {

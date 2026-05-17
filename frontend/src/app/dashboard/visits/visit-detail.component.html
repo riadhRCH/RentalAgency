@@ -26,116 +26,195 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Main Content -->
       <div class="lg:col-span-2 space-y-8">
-        <!-- Property Info -->
-        <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-          <div class="p-8">
-            <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-6">
-              <span class="material-symbols-outlined text-primary">home</span>
-              Property
-            </h2>
-            <div class="flex flex-col lg:flex-row gap-6">
-              <div class="w-full lg:w-48 h-36 rounded-xl overflow-hidden flex-shrink-0 bg-black/20 border border-white/10">
-                @if (getPropertyPhoto(v); as photo) {
-                  <img [src]="photo" alt="" class="w-full h-full object-cover" />
-                } @else {
-                  <div class="w-full h-full flex items-center justify-center text-slate-500">
-                    <span class="material-symbols-outlined text-4xl">home</span>
-                  </div>
-                }
-              </div>
-              <div class="space-y-2 flex-1">
-                <button (click)="openProperty(v.propertyId?._id)" class="text-white font-bold text-sm hover:text-primary transition-colors text-left">
-                  {{ v.propertyId?.reference || 'Unknown' }}
-                </button>
-                <p class="text-slate-400 text-xs">{{ v.propertyId?.address || '' }}</p>
-                <p class="text-[10px] text-slate-500 uppercase tracking-widest">{{ v.propertyId?.type }}</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Visitor Info -->
-        <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-          <div class="p-8">
-            <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-6">
-              <span class="material-symbols-outlined text-primary">person</span>
-              Visitor
-            </h2>
-            <div class="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
-              <div class="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
-                <span class="material-symbols-outlined text-2xl">person</span>
-              </div>
-              <div>
-                <div class="text-sm font-bold text-white">{{ v.customerName || 'Public Request' }}</div>
-                @if (v.customerPhone) {
-                  <div class="text-xs text-slate-400">{{ v.customerPhone }}</div>
-                }
-                @if (v.customerEmail) {
-                  <div class="text-xs text-slate-400">{{ v.customerEmail }}</div>
-                }
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Additional Info -->
-        @if (v.preferredContact || v.purchaseType || v.budget) {
+        <form [formGroup]="form" class="space-y-8">
+          <!-- Personal Info -->
           <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
             <div class="p-8">
-              <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-6">
-                <span class="material-symbols-outlined text-primary">info</span>
-                Additional Info
+              <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+                <span class="material-symbols-outlined text-primary">person</span>
+                Informations personnelles
               </h2>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                @if (v.preferredContact) {
-                  <div>
-                    <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Preferred Contact</p>
-                    <p class="text-sm text-white">{{ getPreferredContactLabel(v.preferredContact) }}</p>
-                  </div>
-                }
-                @if (v.purchaseType) {
-                  <div>
-                    <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Purchase Type</p>
-                    <p class="text-sm text-white">{{ v.purchaseType === 'CASH' ? 'Paiement comptant' : 'Emprunt' }}</p>
-                  </div>
-                }
-                @if (v.budget) {
-                  <div>
-                    <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Budget</p>
-                    <p class="text-sm text-white">{{ getBudgetLabel(v.budget) }}</p>
-                  </div>
+                <div class="space-y-2">
+                  <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                    Nom <span class="text-red-400">*</span>
+                  </label>
+                  <input type="text" formControlName="customerName"
+                    class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
+                    placeholder="Nom complet">
+                  @if (form.get('customerName')?.touched && form.get('customerName')?.invalid) {
+                    <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1">Champ requis</div>
+                  }
+                </div>
+                <div class="space-y-2">
+                  <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                    Téléphone <span class="text-red-400">*</span>
+                  </label>
+                  <input type="tel" formControlName="customerPhone"
+                    class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
+                    placeholder="Numéro de téléphone">
+                  @if (form.get('customerPhone')?.touched && form.get('customerPhone')?.invalid) {
+                    <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1">Numéro invalide</div>
+                  }
+                </div>
+                <div class="space-y-2 md:col-span-2">
+                  <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
+                    E-mail <span class="text-red-400">*</span>
+                  </label>
+                  <input type="email" formControlName="customerEmail"
+                    class="w-full bg-white/5 border border-white/10 text-white rounded p-3 text-sm outline-none focus:border-primary transition-all"
+                    placeholder="email@exemple.com">
+                  @if (form.get('customerEmail')?.touched && form.get('customerEmail')?.invalid) {
+                    <div class="text-red-500 text-[10px] uppercase font-bold tracking-widest ml-1">Email invalide</div>
+                  }
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Preferred Contact -->
+          <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+            <div class="p-8">
+              <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+                <span class="material-symbols-outlined text-primary">contact_phone</span>
+                Moyen de contact favori <span class="text-red-400">*</span>
+              </h2>
+              <div class="flex flex-wrap gap-4">
+                <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                  <input type="radio" formControlName="preferredContact" value="PHONE" class="accent-primary">
+                  <span class="text-sm text-white font-medium">Téléphone</span>
+                </label>
+                <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                  <input type="radio" formControlName="preferredContact" value="EMAIL" class="accent-primary">
+                  <span class="text-sm text-white font-medium">E-mail</span>
+                </label>
+                <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                  <input type="radio" formControlName="preferredContact" value="SMS" class="accent-primary">
+                  <span class="text-sm text-white font-medium">SMS</span>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <!-- Interested Properties -->
+          <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+            <div class="p-8">
+              <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+                <span class="material-symbols-outlined text-primary">home</span>
+                Propriétés d'intérêt
+              </h2>
+              @if (properties().length === 0) {
+                <p class="text-slate-500 text-sm">Chargement des propriétés...</p>
+              } @else {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  @for (prop of properties(); track prop._id) {
+                    <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                      <input type="checkbox"
+                        [checked]="selectedProperties().includes(prop._id)"
+                        (change)="toggleProperty(prop._id)"
+                        class="accent-primary">
+                      <div class="min-w-0">
+                        <div class="text-sm text-white font-medium truncate">{{ prop.reference }}</div>
+                        <div class="text-[10px] text-slate-500 uppercase tracking-widest truncate">{{ prop.address }}</div>
+                        @if (prop.price) {
+                          <div class="text-[10px] text-primary font-bold mt-0.5">{{ prop.price.toLocaleString() }} TND</div>
+                        }
+                      </div>
+                    </label>
+                  }
+                </div>
+              }
+            </div>
+          </section>
+
+          <!-- Visit Date & Time -->
+          <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+            <div class="p-8">
+              <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+                <span class="material-symbols-outlined text-primary">calendar_month</span>
+                Disponibilité
+              </h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                <div class="bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl border border-primary/30 p-6 text-center flex flex-col items-center justify-center min-h-[200px]">
+                  <span class="material-symbols-outlined text-4xl text-primary mb-2 block">calendar_month</span>
+                  @if (selectedDate()) {
+                    <div class="text-lg font-bold text-white mb-1">{{ formatDate(selectedDate()) }}</div>
+                    <div class="text-primary text-[10px] font-bold uppercase tracking-widest">Changer la date</div>
+                  } @else {
+                    <div class="text-sm font-bold text-white/60 mb-3">Aucune date sélectionnée</div>
+                  }
+                  <input type="date" [value]="selectedDate()" (input)="onDateChange($any($event.target).value)"
+                    class="mt-3 w-full bg-white/10 border border-white/20 text-white rounded-xl p-3 text-sm outline-none focus:border-primary transition-all [color-scheme:dark]" />
+                </div>
+                <div class="bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl border border-primary/30 p-6 text-center flex flex-col items-center justify-center min-h-[200px]">
+                  <span class="material-symbols-outlined text-4xl text-primary mb-2 block">schedule</span>
+                  <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3 block">Heure de visite souhaitée</label>
+                  <input type="time" [value]="selectedTime()" (input)="onTimeChange($any($event.target).value)"
+                    class="w-full bg-white/10 border border-white/20 text-white text-xl font-bold rounded-xl p-3 text-center outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all [color-scheme:dark]" />
+                </div>
+              </div>
+              @if (selectedDate() && selectedTime()) {
+                <div class="flex items-center justify-center gap-2 text-emerald-400 text-sm mt-6">
+                  <span class="material-symbols-outlined text-lg">check_circle</span>
+                  Visite prévue le {{ formatDate(selectedDate()) }} à {{ selectedTime() }}
+                </div>
+              }
+            </div>
+          </section>
+
+          <!-- Purchase Type -->
+          <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+            <div class="p-8">
+              <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+                <span class="material-symbols-outlined text-primary">payments</span>
+                Type d'achat
+              </h2>
+              <div class="flex flex-wrap gap-4">
+                <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                  <input type="radio" formControlName="purchaseType" value="CASH" class="accent-primary">
+                  <span class="text-sm text-white font-medium">Paiement comptant</span>
+                </label>
+                <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                  <input type="radio" formControlName="purchaseType" value="LOAN" class="accent-primary">
+                  <span class="text-sm text-white font-medium">Emprunt</span>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <!-- Budget -->
+          <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+            <div class="p-8">
+              <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-8">
+                <span class="material-symbols-outlined text-primary">account_balance</span>
+                Budget
+              </h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                @for (opt of budgetOptions; track opt.value) {
+                  <label class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-primary/30 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                    <input type="radio" formControlName="budget" [value]="opt.value" class="accent-primary">
+                    <span class="text-sm text-white font-medium">{{ opt.label }}</span>
+                  </label>
                 }
               </div>
             </div>
           </section>
-        }
 
-        <!-- Notes -->
-        <section class="glass-card rounded-2xl border border-white/10 overflow-hidden">
-          <div class="p-8">
-            <h2 class="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-6">
-              <span class="material-symbols-outlined text-primary">notes</span>
-              Notes
-            </h2>
-            <textarea
-              [(ngModel)]="notes"
-              class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-white placeholder-slate-500 resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[120px]"
-              placeholder="Add notes..."
-            ></textarea>
-            <div class="mt-4 flex justify-end">
-              <button
-                (click)="saveNotes()"
-                [disabled]="saving()"
-                class="px-5 py-2 rounded-xl bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                @if (saving()) {
-                  <span class="animate-spin inline-block w-3 h-3 border-2 border-white/30 border-t-white rounded-full"></span>
-                }
-                {{ saving() ? 'Saving...' : 'Save Notes' }}
-              </button>
-            </div>
+          <!-- Save Button -->
+          <div class="flex justify-end">
+            <button type="button" (click)="onSubmit()" [disabled]="saving() || form.invalid"
+              class="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-10 py-4 rounded-xl uppercase text-xs font-bold tracking-widest transition-all shadow-lg shadow-primary/20">
+              @if (saving()) {
+                <span class="flex items-center gap-2">
+                  <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                  Sauvegarde...
+                </span>
+              } @else {
+                Enregistrer
+              }
+            </button>
           </div>
-        </section>
+        </form>
       </div>
 
       <!-- Sidebar -->
@@ -148,7 +227,7 @@
           </span>
         </div>
 
-        <!-- Visit Date & Time -->
+        <!-- Visit Date & Time (read-only summary) -->
         <div class="glass-card rounded-2xl border border-white/10 p-6 space-y-4">
           <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Visit Date</h3>
           @if (v.visitDate) {
@@ -166,6 +245,15 @@
           } @else {
             <p class="text-slate-500 text-xs italic">Not scheduled</p>
           }
+        </div>
+
+        <!-- Notes -->
+        <div class="glass-card rounded-2xl border border-white/10 p-6 space-y-4">
+          <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Notes</h3>
+          <textarea
+            class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white placeholder-slate-500 resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[100px]"
+            placeholder="Add notes..."
+          ></textarea>
         </div>
 
         <!-- Created -->

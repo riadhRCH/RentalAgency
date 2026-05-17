@@ -68,6 +68,10 @@ export class VisitsService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
+  createVisit(data: Partial<VisitRequest>): Observable<VisitRequest> {
+    return this.http.post<VisitRequest>(`${this.apiUrl}`, data);
+  }
+
   createPublic(data: any): Observable<VisitRequest> {
     return this.http.post<VisitRequest>(`${this.apiUrl}/public`, data);
   }

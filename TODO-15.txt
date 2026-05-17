@@ -1,0 +1,3 @@
+for short term : 
+ - design of payment methods should be like Vitotrip
+ - commpte family escape + fix services

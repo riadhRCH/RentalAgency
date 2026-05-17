@@ -1,7 +1,8 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { AgencyService, AgencyProfile } from '../../services/agency.service';
 import {
   Announcement,
@@ -30,10 +31,11 @@ import { SharedSearchBarComponent, SearchFilters } from '../../shared/components
   templateUrl: './agency-landing-page.component.html',
   styleUrl: './agency-landing-page.component.scss',
 })
-export class AgencyLandingPageComponent implements OnInit {
+export class AgencyLandingPageComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly agencyService = inject(AgencyService);
   private readonly announcementsService = inject(AnnouncementsService);
+  private readonly destroy$ = new Subject<void>();
 
   agencyId = '';
   agency: AgencyProfile | null = null;
@@ -53,13 +55,19 @@ export class AgencyLandingPageComponent implements OnInit {
   ];
 
   ngOnInit() {
-    this.agencyId = this.route.snapshot.paramMap.get('agencyId') ?? '';
-    if (!this.agencyId) {
-      return;
-    }
+    this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      this.agencyId = params.get('agencyId') ?? '';
+      if (!this.agencyId) {
+        return;
+      }
+      this.loadAgency();
+      this.loadAnnouncements();
+    });
+  }
 
-    this.loadAgency();
-    this.loadAnnouncements();
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   get galleryItems(): CircularGalleryItem[] {
